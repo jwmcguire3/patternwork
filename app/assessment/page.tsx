@@ -183,24 +183,29 @@ function AssessmentRunner() {
   }
 
   async function handleSubmit() {
-    setSubmitting(true);
-    try {
-      // Placeholder: this is where you'd send to your API / DB.
-      // Example:
-      // await fetch("/api/save-assessment", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ answers }),
-      // });
+  setSubmitting(true);
+  try {
+    const res = await fetch("/api/save-assessment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ answers }),
+    });
 
-      console.log("Assessment answers:", answers);
-      setSubmitted(true);
-    } catch (err) {
-      console.error("Error submitting assessment", err);
-    } finally {
-      setSubmitting(false);
+    if (!res.ok) {
+      console.error("Save failed", await res.json());
+      return;
     }
+
+    const data = await res.json();
+    console.log("Saved assessment, id:", data.assessmentId);
+    setSubmitted(true);
+  } catch (err) {
+    console.error("Network or server error", err);
+  } finally {
+    setSubmitting(false);
   }
+}
+
 
   const isLast = currentIndex === QUESTIONS.length - 1;
 
@@ -304,5 +309,6 @@ function AssessmentRunner() {
     </div>
   );
 }
+
 
 
