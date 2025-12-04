@@ -1,3 +1,4 @@
+// app/api/save-assessment/route.ts
 import { NextResponse } from "next/server";
 import { createClient } from "@vercel/postgres";
 
@@ -6,7 +7,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  let client = null;
+  let client: ReturnType<typeof createClient> | null = null;
 
   try {
     console.log("save-assessment POST hit");
@@ -21,10 +22,11 @@ export async function POST(req: Request) {
       );
     }
 
-    const connString = process.env.POSTGRES_URL;
+    const connString =
+      process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL;
 
     if (!connString) {
-      console.error("POSTGRES_URL is not defined");
+      console.error("No Postgres connection string found in env.");
       return NextResponse.json(
         { error: "Database connection not configured." },
         { status: 500 }
@@ -33,7 +35,7 @@ export async function POST(req: Request) {
 
     client = createClient({ connectionString: connString });
     await client.connect();
-    console.log("Connected to DB");
+    console.log("Connected to DB, inserting…");
 
     const result = await client.sql`
       INSERT INTO assessments (answers, user_email)
@@ -53,6 +55,8 @@ export async function POST(req: Request) {
       { status: 200 }
     );
   } catch (err) {
+    console.error("Error in /api/save-assessment:", err);
+
     const message =
       err instanceof Error
         ? err.message
@@ -68,7 +72,10 @@ export async function POST(req: Request) {
     if (client) {
       try {
         await client.end();
-      } catch {}
+        console.log("DB client closed");
+      } catch {
+        // ignore
+      }
     }
   }
 }
