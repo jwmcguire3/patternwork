@@ -20,7 +20,7 @@ export default function RootLayout({
         {/* NAVBAR (global) */}
         <nav className="navbar">
           <div className="container navbar-inner">
-            <div className="nav-brand">Patternwork</div>
+            <Link href="/" className="nav-brand">Patternwork</Link>
             <div className="nav-links">
               <Link href="/#what">What it does</Link>
               <Link href="/method">Method</Link>
@@ -46,3 +46,4 @@ export default function RootLayout({
     </html>
   );
 }
+
