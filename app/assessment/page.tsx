@@ -140,7 +140,30 @@ function AssessmentRunner() {
     if (currentIndex < QUESTIONS.length - 1) {
       setCurrentIndex((i) => i + 1);
     } else {
-      handleSubmit();
+      async function handleSubmit() {
+  setSubmitting(true);
+  try {
+    const res = await fetch("/api/save-assessment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ answers }),
+    });
+
+    if (!res.ok) {
+      console.error("Save failed", await res.json());
+      // you can surface a user-facing error here if you want
+      return;
+    }
+
+    const data = await res.json();
+    console.log("Saved assessment, id:", data.assessmentId);
+    setSubmitted(true);
+  } catch (err) {
+    console.error("Network or server error", err);
+  } finally {
+    setSubmitting(false);
+  }
+}
     }
   }
 
@@ -281,4 +304,5 @@ function AssessmentRunner() {
     </div>
   );
 }
+
 
