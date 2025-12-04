@@ -16,10 +16,10 @@ export default function HomePage() {
           </p>
 
           <div className="hero-actions">
-            <a href="#assessment" className="btn">
+            <a href="/assessment" className="btn">
               Start the Assessment
             </a>
-            <a href="#method" className="btn btn-secondary">
+            <a href="/method" className="btn btn-secondary">
               Learn the Method
             </a>
           </div>
@@ -209,3 +209,4 @@ export default function HomePage() {
     </>
   );
 }
+
