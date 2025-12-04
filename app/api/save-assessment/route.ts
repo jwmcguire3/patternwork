@@ -7,8 +7,11 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  let client;
+  let client: ReturnType<typeof createClient> | null = null;
+
   try {
+    console.log("save-assessment POST hit");
+
     const body = await req.json();
     const { answers, userEmail } = body ?? {};
 
@@ -19,22 +22,30 @@ export async function POST(req: Request) {
       );
     }
 
-    console.log("API HIT, answers:", answers);
+    const connString = process.env.POSTGRES_URL_NON_POOLING;
 
-    // Use a direct client with the connection string from env
-    client = createClient({
-      connectionString: process.env.POSTGRES_URL,
-    });
+    if (!connString) {
+      console.error("POSTGRES_URL_NON_POOLING is not set");
+      return NextResponse.json(
+        { error: "Database connection not configured." },
+        { status: 500 }
+      );
+    }
 
+    client = createClient({ connectionString: connString });
     await client.connect();
+
+    console.log("Connected to DB, inserting…");
 
     const result = await client.sql`
       INSERT INTO assessments (answers, user_email)
-      VALUES (${answers}::jsonb, ${userEmail ?? null})
+      VALUES (${JSON.stringify(answers)}::jsonb, ${userEmail ?? null})
       RETURNING id, created_at;
     `;
 
     const row = result.rows[0];
+
+    console.log("Insert complete:", row);
 
     return NextResponse.json(
       {
@@ -62,6 +73,7 @@ export async function POST(req: Request) {
     if (client) {
       try {
         await client.end();
+        console.log("DB client closed");
       } catch {
         // ignore
       }
