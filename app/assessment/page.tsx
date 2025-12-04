@@ -117,7 +117,6 @@ function AssessmentRunner() {
     setAnswers((prev) => ({
       ...prev,
       [question.id]: {
-        altIndex: answer.altIndex,
         ...answer,
         ...partial,
       },
@@ -282,3 +281,4 @@ function AssessmentRunner() {
     </div>
   );
 }
+
