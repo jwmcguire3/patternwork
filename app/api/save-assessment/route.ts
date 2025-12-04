@@ -1,12 +1,11 @@
 // app/api/save-assessment/route.ts
 import { NextResponse } from "next/server";
+import { sql } from "@vercel/postgres";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-
-    // Expecting { answers: { [questionId]: { choice?: string; text?: string; altIndex: number } } }
-    const { answers } = body ?? {};
+    const { answers, userEmail } = body ?? {};
 
     if (!answers || typeof answers !== "object") {
       return NextResponse.json(
@@ -15,17 +14,20 @@ export async function POST(req: Request) {
       );
     }
 
-    // 🔍 This is where you'd save to a database later.
-    // For now, just log it so you can verify it's working:
-    console.log("Received assessment answers:", answers);
+    // Insert into DB
+    const result = await sql`
+      INSERT INTO assessments (answers, user_email)
+      VALUES (${JSON.stringify(answers)}::jsonb, ${userEmail ?? null})
+      RETURNING id, created_at;
+    `;
 
-    // You could also generate a simple ID here:
-    const assessmentId = crypto.randomUUID();
+    const row = result.rows[0];
 
     return NextResponse.json(
       {
         ok: true,
-        assessmentId,
+        assessmentId: row.id,
+        createdAt: row.created_at,
       },
       { status: 200 }
     );
