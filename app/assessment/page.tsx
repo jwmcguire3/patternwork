@@ -309,6 +309,27 @@ function AssessmentRunner() {
     </div>
   );
 }
+<button
+  type="button"
+  className="btn btn-secondary"
+  onClick={async () => {
+    try {
+      const res = await fetch("/api/save-assessment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answers: { test: { choice: "ok", altIndex: 0 } } }),
+      });
+
+      const data = await res.json();
+      console.log("Test API response:", data);
+    } catch (err) {
+      console.error("Test API error:", err);
+    }
+  }}
+  style={{ marginTop: "1.5rem" }}
+>
+  Test API
+</button>
 
 
 
