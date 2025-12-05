@@ -1,9 +1,6 @@
+// app/api/save-assessment/route.ts
 import { NextResponse } from "next/server";
 import { sql } from "@vercel/postgres";
-
-export async function GET() {
-  return NextResponse.json({ ok: true, route: "save-assessment" });
-}
 
 export async function POST(req: Request) {
   try {
@@ -17,8 +14,7 @@ export async function POST(req: Request) {
       );
     }
 
-    console.log("API HIT, answers:", answers);
-
+    // Insert into DB
     const result = await sql`
       INSERT INTO assessments (answers, user_email)
       VALUES (${JSON.stringify(answers)}::jsonb, ${userEmail ?? null})
