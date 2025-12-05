@@ -14,7 +14,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Insert into DB
     const result = await sql`
       INSERT INTO assessments (answers, user_email)
       VALUES (${JSON.stringify(answers)}::jsonb, ${userEmail ?? null})
@@ -31,10 +30,18 @@ export async function POST(req: Request) {
       },
       { status: 200 }
     );
-  } catch (err) {
+  } catch (err: unknown) {
     console.error("Error in /api/save-assessment:", err);
+
+    const message =
+      err instanceof Error
+        ? err.message
+        : typeof err === "string"
+        ? err
+        : "Unknown error";
+
     return NextResponse.json(
-      { error: "Failed to process assessment." },
+      { error: "Failed to process assessment.", detail: message },
       { status: 500 }
     );
   }
