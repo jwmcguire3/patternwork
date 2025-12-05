@@ -1,17 +1,12 @@
-// app/api/save-assessment/route.ts
 import { NextResponse } from "next/server";
-import { createClient } from "@vercel/postgres";
+import { sql } from "@vercel/postgres";
 
 export async function GET() {
   return NextResponse.json({ ok: true, route: "save-assessment" });
 }
 
 export async function POST(req: Request) {
-  let client: ReturnType<typeof createClient> | null = null;
-
   try {
-    console.log("save-assessment POST hit");
-
     const body = await req.json();
     const { answers, userEmail } = body ?? {};
 
@@ -22,29 +17,15 @@ export async function POST(req: Request) {
       );
     }
 
-    const connString =
-      process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL;
+    console.log("API HIT, answers:", answers);
 
-    if (!connString) {
-      console.error("No Postgres connection string found in env.");
-      return NextResponse.json(
-        { error: "Database connection not configured." },
-        { status: 500 }
-      );
-    }
-
-    client = createClient({ connectionString: connString });
-    await client.connect();
-    console.log("Connected to DB, inserting…");
-
-    const result = await client.sql`
+    const result = await sql`
       INSERT INTO assessments (answers, user_email)
-      VALUES (${answers}, ${userEmail ?? null})
+      VALUES (${JSON.stringify(answers)}::jsonb, ${userEmail ?? null})
       RETURNING id, created_at;
     `;
 
     const row = result.rows[0];
-    console.log("Insert complete:", row);
 
     return NextResponse.json(
       {
@@ -56,26 +37,9 @@ export async function POST(req: Request) {
     );
   } catch (err) {
     console.error("Error in /api/save-assessment:", err);
-
-    const message =
-      err instanceof Error
-        ? err.message
-        : typeof err === "string"
-        ? err
-        : "Unknown error";
-
     return NextResponse.json(
-      { error: "Failed to process assessment.", detail: message },
+      { error: "Failed to process assessment." },
       { status: 500 }
     );
-  } finally {
-    if (client) {
-      try {
-        await client.end();
-        console.log("DB client closed");
-      } catch {
-        // ignore
-      }
-    }
   }
 }
