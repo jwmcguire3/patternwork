@@ -1,12 +1,16 @@
-// app/api/save-assessment/route.ts
 import { NextResponse } from "next/server";
+import { createClient } from "@vercel/postgres";
 
 export async function GET() {
   return NextResponse.json({ ok: true, route: "save-assessment" });
 }
 
 export async function POST(req: Request) {
+  let client = null;
+
   try {
+    console.log("save-assessment POST hit");
+
     const body = await req.json();
     const { answers, userEmail } = body ?? {};
 
@@ -17,28 +21,38 @@ export async function POST(req: Request) {
       );
     }
 
-    // Just generate a fake ID for now
-    const assessmentId =
-      typeof crypto !== "undefined" && "randomUUID" in crypto
-        ? crypto.randomUUID()
-        : `fake-${Date.now()}`;
+    const connString = process.env.POSTGRES_URL;
 
-    console.log("Received assessment:", {
-      assessmentId,
-      userEmail: userEmail ?? null,
-      answers,
-    });
+    if (!connString) {
+      console.error("POSTGRES_URL is not defined");
+      return NextResponse.json(
+        { error: "Database connection not configured." },
+        { status: 500 }
+      );
+    }
+
+    client = createClient({ connectionString: connString });
+    await client.connect();
+    console.log("Connected to DB");
+
+    const result = await client.sql`
+      INSERT INTO assessments (answers, user_email)
+      VALUES (${answers}, ${userEmail ?? null})
+      RETURNING id, created_at;
+    `;
+
+    const row = result.rows[0];
+    console.log("Insert complete:", row);
 
     return NextResponse.json(
       {
         ok: true,
-        assessmentId,
+        assessmentId: row.id,
+        createdAt: row.created_at,
       },
       { status: 200 }
     );
   } catch (err) {
-    console.error("Error in /api/save-assessment:", err);
-
     const message =
       err instanceof Error
         ? err.message
@@ -50,5 +64,11 @@ export async function POST(req: Request) {
       { error: "Failed to process assessment.", detail: message },
       { status: 500 }
     );
+  } finally {
+    if (client) {
+      try {
+        await client.end();
+      } catch {}
+    }
   }
 }
