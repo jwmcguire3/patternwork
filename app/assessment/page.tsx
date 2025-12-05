@@ -109,6 +109,8 @@ function AssessmentRunner() {
     "questions"
   );
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [assessmentId, setAssessmentId] = useState<string | null>(null);
+  const [copyStatus, setCopyStatus] = useState<"" | "ok" | "err">("");
 
   const question = QUESTIONS[currentIndex];
   const answer = answers[question.id] ?? { altIndex: 0 };
@@ -167,6 +169,7 @@ function AssessmentRunner() {
 
   async function handleSubmit() {
     setEmailError(null);
+    setCopyStatus("");
 
     const trimmed = userEmail.trim();
 
@@ -175,7 +178,6 @@ function AssessmentRunner() {
       return;
     }
 
-    // super simple sanity check; you can tighten later
     if (!trimmed.includes("@") || !trimmed.includes(".")) {
       setEmailError("Please enter a valid email address.");
       return;
@@ -200,6 +202,7 @@ function AssessmentRunner() {
 
       const data = await res.json();
       console.log("Saved assessment, id:", data.assessmentId);
+      setAssessmentId(data.assessmentId ?? null);
       setSubmitted(true);
       setStage("done");
     } catch (err) {
@@ -207,6 +210,60 @@ function AssessmentRunner() {
       setEmailError("Network error while saving. Please try again.");
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function handleCopyMiniKit() {
+    try {
+      const letters = ["A", "B", "C", "D", "E", "F", "G"];
+
+      const answerLines = QUESTIONS.map((q, idx) => {
+        const ans = answers[q.id];
+        if (!ans) return `Q${idx + 1}: (no answer)`;
+
+        const choiceIndex = q.choices.findIndex(
+          (c) => c.value === ans.choice
+        );
+        const letter =
+          choiceIndex >= 0 && choiceIndex < letters.length
+            ? letters[choiceIndex]
+            : "?";
+        const choiceLabel =
+          choiceIndex >= 0 ? q.choices[choiceIndex].label : "Unknown choice";
+
+        const textPart = ans.text
+          ? ` | Notes: "${ans.text.replace(/\n/g, " ")}"`
+          : "";
+
+        return `Q${idx + 1}: ${letter} — ${choiceLabel}${textPart}`;
+      }).join("\n");
+
+      const instructions = `Patternwork Mini Report Kit
+
+Instructions for ChatGPT (free):
+1. Read my answers below.
+2. Identify my main nervous-system tendencies, protectors, and attachment patterns.
+3. Give me:
+   - A short reflection (5–7 sentences) in plain language
+   - 3 concrete daily experiments I can try this week
+   - 3 questions I can journal on to go deeper
+
+Style:
+- Be grounded, practical, and specific.
+- No spiritual language, no generic therapy fluff.
+- Talk to me like a smart, burnt-out adult who wants clarity, not vibes.
+
+---
+
+Answers:
+${answerLines}
+`;
+
+      await navigator.clipboard.writeText(instructions);
+      setCopyStatus("ok");
+    } catch (err) {
+      console.error("Clipboard error:", err);
+      setCopyStatus("err");
     }
   }
 
@@ -221,7 +278,7 @@ function AssessmentRunner() {
           <h3 style={{ marginBottom: "0.75rem" }}>Finalize your assessment</h3>
           <p style={{ marginBottom: "1rem", fontSize: "0.95rem" }}>
             Enter your email to save your assessment and receive your
-            Patternwork Profile when it’s ready.
+            Patternwork mini pack and upgrade offer.
           </p>
 
           <div style={{ marginBottom: "1.25rem" }}>
@@ -292,12 +349,48 @@ function AssessmentRunner() {
         <div className="card">
           <h3 style={{ marginBottom: "0.75rem" }}>Assessment saved</h3>
           <p style={{ marginBottom: "0.75rem", fontSize: "0.95rem" }}>
-            Your answers and email have been saved.
+            Your answers and email have been saved. A mini pack will be sent to
+            your inbox with a workbook link and an option to upgrade to the full
+            Patternwork Profile.
           </p>
-          <p style={{ fontSize: "0.9rem" }}>
-            In the full Patternwork release, this is where your Profile would be
-            generated and either shown here or sent to your inbox.
-          </p>
+          {assessmentId && (
+            <p style={{ fontSize: "0.85rem", color: "#666" }}>
+              Internal reference: <code>{assessmentId}</code>
+            </p>
+          )}
+
+          <div style={{ marginTop: "1.25rem" }}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={handleCopyMiniKit}
+            >
+              Copy mini-report kit for ChatGPT
+            </button>
+            {copyStatus === "ok" && (
+              <p
+                style={{
+                  marginTop: "0.5rem",
+                  fontSize: "0.85rem",
+                  color: "#2c662d",
+                }}
+              >
+                Copied. Paste this into free ChatGPT to get a quick reflection.
+              </p>
+            )}
+            {copyStatus === "err" && (
+              <p
+                style={{
+                  marginTop: "0.5rem",
+                  fontSize: "0.85rem",
+                  color: "#c0392b",
+                }}
+              >
+                Couldn’t access the clipboard. You may need to paste manually or
+                check browser permissions.
+              </p>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -394,13 +487,6 @@ function AssessmentRunner() {
           </button>
         </div>
       </div>
-
-      {submitted && (
-        <p style={{ marginTop: "1rem", fontSize: "0.9rem" }}>
-          Assessment submitted. In the full version, this will generate your
-          Patternwork Profile and optionally send it by email.
-        </p>
-      )}
     </div>
   );
 }
