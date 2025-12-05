@@ -11,7 +11,8 @@
   "dependencies": {
     "next": "16.0.7",
     "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react-dom": "19.2.0",
+    "@vercel/postgres": "latest"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -21,8 +22,9 @@
     "eslint": "^9",
     "eslint-config-next": "16.0.7",
     "tailwindcss": "^4",
-    "typescript": "^5",
-    "@vercel/postgres": "latest"
+    "typescript": "^5"
+    
   }
 }
+
 
