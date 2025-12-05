@@ -77,29 +77,6 @@ export default function AssessmentPage() {
     <main className="section">
       <div className="container narrow">
         <h2>Patternwork Assessment</h2>
-        
-        <button
-  type="button"
-  className="btn btn-secondary"
-  onClick={async () => {
-    try {
-      const res = await fetch("/api/save-assessment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers: { test: { choice: "ok", altIndex: 0 } } }),
-      });
-
-      const data = await res.json();
-      console.log("Test API response:", data);
-    } catch (err) {
-      console.error("Test API error:", err);
-    }
-  }}
-  style={{ marginTop: "1.5rem" }}
->
-  Test API
-</button>
-        
         <p>
           The Patternwork Assessment is a structured set of questions designed
           to surface the patterns behind your states, protectors, attachment
@@ -162,31 +139,6 @@ function AssessmentRunner() {
   function handleNext() {
     if (currentIndex < QUESTIONS.length - 1) {
       setCurrentIndex((i) => i + 1);
-    } else {
-      async function handleSubmit() {
-  setSubmitting(true);
-  try {
-    const res = await fetch("/api/save-assessment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ answers }),
-    });
-
-    if (!res.ok) {
-      console.error("Save failed", await res.json());
-      // you can surface a user-facing error here if you want
-      return;
-    }
-
-    const data = await res.json();
-    console.log("Saved assessment, id:", data.assessmentId);
-    setSubmitted(true);
-  } catch (err) {
-    console.error("Network or server error", err);
-  } finally {
-    setSubmitting(false);
-  }
-}
     }
   }
 
@@ -206,29 +158,28 @@ function AssessmentRunner() {
   }
 
   async function handleSubmit() {
-  setSubmitting(true);
-  try {
-    const res = await fetch("/api/save-assessment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ answers }),
-    });
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/save-assessment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answers }),
+      });
 
-    if (!res.ok) {
-      console.error("Save failed", await res.json());
-      return;
+      if (!res.ok) {
+        console.error("Save failed", await res.json());
+        return;
+      }
+
+      const data = await res.json();
+      console.log("Saved assessment, id:", data.assessmentId);
+      setSubmitted(true);
+    } catch (err) {
+      console.error("Network or server error", err);
+    } finally {
+      setSubmitting(false);
     }
-
-    const data = await res.json();
-    console.log("Saved assessment, id:", data.assessmentId);
-    setSubmitted(true);
-  } catch (err) {
-    console.error("Network or server error", err);
-  } finally {
-    setSubmitting(false);
   }
-}
-
 
   const isLast = currentIndex === QUESTIONS.length - 1;
 
@@ -312,14 +263,25 @@ function AssessmentRunner() {
             </button>
           </div>
 
-          <button
-            type="button"
-            onClick={handleNext}
-            className="btn"
-            disabled={submitting}
-          >
-            {isLast ? (submitting ? "Submitting..." : "Finish") : "Next"}
-          </button>
+          {isLast ? (
+            <button
+              type="button"
+              onClick={handleSubmit}
+              className="btn"
+              disabled={submitting}
+            >
+              {submitting ? "Submitting..." : "Finish"}
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleNext}
+              className="btn"
+              disabled={submitting}
+            >
+              Next
+            </button>
+          )}
         </div>
       </div>
 
