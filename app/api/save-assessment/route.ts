@@ -1,8 +1,14 @@
 // app/api/save-assessment/route.ts
 import { NextResponse } from "next/server";
-import { sql } from "@vercel/postgres";
+import { Pool } from "pg";
+
+// One pool per lambda bundle
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
 export async function POST(req: Request) {
+  let client;
   try {
     const body = await req.json();
     const { answers, userEmail } = body ?? {};
@@ -14,11 +20,24 @@ export async function POST(req: Request) {
       );
     }
 
-    const result = await sql`
-      INSERT INTO assessments (answers, user_email)
-      VALUES (${JSON.stringify(answers)}::jsonb, ${userEmail ?? null})
-      RETURNING id, created_at;
-    `;
+    if (!process.env.DATABASE_URL) {
+      console.error("DATABASE_URL is not defined");
+      return NextResponse.json(
+        { error: "Database connection not configured." },
+        { status: 500 }
+      );
+    }
+
+    client = await pool.connect();
+
+    const result = await client.query(
+      `
+        INSERT INTO assessments (answers, user_email)
+        VALUES ($1::jsonb, $2)
+        RETURNING id, created_at
+      `,
+      [JSON.stringify(answers), userEmail ?? null]
+    );
 
     const row = result.rows[0];
 
@@ -30,7 +49,7 @@ export async function POST(req: Request) {
       },
       { status: 200 }
     );
-  } catch (err: unknown) {
+  } catch (err) {
     console.error("Error in /api/save-assessment:", err);
 
     const message =
@@ -44,5 +63,9 @@ export async function POST(req: Request) {
       { error: "Failed to process assessment.", detail: message },
       { status: 500 }
     );
+  } finally {
+    if (client) {
+      client.release();
+    }
   }
 }
