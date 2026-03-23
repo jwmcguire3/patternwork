@@ -6,3 +6,15 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+model SelfMapAssessmentProgress {
+  id             String   @id @default(cuid())
+  userId         String
+  assessmentKey  String
+  currentIndex   Int      @default(0)
+  responsesJson  Json
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([userId, assessmentKey], name: "userId_assessmentKey")
+  @@index([userId])
+}
