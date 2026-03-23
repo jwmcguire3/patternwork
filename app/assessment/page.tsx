@@ -1,23 +1,12 @@
 // app/assessment/page.tsx
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef } from "react";
+import { QUESTIONS, type QuestionData } from "./questions_data";
 
 // ═══════════════════════════════════════════════════════════════
 // TYPES
 // ═══════════════════════════════════════════════════════════════
-
-type QuestionData = {
-  num: number;
-  category: string;
-  axis: string;
-  load: "mild" | "moderate" | "high";
-  ic: string;
-  scenarioTag: string;
-  text: string;
-  options: Record<string, string>;
-  bodyPrompt: "standard" | "enhanced";
-};
 
 type Answer = {
   selected: string[]; // ordered: first = PRIMARY, rest = SECONDARY
@@ -52,21 +41,6 @@ const IMPULSES = [
 const OPTION_KEYS = ["A", "B", "C", "D", "E", "F"] as const;
 
 // ═══════════════════════════════════════════════════════════════
-// QUESTION BANK (inline for single-file deployment)
-// In production, import from a separate file
-// ═══════════════════════════════════════════════════════════════
-
-// PLACEHOLDER: This will be replaced with the full 60-question bank.
-// For now we embed a note — the actual data comes from the xlsx.
-// See the companion questions_data.ts file for the full export.
-
-/* ─── paste QUESTIONS array from questions_data.ts here ─── */
-// @ts-expect-error — will be populated
-let QUESTIONS: QuestionData[] = [];
-
-// We'll dynamically import or inline. For this file, assume QUESTIONS
-// is imported at build time. The page works with any length array.
-
 // ═══════════════════════════════════════════════════════════════
 // UTILITY: generate SelfMap log output
 // ═══════════════════════════════════════════════════════════════
