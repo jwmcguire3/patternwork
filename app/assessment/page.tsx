@@ -647,7 +647,10 @@ export default function AssessmentPage() {
         }),
       });
       if (!res.ok) {
-        setEmailError("Something went wrong saving your assessment.");
+        const errData = await res.json().catch(() => null);
+        setEmailError(
+          errData?.error ?? "Something went wrong saving your assessment."
+        );
         return;
       }
       const data = await res.json();

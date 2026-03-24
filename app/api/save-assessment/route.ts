@@ -7,11 +7,11 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
-const resend =
-  process.env.RESEND_API_KEY && new Resend(process.env.RESEND_API_KEY);
+const resendApiKey = process.env.RESEND_API_KEY;
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
 const FROM_EMAIL =
-  process.env.EMAIL_FROM || "test@patternwork.io";
+  process.env.EMAIL_FROM || "map@patternwork.io";
 
 // TODO: Replace with real workbook URL when ready
 const WORKBOOK_URL = "https://patternwork.io/workbook.pdf";
@@ -21,10 +21,18 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { answers, userEmail } = body ?? {};
+    const normalizedEmail =
+      typeof userEmail === "string" ? userEmail.trim().toLowerCase() : "";
 
-    if (!answers || typeof answers !== "object" || !userEmail) {
+    if (!answers || typeof answers !== "object" || !normalizedEmail) {
       return NextResponse.json(
         { error: "Missing 'answers' or 'userEmail'." },
+        { status: 400 }
+      );
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+      return NextResponse.json(
+        { error: "Invalid email format." },
         { status: 400 }
       );
     }
@@ -33,6 +41,13 @@ export async function POST(req: Request) {
       console.error("DATABASE_URL is not defined");
       return NextResponse.json(
         { error: "Database connection not configured." },
+        { status: 500 }
+      );
+    }
+    if (!resend) {
+      console.error("RESEND_API_KEY is not defined");
+      return NextResponse.json(
+        { error: "Email service is not configured." },
         { status: 500 }
       );
     }
@@ -45,7 +60,7 @@ export async function POST(req: Request) {
         VALUES ($1::jsonb, $2)
         RETURNING id, created_at
       `,
-      [JSON.stringify(answers), userEmail]
+      [JSON.stringify(answers), normalizedEmail]
     );
 
     const row = result.rows[0];
@@ -53,24 +68,25 @@ export async function POST(req: Request) {
     // Build a very compact summary we can drop into the email (optional)
     const miniSummary = buildMiniSummary(answers);
 
-    // Fire-and-forget email (don’t block response if it fails)
-    if (resend && userEmail) {
-      const html = buildEmailHtml({
-        workbookUrl: WORKBOOK_URL,
-        miniSummary,
-        assessmentId: row.id,
-      });
+    const html = buildEmailHtml({
+      workbookUrl: WORKBOOK_URL,
+      miniSummary,
+      assessmentId: row.id,
+    });
 
-      resend.emails
-        .send({
-          from: FROM_EMAIL,
-          to: userEmail,
-          subject: "Your Patternwork Assessment – Mini Pack & Next Steps",
-          html,
-        })
-        .catch((err) => {
-          console.error("Error sending email via Resend:", err);
-        });
+    const { error: emailError } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: normalizedEmail,
+      subject: "Your Patternwork Assessment – Mini Pack & Next Steps",
+      html,
+    });
+
+    if (emailError) {
+      console.error("Error sending email via Resend:", emailError);
+      return NextResponse.json(
+        { error: "Assessment saved, but sending email failed." },
+        { status: 502 }
+      );
     }
 
     return NextResponse.json(
@@ -78,6 +94,7 @@ export async function POST(req: Request) {
         ok: true,
         assessmentId: row.id,
         createdAt: row.created_at,
+        emailSent: true,
       },
       { status: 200 }
     );
