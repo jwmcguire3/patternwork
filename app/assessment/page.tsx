@@ -582,6 +582,7 @@ export default function AssessmentPage() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
+  const [emailDeliveryError, setEmailDeliveryError] = useState<string | null>(null);
   const [copyStatus, setCopyStatus] = useState<"" | "ok" | "err">("");
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -655,6 +656,7 @@ export default function AssessmentPage() {
       }
       const data = await res.json();
       setAssessmentId(data.assessmentId ?? null);
+      setEmailDeliveryError(data.emailSent ? null : data.emailError ?? "Email delivery is delayed.");
       setStage("done");
     } catch {
       setEmailError("Network error. Please try again.");
@@ -789,6 +791,12 @@ export default function AssessmentPage() {
               Your assessment has been recorded. You'll receive your
               Patternwork Map at the email you provided.
             </p>
+            {emailDeliveryError && (
+              <p className="assessment-error" style={{ marginTop: "0.5rem" }}>
+                We saved your assessment, but we couldn't send the email yet.
+                Please retry in a moment or contact support.
+              </p>
+            )}
             {assessmentId && (
               <p
                 style={{

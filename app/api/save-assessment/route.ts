@@ -44,14 +44,6 @@ export async function POST(req: Request) {
         { status: 500 }
       );
     }
-    if (!resend) {
-      console.error("RESEND_API_KEY is not defined");
-      return NextResponse.json(
-        { error: "Email service is not configured." },
-        { status: 500 }
-      );
-    }
-
     client = await pool.connect();
 
     const result = await client.query(
@@ -74,19 +66,26 @@ export async function POST(req: Request) {
       assessmentId: row.id,
     });
 
-    const { error: emailError } = await resend.emails.send({
-      from: FROM_EMAIL,
-      to: normalizedEmail,
-      subject: "Your Patternwork Assessment – Mini Pack & Next Steps",
-      html,
-    });
+    let emailSent = false;
+    let emailErrorMessage: string | null = null;
 
-    if (emailError) {
-      console.error("Error sending email via Resend:", emailError);
-      return NextResponse.json(
-        { error: "Assessment saved, but sending email failed." },
-        { status: 502 }
-      );
+    if (!resend) {
+      emailErrorMessage = "RESEND_API_KEY is not defined.";
+      console.error(emailErrorMessage);
+    } else {
+      const { error: emailError } = await resend.emails.send({
+        from: FROM_EMAIL,
+        to: normalizedEmail,
+        subject: "Your Patternwork Assessment – Mini Pack & Next Steps",
+        html,
+      });
+
+      if (emailError) {
+        emailErrorMessage = emailError.message || "Unknown email error.";
+        console.error("Error sending email via Resend:", emailError);
+      } else {
+        emailSent = true;
+      }
     }
 
     return NextResponse.json(
@@ -94,7 +93,8 @@ export async function POST(req: Request) {
         ok: true,
         assessmentId: row.id,
         createdAt: row.created_at,
-        emailSent: true,
+        emailSent,
+        emailError: emailErrorMessage,
       },
       { status: 200 }
     );
