@@ -580,9 +580,9 @@ export default function AssessmentPage() {
   const [stage, setStage] = useState<"intro" | "questions" | "finalize" | "done">("intro");
   const [userEmail, setUserEmail] = useState("");
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
-  const [copyStatus, setCopyStatus] = useState<"" | "ok" | "err">("");
   const cardRef = useRef<HTMLDivElement>(null);
 
   const question = QUESTIONS[currentIndex];
@@ -617,23 +617,25 @@ export default function AssessmentPage() {
     }
   }, [currentIndex]);
 
-  // Count answered
-  const answeredCount = Object.values(answers).filter(
-    (a) => a.selected.length > 0
-  ).length;
+  const validateEmail = useCallback((email: string): string | null => {
+    const trimmed = email.trim();
+    if (!trimmed) return "Email is required.";
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(trimmed)) {
+      return "Please enter a valid email address.";
+    }
+    return null;
+  }, []);
 
   async function handleSubmit() {
-    setEmailError(null);
-    const trimmed = userEmail.trim();
-    if (!trimmed) {
-      setEmailError("Email is required to save your assessment.");
-      return;
-    }
-    if (!trimmed.includes("@") || !trimmed.includes(".")) {
-      setEmailError("Please enter a valid email address.");
+    const validationError = validateEmail(userEmail);
+    setEmailError(validationError);
+    setSubmitError(null);
+    if (validationError) {
       return;
     }
 
+    const trimmed = userEmail.trim();
     setSubmitting(true);
     try {
       const log = generateLog(QUESTIONS, answers);
@@ -647,26 +649,17 @@ export default function AssessmentPage() {
         }),
       });
       if (!res.ok) {
-        setEmailError("Something went wrong saving your assessment.");
+        setSubmitError("Could not submit your request. Please try again.");
         return;
       }
       const data = await res.json();
       setAssessmentId(data.assessmentId ?? null);
+      setUserEmail(trimmed);
       setStage("done");
     } catch {
-      setEmailError("Network error. Please try again.");
+      setSubmitError("Network error. Please try again.");
     } finally {
       setSubmitting(false);
-    }
-  }
-
-  async function handleCopyLog() {
-    try {
-      const log = generateLog(QUESTIONS, answers);
-      await navigator.clipboard.writeText(log);
-      setCopyStatus("ok");
-    } catch {
-      setCopyStatus("err");
     }
   }
 
@@ -728,30 +721,55 @@ export default function AssessmentPage() {
               Assessment complete
             </h3>
             <p style={{ marginBottom: "0.25rem", fontSize: "0.95rem" }}>
-              {answeredCount} of {QUESTIONS.length} questions answered.
+              {QUESTIONS.length} of {QUESTIONS.length} questions answered.
             </p>
             <p style={{ marginBottom: "1.5rem", fontSize: "0.95rem" }}>
-              Enter your email to save your results and receive your
-              Patternwork Map.
+              Enter your email to receive your free report. Report
+              delivery may take up to 48 hours.
             </p>
 
             <div style={{ marginBottom: "1.25rem" }}>
               <label
+                htmlFor="report-request-email"
                 style={{ display: "block", marginBottom: "0.4rem" }}
               >
                 Email
               </label>
               <input
+                id="report-request-email"
                 type="email"
                 value={userEmail}
-                onChange={(e) => setUserEmail(e.target.value)}
+                onChange={(e) => {
+                  const nextEmail = e.target.value;
+                  setUserEmail(nextEmail);
+                  setSubmitError(null);
+                  if (emailError) {
+                    setEmailError(validateEmail(nextEmail));
+                  }
+                }}
+                onBlur={() => setEmailError(validateEmail(userEmail))}
                 placeholder="you@example.com"
                 className="assessment-input"
+                aria-invalid={Boolean(emailError)}
+                aria-describedby={emailError ? "email-error" : undefined}
               />
               {emailError && (
-                <p className="assessment-error">{emailError}</p>
+                <p id="email-error" className="assessment-error">{emailError}</p>
               )}
             </div>
+            {submitError && <p className="assessment-error">{submitError}</p>}
+            {submitting && (
+              <p
+                style={{
+                  fontSize: "0.9rem",
+                  color: "var(--muted)",
+                  marginBottom: "1rem",
+                }}
+                role="status"
+              >
+                Submitting your report request…
+              </p>
+            )}
 
             <div className="assessment-nav">
               <button
@@ -766,7 +784,7 @@ export default function AssessmentPage() {
                 onClick={handleSubmit}
                 disabled={submitting}
               >
-                {submitting ? "Saving…" : "Save assessment"}
+                {submitting ? "Submitting request…" : "Submit Report Request"}
               </button>
             </div>
           </div>
@@ -781,10 +799,13 @@ export default function AssessmentPage() {
       <main className="section">
         <div className="container narrow">
           <div className="card">
-            <h3 style={{ marginBottom: "0.75rem" }}>Saved</h3>
+            <h3 style={{ marginBottom: "0.75rem" }}>Request received</h3>
             <p style={{ fontSize: "0.95rem" }}>
-              Your assessment has been recorded. You'll receive your
-              Patternwork Map at the email you provided.
+              Your assessment was submitted successfully. Your free
+              report may take up to 48 hours to arrive.
+            </p>
+            <p style={{ fontSize: "0.95rem", marginTop: "0.75rem" }}>
+              Sent to: <strong>{userEmail}</strong>
             </p>
             {assessmentId && (
               <p
@@ -799,28 +820,14 @@ export default function AssessmentPage() {
             )}
 
             <div style={{ marginTop: "1.5rem" }}>
-              <button
-                className="btn btn-secondary"
-                onClick={handleCopyLog}
+              <a
+                className="btn"
+                href="https://patternwork.io/method"
+                target="_blank"
+                rel="noreferrer"
               >
-                Copy raw log to clipboard
-              </button>
-              {copyStatus === "ok" && (
-                <p
-                  style={{
-                    marginTop: "0.5rem",
-                    fontSize: "0.85rem",
-                    color: "var(--accent-forest)",
-                  }}
-                >
-                  Copied.
-                </p>
-              )}
-              {copyStatus === "err" && (
-                <p className="assessment-error">
-                  Clipboard not available.
-                </p>
-              )}
+                Learn more
+              </a>
             </div>
           </div>
         </div>
