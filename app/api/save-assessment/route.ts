@@ -1,157 +1,141 @@
-// app/api/save-assessment/route.ts
 import { NextResponse } from "next/server";
 import { Pool } from "pg";
-import { Resend } from "resend";
+
+import { sendAssessmentSubmissionEmail } from "@/lib/server/assessment-submission-email";
+
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
-const resend =
-  process.env.RESEND_API_KEY && new Resend(process.env.RESEND_API_KEY);
+type SaveAssessmentPayload = {
+  userEmail?: unknown;
+  log?: unknown;
+  answers?: unknown;
+};
 
-const FROM_EMAIL =
-  process.env.EMAIL_FROM || "test@patternwork.io";
+function answeredCountFromAnswers(answers: unknown): number | undefined {
+  if (!answers || typeof answers !== "object" || Array.isArray(answers)) {
+    return undefined;
+  }
 
-// TODO: Replace with real workbook URL when ready
-const WORKBOOK_URL = "https://patternwork.io/workbook.pdf";
+  return Object.values(answers).filter((answer) => {
+    if (!answer || typeof answer !== "object") {
+      return false;
+    }
 
-export async function POST(req: Request) {
-  let client;
+    const maybeSelected = (answer as { selected?: unknown }).selected;
+    return Array.isArray(maybeSelected) && maybeSelected.length > 0;
+  }).length;
+}
+
+async function saveAssessmentToDatabase(
+  userEmail: string,
+  answers: unknown
+): Promise<{ assessmentId: string | null; createdAt: string | null }> {
+  if (!process.env.DATABASE_URL) {
+    return { assessmentId: null, createdAt: null };
+  }
+
+  const client = await pool.connect();
+
   try {
-    const body = await req.json();
-    const { answers, userEmail } = body ?? {};
-
-    if (!answers || typeof answers !== "object" || !userEmail) {
-      return NextResponse.json(
-        { error: "Missing 'answers' or 'userEmail'." },
-        { status: 400 }
-      );
-    }
-
-    if (!process.env.DATABASE_URL) {
-      console.error("DATABASE_URL is not defined");
-      return NextResponse.json(
-        { error: "Database connection not configured." },
-        { status: 500 }
-      );
-    }
-
-    client = await pool.connect();
-
     const result = await client.query(
       `
         INSERT INTO assessments (answers, user_email)
         VALUES ($1::jsonb, $2)
         RETURNING id, created_at
       `,
-      [JSON.stringify(answers), userEmail]
+      [JSON.stringify(answers ?? {}), userEmail]
     );
 
-    const row = result.rows[0];
+    return {
+      assessmentId: result.rows[0]?.id ?? null,
+      createdAt: result.rows[0]?.created_at?.toISOString?.() ?? null,
+    };
+  } finally {
+    client.release();
+  }
+}
 
-    // Build a very compact summary we can drop into the email (optional)
-    const miniSummary = buildMiniSummary(answers);
+export async function POST(req: Request) {
+  let body: SaveAssessmentPayload;
 
-    // Fire-and-forget email (don’t block response if it fails)
-    if (resend && userEmail) {
-      const html = buildEmailHtml({
-        workbookUrl: WORKBOOK_URL,
-        miniSummary,
-        assessmentId: row.id,
-      });
+  try {
+    body = (await req.json()) as SaveAssessmentPayload;
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON payload." }, { status: 400 });
+  }
 
-      resend.emails
-        .send({
-          from: FROM_EMAIL,
-          to: userEmail,
-          subject: "Your Patternwork Assessment – Mini Pack & Next Steps",
-          html,
-        })
-        .catch((err) => {
-          console.error("Error sending email via Resend:", err);
-        });
-    }
+  const userEmail =
+    typeof body.userEmail === "string" ? body.userEmail.trim().toLowerCase() : "";
+  const log = typeof body.log === "string" ? body.log.trim() : "";
+
+  if (!userEmail || !emailPattern.test(userEmail)) {
+    return NextResponse.json(
+      { error: "A valid 'userEmail' is required." },
+      { status: 400 }
+    );
+  }
+
+  if (!log) {
+    return NextResponse.json(
+      { error: "Missing required 'log' field." },
+      { status: 400 }
+    );
+  }
+
+  const submittedAt = new Date().toISOString();
+  const answeredCount = answeredCountFromAnswers(body.answers);
+
+  try {
+    await sendAssessmentSubmissionEmail({
+      userEmail,
+      submissionTimestampIso: submittedAt,
+      answeredCount,
+      log,
+      answers: body.answers,
+    });
+  } catch (error) {
+    console.error("Error sending internal assessment email:", error);
+    return NextResponse.json(
+      { error: "Failed to send assessment submission email." },
+      { status: 502 }
+    );
+  }
+
+  try {
+    const { assessmentId, createdAt } = await saveAssessmentToDatabase(
+      userEmail,
+      body.answers
+    );
 
     return NextResponse.json(
       {
         ok: true,
-        assessmentId: row.id,
-        createdAt: row.created_at,
+        assessmentId,
+        createdAt,
+        submittedAt,
+        message:
+          "Assessment received. Patternwork will follow up with your free report within 48 hours.",
       },
       { status: 200 }
     );
-  } catch (err: any) {
-    console.error("Error in /api/save-assessment:", err);
+  } catch (error) {
+    console.error("Error saving assessment after email delivery:", error);
+
     return NextResponse.json(
       {
-        error: "Failed to process assessment.",
-        detail: err?.message ?? String(err),
+        ok: true,
+        assessmentId: null,
+        createdAt: null,
+        submittedAt,
+        message:
+          "Assessment received. Patternwork will follow up with your free report within 48 hours.",
+        warning: "Email delivered, but database save failed.",
       },
-      { status: 500 }
+      { status: 200 }
     );
-  } finally {
-    if (client) {
-      client.release();
-    }
   }
-}
-
-function buildMiniSummary(answers: any): string {
-  // For now: just stringify and truncate; you can replace this with
-  // something smarter or with your pre-rendered mini blocks later.
-  try {
-    const raw = JSON.stringify(answers);
-    return raw.length > 1500 ? raw.slice(0, 1500) + " …" : raw;
-  } catch {
-    return "";
-  }
-}
-
-function buildEmailHtml({
-  workbookUrl,
-  miniSummary,
-  assessmentId,
-}: {
-  workbookUrl: string;
-  miniSummary: string;
-  assessmentId: string;
-}) {
-  return `
-  <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.5;">
-    <h2>Thanks for completing the Patternwork Assessment</h2>
-    <p>This email includes:</p>
-    <ul>
-      <li>A link to the starter workbook</li>
-      <li>Instructions for a mini AI reflection using your answers</li>
-      <li>An invitation to upgrade to the full Patternwork Profile</li>
-    </ul>
-
-    <h3>Your starter workbook</h3>
-    <p>You can download the workbook here:</p>
-    <p><a href="${workbookUrl}">${workbookUrl}</a></p>
-
-    <h3>Mini AI reflection (for free ChatGPT)</h3>
-    <p>Copy the kit from the site (or the block below) into ChatGPT and ask:</p>
-    <ul>
-      <li>“Give me a short reflection on my nervous-system and protector patterns.”</li>
-      <li>“Give me 3 concrete daily experiments I can try this week.”</li>
-      <li>“Give me 3 journal questions to go deeper.”</li>
-    </ul>
-
-    ${
-      miniSummary
-        ? `<h4>Compact answer snapshot</h4>
-           <pre style="white-space: pre-wrap; font-size: 12px; background:#f7f7f7; padding:0.75rem; border-radius:6px;">${miniSummary}</pre>`
-        : ""
-    }
-
-    <h3>Upgrade: Full Patternwork Profile</h3>
-    <p>The full Patternwork Profile gives you a deeper, structured map of your states, protectors, attachment patterns, and rituals built specifically around your patterns.</p>
-    <p>When this is live, this section will contain a direct link to purchase your full Profile with this assessment already attached.</p>
-
-    <hr />
-    <p style="font-size: 12px; color: #666;">Internal reference: ${assessmentId}</p>
-  </div>
-  `;
 }
