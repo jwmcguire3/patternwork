@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 
 const INTERNAL_TO_EMAIL = "map@patternwork.io";
-const DEFAULT_FROM_EMAIL = "Patternwork <onboarding@resend.dev>";
+const DEFAULT_FROM_EMAIL = "Patternwork <noreply@patternwork.io>";
 
 export type AssessmentSubmissionEmailInput = {
   userEmail: string;
