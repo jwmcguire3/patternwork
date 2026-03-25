@@ -579,6 +579,16 @@ export default function AssessmentPage() {
   const [answers, setAnswers] = useState<AnswersState>({});
   const [stage, setStage] = useState<"intro" | "questions" | "finalize" | "done">("intro");
   const [userEmail, setUserEmail] = useState("");
+  const [devEmail, setDevEmail] = useState("");
+  const [devStatus, setDevStatus] = useState<{
+    state: "idle" | "sending" | "success" | "error";
+    actionLabel: string;
+    message: string;
+  }>({
+    state: "idle",
+    actionLabel: "",
+    message: "",
+  });
   const [emailError, setEmailError] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -626,6 +636,176 @@ export default function AssessmentPage() {
     }
     return null;
   }, []);
+
+  const shouldShowDevPanel =
+    process.env.NODE_ENV === "development" ||
+    process.env.NEXT_PUBLIC_SHOW_ASSESSMENT_DEVTOOLS === "true";
+
+  const buildMockAnswers = useCallback((): AnswersState => {
+    const result: AnswersState = {};
+    QUESTIONS.slice(0, 3).forEach((q, idx) => {
+      result[q.num] = {
+        selected: idx === 0 ? ["A", "C"] : ["B"],
+        bodyZones: idx === 0 ? ["chest", "stomach"] : idx === 1 ? ["throat"] : [],
+        impulse: q.bodyPrompt === "enhanced" ? "freeze" : null,
+        notes: idx === 2 ? "Mock test payload from assessment devtools." : "",
+      };
+    });
+    return result;
+  }, []);
+
+  async function sendThroughAssessmentRoute(
+    actionLabel: string,
+    payloadAnswers: AnswersState
+  ) {
+    const targetEmail = (devEmail || userEmail).trim();
+    const validationError = validateEmail(targetEmail);
+    if (validationError) {
+      setDevStatus({
+        state: "error",
+        actionLabel,
+        message: validationError,
+      });
+      return;
+    }
+
+    setDevStatus({
+      state: "sending",
+      actionLabel,
+      message: "Sending through /api/save-assessment…",
+    });
+
+    try {
+      const log = generateLog(QUESTIONS, payloadAnswers);
+      const res = await fetch("/api/save-assessment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          answers: payloadAnswers,
+          log,
+          userEmail: targetEmail,
+        }),
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        setDevStatus({
+          state: "error",
+          actionLabel,
+          message: data?.error ?? `Request failed with status ${res.status}.`,
+        });
+        return;
+      }
+
+      setDevStatus({
+        state: "success",
+        actionLabel,
+        message: data?.message ?? "Sent successfully.",
+      });
+    } catch {
+      setDevStatus({
+        state: "error",
+        actionLabel,
+        message: "Network error while sending test payload.",
+      });
+    }
+  }
+
+  const renderDevPanel = () => {
+    if (!shouldShowDevPanel) return null;
+
+    return (
+      <div
+        className="card"
+        style={{
+          marginTop: "1rem",
+          borderStyle: "dashed",
+          borderColor: "var(--muted)",
+          background: "rgba(255, 255, 255, 0.65)",
+        }}
+      >
+        <p
+          style={{
+            fontSize: "0.75rem",
+            textTransform: "uppercase",
+            letterSpacing: "0.06em",
+            color: "var(--muted)",
+            marginBottom: "0.4rem",
+          }}
+        >
+          Development-only quick email test tools
+        </p>
+        <p style={{ fontSize: "0.9rem", marginBottom: "0.8rem" }}>
+          Sends payloads through the real <code>/api/save-assessment</code> route.
+        </p>
+        <label
+          htmlFor="devtools-email"
+          style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.9rem" }}
+        >
+          Test destination email
+        </label>
+        <input
+          id="devtools-email"
+          type="email"
+          value={devEmail}
+          onChange={(e) => setDevEmail(e.target.value)}
+          placeholder={userEmail || "you@example.com"}
+          className="assessment-input"
+          style={{ marginBottom: "0.8rem" }}
+        />
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+          <button
+            className="btn btn-secondary"
+            disabled={devStatus.state === "sending"}
+            onClick={() =>
+              sendThroughAssessmentRoute("Basic test", {
+                [QUESTIONS[0].num]: {
+                  selected: ["A"],
+                  bodyZones: [],
+                  impulse: null,
+                  notes: "Basic test from assessment devtools.",
+                },
+              })
+            }
+          >
+            Send basic test
+          </button>
+          <button
+            className="btn btn-secondary"
+            disabled={devStatus.state === "sending"}
+            onClick={() => sendThroughAssessmentRoute("Mock payload", buildMockAnswers())}
+          >
+            Send mock payload
+          </button>
+          <button
+            className="btn btn-secondary"
+            disabled={devStatus.state === "sending"}
+            onClick={() => sendThroughAssessmentRoute("Current state", answers)}
+          >
+            Send current state/log
+          </button>
+        </div>
+        {devStatus.state !== "idle" && (
+          <p
+            style={{
+              marginTop: "0.8rem",
+              fontSize: "0.9rem",
+              color:
+                devStatus.state === "error"
+                  ? "var(--danger, #b42318)"
+                  : devStatus.state === "success"
+                  ? "var(--accent-teal)"
+                  : "var(--muted)",
+            }}
+            role="status"
+          >
+            <strong>{devStatus.actionLabel}:</strong> {devStatus.message}
+          </p>
+        )}
+      </div>
+    );
+  };
 
   async function handleSubmit() {
     const validationError = validateEmail(userEmail);
@@ -706,6 +886,7 @@ export default function AssessmentPage() {
               Begin assessment
             </button>
           </div>
+          {renderDevPanel()}
         </div>
       </main>
     );
@@ -788,6 +969,7 @@ export default function AssessmentPage() {
               </button>
             </div>
           </div>
+          {renderDevPanel()}
         </div>
       </main>
     );
@@ -829,6 +1011,7 @@ export default function AssessmentPage() {
                 Learn more
               </a>
             </div>
+            {renderDevPanel()}
           </div>
         </div>
       </main>
@@ -849,6 +1032,7 @@ export default function AssessmentPage() {
           onNext={goNext}
           onPrev={goPrev}
         />
+        {renderDevPanel()}
       </div>
     </main>
   );
