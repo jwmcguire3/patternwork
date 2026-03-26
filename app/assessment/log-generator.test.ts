@@ -20,7 +20,7 @@ function makeQuestion(num: number, scenarioTag: string, supportsImpulse: boolean
     num,
     scenarioTag,
     supportsImpulse,
-    bodyPrompt: supportsImpulse ? "enhanced" : "standard",
+    bodyPrompt: "standard",
   };
 }
 
