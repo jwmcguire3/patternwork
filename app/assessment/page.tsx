@@ -3,19 +3,16 @@
 
 import { useState, useCallback, useRef } from "react";
 import { QUESTIONS, type QuestionData } from "./questions_data";
+import {
+  generateLog,
+  type AssessmentAnswer as Answer,
+  type AssessmentAnswersState as AnswersState,
+} from "./log-generator";
 
 // ═══════════════════════════════════════════════════════════════
 // TYPES
 // ═══════════════════════════════════════════════════════════════
 
-type Answer = {
-  selected: string[]; // ordered: first = PRIMARY, rest = SECONDARY
-  bodyZones: string[];
-  impulse: string | null;
-  notes: string;
-};
-
-type AnswersState = Record<number, Answer>;
 
 const BODY_ZONES = [
   "head",
@@ -39,38 +36,6 @@ const IMPULSES = [
 ] as const;
 
 const OPTION_KEYS = ["A", "B", "C", "D", "E", "F"] as const;
-
-// ═══════════════════════════════════════════════════════════════
-// ═══════════════════════════════════════════════════════════════
-// UTILITY: generate SelfMap log output
-// ═══════════════════════════════════════════════════════════════
-
-function generateLog(questions: QuestionData[], answers: AnswersState): string {
-  const lines: string[] = [`[SELFMAP_V4.1|COUNT=${questions.length}|QBANK=1.0]`];
-
-  for (const q of questions) {
-    const a = answers[q.num];
-    if (!a || a.selected.length === 0) continue;
-
-    const primary = a.selected[0];
-    const secondary =
-      a.selected.length > 1 ? a.selected.slice(1).join("") : "-";
-    const somatic =
-      a.bodyZones.length > 0 ? a.bodyZones.join(",") : "NONE";
-    const qNum = String(q.num).padStart(2, "0");
-
-    let line = `Q${qNum}|${q.category}|${q.axis}|${q.load}|${q.ic}|${primary}|${secondary}|${somatic}|${q.scenarioTag}`;
-
-    if (q.bodyPrompt === "enhanced" && a.impulse) {
-      line += `|${a.impulse}`;
-    }
-
-    lines.push(line);
-  }
-
-  lines.push("[END]");
-  return lines.join("\n");
-}
 
 // ═══════════════════════════════════════════════════════════════
 // BODY MAP SVG
