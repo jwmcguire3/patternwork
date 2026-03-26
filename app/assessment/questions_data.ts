@@ -9,9 +9,12 @@ export type QuestionData = {
   text: string;
   options: Record<string, string>;
   bodyPrompt: "standard" | "enhanced";
+  supportsImpulse: boolean;
 };
 
-export const QUESTIONS: QuestionData[] = [
+type QuestionRow = Omit<QuestionData, "supportsImpulse">;
+
+const QUESTION_ROWS = [
   {
     "num": 1,
     "category": "state",
@@ -1092,4 +1095,9 @@ export const QUESTIONS: QuestionData[] = [
     },
     "bodyPrompt": "standard"
   }
-];
+] as const satisfies QuestionRow[];
+
+export const QUESTIONS: QuestionData[] = QUESTION_ROWS.map((question) => ({
+  ...question,
+  supportsImpulse: question.bodyPrompt === "enhanced",
+}));
