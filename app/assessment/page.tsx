@@ -336,7 +336,7 @@ function QuestionCard({
   );
 
   const hasSelection = answer.selected.length > 0;
-  const isEnhanced = question.bodyPrompt === "enhanced";
+  const supportsImpulse = question.supportsImpulse;
   const progress = ((index + 1) / total) * 100;
 
   return (
@@ -445,7 +445,7 @@ function QuestionCard({
           </div>
 
           {/* Impulse section (enhanced only) */}
-          {isEnhanced && (
+          {supportsImpulse && (
             <>
               <div className="assessment-divider" />
               <div className="assessment-impulse-section">
@@ -612,7 +612,7 @@ export default function AssessmentPage() {
       result[q.num] = {
         selected: idx === 0 ? ["A", "C"] : ["B"],
         bodyZones: idx === 0 ? ["chest", "stomach"] : idx === 1 ? ["throat"] : [],
-        impulse: q.bodyPrompt === "enhanced" ? "freeze" : null,
+        impulse: q.supportsImpulse ? "freeze" : null,
         notes: idx === 2 ? "Mock test payload from assessment devtools." : "",
       };
     });

@@ -12,7 +12,7 @@ export type QuestionData = {
   supportsImpulse: boolean;
 };
 
-type QuestionRow = Omit<QuestionData, "supportsImpulse">;
+type QuestionRow = QuestionData;
 
 const QUESTION_ROWS = [
   {
@@ -31,7 +31,8 @@ const QUESTION_ROWS = [
       "E": "Something flares — resistance, heat, the urge to push back hard.",
       "F": "I disconnect a little. It's like the pressure creates a wall between me and the moment."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 2,
@@ -49,7 +50,8 @@ const QUESTION_ROWS = [
       "E": "Frustration or hurt flares — being misunderstood by someone who should know better.",
       "F": "I disengage slightly. The gap between us feels like something I can't bridge right now."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 3,
@@ -67,7 +69,8 @@ const QUESTION_ROWS = [
       "E": "Something lights up — a flicker of warmth or intensity I wasn't expecting.",
       "F": "I feel myself go a bit blank, like the unexpected closeness short-circuits something."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 4,
@@ -85,7 +88,8 @@ const QUESTION_ROWS = [
       "E": "There's an unexpected wave of emotion — relief mixed with grief or intensity.",
       "F": "I feel strangely detached from it, like the decision was made by someone else."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 5,
@@ -103,7 +107,8 @@ const QUESTION_ROWS = [
       "E": "There's a flash of frustration — at myself, at the pattern, at the situation.",
       "F": "I notice it vaguely but don't fully engage with what it means."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 6,
@@ -121,7 +126,8 @@ const QUESTION_ROWS = [
       "E": "When it happens, the aliveness of it is intense — almost too much. Being fully present carries a lot of charge.",
       "F": "I have a hard time accessing what that would feel like. The idea makes sense but the feeling is remote."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 7,
@@ -139,7 +145,8 @@ const QUESTION_ROWS = [
       "E": "The feelings linger with intensity — it meant more than I expected.",
       "F": "I'm already at a distance from it. The connection felt real in the moment but now it's hard to access."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 8,
@@ -157,7 +164,8 @@ const QUESTION_ROWS = [
       "E": "Something reacts — annoyance, pressure, or a trapped feeling that spikes fast.",
       "F": "I start tuning them out. The intensity triggers a disconnect rather than engagement."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 9,
@@ -175,7 +183,8 @@ const QUESTION_ROWS = [
       "E": "I feel a spike of anxiety or urgency — something's wrong and my body knows first.",
       "F": "I go a bit numb. The uncertainty puts me in a fog."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 10,
@@ -193,7 +202,8 @@ const QUESTION_ROWS = [
       "E": "The pressure builds — it feels physical, like heat or tightness.",
       "F": "I go a bit numb, like the anger gets muffled or far away."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 11,
@@ -211,7 +221,8 @@ const QUESTION_ROWS = [
       "E": "It stings — there's a sharp feeling of something unfair or painful.",
       "F": "I stop feeling much about it. Like something in me files it away."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 12,
@@ -229,7 +240,8 @@ const QUESTION_ROWS = [
       "E": "Something rises — emotion, pressure, the weight of what I could say.",
       "F": "I go a little blank. The question feels like it's hitting a wall I can't see past."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 13,
@@ -247,7 +259,8 @@ const QUESTION_ROWS = [
       "E": "The emotion hits hard and fast — like a wave or a pressure in my chest.",
       "F": "I feel it start to come up but then it's like a fog rolls in and mutes everything."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 14,
@@ -265,7 +278,8 @@ const QUESTION_ROWS = [
       "E": "Something wells up — the offer lands harder than expected and emotion rises fast.",
       "F": "I hear them but it doesn't quite land. Like the care is reaching for something in me that isn't there right now."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 15,
@@ -283,7 +297,8 @@ const QUESTION_ROWS = [
       "E": "There's a hurt that rises — a sting of not mattering enough.",
       "F": "I check out a bit. If I'm not being seen, part of me stops showing up."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 16,
@@ -301,7 +316,8 @@ const QUESTION_ROWS = [
       "E": "The emotional charge rises — I feel it before I can think about strategy.",
       "F": "I check out a little. The intensity makes something in me step back from the whole scene."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 17,
@@ -319,7 +335,8 @@ const QUESTION_ROWS = [
       "E": "There's a surge of feeling — grief, resistance, or intensity about what's being lost.",
       "F": "I feel oddly detached from it, like the shift hasn't fully landed yet."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 18,
@@ -337,7 +354,8 @@ const QUESTION_ROWS = [
       "E": "A sharp feeling — jealousy, hurt, or longing — hits before I can contextualize it.",
       "F": "I observe it but feel strangely far from the emotion. Like watching a scene I'm not in."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 19,
@@ -355,7 +373,8 @@ const QUESTION_ROWS = [
       "E": "Something flares — irritation, pressure, or a feeling of being cornered by their need.",
       "F": "I go a bit blank. Their desire for closeness hits something in me that shuts off rather than opens."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 20,
@@ -373,7 +392,8 @@ const QUESTION_ROWS = [
       "E": "Something flares — resentment, claustrophobia, or frustration I feel guilty about.",
       "F": "I'm there physically but I notice myself checking out. Their need pushes me further away."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 21,
@@ -391,7 +411,8 @@ const QUESTION_ROWS = [
       "E": "It hits me emotionally — the relief or gratitude is intense, maybe unexpectedly so.",
       "F": "I register that it happened but can't fully feel the weight of it."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 22,
@@ -409,7 +430,8 @@ const QUESTION_ROWS = [
       "E": "The self-blame hits with emotional force — shame, heat, or a sinking feeling.",
       "F": "I feel detached from the whole thing, like the guilt is happening at arm's length."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 23,
@@ -427,7 +449,8 @@ const QUESTION_ROWS = [
       "E": "The relief or joy hits with surprising intensity — almost too much feeling.",
       "F": "I notice it happened but I can't quite feel it. Like the good news is behind glass."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 24,
@@ -445,7 +468,8 @@ const QUESTION_ROWS = [
       "E": "The tenderness hits with surprising force — more than I expected.",
       "F": "I feel it at a distance, like it belongs to a version of me I can't quite reach."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 25,
@@ -463,7 +487,8 @@ const QUESTION_ROWS = [
       "E": "The desire to reach out pulses with urgency, but the hesitation is just as strong.",
       "F": "I lose track of the impulse. By the time I think about it again, the moment has passed."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 26,
@@ -481,7 +506,8 @@ const QUESTION_ROWS = [
       "E": "The vulnerability of needing help creates urgency or distress.",
       "F": "I know I need help but I can't quite connect to the impulse to ask. The need feels far away."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 27,
@@ -499,7 +525,8 @@ const QUESTION_ROWS = [
       "E": "With a stranger I fire back. With someone I love the anger is mixed with hurt — it's sharper.",
       "F": "With a stranger I barely register it. With someone I love I still go numb, but the numbness is heavier."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 28,
@@ -517,7 +544,8 @@ const QUESTION_ROWS = [
       "E": "With an acquaintance it's low charge. With my closest person the same words carry so much more weight.",
       "F": "With an acquaintance I stay present. With my closest person something in me distances."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 29,
@@ -535,7 +563,8 @@ const QUESTION_ROWS = [
       "E": "Trying to give myself compassion opens something painful — easier to care for them than feel my own need.",
       "F": "I can feel for them clearly. When I turn it toward myself, there's just nothing there."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 30,
@@ -553,7 +582,8 @@ const QUESTION_ROWS = [
       "E": "The combined feeling is intense — compassion for them and grief for myself hit at the same time.",
       "F": "I can feel tenderness for them clearly but my own pain stays at a distance."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 31,
@@ -571,7 +601,8 @@ const QUESTION_ROWS = [
       "E": "The hurt is immediate and physical — chest, stomach, pressure.",
       "F": "I feel distant from it, like the crack happened to a version of me that's somewhere else."
     },
-    "bodyPrompt": "enhanced"
+    "bodyPrompt": "enhanced",
+    "supportsImpulse": true
   },
   {
     "num": 32,
@@ -589,7 +620,8 @@ const QUESTION_ROWS = [
       "E": "The betrayal hits hard — a surge of anger, hurt, or disbelief.",
       "F": "I feel strangely calm, almost detached, like I'm processing it from a distance."
     },
-    "bodyPrompt": "enhanced"
+    "bodyPrompt": "enhanced",
+    "supportsImpulse": true
   },
   {
     "num": 33,
@@ -607,7 +639,8 @@ const QUESTION_ROWS = [
       "E": "Frustration or hurt flares — I tried and it wasn't enough.",
       "F": "I feel disconnected from the whole thing. Like it's happening at a distance."
     },
-    "bodyPrompt": "enhanced"
+    "bodyPrompt": "enhanced",
+    "supportsImpulse": true
   },
   {
     "num": 34,
@@ -625,7 +658,8 @@ const QUESTION_ROWS = [
       "E": "The intensity of it hits my body first — it's not just emotional, it's physical.",
       "F": "Part of me goes somewhere else. The magnitude of it is too much to fully feel right now."
     },
-    "bodyPrompt": "enhanced"
+    "bodyPrompt": "enhanced",
+    "supportsImpulse": true
   },
   {
     "num": 35,
@@ -643,7 +677,8 @@ const QUESTION_ROWS = [
       "E": "Rejection hits physically — a sharp contraction somewhere in my body.",
       "F": "I go numb. The emotional exposure followed by distance is too much to process."
     },
-    "bodyPrompt": "enhanced"
+    "bodyPrompt": "enhanced",
+    "supportsImpulse": true
   },
   {
     "num": 36,
@@ -661,7 +696,8 @@ const QUESTION_ROWS = [
       "E": "Emotion comes up hard — tears, pressure, shaking — like the sharing opened a dam.",
       "F": "I feel distant from the moment. I can see that it went well but I can't fully feel it."
     },
-    "bodyPrompt": "enhanced"
+    "bodyPrompt": "enhanced",
+    "supportsImpulse": true
   },
   {
     "num": 37,
@@ -679,7 +715,8 @@ const QUESTION_ROWS = [
       "E": "The intensity is overwhelming — heat, pressure, trembling.",
       "F": "I go numb. The rage was there and then it wasn't, like a switch got flipped."
     },
-    "bodyPrompt": "enhanced"
+    "bodyPrompt": "enhanced",
+    "supportsImpulse": true
   },
   {
     "num": 38,
@@ -697,7 +734,8 @@ const QUESTION_ROWS = [
       "E": "Heat rises — embarrassment, anger, or a sharp defensive impulse.",
       "F": "I disconnect from the moment. I'm there but not feeling it fully."
     },
-    "bodyPrompt": "enhanced"
+    "bodyPrompt": "enhanced",
+    "supportsImpulse": true
   },
   {
     "num": 39,
@@ -715,7 +753,8 @@ const QUESTION_ROWS = [
       "E": "It hits with fresh intensity, like it just happened, even though it didn't.",
       "F": "I feel the edges of it but can't fully get there. Something keeps me at a distance."
     },
-    "bodyPrompt": "enhanced"
+    "bodyPrompt": "enhanced",
+    "supportsImpulse": true
   },
   {
     "num": 40,
@@ -733,7 +772,8 @@ const QUESTION_ROWS = [
       "E": "It hits with force — raw and present, like it just happened even though it didn't.",
       "F": "I feel it start to come up and then something closes. I'm aware it was there but I can't reach it."
     },
-    "bodyPrompt": "enhanced"
+    "bodyPrompt": "enhanced",
+    "supportsImpulse": true
   },
   {
     "num": 41,
@@ -751,7 +791,8 @@ const QUESTION_ROWS = [
       "E": "Something breaks open — emotion rises fast, more than the moment seems to warrant.",
       "F": "I hear what they're saying but it's reaching for a part of me that's not available right now."
     },
-    "bodyPrompt": "enhanced"
+    "bodyPrompt": "enhanced",
+    "supportsImpulse": true
   },
   {
     "num": 42,
@@ -769,7 +810,8 @@ const QUESTION_ROWS = [
       "E": "The pressure spikes physically — chest tight, body buzzing, something needs to move.",
       "F": "I check out. My body stays but some part of me goes offline."
     },
-    "bodyPrompt": "enhanced"
+    "bodyPrompt": "enhanced",
+    "supportsImpulse": true
   },
   {
     "num": 43,
@@ -787,7 +829,8 @@ const QUESTION_ROWS = [
       "E": "There's a surge of pain when I try — being kind to myself opens a door I'm not ready for.",
       "F": "I go blank when I try. The self-compassion doesn't land; it just bounces off."
     },
-    "bodyPrompt": "enhanced"
+    "bodyPrompt": "enhanced",
+    "supportsImpulse": true
   },
   {
     "num": 44,
@@ -805,7 +848,8 @@ const QUESTION_ROWS = [
       "E": "The charge builds each round until something snaps or I explode or collapse.",
       "F": "I'm present at first, then start drifting, and by the end I'm watching from far away."
     },
-    "bodyPrompt": "enhanced"
+    "bodyPrompt": "enhanced",
+    "supportsImpulse": true
   },
   {
     "num": 45,
@@ -823,7 +867,8 @@ const QUESTION_ROWS = [
       "E": "The pain is sharp and the aloneness amplifies it — it's visceral.",
       "F": "I go somewhere else inside. The pain is there but I'm not fully in it."
     },
-    "bodyPrompt": "enhanced"
+    "bodyPrompt": "enhanced",
+    "supportsImpulse": true
   },
   {
     "num": 46,
@@ -841,7 +886,8 @@ const QUESTION_ROWS = [
       "E": "There's a surge of resentment or desperation — something sharp before I comply or refuse.",
       "F": "I go into autopilot. My body keeps moving but I'm not really driving."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 47,
@@ -859,7 +905,8 @@ const QUESTION_ROWS = [
       "E": "Something flares — resentment, or the intensity of being needed when I'm empty.",
       "F": "I go numb. My body is present but I'm barely in it."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 48,
@@ -877,7 +924,8 @@ const QUESTION_ROWS = [
       "E": "Waves of feeling come — grief, urgency, love, anger — sometimes all at once.",
       "F": "I feel removed from it. Like the relationship is already at a distance."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 49,
@@ -895,7 +943,8 @@ const QUESTION_ROWS = [
       "E": "There's an urgency to start but it's fighting something equally strong that won't let me.",
       "F": "I drift. The task exists in my awareness but I keep ending up somewhere else."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 50,
@@ -913,7 +962,8 @@ const QUESTION_ROWS = [
       "E": "There's a tension — the need to set it is real but so is the fear of what comes next.",
       "F": "I keep forgetting about it. The need surfaces and then disappears again."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 51,
@@ -931,7 +981,8 @@ const QUESTION_ROWS = [
       "E": "Frustration surges. The wall feels personal.",
       "F": "I detach. The effort and the outcome both start to feel distant."
     },
-    "bodyPrompt": "enhanced"
+    "bodyPrompt": "enhanced",
+    "supportsImpulse": true
   },
   {
     "num": 52,
@@ -949,7 +1000,8 @@ const QUESTION_ROWS = [
       "E": "The loss of hope hits with surprising force — sharper than I expected.",
       "F": "I feel oddly neutral. Like the hope leaving didn't fully register."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 53,
@@ -967,7 +1019,8 @@ const QUESTION_ROWS = [
       "E": "A rush of feeling — whatever was being managed hits all at once.",
       "F": "Nothing. When the guard drops, what's underneath is just blank."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 54,
@@ -985,7 +1038,8 @@ const QUESTION_ROWS = [
       "E": "There's a flash of something underneath — anger or sadness about the performance itself.",
       "F": "I stay in the blankness. Performing and feeling nothing become the same state."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 55,
@@ -1003,7 +1057,8 @@ const QUESTION_ROWS = [
       "E": "There's a spike of shame or frustration about the pattern itself.",
       "F": "I notice but it doesn't change anything. I keep going, aware but not engaged."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 56,
@@ -1021,7 +1076,8 @@ const QUESTION_ROWS = [
       "E": "The true thing pushes to come out with force — almost involuntary.",
       "F": "By the time I've decided, the moment has passed."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 57,
@@ -1039,7 +1095,8 @@ const QUESTION_ROWS = [
       "E": "Feeling comes back first — sometimes as a delayed wave of whatever I was avoiding.",
       "F": "It's patchy. Parts of me come back while other parts stay distant."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 58,
@@ -1057,7 +1114,8 @@ const QUESTION_ROWS = [
       "E": "The positive experience carries emotional weight — it meant a lot and I keep feeling it.",
       "F": "I remember it happened but the feeling of it becomes hard to access pretty quickly."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 59,
@@ -1075,7 +1133,8 @@ const QUESTION_ROWS = [
       "E": "The feeling is surprisingly intense — the missing hits harder than I thought it would.",
       "F": "I think about it but the feeling is muted. Like the memory is behind a pane of glass."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   },
   {
     "num": 60,
@@ -1093,11 +1152,9 @@ const QUESTION_ROWS = [
       "E": "When I've had it, it was almost overwhelming — the relief of not having to protect myself was intense.",
       "F": "I can picture what it might look like but I can't really feel it from inside."
     },
-    "bodyPrompt": "standard"
+    "bodyPrompt": "standard",
+    "supportsImpulse": false
   }
 ] as const satisfies QuestionRow[];
 
-export const QUESTIONS: QuestionData[] = QUESTION_ROWS.map((question) => ({
-  ...question,
-  supportsImpulse: question.bodyPrompt === "enhanced",
-}));
+export const QUESTIONS: QuestionData[] = [...QUESTION_ROWS];
