@@ -1,129 +1,62 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { generateLog, sanitizeNote, type AssessmentAnswersState } from "./log-generator.ts";
+import {
+  createEmptyAnswer,
+  generateLog,
+  isAnswered,
+  sanitizeNote,
+  type AssessmentAnswersState,
+} from "./log-generator.ts";
 import { type QuestionData } from "./questions_data.ts";
 
-const baseQuestion: Omit<QuestionData, "num" | "scenarioTag" | "supportsImpulse"> = {
-  category: "att",
-  axis: "4",
-  load: "moderate",
-  ic: "",
-  text: "test",
-  options: { A: "a", B: "b", C: "c", D: "d", E: "e", F: "f" },
-  bodyPrompt: "standard",
-};
+const questions: QuestionData[] = [
+  {
+    num: 1,
+    answerType: "T1",
+    text: "q1",
+    tap1: [{ id: "A", text: "a" }],
+    tap2: [{ id: "B", text: "b" }],
+  },
+  {
+    num: 2,
+    answerType: "T5",
+    text: "q2",
+    leftLabel: "left",
+    rightLabel: "right",
+  },
+  {
+    num: 3,
+    answerType: "T6",
+    text: "q3",
+    options: [{ id: "A", text: "a" }, { id: "B", text: "b" }],
+  },
+];
 
-function makeQuestion(num: number, scenarioTag: string, supportsImpulse: boolean): QuestionData {
-  return {
-    ...baseQuestion,
-    num,
-    scenarioTag,
-    supportsImpulse,
-    bodyPrompt: "standard",
-  };
-}
+test("sanitizeNote strips pipes and newlines", () => {
+  assert.equal(sanitizeNote("  a|b\n c  "), "a/b c");
+});
 
-test("answered question with note and no impulse support includes NOTE column only", () => {
-  const questions = [makeQuestion(1, "partner_goes_cold", false)];
+test("isAnswered respects answer type", () => {
+  assert.equal(isAnswered({ type: "T1", tap1: "A", tap2: null, notes: "" }), false);
+  assert.equal(isAnswered({ type: "T1", tap1: "A", tap2: "B", notes: "" }), true);
+  assert.equal(isAnswered({ type: "T5", value: null, notes: "" }), false);
+  assert.equal(isAnswered({ type: "T5", value: 42, notes: "" }), true);
+});
+
+test("generateLog serializes all new answer formats", () => {
   const answers: AssessmentAnswersState = {
-    1: {
-      selected: ["C", "E", "B"],
-      bodyZones: ["chest"],
-      impulse: "hide",
-      notes: "felt pressure in the center of my chest",
-    },
+    1: { type: "T1", tap1: "A", tap2: "B", notes: "hello" },
+    2: { type: "T5", value: 77, notes: "" },
+    3: { type: "T6", order: ["B", "A"], notes: "ranked" },
   };
 
   const log = generateLog(questions, answers);
-  assert.ok(
-    log.includes(
-      "Q01|att|4|moderate||C|EB|chest|partner_goes_cold|felt pressure in the center of my chest",
-    ),
-  );
-  assert.ok(!log.includes("|hide"));
+  assert.ok(log.includes("Q01|T1|tap1=A;tap2=B|hello"));
+  assert.ok(log.includes("Q02|T5|value=77|"));
+  assert.ok(log.includes("Q03|T6|order=B>A|ranked"));
 });
 
-test("answered question with empty note and no impulse support keeps trailing NOTE delimiter", () => {
-  const questions = [makeQuestion(2, "irritation_at_work", false)];
-  const answers: AssessmentAnswersState = {
-    2: {
-      selected: ["B", "A"],
-      bodyZones: [],
-      impulse: null,
-      notes: "   ",
-    },
-  };
-
-  const log = generateLog(questions, answers);
-  assert.ok(log.includes("Q02|att|4|moderate||B|A|NONE|irritation_at_work|"));
-});
-
-test("answered question with impulse support and chosen impulse includes IMPULSE", () => {
-  const questions = [makeQuestion(3, "felt_misunderstood", true)];
-  const answers: AssessmentAnswersState = {
-    3: {
-      selected: ["E", "D", "C"],
-      bodyZones: ["throat"],
-      impulse: "hide",
-      notes: "this reminded me of family conflict more than work",
-    },
-  };
-
-  const log = generateLog(questions, answers);
-  assert.ok(
-    log.includes(
-      "Q03|att|4|moderate||E|DC|throat|felt_misunderstood|this reminded me of family conflict more than work|hide",
-    ),
-  );
-});
-
-test("impulse-supporting question with no chosen impulse keeps empty trailing IMPULSE column", () => {
-  const questions = [makeQuestion(8, "overloaded_and_numb", true)];
-  const answers: AssessmentAnswersState = {
-    8: {
-      selected: ["F", "E"],
-      bodyZones: [],
-      impulse: null,
-      notes: "",
-    },
-  };
-
-  const log = generateLog(questions, answers);
-  assert.ok(log.includes("Q08|att|4|moderate||F|E|NONE|overloaded_and_numb||"));
-});
-
-test("sanitizeNote strips pipes, collapses line breaks, and trims", () => {
-  const sanitized = sanitizeNote("  alpha|beta\nline two\r\nline three  ");
-  assert.equal(sanitized, "alpha/beta line two line three");
-});
-
-test("unanswered questions are skipped and header/footer remain exact", () => {
-  const questions = [makeQuestion(1, "a", false), makeQuestion(2, "b", true)];
-  const answers: AssessmentAnswersState = {
-    1: {
-      selected: [],
-      bodyZones: ["chest"],
-      impulse: null,
-      notes: "ignored",
-    },
-  };
-
-  const log = generateLog(questions, answers);
-  assert.equal(log, "[SELFMAP_V4.1|COUNT=2|QBANK=1.0]\n[END]");
-});
-
-test("only primary selection sets SECONDARY to '-'", () => {
-  const questions = [makeQuestion(4, "primary_only", false)];
-  const answers: AssessmentAnswersState = {
-    4: {
-      selected: ["A"],
-      bodyZones: [],
-      impulse: null,
-      notes: "note",
-    },
-  };
-
-  const log = generateLog(questions, answers);
-  assert.ok(log.includes("Q04|att|4|moderate||A|-|NONE|primary_only|note"));
+test("createEmptyAnswer defaults by type", () => {
+  assert.deepEqual(createEmptyAnswer("T3"), { type: "T3", selected: null, notes: "" });
 });
