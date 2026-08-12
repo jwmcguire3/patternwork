@@ -1,5 +1,5 @@
-// app/stopping/page.tsx
-export default function MethodPage() {
+// app/cannawithdrawl/page.tsx
+export default function cannawithdrawlPage() {
   return (
     <main className="section">
       <div className="container narrow">
