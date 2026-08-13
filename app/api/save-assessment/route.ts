@@ -25,8 +25,36 @@ function answeredCountFromAnswers(answers: unknown): number | undefined {
       return false;
     }
 
-    const maybeSelected = (answer as { selected?: unknown }).selected;
-    return Array.isArray(maybeSelected) && maybeSelected.length > 0;
+    const typed = answer as {
+      type?: unknown;
+      selected?: unknown;
+      tap1?: unknown;
+      tap2?: unknown;
+      value?: unknown;
+      order?: unknown;
+    };
+
+    if (typeof typed.selected === "string" && typed.selected.length > 0) {
+      return true;
+    }
+
+    if (Array.isArray(typed.selected) && typed.selected.length > 0) {
+      return true;
+    }
+
+    if (typeof typed.tap1 === "string" && typeof typed.tap2 === "string") {
+      return true;
+    }
+
+    if (typeof typed.value === "number") {
+      return true;
+    }
+
+    if (Array.isArray(typed.order) && typed.order.length > 0) {
+      return true;
+    }
+
+    return false;
   }).length;
 }
 
