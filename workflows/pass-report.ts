@@ -10,6 +10,8 @@ import {
   prepareReportInputsStep,
   raiseFatalReportFailureStep,
   releaseReportsStep,
+  renderReportPdfsStep,
+  deliverReleasedReportsStep,
 } from "../lib/server/reports/steps.ts";
 
 function layerInput(reportType: "IFS" | "PV" | "ATT", prepared: PreparedReportInputs): JsonObject {
@@ -55,6 +57,8 @@ export async function passReportWorkflow(input: PassReportWorkflowInput): Promis
     const bundle = await buildSynthesisBundleStep(input, prepared, generated);
     generated.push(await requireGenerated(input, prepared, "SYNTHESIS", { bundle } as unknown as JsonObject, spentMicros, bundle));
   }
-  await releaseReportsStep(input, generated);
+  const pdfs = await renderReportPdfsStep(input, prepared, generated);
+  await releaseReportsStep(input, generated, pdfs);
+  await deliverReleasedReportsStep(input);
   return { status: "released", reportTypes };
 }

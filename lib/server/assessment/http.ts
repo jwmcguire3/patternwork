@@ -3,7 +3,9 @@ import { cookieKeyringFromEnv, readSessionCookieValue } from "@/lib/server/secur
 import { AssessmentError } from "./errors.ts";
 
 export function authenticatedAssessmentSessionId(request: NextRequest): string {
-  const claim = readSessionCookieValue(request.cookies.get("pw_assessment_session")?.value, cookieKeyringFromEnv());
+  const cookie = request.cookies.get("pw_assessment_session")?.value;
+  if (!cookie) throw new AssessmentError("unauthorized", "Assessment session is unavailable.");
+  const claim = readSessionCookieValue(cookie, cookieKeyringFromEnv());
   if (!claim) throw new AssessmentError("unauthorized", "Assessment session is unavailable.");
   return claim.sessionId;
 }

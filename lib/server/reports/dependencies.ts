@@ -1,7 +1,7 @@
 import type { JsonObject, ReportType } from "../../question-engine/types.ts";
 import { sha256Canonical } from "../../report-contracts/delivery-validator.ts";
 import { prisma } from "../../prisma.ts";
-import { decryptJson, encryptJson, encryptionKeyringFromEnv, sha256 } from "../security/index.ts";
+import { decryptJson, encryptBytes, encryptJson, encryptionKeyringFromEnv, sha256 } from "../security/index.ts";
 import { OpenRouterClient } from "../openrouter/client.ts";
 import { activateReviewedQualificationManifest, totalUsage } from "../openrouter/policy.ts";
 import type { OpenRouterUsage } from "../openrouter/types.ts";
@@ -9,6 +9,7 @@ import type {
   DecryptedAssessmentSnapshot,
   GeneratedCanonicalArtifact,
   PassReportWorkflowInput,
+  PreparedPdfArtifact,
   PreparedReportInputs,
   ReportWorkflowDependencies,
   ReportWorkflowPersistence,
@@ -39,7 +40,7 @@ interface SnapshotRow {
 interface RunRow {
   id: string;
   status: string;
-  artifact?: { canonicalJsonSha256: string; artifactStatus: string } | null;
+  artifact?: { canonicalJsonSha256: string; artifactStatus: string; pdfStatus?: string } | null;
 }
 
 interface ReportPrisma {
@@ -53,7 +54,7 @@ interface ReportPrisma {
     updateMany(args: unknown): Promise<{ count: number }>;
   };
   patternworkV31ReportArtifact: {
-    findUnique(args: unknown): Promise<{ canonicalJsonSha256: string; artifactStatus: string } | null>;
+    findUnique(args: unknown): Promise<{ id: string; canonicalJsonSha256: string; artifactStatus: string } | null>;
     create(args: unknown): Promise<unknown>;
     update(args: unknown): Promise<unknown>;
   };
@@ -69,6 +70,7 @@ export const snapshotEncryptionPurpose = (assessmentSessionId: string, completed
 export const packetEncryptionPurpose = (packetDatabaseId: string) => `patternwork:evidence-packet:${packetDatabaseId}`;
 export const artifactEncryptionPurpose = (runId: string) => `patternwork:report-artifact:${runId}`;
 export const markdownEncryptionPurpose = (runId: string) => `patternwork:report-markdown:${runId}`;
+export const pdfEncryptionPurpose = (artifactId: string) => `patternwork:report-pdf:${artifactId}`;
 
 function jsonObjects(value: unknown): readonly JsonObject[] | undefined {
   if (!Array.isArray(value)) return undefined;
@@ -185,9 +187,9 @@ export class PrismaReportWorkflowPersistence implements ReportWorkflowPersistenc
         startedAt: new Date(),
       },
       update: {},
-      include: { artifact: { select: { canonicalJsonSha256: true } } },
+      include: { artifact: { select: { canonicalJsonSha256: true, artifactStatus: true, pdfStatus: true } } },
     }))));
-    const alreadyReleased = rows.every((row) => row.status === "SUCCEEDED" && row.artifact?.artifactStatus === "ACTIVE");
+    const alreadyReleased = rows.every((row) => row.status === "SUCCEEDED" && row.artifact?.artifactStatus === "ACTIVE" && row.artifact?.pdfStatus === "READY");
     if (!alreadyReleased) {
       await Promise.all(rows.filter((row) => row.status !== "SUCCEEDED").map((row) => reportPrisma.patternworkV31ReportRun.update({
         where: { id: row.id },
@@ -217,10 +219,13 @@ export class PrismaReportWorkflowPersistence implements ReportWorkflowPersistenc
     });
   }
 
-  async releaseAtomically(input: PassReportWorkflowInput, generated: readonly GeneratedCanonicalArtifact[]): Promise<void> {
+  async releaseAtomically(input: PassReportWorkflowInput, generated: readonly GeneratedCanonicalArtifact[], pdfs: readonly PreparedPdfArtifact[] = []): Promise<void> {
     const expected = reportTypesForPass(input.completedPass);
     if (generated.length !== expected.length || expected.some((type) => !generated.some((item) => item.reportType === type))) {
       throw new Error("Atomic release requires the complete pass artifact set.");
+    }
+    if (pdfs.length !== expected.length || expected.some((type) => !pdfs.some((item) => item.reportType === type && item.pageCount > 0 && item.pngPageCount === item.pageCount))) {
+      throw new Error("Atomic release requires the complete externally verified PDF set.");
     }
     const keyring = encryptionKeyringFromEnv();
     await reportPrisma.$transaction(async (tx) => {
@@ -236,10 +241,16 @@ export class PrismaReportWorkflowPersistence implements ReportWorkflowPersistenc
           : String((artifact.digests as JsonObject).artifact_sha256);
         const existing = await tx.patternworkV31ReportArtifact.findUnique({ where: { reportRunId: run.id } });
         if (existing && existing.canonicalJsonSha256 !== artifactSha) throw new Error("Immutable report artifact conflict during idempotent release.");
+        const artifactId = existing?.id ?? `pwra_${sha256(`${run.id}:${reportId}`).slice(0, 28)}`;
+        const pdf = pdfs.find((candidate) => candidate.reportType === item.reportType)!;
+        const pdfBytes = Buffer.from(pdf.bytesBase64, "base64");
+        if (sha256(pdfBytes) !== pdf.sha256) throw new Error("Prepared PDF digest binding failed before persistence.");
+        const encryptedPdf = encryptBytes(pdfBytes, pdfEncryptionPurpose(artifactId), keyring);
         if (!existing) {
           const encryptedArtifact = encryptJson(artifact, artifactEncryptionPurpose(run.id), keyring);
           const encryptedMarkdown = encryptJson(markdown, markdownEncryptionPurpose(run.id), keyring);
           await tx.patternworkV31ReportArtifact.create({ data: {
+            id: artifactId,
             reportRunId: run.id,
             reportId,
             artifactType: artifact.artifact_type,
@@ -251,7 +262,13 @@ export class PrismaReportWorkflowPersistence implements ReportWorkflowPersistenc
             markdownSha256: sha256(markdown.replaceAll("\r\n", "\n").replaceAll("\r", "\n")),
             markdownCiphertext: encryptedMarkdown.ciphertext,
             markdownNonce: encryptedMarkdown.nonce,
+            pdfStatus: "READY",
+            pdfCiphertext: encryptedPdf.ciphertext,
+            pdfNonce: encryptedPdf.nonce,
+            pdfSha256: pdf.sha256,
           } });
+        } else {
+          await tx.patternworkV31ReportArtifact.update({ where: { reportRunId: run.id }, data: { pdfStatus: "READY", pdfCiphertext: encryptedPdf.ciphertext, pdfNonce: encryptedPdf.nonce, pdfSha256: pdf.sha256 } });
         }
         activations.push({ runId: run.id, artifactSha });
       }

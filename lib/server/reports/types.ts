@@ -8,6 +8,8 @@ import type {
 import type { OpenRouterTransport, OpenRouterUsage } from "../openrouter/types.ts";
 import type { totalUsage } from "../openrouter/policy.ts";
 import type { ActivatedReportModelPolicy } from "../openrouter/policy.ts";
+import type { ReportDeliveryBoundary } from "../email/types.ts";
+import type { PdfVerificationBoundary } from "../pdf/types.ts";
 
 export interface PassReportWorkflowInput {
   readonly assessmentSessionId: string;
@@ -46,6 +48,16 @@ export interface GeneratedCanonicalArtifact {
   readonly usage: AggregatedOpenRouterUsage;
 }
 
+export interface PreparedPdfArtifact {
+  readonly reportType: ReportType;
+  readonly filename: string;
+  readonly bytesBase64: string;
+  readonly sha256: string;
+  readonly sourceMarkdownSha256: string;
+  readonly pageCount: number;
+  readonly pngPageCount: number;
+}
+
 export interface ReportGenerationFailure {
   readonly reportType: ReportType;
   readonly code: string;
@@ -62,7 +74,7 @@ export type ReportGenerationOutcome =
 export interface ReportWorkflowPersistence {
   initializeRuns(input: PassReportWorkflowInput, prepared: PreparedReportInputs): Promise<{ readonly alreadyReleased: boolean }>;
   persistUsage(input: PassReportWorkflowInput, generated: GeneratedCanonicalArtifact): Promise<void>;
-  releaseAtomically(input: PassReportWorkflowInput, generated: readonly GeneratedCanonicalArtifact[]): Promise<void>;
+  releaseAtomically(input: PassReportWorkflowInput, generated: readonly GeneratedCanonicalArtifact[], pdfs?: readonly PreparedPdfArtifact[]): Promise<void>;
   persistFailure(input: PassReportWorkflowInput, code: string, message: string, reportType?: ReportType, usages?: readonly OpenRouterUsage[]): Promise<void>;
 }
 
@@ -73,6 +85,8 @@ export interface ReportWorkflowDependencies {
   readonly workspaceRoot?: string;
   readonly costCapMicros?: number;
   readonly modelPolicy: ActivatedReportModelPolicy;
+  readonly pdfVerification?: PdfVerificationBoundary;
+  readonly delivery?: ReportDeliveryBoundary;
 }
 
 export interface SynthesisInput {

@@ -7,6 +7,7 @@ import { buildValidatedSynthesisBundle } from "./synthesis.ts";
 import type {
   GeneratedCanonicalArtifact,
   PassReportWorkflowInput,
+  PreparedPdfArtifact,
   PreparedReportInputs,
   ReportGenerationFailure,
 } from "./types.ts";
@@ -76,16 +77,41 @@ export async function buildSynthesisBundleStep(
   }
 }
 
-export async function releaseReportsStep(input: PassReportWorkflowInput, generated: readonly GeneratedCanonicalArtifact[]): Promise<void> {
+export async function renderReportPdfsStep(input: PassReportWorkflowInput, prepared: PreparedReportInputs, generated: readonly GeneratedCanonicalArtifact[]): Promise<readonly PreparedPdfArtifact[]> {
+  "use step";
+  const dependencies = getReportWorkflowDependencies();
+  try {
+    const { renderAndVerifyCanonicalPdf } = await import("../pdf/index.ts");
+    return await Promise.all(generated.map(async (item) => {
+      const pdf = await renderAndVerifyCanonicalPdf({ reportType: item.reportType, artifact: item.artifact, packets: prepared.packets, workspaceRoot: dependencies.workspaceRoot, verification: dependencies.pdfVerification });
+      return { reportType: item.reportType, filename: pdf.filename, bytesBase64: pdf.bytes.toString("base64"), sha256: pdf.sha256, sourceMarkdownSha256: pdf.sourceMarkdownSha256, pageCount: pdf.pageCount, pngPageCount: pdf.pngPageCount };
+    }));
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    await dependencies.persistence.persistFailure(input, "pdf_verification_failed", message);
+    throw new FatalError(`pdf_verification_failed:${message}`);
+  }
+}
+renderReportPdfsStep.maxRetries = 1;
+
+export async function releaseReportsStep(input: PassReportWorkflowInput, generated: readonly GeneratedCanonicalArtifact[], pdfs: readonly PreparedPdfArtifact[]): Promise<void> {
   "use step";
   const persistence = getReportWorkflowDependencies().persistence;
   try {
-    await persistence.releaseAtomically(input, generated);
+    await persistence.releaseAtomically(input, generated, pdfs);
   } catch (error) {
     await persistence.persistFailure(input, "atomic_release_failed", error instanceof Error ? error.message : String(error));
     throw error;
   }
 }
+
+export async function deliverReleasedReportsStep(input: PassReportWorkflowInput): Promise<void> {
+  "use step";
+  const dependencies = getReportWorkflowDependencies();
+  const delivery = dependencies.delivery ?? (await import("../email/delivery.ts")).getReportDeliveryBoundary();
+  await delivery.deliverReleased(input);
+}
+deliverReleasedReportsStep.maxRetries = 3;
 
 export async function persistReportFailureStep(input: PassReportWorkflowInput, failure: ReportGenerationFailure): Promise<void> {
   "use step";
