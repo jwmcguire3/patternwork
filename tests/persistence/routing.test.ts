@@ -10,7 +10,7 @@ function current(bankItemId: InteractionViewModel["bankItemId"], family: Interac
 test("every completed body map routes immediately to RSR-003 and preserves the gate across pause", () => {
   const base = createInitialRoutingState(2);
   const mapped = { ...base, currentInteraction: current("BTM-201", "BTM", 2) } as AssessmentRoutingState;
-  const next = routeAssessmentResponse(mapped, { interactionInstanceId: "test-10-BTM-201", bankItemId: "BTM-201", completionState: "COMPLETED", response: { regions: ["chest"] } });
+  const next = routeAssessmentResponse(mapped, { interactionInstanceId: "test-10-BTM-201", bankItemId: "BTM-201", completionState: "COMPLETED", response: { schemaVersion:"PWRS-1", semantic:{ zones: ["OPT-body-chest-aabbccdd"] } } });
   assert.equal(next.pendingBtmTransition, true);
   assert.equal(next.currentInteraction?.bankItemId, "RSR-003");
   const paused = pauseRoutingState(next);
@@ -21,7 +21,7 @@ test("every completed body map routes immediately to RSR-003 and preserves the g
 test("two consecutive high-intensity interactions force a recovery item", () => {
   const base = createInitialRoutingState(2);
   const state = { ...base, consecutiveHighIntensity: 1, currentInteraction: current("BDA-201", "BDA", 2) } as AssessmentRoutingState;
-  const next = routeAssessmentResponse(state, { interactionInstanceId: "test-10-BDA-201", bankItemId: "BDA-201", completionState: "COMPLETED", response: {} });
+  const next = routeAssessmentResponse(state, { interactionInstanceId: "test-10-BDA-201", bankItemId: "BDA-201", completionState: "COMPLETED", response: { schemaVersion:"PWRS-1", semantic:{ choices:["OPT-bda-action-aabbccdd"] } } });
   assert.equal(next.currentInteraction?.bankItemId, "RSR-003");
   assert.equal(next.currentInteraction?.routeReason, "two-high-item-limit");
 });

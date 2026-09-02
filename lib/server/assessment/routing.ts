@@ -1,5 +1,6 @@
 import { DEEPENING_ITEMS, getBankItem, MAPPING_ITEMS } from "@/lib/question-engine/manifest";
 import type { AssessmentStage, BankItemManifestEntry, InteractionFamilyCode } from "@/lib/question-engine/types";
+import type { ExecutableRoutingContract } from "@/lib/question-engine/renderable-manifest";
 import type {
   AssessmentPass,
   AssessmentResponseInput,
@@ -14,7 +15,8 @@ const HIGH_INTENSITY_FAMILIES = new Set<InteractionFamilyCode>(["BDA", "BTM", "B
 const RESOURCE_FAMILIES = new Set<InteractionFamilyCode>(["RSR", "SEF"]);
 type StickySafetyState = AssessmentRoutingState & { readonly safetyContext?: "safe" | "mixed" | "unsafe" | "unknown" };
 type TypedRoutingResponse = AssessmentResponseInput & { readonly resourceSafetyClear?: boolean };
-type ContractCompletedInteraction = CompletedInteraction & { readonly evidenceEligible?: boolean; readonly coverageSectionCodes?: readonly string[] };
+type ContractCompletedInteraction = CompletedInteraction & { readonly evidenceEligible?: boolean; readonly coverageSectionCodes?: readonly string[]; readonly referentPresent?: boolean; readonly safetyContextRecorded?: boolean };
+type RoutingContractInput = TypedRoutingResponse & { readonly authoredRoutingContracts?: Readonly<Record<string, ExecutableRoutingContract>> };
 const FORM_BY_FAMILY: Readonly<Record<InteractionFamilyCode, InteractionForm>> = {
   RL: "threshold", MS: "recall", BDA: "recall", BTM: "map", FSR: "sort", VFR: "text",
   RLB: "sort", BSP: "threshold", PIS: "sort", PDL: "sort", RMX: "threshold", PCR: "threshold",
@@ -104,15 +106,43 @@ function occurrences(family: InteractionFamilyCode, recent: readonly Interaction
   return recent.filter((candidate) => candidate === family).length;
 }
 
+export function isAuthoredContractEligible(contract: ExecutableRoutingContract | undefined, state: AssessmentRoutingState, completed: readonly CompletedInteraction[]): boolean {
+  if (!contract || contract.eligibilityCompilation !== "compiled") return false;
+  const evidence = completed.filter((entry) => entry.completionState === "COMPLETED" && (entry as ContractCompletedInteraction).evidenceEligible === true);
+  const completedIds = new Set(evidence.map((entry) => entry.bankItemId));
+  const predicates = contract.eligibility;
+  if (predicates.allowedStages.length > 0 && !predicates.allowedStages.includes(state.stage)) return false;
+  if (predicates.prerequisiteBankItemIds.length > 0) {
+    const matches = predicates.prerequisiteBankItemIds.map((id) => completedIds.has(id));
+    if (predicates.prerequisiteMode === "all" ? matches.some((match) => !match) : matches.every((match) => !match)) return false;
+  }
+  if (evidence.length < predicates.minimumEpisodeAnchors) return false;
+  if (predicates.requiresReferent && !evidence.some((entry) => (entry as ContractCompletedInteraction).referentPresent)) return false;
+  if (predicates.requiresSafetyContext && !completed.some((entry) => (entry as ContractCompletedInteraction).safetyContextRecorded)) return false;
+  if (predicates.requiresSafeContext && (state as StickySafetyState).safetyContext !== "safe") return false;
+  return predicates.always || predicates.allowedStages.length > 0 || predicates.prerequisiteBankItemIds.length > 0 || predicates.minimumEpisodeAnchors > 0 || predicates.requiresReferent || predicates.requiresSafetyContext || predicates.requiresSafeContext;
+}
+
 function chooseNext(
   state: AssessmentRoutingState,
   completed: readonly CompletedInteraction[],
   signal: { userArousal: UserArousal; unsafeContext: boolean },
+  contracts: Readonly<Record<string, ExecutableRoutingContract>>,
+  selectedOptionIds: readonly string[],
+  currentContract?: ExecutableRoutingContract,
 ): { item: BankItemManifestEntry | null; reason: string } {
   if (state.pendingBtmTransition) return { item: requiredResourceItem(), reason: "mandatory-post-body-map-recovery" };
   if (state.requiresLowIntensityAfterRre) return { item: requiredResourceItem(), reason: "mandatory-post-rupture-low-intensity" };
   if (signal.userArousal === "high" || signal.unsafeContext) return { item: requiredResourceItem(), reason: signal.unsafeContext ? "unsafe-context-resource-only" : "high-arousal-resource-only" };
   if (state.consecutiveHighIntensity >= 2) return { item: requiredResourceItem(), reason: "two-high-item-limit" };
+
+  if (currentContract?.recoveryCompilation === "compiled" && currentContract.recovery.required) {
+    const recovery = currentContract.recovery.routeBankItemIds.map((id) => getBankItem(id)).filter((item): item is BankItemManifestEntry => Boolean(item)).find((item) => isAuthoredContractEligible(contracts[item.bankItemId], state, completed));
+    if (recovery) return { item: recovery, reason: "authored-required-recovery" };
+  }
+  const authoredBranchIds = currentContract?.branchCompilation === "compiled" ? currentContract.branches.filter((branch) => selectedOptionIds.includes(branch.optionId)).flatMap((branch) => branch.routeBankItemIds) : [];
+  const authoredBranch = authoredBranchIds.map((id) => getBankItem(id)).filter((item): item is BankItemManifestEntry => Boolean(item)).find((item) => isAuthoredContractEligible(contracts[item.bankItemId], state, completed));
+  if (authoredBranch) return { item: authoredBranch, reason: "authored-option-branch" };
 
   if (state.pass === 1 && state.coverage.mappingGate === "green") {
     const last = completed.at(-1);
@@ -135,6 +165,7 @@ function chooseNext(
     if (completedIds.has(item.bankItemId)) return false;
     if ((state.skipCounts[item.family] ?? 0) >= 2) return false;
     if (occurrences(item.family, state.recentFamilies) >= 2) return false;
+    if (!isAuthoredContractEligible(contracts[item.bankItemId], state, completed)) return false;
     return true;
   });
   const differentForm = candidates.find((item) => FORM_BY_FAMILY[item.family] !== state.recentForms.at(-1));
@@ -187,7 +218,8 @@ export function routeAssessmentResponse(state: AssessmentRoutingState, response:
     ? (response.response as Record<string, unknown>).semantic
     : undefined;
   const semanticFields = semantic && typeof semantic === "object" && !Array.isArray(semantic) ? semantic as Record<string, unknown> : {};
-  const evidenceEligible = semanticFields.eligible !== false && Object.entries(semanticFields).some(([key, value]) => !["safetyContext", "userArousal", "resourceSafetyClear", "eligible"].includes(key) && (Array.isArray(value) ? value.length > 0 : value !== undefined && value !== null && value !== ""));
+  const substantiveKeys = new Set(["choices", "rank", "zones", "relationship", "selectedOptionIds", "orderedOptionIds", "Before", "When it first hit", "What happened next", "Later / aftermath", "Person / role 1", "Person / role 2", "Contact frequency", "Emotional disclosure", "Asking for help", "Space", "objectEvidence"]);
+  const evidenceEligible = semanticFields.eligible !== false && semanticFields.evidenceDisposition !== "missing" && Object.entries(semanticFields).some(([key, value]) => substantiveKeys.has(key) && (Array.isArray(value) ? value.length > 0 : value !== undefined && value !== null && value !== ""));
   const completedEntry: ContractCompletedInteraction = {
     interactionInstanceId: current.interactionInstanceId,
     bankItemId: current.bankItemId,
@@ -199,10 +231,12 @@ export function routeAssessmentResponse(state: AssessmentRoutingState, response:
     resourceOrOrdinary: isResourceOrOrdinary(item),
     evidenceEligible,
     coverageSectionCodes: Array.isArray(semanticFields.coverageSectionCodes) ? semanticFields.coverageSectionCodes.filter((value): value is string => typeof value === "string") : [],
+    referentPresent: typeof semanticFields.referentOptionId === "string",
+    safetyContextRecorded: ["safe", "mixed", "unsafe"].includes(String(semanticFields.safetyContext)),
   };
   const completedInteractions = [...state.completedInteractions, completedEntry];
   if (response.completionState === "PARTIAL") throw new Error("Partial responses do not advance routing.");
-  const answered = response.completionState === "COMPLETED" && semanticFields.eligible !== false;
+  const answered = response.completionState === "COMPLETED" && evidenceEligible;
   const resourceCompleted = answered && completedEntry.resourceOrOrdinary;
   const typedResponse = response as TypedRoutingResponse;
   const resourceSafetyClear = resourceCompleted && typedResponse.resourceSafetyClear === true;
@@ -231,7 +265,10 @@ export function routeAssessmentResponse(state: AssessmentRoutingState, response:
     paused: false,
     coverage: deriveCoverage(completedInteractions),
   } as StickySafetyState;
-  const choice = chooseNext(nextBase, completedInteractions, { userArousal, unsafeContext });
+  const contractInput = response as RoutingContractInput;
+  const contracts = contractInput.authoredRoutingContracts ?? {};
+  const selectedOptionIds = Object.values(semanticFields).flatMap((value) => Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === "string") : typeof value === "string" ? [value] : []);
+  const choice = chooseNext(nextBase, completedInteractions, { userArousal, unsafeContext }, contracts, selectedOptionIds, contracts[current.bankItemId]);
   const sequence = state.administrationSequence + 1;
   const currentInteraction = choice.item ? interaction(choice.item, state.pass, sequence, choice.reason) : null;
   const coverage = deriveCoverage(completedInteractions);

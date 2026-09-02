@@ -105,6 +105,23 @@ const SECTION_CODE = /^(?:IFS-(?:0[1-9]|1[0-2])|PV-(?:0[1-9]|1[01])|ATT-(?:0[1-9
 const OPTION_ARRAY_FIELDS = new Set(["choices", "rank", "zones", "relationship", "selectedOptionIds", "orderedOptionIds"]);
 const OPTION_FIELDS = new Set(["Before", "When it first hit", "What happened next", "Later / aftermath", "Person / role 1", "Person / role 2", "Contact frequency", "Emotional disclosure", "Asking for help", "Space", "referentOptionId", "windowOptionId"]);
 
+function normalizeObjectEvidence(value: unknown): Prisma.JsonObject | undefined {
+  const candidate = object(value);
+  if (!candidate || !["part_cluster", "state_signature", "attachment_pattern"].includes(String(candidate.kind)) || typeof candidate.candidateKey !== "string" || !SEMANTIC_ID.test(candidate.candidateKey)) return undefined;
+  const result: Record<string, Prisma.JsonValue> = { kind: candidate.kind as string, candidateKey: candidate.candidateKey };
+  const enums: Readonly<Record<string, readonly string[]>> = {
+    identityStatus: ["confirmed", "cluster_only", "uncertain", "rejected"], roleClass: ["manager", "firefighter", "mixed", "uncertain"],
+    classification: ["baseline", "activated", "shutdown", "mixed", "connected", "uncertain"], anxietyEstimate: ["low", "moderate", "high", "variable", "underdetermined"],
+    avoidanceEstimate: ["low", "moderate", "high", "variable", "underdetermined"],
+  };
+  for (const [key, allowed] of Object.entries(enums)) if (typeof candidate[key] === "string" && allowed.includes(candidate[key])) result[key] = candidate[key] as string;
+  for (const key of ["bodyRegionIds", "entryOptionIds", "exitOptionIds", "directFieldOptionIds", "cueOptionIds", "meaningOptionIds", "moveOptionIds"] as const) if (Array.isArray(candidate[key])) result[key] = candidate[key].filter((entry): entry is string => typeof entry === "string" && SEMANTIC_ID.test(entry));
+  if (typeof candidate.referentOptionId === "string" && SEMANTIC_ID.test(candidate.referentOptionId)) result.referentOptionId = candidate.referentOptionId;
+  if (typeof candidate.fitConfirmed === "boolean") result.fitConfirmed = candidate.fitConfirmed;
+  if (typeof candidate.contradicted === "boolean") result.contradicted = candidate.contradicted;
+  return result as Prisma.JsonObject;
+}
+
 function object(value: unknown): Record<string, unknown> | undefined {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : undefined;
 }
@@ -121,8 +138,13 @@ export function normalizeTypedAssessmentResponse(value: unknown, bankItemId?: st
     else if (key === "safetyContext" && ["safe", "mixed", "unsafe", "unknown"].includes(String(raw))) semantic[key] = raw as string;
     else if (key === "userArousal" && ["low", "unknown", "elevated", "high"].includes(String(raw))) semantic[key] = raw as string;
     else if (key === "timeHorizon" && ["anticipatory", "immediate", "aftermath", "multi_horizon", "uncertain"].includes(String(raw))) semantic[key] = raw as string;
+    else if (key === "evidenceDisposition" && ["observed", "missing"].includes(String(raw))) semantic[key] = raw as string;
     else if (key === "certainty" && typeof raw === "number" && Number.isFinite(raw) && raw >= 0 && raw <= 1) semantic[key] = raw;
     else if (["resourceSafetyClear", "quotePermission", "eligible"].includes(key) && typeof raw === "boolean") semantic[key] = raw;
+    else if (key === "objectEvidence") {
+      const objectEvidence = normalizeObjectEvidence(raw);
+      if (objectEvidence) semantic[key] = objectEvidence;
+    }
   }
   return {
     schemaVersion: "PWRS-1",
@@ -148,7 +170,8 @@ const DEFAULT_HORIZON_BY_FAMILY: Readonly<Record<string, "anticipatory" | "immed
 
 async function enrichResponseFromAuthoredContract(response: Prisma.JsonObject, bankItemId: string): Promise<Prisma.JsonObject> {
   structuredManifestPromise ??= loadStructuredInstrumentManifest();
-  const definition = (await structuredManifestPromise).itemById.get(bankItemId);
+  const manifest = await structuredManifestPromise;
+  const definition = manifest.itemById.get(bankItemId);
   const semantic = { ...(object(response.semantic) ?? {}) } as Record<string, Prisma.JsonValue>;
   if (!Array.isArray(semantic.coverageSectionCodes) || semantic.coverageSectionCodes.length === 0) semantic.coverageSectionCodes = [...(definition?.supportedReportSections ?? [])];
   if (typeof semantic.eligible !== "boolean") semantic.eligible = true;
@@ -156,6 +179,16 @@ async function enrichResponseFromAuthoredContract(response: Prisma.JsonObject, b
   if (definition?.family === "RL" && typeof semantic.referentOptionId !== "string" && Array.isArray(semantic.choices)) {
     const referentOptionId = semantic.choices.find((value): value is string => typeof value === "string" && SEMANTIC_ID.test(value));
     if (referentOptionId) semantic.referentOptionId = referentOptionId;
+  }
+  if (semantic.evidenceDisposition !== "missing") {
+    const selected = Array.isArray(semantic.choices) ? semantic.choices.filter((value): value is string => typeof value === "string") : [];
+    const authoredOptions = [
+      ...(definition?.optionGroups.flatMap((group) => group.options).map((option) => ({ optionId:option.optionId, authored:option.authored, label:option.label })) ?? []),
+      ...(definition?.responseLibraryIds.flatMap((libraryId) => manifest.responseLibraryById.get(libraryId)?.options ?? []).map((option) => ({ ...option, authored:option.optionId })) ?? []),
+    ];
+    const missingIds = new Set(authoredOptions.filter((option) => /(?:^|[_ -])(?:not[_ -]?sure|no[_ -]?memory|skip)(?:[_ -]|$)/iu.test(`${option.optionId} ${option.authored} ${option.label}`)).map((option) => option.optionId));
+    const substantiveOther = Object.entries(semantic).some(([key, value]) => ["rank", "zones", "relationship", "Before", "When it first hit", "What happened next", "Later / aftermath", "objectEvidence"].includes(key) && (Array.isArray(value) ? value.length > 0 : Boolean(value)));
+    semantic.evidenceDisposition = selected.length > 0 && selected.every((id) => missingIds.has(id) || /not-sure|no-memory|skip/iu.test(id)) && !substantiveOther ? "missing" : "observed";
   }
   return { ...response, semantic } as Prisma.JsonObject;
 }
@@ -345,7 +378,9 @@ export async function saveAssessmentResponse(
     const response = await enrichResponseFromAuthoredContract(normalizeTypedAssessmentResponse(input.response, current.bankItemId), current.bankItemId);
     const encryptedResponse = encryptJson({ response }, responsePurpose(sessionId, input.interactionInstanceId), keyring);
     const safety = responseSafetySignals(response);
-    const routedInput = { ...input, response: response as unknown as AssessmentResponseInput["response"], bankItemId: current.bankItemId, userArousal: safety.userArousal, unsafeContext: safety.unsafeContext, resourceSafetyClear: safety.resourceSafetyClear };
+    structuredManifestPromise ??= loadStructuredInstrumentManifest();
+    const authoredRoutingContracts = Object.fromEntries((await structuredManifestPromise).items.map((item) => [item.bankItemId, item.deterministicRouting.executable]));
+    const routedInput = { ...input, response: response as unknown as AssessmentResponseInput["response"], bankItemId: current.bankItemId, userArousal: safety.userArousal, unsafeContext: safety.unsafeContext, resourceSafetyClear: safety.resourceSafetyClear, authoredRoutingContracts };
     const nextState = input.completionState === "PARTIAL" ? state : routeAssessmentResponse(state, routedInput);
     const encryptedState = encryptJson(nextState, statePurpose(sessionId), keyring);
     await tx.patternworkV31AssessmentResponse.upsert({

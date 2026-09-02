@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { responseSafetySignals, normalizeTypedAssessmentResponse, reportArtifactUrl } from "../../lib/server/assessment/service.ts";
 import { createInitialRoutingState, routeAssessmentResponse } from "../../lib/server/assessment/routing.ts";
+import { isAuthoredContractEligible } from "../../lib/server/assessment/routing.ts";
+import { loadStructuredInstrumentManifest } from "../../lib/question-engine/renderable-manifest.ts";
 
 const typed = (semantic: Record<string, unknown>, privateNote?: string) => ({ schemaVersion:"PWRS-1", semantic, ...(privateNote ? { privateNote } : {}) });
 
@@ -38,4 +40,53 @@ test("unsafe state survives canonical replay until a completed resource step exp
   const cleared = routeAssessmentResponse(uncleared, { interactionInstanceId:uncleared.currentInteraction!.interactionInstanceId, bankItemId:"RSR-003", completionState:"COMPLETED", response:typed({ choices:["OPT-RSR-ground-aabbccdd"], safetyContext:"safe", resourceSafetyClear:true }), unsafeContext:false, userArousal:"low", resourceSafetyClear:true } as never);
   assert.equal((cleared as unknown as { safetyContext:string }).safetyContext, "safe");
   assert.notEqual(cleared.currentInteraction?.routeReason, "unsafe-context-resource-only");
+});
+
+test("answerless COMPLETED responses remain non-evidence and cannot advance coverage or completion", async () => {
+  const manifest = await loadStructuredInstrumentManifest();
+  const contracts = Object.fromEntries(manifest.items.map((item) => [item.bankItemId, item.deterministicRouting.executable]));
+  const initial = createInitialRoutingState(1);
+  const next = routeAssessmentResponse(initial, {
+    interactionInstanceId: initial.currentInteraction!.interactionInstanceId,
+    bankItemId: initial.currentInteraction!.bankItemId,
+    completionState: "COMPLETED",
+    response: typed({ eligible:true, coverageSectionCodes:["IFS-01"], timeHorizon:"immediate" }),
+    authoredRoutingContracts: contracts,
+  } as never);
+  assert.equal((next.completedInteractions[0] as unknown as { evidenceEligible:boolean }).evidenceEligible, false);
+  assert.equal(next.coverage.directSamples, 0);
+  assert.equal(next.mappingCompleted, false);
+});
+
+test("only fully compiled eligibility predicates execute; partial prose branches fail closed", async () => {
+  const manifest = await loadStructuredInstrumentManifest();
+  const ms101 = manifest.itemById.get("MS-101")!.deterministicRouting.executable;
+  const rl102 = manifest.itemById.get("RL-102")!.deterministicRouting.executable;
+  assert.equal(ms101.eligibilityCompilation, "compiled");
+  assert.equal(rl102.eligibilityCompilation, "partial");
+  assert.ok(rl102.uncompiledFragments.length > 0);
+  const state = { ...createInitialRoutingState(1), stage:"S1" } as never;
+  const completed = [{ bankItemId:"RL-102", completionState:"COMPLETED", evidenceEligible:true, referentPresent:true }] as never;
+  assert.equal(isAuthoredContractEligible(ms101, state, completed), true);
+  assert.equal(isAuthoredContractEligible(rl102, state, completed), false);
+
+  const contracts = Object.fromEntries(manifest.items.map((item) => [item.bankItemId, item.deterministicRouting.executable]));
+  const initial = createInitialRoutingState(1);
+  const closest = manifest.itemById.get("RL-101")!.optionGroups.flatMap((group) => group.options).find((option) => /`closest`/u.test(option.authored))!.optionId;
+  const next = routeAssessmentResponse(initial, { interactionInstanceId:initial.currentInteraction!.interactionInstanceId, bankItemId:"RL-101", completionState:"COMPLETED", response:typed({ choices:[closest], referentOptionId:closest }), authoredRoutingContracts:contracts } as never);
+  assert.notEqual(next.currentInteraction?.routeReason, "authored-option-branch");
+});
+
+test("authored body-map recovery dominates ordinary routing and replays deterministically", async () => {
+  const manifest = await loadStructuredInstrumentManifest();
+  const contracts = Object.fromEntries(manifest.items.map((item) => [item.bankItemId, item.deterministicRouting.executable]));
+  const initial = createInitialRoutingState(2);
+  const current = { ...initial.currentInteraction!, interactionInstanceId:"btm-replay", bankItemId:"BTM-201", family:"BTM", intensity:2 } as never;
+  const state = { ...initial, currentInteraction:current } as never;
+  const input = { interactionInstanceId:"btm-replay", bankItemId:"BTM-201", completionState:"COMPLETED", response:typed({ zones:["OPT-body-chest-aabbccdd"] }), authoredRoutingContracts:contracts } as never;
+  const first = routeAssessmentResponse(state, input);
+  const replay = routeAssessmentResponse(state, input);
+  assert.deepEqual(first, replay);
+  assert.equal(first.currentInteraction?.bankItemId, "RSR-003");
+  assert.equal(first.currentInteraction?.routeReason, "mandatory-post-body-map-recovery");
 });

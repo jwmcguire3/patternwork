@@ -54,8 +54,8 @@ function piiIssues(value: unknown, path = "$", issues: ValidationIssue[] = []): 
   return issues;
 }
 
-const TYPED_VALUE_KEYS = new Set(["selected_option_ids", "episode_fields", "pace_band_ids", "time_horizon", "coverage_section_codes", "user_certainty", "safety_context", "user_arousal", "resource_safety_clear", "eligible"]);
-const TYPED_ENUMS = new Set(["anticipatory", "immediate", "aftermath", "multi_horizon", "uncertain", "safe", "mixed", "unsafe", "unknown", "low", "elevated", "high"]);
+const TYPED_VALUE_KEYS = new Set(["selected_option_ids", "episode_fields", "pace_band_ids", "time_horizon", "coverage_section_codes", "user_certainty", "safety_context", "user_arousal", "resource_safety_clear", "eligible", "evidence_disposition", "object_evidence"]);
+const TYPED_ENUMS = new Set(["anticipatory", "immediate", "aftermath", "multi_horizon", "uncertain", "safe", "mixed", "unsafe", "unknown", "low", "elevated", "high", "moderate", "variable", "underdetermined", "observed", "missing", "part_cluster", "state_signature", "attachment_pattern", "confirmed", "cluster_only", "rejected", "manager", "firefighter", "baseline", "activated", "shutdown", "connected"]);
 
 function typedLeafAllowed(value: unknown): boolean {
   if (typeof value === "boolean") return true;

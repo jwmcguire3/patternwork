@@ -75,12 +75,53 @@ test("provider and prompt boundaries reject mixed narrative even without a recog
   assert.throws(() => buildGenerationPrompt("IFS", { packet:{ privateNote:"mixed narrative" } } as unknown as Record<string, JsonValue>), /free text/u);
 });
 
-test("Pass 2 stop eligibility is asserted only when every typed routing gate passes", () => {
+test("Pass 2 routing flags alone never assert stop eligibility", () => {
   const incomplete = buildPseudonymousPacketsFromCanonicalSnapshot(snapshot(2));
   assert.equal(incomplete[0].coverage_matrix.stop_eligible, false);
   const gated = buildPseudonymousPacketsFromCanonicalSnapshot(snapshot(2, undefined, {
     deepeningCompleted: true, fitCompleted: true, endingSatisfied: true, pendingBtmTransition: false,
     requiresLowIntensityAfterRre: false, safetyContext: "safe", coverage: { deepeningGate: "green" },
   }));
-  assert.equal(gated[0].coverage_matrix.stop_eligible, true);
+  assert.equal(gated[0].coverage_matrix.stop_eligible, false);
+});
+
+function objectSnapshot(options: { oneOff?: boolean; contradicted?: boolean; omitFit?: boolean } = {}): DecryptedAssessmentSnapshot {
+  const rows: Record<string, JsonValue>[] = [];
+  const add = (bankItemId:string, objectEvidence:Record<string,JsonValue>, semantic:Record<string,JsonValue>={}) => rows.push({
+    responseId:`response-${rows.length+1}`, interactionInstanceId:`interaction-${rows.length+1}`, bankItemId, bankItemVersion:"3.1.0",
+    administrationSequence:rows.length+1, stage:bankItemId==="FCF-201"?"S5":"S3", completionState:"COMPLETED", responseOrder:["OPT-observed-aabbccdd"],
+    content:{ response:{ schemaVersion:"PWRS-1", semantic:{ choices:["OPT-observed-aabbccdd"], coverageSectionCodes:[], ...semantic, objectEvidence } } },
+  });
+  const directCount = options.oneOff ? 1 : 2;
+  for (let index=0; index<directCount; index+=1) add(index===0?"VFR-201":"RLB-201", { kind:"part_cluster", candidateKey:"OPT-part-care-aabbccdd", roleClass:"uncertain", directFieldOptionIds:[`OPT-part-field-${index}-aabbccdd`], contradicted:options.contradicted===true });
+  add("FCF-201", { kind:"part_cluster", candidateKey:"OPT-part-care-aabbccdd", identityStatus:"confirmed", fitConfirmed:!options.omitFit, directFieldOptionIds:[] });
+  for (let index=0; index<directCount; index+=1) add(index===0?"BTM-201":"FSR-201", { kind:"state_signature", candidateKey:"OPT-state-activated-aabbccdd", classification:"activated", bodyRegionIds:[`OPT-region-${index}-aabbccdd`], entryOptionIds:index===0?["OPT-entry-aabbccdd"]:[], exitOptionIds:index===1?["OPT-exit-aabbccdd"]:[], directFieldOptionIds:[`OPT-state-field-${index}-aabbccdd`], contradicted:options.contradicted===true });
+  add("FCF-201", { kind:"state_signature", candidateKey:"OPT-state-activated-aabbccdd", classification:"activated", fitConfirmed:!options.omitFit, bodyRegionIds:[], entryOptionIds:[], exitOptionIds:[], directFieldOptionIds:[] });
+  for (let index=0; index<directCount; index+=1) add(index===0?"WMA-201":"BDA-205", { kind:"attachment_pattern", candidateKey:"OPT-attachment-sequence-aabbccdd", referentOptionId:"OPT-referent-friend-aabbccdd", anxietyEstimate:"moderate", avoidanceEstimate:"low", cueOptionIds:[`OPT-cue-${index}-aabbccdd`], meaningOptionIds:[`OPT-meaning-${index}-aabbccdd`], moveOptionIds:[`OPT-move-${index}-aabbccdd`], directFieldOptionIds:[], contradicted:options.contradicted===true }, { referentOptionId:"OPT-referent-friend-aabbccdd", safetyContext:"safe" });
+  add("FCF-201", { kind:"attachment_pattern", candidateKey:"OPT-attachment-sequence-aabbccdd", referentOptionId:"OPT-referent-friend-aabbccdd", anxietyEstimate:"moderate", avoidanceEstimate:"low", fitConfirmed:!options.omitFit, cueOptionIds:[], meaningOptionIds:[], moveOptionIds:[], directFieldOptionIds:[] });
+  add("RSR-201", { kind:"state_signature", candidateKey:"OPT-resource-only-aabbccdd", classification:"connected", bodyRegionIds:[], entryOptionIds:[], exitOptionIds:[], directFieldOptionIds:[] }, { resourceSafetyClear:true });
+  const base = snapshot(2);
+  return { ...base, canonicalSnapshot:{ ...base.canonicalSnapshot, responses:rows } };
+}
+
+test("replicated typed direct evidence plus FCF confirmation creates schema-valid bounded objects", async () => {
+  const packets = buildPseudonymousPacketsFromCanonicalSnapshot(objectSnapshot());
+  for (const packet of packets) {
+    assert.equal(packet.part_profiles.length, 1);
+    assert.equal(packet.state_signatures.length, 1);
+    assert.equal(packet.attachment_patterns.length, 1);
+    assert.equal(packet.coverage_matrix.stop_eligible, false, "remaining red coverage cells prevent normal stop");
+    const validation = await validateReportEvidencePacket(packet);
+    assert.equal(validation.ok, true, validation.ok ? undefined : JSON.stringify(validation.issues));
+  }
+});
+
+test("one-off, contradicted, or unconfirmed typed evidence never creates promoted objects", () => {
+  for (const candidate of [objectSnapshot({oneOff:true}), objectSnapshot({contradicted:true}), objectSnapshot({omitFit:true})]) {
+    const packet = buildPseudonymousPacketsFromCanonicalSnapshot(candidate)[0];
+    assert.deepEqual(packet.part_profiles, []);
+    assert.deepEqual(packet.state_signatures, []);
+    assert.deepEqual(packet.attachment_patterns, []);
+    assert.equal(packet.coverage_matrix.stop_eligible, false);
+  }
 });
