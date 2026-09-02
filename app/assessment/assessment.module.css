@@ -1,0 +1,73 @@
+.shell {
+  min-height: 100vh;
+  background: #f5f6f0;
+  color: #1e3531;
+  padding: clamp(1.25rem, 4vw, 4rem);
+}
+
+.loading,
+.intro,
+.card {
+  max-width: 760px;
+  margin: 8vh auto;
+}
+
+.intro,
+.card {
+  background: #fffdf8;
+  border: 1px solid #d9e1d7;
+  border-radius: 20px;
+  padding: clamp(1.5rem, 5vw, 3.5rem);
+  box-shadow: 0 8px 32px #203d3110;
+}
+
+.intro h1,
+.card h1 {
+  font-family: Georgia, serif;
+  font-size: clamp(2rem, 5vw, 3.3rem);
+  line-height: 1.08;
+  margin: 0.3rem 0 1.2rem;
+}
+
+.card h1 { font-size: clamp(1.7rem, 4vw, 2.5rem); }
+.intro p, .help { font-size: 1.05rem; line-height: 1.65; }
+.kicker, .family { color: #397166; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.78rem; font-weight: 700; }
+.header { max-width: 760px; margin: 0 auto 1rem; display: flex; justify-content: space-between; gap: 1rem; align-items: start; }
+.progressText, .save, .small { font-size: 0.9rem; color: #5a6b65; }
+.stageBar { height: 7px; max-width: 760px; margin: 0 auto 2rem; background: #dce5dd; border-radius: 10px; overflow: hidden; }
+.stageBar span { display: block; height: 100%; background: #b48a3c; border-radius: inherit; transition: width 0.3s ease; }
+.shell fieldset { border: 0; padding: 0; margin: 2rem 0; }
+.shell legend { font-weight: 700; margin-bottom: 0.75rem; }
+.options { display: grid; gap: 0.65rem; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+.option, .selected, .textButton, .primary { font: inherit; border-radius: 11px; padding: 0.85rem 1rem; cursor: pointer; min-height: 46px; }
+.option { background: #fff; border: 1px solid #cad8d1; color: #203a35; text-align: left; }
+.selected { background: #dceee9; border: 2px solid #397166; color: #183e38; text-align: left; }
+.field { display: grid; gap: 0.45rem; margin-top: 1.2rem; font-weight: 600; }
+.shell .field textarea, .shell input, .shell select { font: inherit; border: 1px solid #aebfb7; border-radius: 8px; padding: 0.7rem; background: white; }
+.shell textarea { min-height: 80px; }
+.controls { display: flex; flex-wrap: wrap; gap: 0.8rem; border-top: 1px solid #dae2dc; padding-top: 1.5rem; margin-top: 2rem; }
+.primary { background: #24675e; color: #fff; border: 1px solid #24675e; font-weight: 700; }
+.textButton { background: transparent; border: 0; color: #24675e; text-decoration: underline; }
+.textButton:disabled { opacity: 0.45; cursor: not-allowed; }
+.form { display: grid; gap: 1.1rem; margin: 1.5rem 0; }
+.form label { display: grid; gap: 0.4rem; font-weight: 600; }
+.check { display: flex !important; gap: 0.65rem; align-items: flex-start; font-weight: 400 !important; }
+.check input { margin-top: 0.15rem; }
+.error { color: #9a3027; font-weight: 600; }
+.grounding { background: #edf3ed; border-left: 4px solid #b48a3c; padding: 1rem 1.2rem; margin: 1.5rem 0; }
+.strip, .matrix { display: grid; gap: 0.85rem; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.strip label, .matrix label { display: grid; gap: 0.4rem; font-weight: 600; }
+.body { display: flex; gap: 1.5rem; align-items: center; }
+.silhouette { min-width: 105px; text-align: center; color: #397166; font-size: 2.2rem; line-height: 1.1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .stageBar span { transition: none; }
+}
+
+@media (max-width: 560px) {
+  .shell { padding: 1rem; }
+  .header { align-items: flex-start; flex-direction: column; }
+  .body { align-items: flex-start; }
+  .controls { display: grid; grid-template-columns: 1fr 1fr; }
+  .primary { grid-column: span 2; }
+}

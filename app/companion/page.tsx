@@ -7,7 +7,7 @@ export default function CompanionPage() {
         <h2>The Patternwork Companion</h2>
 
         <p>
-          The Patternwork Companion exists so your Map doesn't become
+          The Patternwork Companion exists so your Map doesn&apos;t become
           something you read once and forget. It is designed to speak the same
           language as your Patternwork Assessment and keep using it in daily
           life.
@@ -16,7 +16,7 @@ export default function CompanionPage() {
         <h3>What the Companion does</h3>
         <ul>
           <li>
-            Helps you interpret what's happening in your system in
+            Helps you interpret what&apos;s happening in your system in
             real time.
           </li>
           <li>
@@ -40,11 +40,11 @@ export default function CompanionPage() {
 
         <p>
           It is not a therapist, coach, or crisis service. It is a way to keep
-          your internal map active, so you don't have to rebuild the same
+          your internal map active, so you don&apos;t have to rebuild the same
           insight from scratch every time your system spikes.
         </p>
 
-        <h3>Who it's for</h3>
+        <h3>Who it&apos;s for</h3>
         <p>
           The Companion is for people who want more than a one-time assessment.
           It is for people who want a clear, repeatable way to understand what

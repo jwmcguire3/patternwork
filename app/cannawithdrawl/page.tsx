@@ -3,7 +3,7 @@ export default function cannawithdrawlPage() {
   return (
     <main className="section">
       <div className="container narrow">
-        <h2>You've Already Been Doing the Hard Part</h2>
+        <h2>You&apos;ve Already Been Doing the Hard Part</h2>
         <p>
           This is for the situation where going without already makes you feel
           ill, and where the thought of one more time before committing keeps
@@ -163,7 +163,7 @@ export default function cannawithdrawlPage() {
           </li>
           <li>
             <strong>Tell one person</strong> – Not for supervision, but so someone
-            understands that this week's irritability is chemistry and has an end
+            understands that this week&apos;s irritability is chemistry and has an end
             date.
           </li>
           <li>

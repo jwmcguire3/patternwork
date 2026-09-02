@@ -1,6 +1,6 @@
 # Hub run ledger
 
-- State: phase 2 implementation active
+- State: phase 2 integrated; phase 3 ready
 - Status: active
 - Accepted contract: `PWQE3-CONTRACT-2` / `PWQE3-INTEGRITY-1`
 - Base commit: `aa8f50a901ffbd62ad33a35343bfcb4bf6418fba`
@@ -12,7 +12,7 @@
 - Historical semantics: artifacts remain bound to their immutable snapshot; no live-answer substitution.
 - Comparison equivalence: model qualification uses the same fixture set and acceptance checks for every tier.
 - Generated artifacts: source manifests and schemas are committed; drift checks must fail on unreviewed changes.
-- Active ownership: hub plus bounded Phase-2 assessment, persistence, and workflow workers.
+- Active ownership: hub; Phase-2 workers stopped after integration.
 - Current checkpoint: `PWQE3-CONTRACT-2` / `PWQE3-INTEGRITY-1` accepted 2026-09-02 after hub verification.
 - Findings: none
-- Verification: 15/15 contract tests, TypeScript check, and Prisma schema validation passed. Canonical source integrity covers 26 files and source-derived authored definitions cover all 112 bank items.
+- Verification: 58/58 integrated tests, global lint, TypeScript, Prisma validation, and the Next.js production build pass. Canonical source integrity covers 26 files; the typed render contract covers 112 interactions and 91 response libraries.

@@ -65,6 +65,13 @@ enum PatternworkV31PdfStatus {
   FAILED
 }
 
+enum PatternworkV31ArtifactStatus {
+  PENDING
+  VALIDATED
+  ACTIVE
+  FAILED
+}
+
 model PatternworkV31SourceRelease {
   id                  String   @id @default(cuid())
   contractId          String
@@ -85,8 +92,11 @@ model PatternworkV31AssessmentSession {
   userId                String?
   contactEmailHash      String?
   contactEmailCiphertext Bytes?
+  contactEmailNonce     Bytes?
   sourceReleaseId       String
   assessmentKey         String                    @default("patternwork-v3.1")
+  consentVersion        String
+  consentedAt           DateTime
   status                PatternworkV31SessionStatus @default(IN_PROGRESS)
   currentPass           Int                       @default(1)
   currentStage          String                    @default("S0")
@@ -133,14 +143,19 @@ model PatternworkV31AssessmentResponse {
   id                    String   @id @default(cuid())
   assessmentSessionId   String
   responseId            String
+  requestSha256         String
   interactionInstanceId String
   bankItemId            String
   bankItemVersion       String
   administrationSequence Int
   stage                 String
+  completionState       String
+  responseOrderJson     Json
   responseCiphertext    Bytes
   responseNonce         Bytes
   encryptionKeyVersion  String
+  answeredAt            DateTime?
+  skippedAt             DateTime?
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
@@ -178,7 +193,7 @@ model PatternworkV31AssessmentSnapshot {
   evidencePackets  PatternworkV31EvidencePacket[]
 
   @@unique([snapshotId, snapshotRevision], name: "pw31_snapshot_identity")
-  @@unique([assessmentSessionId, completedPass, snapshotRevision], name: "pw31_session_pass_revision")
+  @@unique([assessmentSessionId, completedPass], name: "pw31_session_completed_pass")
   @@index([assessmentSessionId, frozenAt])
 }
 
@@ -243,6 +258,7 @@ model PatternworkV31ReportArtifact {
   reportRunId            String   @unique
   reportId               String   @unique
   artifactType           String
+  artifactStatus         PatternworkV31ArtifactStatus @default(PENDING)
   canonicalJsonSha256    String
   canonicalJsonCiphertext Bytes
   canonicalJsonNonce     Bytes

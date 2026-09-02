@@ -1,4 +1,4 @@
-import type { JsonObject, ValidationIssue, ValidationResult } from "./types.ts";
+import type { ValidationIssue, ValidationResult } from "./types.ts";
 import { LAYER_SECTION_CODES, PATTERNWORK_INSTRUMENT_MANIFEST } from "./manifest.ts";
 import { loadPatternworkSchemas } from "../report-contracts/schema-loader.ts";
 import { validateAgainstSchema } from "../report-contracts/schema-validator.ts";
