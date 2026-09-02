@@ -1,0 +1,3420 @@
+{
+  "packet_id": "PKT-ATT-acceptance-b",
+  "packet_version": "3.1.0",
+  "contract_id": "PWQE3-CONTRACT-2",
+  "integrity_contract_id": "PWQE3-INTEGRITY-1",
+  "report_type": "ATT",
+  "generated_at": "2026-08-29T20:05:00Z",
+  "relationship_contexts": [
+    {
+      "referent_id": "REF-B-FRIEND",
+      "user_label": "Mika",
+      "relationship_type": "partner_or_closest",
+      "current_relevance": "current",
+      "safety": "generally_safe",
+      "reliability": "mixed",
+      "certainty": 0.85,
+      "notes": "Fictional closest person who is a close friend; care is present, but reply timing and availability vary.",
+      "provenance": [
+        {
+          "interaction_instance_id": "RI-B-000",
+          "family_code": "RL",
+          "bank_item_id": "RL-101",
+          "bank_item_version": "1.0",
+          "response_ids": [
+            "RR-B-000-referent"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "selected_option",
+          "user_certainty": 0.95,
+          "session_id": "SES-B",
+          "sequence": 1,
+          "presented_option_ids": [
+            "OPT-RL-101-A"
+          ]
+        },
+        {
+          "interaction_instance_id": "RI-B-002",
+          "family_code": "RL",
+          "bank_item_id": "RL-102",
+          "bank_item_version": "1.0",
+          "response_ids": [
+            "RR-B-002-context"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "selected_option",
+          "user_certainty": 0.85,
+          "session_id": "SES-B",
+          "sequence": 2,
+          "presented_option_ids": [
+            "OPT-RL-102-A"
+          ]
+        }
+      ]
+    },
+    {
+      "referent_id": "REF-B-SAFE",
+      "user_label": "Sam",
+      "relationship_type": "reliably_safe_person",
+      "current_relevance": "current",
+      "safety": "generally_safe",
+      "reliability": "predictable_reciprocal",
+      "certainty": 0.9,
+      "notes": "Fictional comparison person; practical requests are answered clearly.",
+      "provenance": [
+        {
+          "interaction_instance_id": "RI-B-012",
+          "family_code": "RL",
+          "bank_item_id": "RL-003",
+          "bank_item_version": "v3.0",
+          "response_ids": [
+            "RR-B-012-safe"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "selected_option",
+          "user_certainty": 0.9,
+          "session_id": "SES-B",
+          "sequence": 3,
+          "presented_option_ids": [
+            "OPT-RL-003-A"
+          ]
+        }
+      ]
+    }
+  ],
+  "episode_evidence": [
+    {
+      "episode_id": "EP-B-01",
+      "referent_id": "REF-B-FRIEND",
+      "relationship_context": {
+        "referent_id": "REF-B-FRIEND",
+        "user_label": "Mika",
+        "relationship_type": "partner_or_closest",
+        "current_relevance": "current",
+        "safety": "generally_safe",
+        "reliability": "mixed",
+        "certainty": 0.85,
+        "notes": "Fictional closest person who is a close friend; care is present, but reply timing and availability vary.",
+        "provenance": [
+          {
+            "interaction_instance_id": "RI-B-000",
+            "family_code": "RL",
+            "bank_item_id": "RL-101",
+            "bank_item_version": "1.0",
+            "response_ids": [
+              "RR-B-000-referent"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.95,
+            "session_id": "SES-B",
+            "sequence": 1,
+            "presented_option_ids": [
+              "OPT-RL-101-A"
+            ]
+          },
+          {
+            "interaction_instance_id": "RI-B-002",
+            "family_code": "RL",
+            "bank_item_id": "RL-102",
+            "bank_item_version": "1.0",
+            "response_ids": [
+              "RR-B-002-context"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.85,
+            "session_id": "SES-B",
+            "sequence": 2,
+            "presented_option_ids": [
+              "OPT-RL-102-A"
+            ]
+          }
+        ]
+      },
+      "life_domain": "friendship messaging",
+      "trigger": {
+        "field": "trigger",
+        "value": "Mika had not replied to a request to talk, and no reason for the delay was known.",
+        "provenance": {
+          "interaction_instance_id": "RI-B-003",
+          "family_code": "MS",
+          "bank_item_id": "MS-101",
+          "bank_item_version": "1.0",
+          "response_ids": [
+            "RR-B-003-trigger"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "selected_option",
+          "user_certainty": 0.85,
+          "session_id": "SES-B",
+          "sequence": 4,
+          "presented_option_ids": [
+            "OPT-MS-101-A"
+          ]
+        }
+      },
+      "recent_window": "last two months",
+      "recency": "two weeks ago",
+      "typicality": 0.7,
+      "frequency": "sometimes with this friend",
+      "intensity": 5,
+      "time_horizon": "anticipatory",
+      "first_noticed_signal": {
+        "field": "first_signal",
+        "value": "words became harder and the chest felt heavy before deciding what to send next",
+        "provenance": {
+          "interaction_instance_id": "RI-B-006",
+          "family_code": "FSR",
+          "bank_item_id": "FSR-202",
+          "bank_item_version": "3.0.0",
+          "response_ids": [
+            "RR-B-006-first"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "rank",
+          "user_certainty": 0.8,
+          "session_id": "SES-B",
+          "sequence": 5,
+          "presented_option_ids": [
+            "OPT-FSR-202-A"
+          ]
+        }
+      },
+      "onset_order": [
+        {
+          "field": "onset_1",
+          "value": "words became harder",
+          "provenance": {
+            "interaction_instance_id": "RI-B-006",
+            "family_code": "FSR",
+            "bank_item_id": "FSR-202",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-006-first"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "rank",
+            "user_certainty": 0.8,
+            "session_id": "SES-B",
+            "sequence": 5,
+            "presented_option_ids": [
+              "OPT-FSR-202-A"
+            ]
+          }
+        },
+        {
+          "field": "onset_2",
+          "value": "chest and arms felt heavy",
+          "provenance": {
+            "interaction_instance_id": "RI-B-011",
+            "family_code": "BTM",
+            "bank_item_id": "BTM-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-011-map"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "map",
+            "user_certainty": 0.8,
+            "session_id": "SES-B",
+            "sequence": 6,
+            "presented_option_ids": [
+              "OPT-BTM-201-A"
+            ]
+          }
+        },
+        {
+          "field": "onset_3",
+          "value": "planned not to send another message",
+          "provenance": {
+            "interaction_instance_id": "RI-B-003",
+            "family_code": "MS",
+            "bank_item_id": "MS-101",
+            "bank_item_version": "1.0",
+            "response_ids": [
+              "RR-B-003-action"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.85,
+            "session_id": "SES-B",
+            "sequence": 4,
+            "presented_option_ids": [
+              "OPT-MS-101-A"
+            ]
+          }
+        }
+      ],
+      "body_deactivation_map": [
+        {
+          "region": "chest",
+          "side_or_surface": "front",
+          "direction": "quieter",
+          "qualities": [
+            "heavy",
+            "hollow"
+          ],
+          "intensity": 5,
+          "provenance": [
+            {
+              "interaction_instance_id": "RI-B-011",
+              "family_code": "BTM",
+              "bank_item_id": "BTM-201",
+              "bank_item_version": "3.0.0",
+              "response_ids": [
+                "RR-B-011-map"
+              ],
+              "signal_class": "direct",
+              "capture_mode": "map",
+              "user_certainty": 0.8,
+              "session_id": "SES-B",
+              "sequence": 6,
+              "presented_option_ids": [
+                "OPT-BTM-201-A"
+              ]
+            }
+          ]
+        },
+        {
+          "region": "arms and hands",
+          "side_or_surface": "both",
+          "direction": "quieter",
+          "qualities": [
+            "heavy",
+            "still"
+          ],
+          "intensity": 5,
+          "provenance": [
+            {
+              "interaction_instance_id": "RI-B-011",
+              "family_code": "BTM",
+              "bank_item_id": "BTM-201",
+              "bank_item_version": "3.0.0",
+              "response_ids": [
+                "RR-B-011-map"
+              ],
+              "signal_class": "direct",
+              "capture_mode": "map",
+              "user_certainty": 0.8,
+              "session_id": "SES-B",
+              "sequence": 6,
+              "presented_option_ids": [
+                "OPT-BTM-201-A"
+              ]
+            }
+          ]
+        }
+      ],
+      "breath_changes": [
+        {
+          "field": "breath",
+          "value": "hard to notice rather than fast",
+          "provenance": {
+            "interaction_instance_id": "RI-B-011",
+            "family_code": "BTM",
+            "bank_item_id": "BTM-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-011-map"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "map",
+            "user_certainty": 0.75,
+            "session_id": "SES-B",
+            "sequence": 6,
+            "presented_option_ids": [
+              "OPT-BTM-201-A"
+            ]
+          }
+        }
+      ],
+      "voice_changes": [
+        {
+          "field": "speech_access",
+          "value": "fewer words were available for the message",
+          "provenance": {
+            "interaction_instance_id": "RI-B-006",
+            "family_code": "FSR",
+            "bank_item_id": "FSR-202",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-006-first"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "rank",
+            "user_certainty": 0.8,
+            "session_id": "SES-B",
+            "sequence": 5,
+            "presented_option_ids": [
+              "OPT-FSR-202-A"
+            ]
+          }
+        }
+      ],
+      "movement_changes": [
+        {
+          "field": "movement",
+          "value": "hands became still and the phone was put away",
+          "provenance": {
+            "interaction_instance_id": "RI-B-011",
+            "family_code": "BTM",
+            "bank_item_id": "BTM-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-011-map"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "map",
+            "user_certainty": 0.8,
+            "session_id": "SES-B",
+            "sequence": 6,
+            "presented_option_ids": [
+              "OPT-BTM-201-A"
+            ]
+          }
+        }
+      ],
+      "orientation_changes": [
+        {
+          "field": "attention",
+          "value": "attention shifted to a practical task and away from the relationship cue",
+          "provenance": {
+            "interaction_instance_id": "RI-B-005",
+            "family_code": "BDA",
+            "bank_item_id": "BDA-206",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-005-sequence"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.85,
+            "session_id": "SES-B",
+            "sequence": 7,
+            "presented_option_ids": [
+              "OPT-BDA-206-A"
+            ]
+          }
+        }
+      ],
+      "internal_experience": [
+        {
+          "text": "Give them room before they decide I am too much.",
+          "language_mode": "words",
+          "quote_eligible": true,
+          "quote_basis": "typed",
+          "provenance": {
+            "interaction_instance_id": "RI-B-008",
+            "family_code": "VFR",
+            "bank_item_id": "VFR-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-008-typed"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "typed",
+            "user_certainty": 0.95,
+            "session_id": "SES-B",
+            "sequence": 8,
+            "presented_option_ids": [
+              "OPT-VFR-201-A"
+            ]
+          }
+        }
+      ],
+      "first_impulse": {
+        "field": "first_impulse",
+        "value": "reduce the request and avoid adding contact",
+        "provenance": {
+          "interaction_instance_id": "RI-B-003",
+          "family_code": "MS",
+          "bank_item_id": "MS-101",
+          "bank_item_version": "1.0",
+          "response_ids": [
+            "RR-B-003-impulse"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "selected_option",
+          "user_certainty": 0.85,
+          "session_id": "SES-B",
+          "sequence": 4,
+          "presented_option_ids": [
+            "OPT-MS-101-A"
+          ]
+        }
+      },
+      "actual_first_action": {
+        "field": "actual_first_action",
+        "value": "sent no follow-up, put the phone away, and prepared to handle the issue alone",
+        "provenance": {
+          "interaction_instance_id": "RI-B-003",
+          "family_code": "MS",
+          "bank_item_id": "MS-101",
+          "bank_item_version": "1.0",
+          "response_ids": [
+            "RR-B-003-action"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "selected_option",
+          "user_certainty": 0.9,
+          "session_id": "SES-B",
+          "sequence": 4,
+          "presented_option_ids": [
+            "OPT-MS-101-A"
+          ]
+        }
+      },
+      "short_term_payoff": [
+        {
+          "field": "short_term_payoff",
+          "value": "preserved space and reduced the chance of feeling demanding before another interaction occurred",
+          "provenance": {
+            "interaction_instance_id": "RI-B-009",
+            "family_code": "BSP",
+            "bank_item_id": "BSP-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-009-function"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.9,
+            "session_id": "SES-B",
+            "sequence": 9,
+            "presented_option_ids": [
+              "OPT-BSP-201-A"
+            ]
+          }
+        }
+      ],
+      "stopping_condition": [
+        {
+          "field": "stopping_condition",
+          "value": "the task was handled independently or Mika later reopened contact",
+          "provenance": {
+            "interaction_instance_id": "RI-B-005",
+            "family_code": "BDA",
+            "bank_item_id": "BDA-206",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-005-stop"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.8,
+            "session_id": "SES-B",
+            "sequence": 7,
+            "presented_option_ids": [
+              "OPT-BDA-206-A"
+            ]
+          }
+        }
+      ],
+      "costs": {
+        "internal": [
+          {
+            "field": "internal_cost",
+            "value": "the need became harder to identify after shifting into task mode",
+            "provenance": {
+              "interaction_instance_id": "RI-B-005",
+              "family_code": "BDA",
+              "bank_item_id": "BDA-206",
+              "bank_item_version": "3.0.0",
+              "response_ids": [
+                "RR-B-005-cost"
+              ],
+              "signal_class": "direct",
+              "capture_mode": "selected_option",
+              "user_certainty": 0.8,
+              "session_id": "SES-B",
+              "sequence": 7,
+              "presented_option_ids": [
+                "OPT-BDA-206-A"
+              ]
+            }
+          }
+        ],
+        "relational": [
+          {
+            "field": "relational_cost",
+            "value": "Mika had no direct signal that support was still wanted",
+            "provenance": {
+              "interaction_instance_id": "RI-B-005",
+              "family_code": "BDA",
+              "bank_item_id": "BDA-206",
+              "bank_item_version": "3.0.0",
+              "response_ids": [
+                "RR-B-005-cost"
+              ],
+              "signal_class": "direct",
+              "capture_mode": "selected_option",
+              "user_certainty": 0.8,
+              "session_id": "SES-B",
+              "sequence": 7,
+              "presented_option_ids": [
+                "OPT-BDA-206-A"
+              ]
+            }
+          }
+        ],
+        "functional": []
+      },
+      "residue_duration": {
+        "field": "residue_duration",
+        "value": "several hours",
+        "provenance": {
+          "interaction_instance_id": "RI-B-005",
+          "family_code": "BDA",
+          "bank_item_id": "BDA-206",
+          "bank_item_version": "3.0.0",
+          "response_ids": [
+            "RR-B-005-residue"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "selected_option",
+          "user_certainty": 0.8,
+          "session_id": "SES-B",
+          "sequence": 7,
+          "presented_option_ids": [
+            "OPT-BDA-206-A"
+          ]
+        }
+      },
+      "user_certainty": 0.84,
+      "source_response_ids": [
+        "RR-B-003-trigger",
+        "RR-B-003-action",
+        "RR-B-003-impulse",
+        "RR-B-005-sequence",
+        "RR-B-005-stop",
+        "RR-B-005-cost",
+        "RR-B-005-residue",
+        "RR-B-006-first",
+        "RR-B-011-map",
+        "RR-B-008-typed",
+        "RR-B-009-function"
+      ],
+      "provenance": [
+        {
+          "interaction_instance_id": "RI-B-003",
+          "family_code": "MS",
+          "bank_item_id": "MS-101",
+          "bank_item_version": "1.0",
+          "response_ids": [
+            "RR-B-003-trigger",
+            "RR-B-003-action"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "selected_option",
+          "user_certainty": 0.9,
+          "session_id": "SES-B",
+          "sequence": 4,
+          "presented_option_ids": [
+            "OPT-MS-101-A"
+          ]
+        },
+        {
+          "interaction_instance_id": "RI-B-011",
+          "family_code": "BTM",
+          "bank_item_id": "BTM-201",
+          "bank_item_version": "3.0.0",
+          "response_ids": [
+            "RR-B-011-map"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "map",
+          "user_certainty": 0.8,
+          "session_id": "SES-B",
+          "sequence": 6,
+          "presented_option_ids": [
+            "OPT-BTM-201-A"
+          ]
+        }
+      ],
+      "confidence": {
+        "grade": "medium",
+        "evidence_grades": [
+          "direct_single",
+          "user_confirmed"
+        ],
+        "rationale": "The episode has direct timing, function, and multichannel evidence and is later fit-confirmed.",
+        "source_evidence_ids": [
+          "EP-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "limits": [
+          "Mika's mixed availability remains an important context qualifier."
+        ]
+      },
+      "contradiction_ids": [],
+      "window_id": "WIN-B-RECENT"
+    },
+    {
+      "episode_id": "EP-B-02",
+      "referent_id": "REF-B-FRIEND",
+      "relationship_context": {
+        "referent_id": "REF-B-FRIEND",
+        "user_label": "Mika",
+        "relationship_type": "partner_or_closest",
+        "current_relevance": "current",
+        "safety": "generally_safe",
+        "reliability": "mixed",
+        "certainty": 0.85,
+        "notes": "Fictional closest person who is a close friend; care is present, but reply timing and availability vary.",
+        "provenance": [
+          {
+            "interaction_instance_id": "RI-B-000",
+            "family_code": "RL",
+            "bank_item_id": "RL-101",
+            "bank_item_version": "1.0",
+            "response_ids": [
+              "RR-B-000-referent"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.95,
+            "session_id": "SES-B",
+            "sequence": 1,
+            "presented_option_ids": [
+              "OPT-RL-101-A"
+            ]
+          },
+          {
+            "interaction_instance_id": "RI-B-002",
+            "family_code": "RL",
+            "bank_item_id": "RL-102",
+            "bank_item_version": "1.0",
+            "response_ids": [
+              "RR-B-002-context"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.85,
+            "session_id": "SES-B",
+            "sequence": 2,
+            "presented_option_ids": [
+              "OPT-RL-102-A"
+            ]
+          }
+        ]
+      },
+      "life_domain": "asking a close friend for practical help",
+      "trigger": {
+        "field": "trigger",
+        "value": "a practical problem made help from Mika useful, but the request had not yet been sent",
+        "provenance": {
+          "interaction_instance_id": "RI-B-010",
+          "family_code": "MS",
+          "bank_item_id": "MS-106",
+          "bank_item_version": "1.0",
+          "response_ids": [
+            "RR-B-010-trigger"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "selected_option",
+          "user_certainty": 0.85,
+          "session_id": "SES-B",
+          "sequence": 10,
+          "presented_option_ids": [
+            "OPT-MS-106-A"
+          ]
+        }
+      },
+      "recent_window": "last two months",
+      "recency": "one month ago",
+      "typicality": 0.75,
+      "frequency": "repeated in support requests",
+      "intensity": 4,
+      "time_horizon": "anticipatory",
+      "first_noticed_signal": {
+        "field": "first_signal",
+        "value": "throat and chest became quiet while wording the request",
+        "provenance": {
+          "interaction_instance_id": "RI-B-011",
+          "family_code": "BTM",
+          "bank_item_id": "BTM-201",
+          "bank_item_version": "3.0.0",
+          "response_ids": [
+            "RR-B-011-map"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "map",
+          "user_certainty": 0.75,
+          "session_id": "SES-B",
+          "sequence": 6,
+          "presented_option_ids": [
+            "OPT-BTM-201-A"
+          ]
+        }
+      },
+      "body_deactivation_map": [
+        {
+          "region": "throat",
+          "side_or_surface": "front",
+          "direction": "quieter",
+          "qualities": [
+            "words unavailable",
+            "far away"
+          ],
+          "intensity": 4,
+          "provenance": [
+            {
+              "interaction_instance_id": "RI-B-011",
+              "family_code": "BTM",
+              "bank_item_id": "BTM-201",
+              "bank_item_version": "3.0.0",
+              "response_ids": [
+                "RR-B-011-map"
+              ],
+              "signal_class": "direct",
+              "capture_mode": "map",
+              "user_certainty": 0.75,
+              "session_id": "SES-B",
+              "sequence": 6,
+              "presented_option_ids": [
+                "OPT-BTM-201-A"
+              ]
+            }
+          ]
+        },
+        {
+          "region": "chest",
+          "side_or_surface": "front",
+          "direction": "quieter",
+          "qualities": [
+            "heavy",
+            "hollow"
+          ],
+          "intensity": 4,
+          "provenance": [
+            {
+              "interaction_instance_id": "RI-B-011",
+              "family_code": "BTM",
+              "bank_item_id": "BTM-201",
+              "bank_item_version": "3.0.0",
+              "response_ids": [
+                "RR-B-011-map"
+              ],
+              "signal_class": "direct",
+              "capture_mode": "map",
+              "user_certainty": 0.75,
+              "session_id": "SES-B",
+              "sequence": 6,
+              "presented_option_ids": [
+                "OPT-BTM-201-A"
+              ]
+            }
+          ]
+        }
+      ],
+      "voice_changes": [
+        {
+          "field": "speech_access",
+          "value": "the request was shortened until the actual need disappeared",
+          "provenance": {
+            "interaction_instance_id": "RI-B-010",
+            "family_code": "MS",
+            "bank_item_id": "MS-106",
+            "bank_item_version": "1.0",
+            "response_ids": [
+              "RR-B-010-action"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.85,
+            "session_id": "SES-B",
+            "sequence": 10,
+            "presented_option_ids": [
+              "OPT-MS-106-A"
+            ]
+          }
+        }
+      ],
+      "movement_changes": [
+        {
+          "field": "movement",
+          "value": "became still and returned to the task",
+          "provenance": {
+            "interaction_instance_id": "RI-B-011",
+            "family_code": "BTM",
+            "bank_item_id": "BTM-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-011-map"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "map",
+            "user_certainty": 0.75,
+            "session_id": "SES-B",
+            "sequence": 6,
+            "presented_option_ids": [
+              "OPT-BTM-201-A"
+            ]
+          }
+        }
+      ],
+      "orientation_changes": [
+        {
+          "field": "attention",
+          "value": "narrowed to solving the practical problem alone",
+          "provenance": {
+            "interaction_instance_id": "RI-B-010",
+            "family_code": "MS",
+            "bank_item_id": "MS-106",
+            "bank_item_version": "1.0",
+            "response_ids": [
+              "RR-B-010-action"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.85,
+            "session_id": "SES-B",
+            "sequence": 10,
+            "presented_option_ids": [
+              "OPT-MS-106-A"
+            ]
+          }
+        }
+      ],
+      "first_impulse": {
+        "field": "first_impulse",
+        "value": "make the request smaller and easier to decline",
+        "provenance": {
+          "interaction_instance_id": "RI-B-010",
+          "family_code": "MS",
+          "bank_item_id": "MS-106",
+          "bank_item_version": "1.0",
+          "response_ids": [
+            "RR-B-010-impulse"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "selected_option",
+          "user_certainty": 0.85,
+          "session_id": "SES-B",
+          "sequence": 10,
+          "presented_option_ids": [
+            "OPT-MS-106-A"
+          ]
+        }
+      },
+      "actual_first_action": {
+        "field": "actual_first_action",
+        "value": "rewrote the request, then handled the problem alone",
+        "provenance": {
+          "interaction_instance_id": "RI-B-010",
+          "family_code": "MS",
+          "bank_item_id": "MS-106",
+          "bank_item_version": "1.0",
+          "response_ids": [
+            "RR-B-010-action"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "selected_option",
+          "user_certainty": 0.9,
+          "session_id": "SES-B",
+          "sequence": 10,
+          "presented_option_ids": [
+            "OPT-MS-106-A"
+          ]
+        }
+      },
+      "short_term_payoff": [
+        {
+          "field": "short_term_payoff",
+          "value": "prevented an open-ended obligation or a response that felt too attentive",
+          "provenance": {
+            "interaction_instance_id": "RI-B-009",
+            "family_code": "BSP",
+            "bank_item_id": "BSP-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-009-fear"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.85,
+            "session_id": "SES-B",
+            "sequence": 9,
+            "presented_option_ids": [
+              "OPT-BSP-201-A"
+            ]
+          }
+        }
+      ],
+      "costs": {
+        "internal": [
+          {
+            "field": "internal_cost",
+            "value": "the need stayed unspoken",
+            "provenance": {
+              "interaction_instance_id": "RI-B-010",
+              "family_code": "MS",
+              "bank_item_id": "MS-106",
+              "bank_item_version": "1.0",
+              "response_ids": [
+                "RR-B-010-cost"
+              ],
+              "signal_class": "direct",
+              "capture_mode": "selected_option",
+              "user_certainty": 0.8,
+              "session_id": "SES-B",
+              "sequence": 10,
+              "presented_option_ids": [
+                "OPT-MS-106-A"
+              ]
+            }
+          }
+        ],
+        "relational": [
+          {
+            "field": "relational_cost",
+            "value": "the friend had no opportunity to respond to the actual request",
+            "provenance": {
+              "interaction_instance_id": "RI-B-010",
+              "family_code": "MS",
+              "bank_item_id": "MS-106",
+              "bank_item_version": "1.0",
+              "response_ids": [
+                "RR-B-010-cost"
+              ],
+              "signal_class": "direct",
+              "capture_mode": "selected_option",
+              "user_certainty": 0.8,
+              "session_id": "SES-B",
+              "sequence": 10,
+              "presented_option_ids": [
+                "OPT-MS-106-A"
+              ]
+            }
+          }
+        ],
+        "functional": [
+          {
+            "field": "functional_cost",
+            "value": "the task took longer without help",
+            "provenance": {
+              "interaction_instance_id": "RI-B-010",
+              "family_code": "MS",
+              "bank_item_id": "MS-106",
+              "bank_item_version": "1.0",
+              "response_ids": [
+                "RR-B-010-cost"
+              ],
+              "signal_class": "direct",
+              "capture_mode": "selected_option",
+              "user_certainty": 0.8,
+              "session_id": "SES-B",
+              "sequence": 10,
+              "presented_option_ids": [
+                "OPT-MS-106-A"
+              ]
+            }
+          }
+        ]
+      },
+      "residue_duration": {
+        "field": "residue_duration",
+        "value": "through the task, then eased",
+        "provenance": {
+          "interaction_instance_id": "RI-B-010",
+          "family_code": "MS",
+          "bank_item_id": "MS-106",
+          "bank_item_version": "1.0",
+          "response_ids": [
+            "RR-B-010-residue"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "selected_option",
+          "user_certainty": 0.8,
+          "session_id": "SES-B",
+          "sequence": 10,
+          "presented_option_ids": [
+            "OPT-MS-106-A"
+          ]
+        }
+      },
+      "repair_or_recovery_attempts": [
+        {
+          "field": "immediate_post_map_reset",
+          "value": "felt the supported surface for a minute; a few more words became available while chest heaviness remained",
+          "provenance": {
+            "interaction_instance_id": "RI-B-011-RSR",
+            "family_code": "RSR",
+            "bank_item_id": "RSR-003",
+            "bank_item_version": "v3.0",
+            "response_ids": [
+              "RR-B-011-reset-postmap"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.75,
+            "session_id": "SES-B",
+            "sequence": 11,
+            "presented_option_ids": [
+              "OPT-RSR-003-A"
+            ]
+          }
+        }
+      ],
+      "user_certainty": 0.82,
+      "source_response_ids": [
+        "RR-B-010-trigger",
+        "RR-B-010-action",
+        "RR-B-010-impulse",
+        "RR-B-010-cost",
+        "RR-B-010-residue",
+        "RR-B-011-map",
+        "RR-B-011-reset-postmap",
+        "RR-B-009-fear"
+      ],
+      "provenance": [
+        {
+          "interaction_instance_id": "RI-B-010",
+          "family_code": "MS",
+          "bank_item_id": "MS-106",
+          "bank_item_version": "1.0",
+          "response_ids": [
+            "RR-B-010-trigger",
+            "RR-B-010-action"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "selected_option",
+          "user_certainty": 0.9,
+          "session_id": "SES-B",
+          "sequence": 10,
+          "presented_option_ids": [
+            "OPT-MS-106-A"
+          ]
+        },
+        {
+          "interaction_instance_id": "RI-B-011",
+          "family_code": "BTM",
+          "bank_item_id": "BTM-201",
+          "bank_item_version": "3.0.0",
+          "response_ids": [
+            "RR-B-011-map"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "map",
+          "user_certainty": 0.75,
+          "session_id": "SES-B",
+          "sequence": 6,
+          "presented_option_ids": [
+            "OPT-BTM-201-A"
+          ]
+        },
+        {
+          "interaction_instance_id": "RI-B-011-RSR",
+          "family_code": "RSR",
+          "bank_item_id": "RSR-003",
+          "bank_item_version": "v3.0",
+          "response_ids": [
+            "RR-B-011-reset-postmap"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "selected_option",
+          "user_certainty": 0.75,
+          "session_id": "SES-B",
+          "sequence": 11,
+          "presented_option_ids": [
+            "OPT-RSR-003-A"
+          ]
+        }
+      ],
+      "confidence": {
+        "grade": "medium",
+        "evidence_grades": [
+          "direct_single"
+        ],
+        "rationale": "A second independent anticipatory episode replicates the function, withdrawal action, and low-access body pattern; the immediate post-map reset supplies one bounded current-effect observation without establishing a stable channel.",
+        "source_evidence_ids": [
+          "EP-B-02"
+        ],
+        "open_contradiction_ids": [],
+        "limits": [
+          "A volunteered sleep change may have contributed to heaviness in this episode."
+        ]
+      },
+      "contradiction_ids": [],
+      "window_id": "WIN-B-RECENT"
+    },
+    {
+      "episode_id": "EP-B-03",
+      "referent_id": "REF-B-SAFE",
+      "relationship_context": {
+        "referent_id": "REF-B-SAFE",
+        "user_label": "Sam",
+        "relationship_type": "reliably_safe_person",
+        "current_relevance": "current",
+        "safety": "generally_safe",
+        "reliability": "predictable_reciprocal",
+        "certainty": 0.9,
+        "notes": "Fictional comparison person; practical requests are answered clearly.",
+        "provenance": [
+          {
+            "interaction_instance_id": "RI-B-012",
+            "family_code": "RL",
+            "bank_item_id": "RL-003",
+            "bank_item_version": "v3.0",
+            "response_ids": [
+              "RR-B-012-safe"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.9,
+            "session_id": "SES-B",
+            "sequence": 3,
+            "presented_option_ids": [
+              "OPT-RL-003-A"
+            ]
+          }
+        ]
+      },
+      "life_domain": "clear practical help with a safer comparison person",
+      "trigger": {
+        "field": "trigger",
+        "value": "a bounded practical request with a clear yes-or-no answer",
+        "provenance": {
+          "interaction_instance_id": "RI-B-013",
+          "family_code": "SEF",
+          "bank_item_id": "SEF-113",
+          "bank_item_version": "1.0",
+          "response_ids": [
+            "RR-B-013-resource"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "selected_option",
+          "user_certainty": 0.9,
+          "session_id": "SES-B",
+          "sequence": 12,
+          "presented_option_ids": [
+            "OPT-SEF-113-A"
+          ]
+        }
+      },
+      "recent_window": "last two months",
+      "recency": "last week",
+      "typicality": 0.8,
+      "frequency": "more than once with Sam",
+      "intensity": 2,
+      "time_horizon": "immediate",
+      "actual_first_action": {
+        "field": "actual_first_action",
+        "value": "asked directly and kept the request at its actual size",
+        "provenance": {
+          "interaction_instance_id": "RI-B-013",
+          "family_code": "SEF",
+          "bank_item_id": "SEF-113",
+          "bank_item_version": "1.0",
+          "response_ids": [
+            "RR-B-013-resource"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "selected_option",
+          "user_certainty": 0.9,
+          "session_id": "SES-B",
+          "sequence": 12,
+          "presented_option_ids": [
+            "OPT-SEF-113-A"
+          ]
+        }
+      },
+      "short_term_payoff": [
+        {
+          "field": "resource_payoff",
+          "value": "clarity made both asking and receiving an answer workable",
+          "provenance": {
+            "interaction_instance_id": "RI-B-013",
+            "family_code": "SEF",
+            "bank_item_id": "SEF-113",
+            "bank_item_version": "1.0",
+            "response_ids": [
+              "RR-B-013-resource"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.9,
+            "session_id": "SES-B",
+            "sequence": 12,
+            "presented_option_ids": [
+              "OPT-SEF-113-A"
+            ]
+          }
+        }
+      ],
+      "user_certainty": 0.9,
+      "source_response_ids": [
+        "RR-B-013-resource"
+      ],
+      "provenance": [
+        {
+          "interaction_instance_id": "RI-B-013",
+          "family_code": "SEF",
+          "bank_item_id": "SEF-113",
+          "bank_item_version": "1.0",
+          "response_ids": [
+            "RR-B-013-resource"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "selected_option",
+          "user_certainty": 0.9,
+          "session_id": "SES-B",
+          "sequence": 12,
+          "presented_option_ids": [
+            "OPT-SEF-113-A"
+          ]
+        }
+      ],
+      "confidence": {
+        "grade": "medium",
+        "evidence_grades": [
+          "direct_single",
+          "cross_context"
+        ],
+        "rationale": "A concrete comparison episode establishes a context boundary, not a global trait.",
+        "source_evidence_ids": [
+          "EP-B-03"
+        ],
+        "open_contradiction_ids": []
+      },
+      "contradiction_ids": [
+        "CX-B-01"
+      ],
+      "window_id": "WIN-B-RECENT"
+    }
+  ],
+  "part_profiles": [
+    {
+      "part_id": "PT-B-01",
+      "status": "confirmed_part",
+      "user_label": "the room-maker",
+      "role_class": "manager",
+      "voice_mode": [
+        "words",
+        "felt_rule"
+      ],
+      "voice_samples": [
+        {
+          "text": "Give them room before they decide I am too much.",
+          "language_mode": "words",
+          "quote_eligible": true,
+          "quote_basis": "typed",
+          "provenance": {
+            "interaction_instance_id": "RI-B-008",
+            "family_code": "VFR",
+            "bank_item_id": "VFR-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-008-typed"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "typed",
+            "user_certainty": 0.95,
+            "session_id": "SES-B",
+            "sequence": 8,
+            "presented_option_ids": [
+              "OPT-VFR-201-A"
+            ]
+          }
+        }
+      ],
+      "trigger_signatures": [
+        {
+          "field": "trigger_signature",
+          "value": "anticipated need, dependence, or added contact when another person's availability is uncertain",
+          "provenance": {
+            "interaction_instance_id": "RI-B-014",
+            "family_code": "FCF",
+            "bank_item_id": "FCF-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-014-fit"
+            ],
+            "signal_class": "confirmatory",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.95,
+            "session_id": "SES-B",
+            "sequence": 13,
+            "presented_option_ids": [
+              "OPT-FCF-201-A"
+            ]
+          }
+        }
+      ],
+      "referent_ids": [
+        "REF-B-FRIEND"
+      ],
+      "life_domains": [
+        "friendship messaging",
+        "asking a close friend for practical help"
+      ],
+      "time_horizons": [
+        "anticipatory"
+      ],
+      "feared_outcomes": [
+        {
+          "field": "feared_outcome",
+          "value": "a direct need could change the balance, create an obligation, or bring more attention than feels manageable",
+          "provenance": {
+            "interaction_instance_id": "RI-B-009",
+            "family_code": "BSP",
+            "bank_item_id": "BSP-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-009-fear"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.85,
+            "session_id": "SES-B",
+            "sequence": 9,
+            "presented_option_ids": [
+              "OPT-BSP-201-A"
+            ]
+          }
+        }
+      ],
+      "protected_feelings_or_vulnerabilities": [
+        {
+          "field": "present_focused_vulnerability",
+          "value": "the exposed or constrained feeling attached to needing an uncertain response",
+          "provenance": {
+            "interaction_instance_id": "RI-B-009",
+            "family_code": "BSP",
+            "bank_item_id": "BSP-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-009-fear"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.85,
+            "session_id": "SES-B",
+            "sequence": 9,
+            "presented_option_ids": [
+              "OPT-BSP-201-A"
+            ]
+          }
+        }
+      ],
+      "body_signature": [
+        {
+          "region": "chest",
+          "side_or_surface": "front",
+          "direction": "quieter",
+          "qualities": [
+            "heavy",
+            "hollow"
+          ],
+          "intensity": 4.5,
+          "provenance": [
+            {
+              "interaction_instance_id": "RI-B-011",
+              "family_code": "BTM",
+              "bank_item_id": "BTM-201",
+              "bank_item_version": "3.0.0",
+              "response_ids": [
+                "RR-B-011-map"
+              ],
+              "signal_class": "confirmatory",
+              "capture_mode": "map",
+              "user_certainty": 0.8,
+              "session_id": "SES-B",
+              "sequence": 6,
+              "presented_option_ids": [
+                "OPT-BTM-201-A"
+              ]
+            }
+          ]
+        },
+        {
+          "region": "arms and hands",
+          "side_or_surface": "both",
+          "direction": "quieter",
+          "qualities": [
+            "heavy",
+            "still"
+          ],
+          "intensity": 4.5,
+          "provenance": [
+            {
+              "interaction_instance_id": "RI-B-011",
+              "family_code": "BTM",
+              "bank_item_id": "BTM-201",
+              "bank_item_version": "3.0.0",
+              "response_ids": [
+                "RR-B-011-map"
+              ],
+              "signal_class": "confirmatory",
+              "capture_mode": "map",
+              "user_certainty": 0.8,
+              "session_id": "SES-B",
+              "sequence": 6,
+              "presented_option_ids": [
+                "OPT-BTM-201-A"
+              ]
+            }
+          ]
+        }
+      ],
+      "strategy_sequence": [
+        {
+          "field": "strategy",
+          "value": "reduce the request, make no second bid, shift to tasks, and handle the need alone",
+          "provenance": {
+            "interaction_instance_id": "RI-B-014",
+            "family_code": "FCF",
+            "bank_item_id": "FCF-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-014-fit"
+            ],
+            "signal_class": "confirmatory",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.95,
+            "session_id": "SES-B",
+            "sequence": 13,
+            "presented_option_ids": [
+              "OPT-FCF-201-A"
+            ]
+          }
+        }
+      ],
+      "stopping_rules": [
+        {
+          "field": "stopping_rule",
+          "value": "the issue is handled without dependence or the other person reopens contact clearly",
+          "provenance": {
+            "interaction_instance_id": "RI-B-014",
+            "family_code": "FCF",
+            "bank_item_id": "FCF-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-014-fit"
+            ],
+            "signal_class": "confirmatory",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.9,
+            "session_id": "SES-B",
+            "sequence": 13,
+            "presented_option_ids": [
+              "OPT-FCF-201-A"
+            ]
+          }
+        }
+      ],
+      "short_term_payoff": [
+        {
+          "field": "payoff",
+          "value": "prevents a feared imbalance before the next relational exchange",
+          "provenance": {
+            "interaction_instance_id": "RI-B-009",
+            "family_code": "BSP",
+            "bank_item_id": "BSP-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-009-function"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.9,
+            "session_id": "SES-B",
+            "sequence": 9,
+            "presented_option_ids": [
+              "OPT-BSP-201-A"
+            ]
+          }
+        }
+      ],
+      "costs": {
+        "internal": [
+          {
+            "field": "internal_cost",
+            "value": "need becomes less accessible",
+            "provenance": {
+              "interaction_instance_id": "RI-B-014",
+              "family_code": "FCF",
+              "bank_item_id": "FCF-201",
+              "bank_item_version": "3.0.0",
+              "response_ids": [
+                "RR-B-014-fit"
+              ],
+              "signal_class": "confirmatory",
+              "capture_mode": "explicit_confirmation",
+              "user_certainty": 0.9,
+              "session_id": "SES-B",
+              "sequence": 13,
+              "presented_option_ids": [
+                "OPT-FCF-201-A"
+              ]
+            }
+          }
+        ],
+        "relational": [
+          {
+            "field": "relational_cost",
+            "value": "the other person does not see the actual request",
+            "provenance": {
+              "interaction_instance_id": "RI-B-014",
+              "family_code": "FCF",
+              "bank_item_id": "FCF-201",
+              "bank_item_version": "3.0.0",
+              "response_ids": [
+                "RR-B-014-fit"
+              ],
+              "signal_class": "confirmatory",
+              "capture_mode": "explicit_confirmation",
+              "user_certainty": 0.9,
+              "session_id": "SES-B",
+              "sequence": 13,
+              "presented_option_ids": [
+                "OPT-FCF-201-A"
+              ]
+            }
+          }
+        ],
+        "functional": [
+          {
+            "field": "functional_cost",
+            "value": "tasks can take longer without available help",
+            "provenance": {
+              "interaction_instance_id": "RI-B-010",
+              "family_code": "MS",
+              "bank_item_id": "MS-106",
+              "bank_item_version": "1.0",
+              "response_ids": [
+                "RR-B-010-cost"
+              ],
+              "signal_class": "direct",
+              "capture_mode": "selected_option",
+              "user_certainty": 0.8,
+              "session_id": "SES-B",
+              "sequence": 10,
+              "presented_option_ids": [
+                "OPT-MS-106-A"
+              ]
+            }
+          }
+        ]
+      },
+      "self_capacity_access": [
+        {
+          "field": "available_choice",
+          "value": "with a predictable person and a bounded request, direct asking remains available",
+          "provenance": {
+            "interaction_instance_id": "RI-B-013",
+            "family_code": "SEF",
+            "bank_item_id": "SEF-113",
+            "bank_item_version": "1.0",
+            "response_ids": [
+              "RR-B-013-resource"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.9,
+            "session_id": "SES-B",
+            "sequence": 12,
+            "presented_option_ids": [
+              "OPT-SEF-113-A"
+            ]
+          }
+        }
+      ],
+      "blending_conditions": [
+        {
+          "field": "reduced_blending_condition",
+          "value": "clear request scope, predictable response, and permission to hear no",
+          "provenance": {
+            "interaction_instance_id": "RI-B-013",
+            "family_code": "SEF",
+            "bank_item_id": "SEF-113",
+            "bank_item_version": "1.0",
+            "response_ids": [
+              "RR-B-013-resource"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.9,
+            "session_id": "SES-B",
+            "sequence": 12,
+            "presented_option_ids": [
+              "OPT-SEF-113-A"
+            ]
+          }
+        }
+      ],
+      "supporting_episode_ids": [
+        "EP-B-01",
+        "EP-B-02"
+      ],
+      "identity_confirmation": {
+        "status": "confirmed",
+        "source_response_ids": [
+          "RR-B-012-identity",
+          "RR-B-014-fit"
+        ],
+        "provenance": [
+          {
+            "interaction_instance_id": "RI-B-012-PIS",
+            "family_code": "PIS",
+            "bank_item_id": "PIS-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-012-identity"
+            ],
+            "signal_class": "confirmatory",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.95,
+            "session_id": "SES-B",
+            "sequence": 14,
+            "presented_option_ids": [
+              "OPT-PIS-201-A"
+            ]
+          }
+        ]
+      },
+      "confidence": {
+        "grade": "high",
+        "evidence_grades": [
+          "replicated",
+          "user_confirmed"
+        ],
+        "rationale": "Two independent anticipatory episodes share function, action, and body direction, and identity was explicitly confirmed.",
+        "source_evidence_ids": [
+          "EP-B-01",
+          "EP-B-02",
+          "PT-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "limits": [
+          "This does not establish how the pattern first formed.",
+          "A sleep confound limits one body map."
+        ]
+      },
+      "contradiction_ids": []
+    }
+  ],
+  "state_signatures": [
+    {
+      "state_id": "ST-B-01",
+      "descriptive_name": "heavy, word-reducing low-access signature",
+      "classification": "shutdown",
+      "interpretive_limit": "self_reported_signature_not_physiological_measurement",
+      "supporting_episode_ids": [
+        "EP-B-01",
+        "EP-B-02"
+      ],
+      "body_regions": [
+        {
+          "region": "chest",
+          "side_or_surface": "front",
+          "direction": "quieter",
+          "qualities": [
+            "heavy",
+            "hollow"
+          ],
+          "intensity": 4.5,
+          "provenance": [
+            {
+              "interaction_instance_id": "RI-B-011",
+              "family_code": "BTM",
+              "bank_item_id": "BTM-201",
+              "bank_item_version": "3.0.0",
+              "response_ids": [
+                "RR-B-011-map"
+              ],
+              "signal_class": "confirmatory",
+              "capture_mode": "map",
+              "user_certainty": 0.8,
+              "session_id": "SES-B",
+              "sequence": 6,
+              "presented_option_ids": [
+                "OPT-BTM-201-A"
+              ]
+            }
+          ]
+        },
+        {
+          "region": "arms and hands",
+          "side_or_surface": "both",
+          "direction": "quieter",
+          "qualities": [
+            "heavy",
+            "still"
+          ],
+          "intensity": 4.5,
+          "provenance": [
+            {
+              "interaction_instance_id": "RI-B-011",
+              "family_code": "BTM",
+              "bank_item_id": "BTM-201",
+              "bank_item_version": "3.0.0",
+              "response_ids": [
+                "RR-B-011-map"
+              ],
+              "signal_class": "confirmatory",
+              "capture_mode": "map",
+              "user_certainty": 0.8,
+              "session_id": "SES-B",
+              "sequence": 6,
+              "presented_option_ids": [
+                "OPT-BTM-201-A"
+              ]
+            }
+          ]
+        }
+      ],
+      "energy_direction": [
+        "down"
+      ],
+      "sensation_qualities": [
+        {
+          "field": "quality",
+          "value": "heavy, hollow, still, and hard to locate",
+          "provenance": {
+            "interaction_instance_id": "RI-B-014",
+            "family_code": "FCF",
+            "bank_item_id": "FCF-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-014-fit"
+            ],
+            "signal_class": "confirmatory",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.85,
+            "session_id": "SES-B",
+            "sequence": 13,
+            "presented_option_ids": [
+              "OPT-FCF-201-A"
+            ]
+          }
+        }
+      ],
+      "first_signals": [
+        {
+          "field": "first_signal",
+          "value": "words reduce and chest heaviness appears",
+          "provenance": {
+            "interaction_instance_id": "RI-B-014",
+            "family_code": "FCF",
+            "bank_item_id": "FCF-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-014-fit"
+            ],
+            "signal_class": "confirmatory",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.85,
+            "session_id": "SES-B",
+            "sequence": 13,
+            "presented_option_ids": [
+              "OPT-FCF-201-A"
+            ]
+          }
+        }
+      ],
+      "onset_order": [
+        {
+          "field": "order",
+          "value": "words narrow, chest and arms grow heavy, then contact and help requests are reduced",
+          "provenance": {
+            "interaction_instance_id": "RI-B-014",
+            "family_code": "FCF",
+            "bank_item_id": "FCF-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-014-fit"
+            ],
+            "signal_class": "confirmatory",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.85,
+            "session_id": "SES-B",
+            "sequence": 13,
+            "presented_option_ids": [
+              "OPT-FCF-201-A"
+            ]
+          }
+        }
+      ],
+      "breath_heart_muscle_temperature": [
+        {
+          "field": "breath_muscle",
+          "value": "breath is hard to notice and the upper body becomes still",
+          "provenance": {
+            "interaction_instance_id": "RI-B-011",
+            "family_code": "BTM",
+            "bank_item_id": "BTM-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-011-map"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "map",
+            "user_certainty": 0.75,
+            "session_id": "SES-B",
+            "sequence": 6,
+            "presented_option_ids": [
+              "OPT-BTM-201-A"
+            ]
+          }
+        }
+      ],
+      "orientation_attention": [
+        {
+          "field": "attention",
+          "value": "attention narrows to a practical task and away from relational information",
+          "provenance": {
+            "interaction_instance_id": "RI-B-014",
+            "family_code": "FCF",
+            "bank_item_id": "FCF-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-014-fit"
+            ],
+            "signal_class": "confirmatory",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.85,
+            "session_id": "SES-B",
+            "sequence": 13,
+            "presented_option_ids": [
+              "OPT-FCF-201-A"
+            ]
+          }
+        }
+      ],
+      "movement_access": [
+        {
+          "field": "movement",
+          "value": "movement remains available for tasks but interpersonal initiation drops",
+          "provenance": {
+            "interaction_instance_id": "RI-B-014",
+            "family_code": "FCF",
+            "bank_item_id": "FCF-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-014-fit"
+            ],
+            "signal_class": "confirmatory",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.85,
+            "session_id": "SES-B",
+            "sequence": 13,
+            "presented_option_ids": [
+              "OPT-FCF-201-A"
+            ]
+          }
+        }
+      ],
+      "speech_access": [
+        {
+          "field": "speech",
+          "value": "fewer words are available for asking or explaining",
+          "provenance": {
+            "interaction_instance_id": "RI-B-006",
+            "family_code": "FSR",
+            "bank_item_id": "FSR-202",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-006-first"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "rank",
+            "user_certainty": 0.8,
+            "session_id": "SES-B",
+            "sequence": 5,
+            "presented_option_ids": [
+              "OPT-FSR-202-A"
+            ]
+          }
+        }
+      ],
+      "social_availability": [
+        {
+          "field": "social_availability",
+          "value": "practical functioning continues while relational availability narrows",
+          "provenance": {
+            "interaction_instance_id": "RI-B-014",
+            "family_code": "FCF",
+            "bank_item_id": "FCF-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-014-fit"
+            ],
+            "signal_class": "confirmatory",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.85,
+            "session_id": "SES-B",
+            "sequence": 13,
+            "presented_option_ids": [
+              "OPT-FCF-201-A"
+            ]
+          }
+        }
+      ],
+      "action_tendencies": [
+        {
+          "field": "action_tendency",
+          "value": "become still, reduce the request, and handle the issue alone",
+          "provenance": {
+            "interaction_instance_id": "RI-B-014",
+            "family_code": "FCF",
+            "bank_item_id": "FCF-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-014-fit"
+            ],
+            "signal_class": "confirmatory",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.9,
+            "session_id": "SES-B",
+            "sequence": 13,
+            "presented_option_ids": [
+              "OPT-FCF-201-A"
+            ]
+          }
+        }
+      ],
+      "entry_paths": [
+        {
+          "field": "entry",
+          "value": "anticipated dependence or added contact under uncertain availability",
+          "provenance": {
+            "interaction_instance_id": "RI-B-014",
+            "family_code": "FCF",
+            "bank_item_id": "FCF-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-014-fit"
+            ],
+            "signal_class": "confirmatory",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.9,
+            "session_id": "SES-B",
+            "sequence": 13,
+            "presented_option_ids": [
+              "OPT-FCF-201-A"
+            ]
+          }
+        }
+      ],
+      "exit_paths": [
+        {
+          "field": "exit",
+          "value": "task completion, clear bounded information, or a predictable response",
+          "provenance": {
+            "interaction_instance_id": "RI-B-013",
+            "family_code": "SEF",
+            "bank_item_id": "SEF-113",
+            "bank_item_version": "1.0",
+            "response_ids": [
+              "RR-B-013-resource"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.9,
+            "session_id": "SES-B",
+            "sequence": 12,
+            "presented_option_ids": [
+              "OPT-SEF-113-A"
+            ]
+          }
+        }
+      ],
+      "duration_and_residue": [
+        {
+          "field": "duration",
+          "value": "several hours or through the task",
+          "provenance": {
+            "interaction_instance_id": "RI-B-014",
+            "family_code": "FCF",
+            "bank_item_id": "FCF-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-014-fit"
+            ],
+            "signal_class": "confirmatory",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.8,
+            "session_id": "SES-B",
+            "sequence": 13,
+            "presented_option_ids": [
+              "OPT-FCF-201-A"
+            ]
+          }
+        }
+      ],
+      "effective_self_regulation": [
+        {
+          "field": "immediate_post_map_effect",
+          "value": "feeling the supported surface made a few more words available while chest heaviness remained; this is one current observation, not a stable regulation claim",
+          "provenance": {
+            "interaction_instance_id": "RI-B-011-RSR",
+            "family_code": "RSR",
+            "bank_item_id": "RSR-003",
+            "bank_item_version": "v3.0",
+            "response_ids": [
+              "RR-B-011-reset-postmap"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.75,
+            "session_id": "SES-B",
+            "sequence": 11,
+            "presented_option_ids": [
+              "OPT-RSR-003-A"
+            ]
+          }
+        },
+        {
+          "field": "self_regulation",
+          "value": "a bounded practical step supported return, while simply handling everything alone preserved function without restoring relational access",
+          "provenance": {
+            "interaction_instance_id": "RI-B-015",
+            "family_code": "RSR",
+            "bank_item_id": "RSR-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-015-resource"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.85,
+            "session_id": "SES-B",
+            "sequence": 15,
+            "presented_option_ids": [
+              "OPT-RSR-201-A"
+            ]
+          }
+        }
+      ],
+      "effective_co_regulation": [
+        {
+          "field": "co_regulation",
+          "value": "clear low-pressure yes-or-no responses with permission for space supported choice",
+          "provenance": {
+            "interaction_instance_id": "RI-B-013",
+            "family_code": "SEF",
+            "bank_item_id": "SEF-113",
+            "bank_item_version": "1.0",
+            "response_ids": [
+              "RR-B-013-resource"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.9,
+            "session_id": "SES-B",
+            "sequence": 12,
+            "presented_option_ids": [
+              "OPT-SEF-113-A"
+            ]
+          }
+        }
+      ],
+      "body_confounds": [
+        {
+          "field": "body_confound",
+          "value": "sleep change was present in EP-B-02 and may have affected heaviness",
+          "provenance": {
+            "interaction_instance_id": "RI-B-001",
+            "family_code": "RL",
+            "bank_item_id": "RL-105",
+            "bank_item_version": "1.0",
+            "response_ids": [
+              "RR-B-001-confound"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.8,
+            "session_id": "SES-B",
+            "sequence": 16,
+            "presented_option_ids": [
+              "OPT-RL-105-A"
+            ]
+          }
+        }
+      ],
+      "confidence": {
+        "grade": "medium",
+        "evidence_grades": [
+          "replicated",
+          "user_confirmed"
+        ],
+        "rationale": "After EP-B-01 and EP-B-02 were independently anchored, BTM-201 compared and mapped both episodes; the two episode-specific multichannel maps, an immediate post-map reset observation, and an exit path support a repeated low-access signature, while a sleep confound limits certainty. The reset observation does not establish a stable regulation channel.",
+        "source_evidence_ids": [
+          "EP-B-01",
+          "EP-B-02",
+          "ST-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "limits": [
+          "This is self-report, not physiological measurement.",
+          "Sleep change may have contributed to EP-B-02 heaviness."
+        ]
+      },
+      "contradiction_ids": []
+    }
+  ],
+  "attachment_patterns": [
+    {
+      "pattern_id": "AP-B-01",
+      "referent_id": "REF-B-FRIEND",
+      "relationship_context": {
+        "referent_id": "REF-B-FRIEND",
+        "user_label": "Mika",
+        "relationship_type": "partner_or_closest",
+        "current_relevance": "current",
+        "safety": "generally_safe",
+        "reliability": "mixed",
+        "certainty": 0.85,
+        "notes": "Fictional closest person who is a close friend; care is present, but reply timing and availability vary.",
+        "provenance": [
+          {
+            "interaction_instance_id": "RI-B-000",
+            "family_code": "RL",
+            "bank_item_id": "RL-101",
+            "bank_item_version": "1.0",
+            "response_ids": [
+              "RR-B-000-referent"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.95,
+            "session_id": "SES-B",
+            "sequence": 1,
+            "presented_option_ids": [
+              "OPT-RL-101-A"
+            ]
+          },
+          {
+            "interaction_instance_id": "RI-B-002",
+            "family_code": "RL",
+            "bank_item_id": "RL-102",
+            "bank_item_version": "1.0",
+            "response_ids": [
+              "RR-B-002-context"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.85,
+            "session_id": "SES-B",
+            "sequence": 2,
+            "presented_option_ids": [
+              "OPT-RL-102-A"
+            ]
+          }
+        ]
+      },
+      "scope_limit": "relationship_specific_unless_cross_context_evidence_is_present",
+      "anxiety_estimate": "underdetermined",
+      "avoidance_estimate": "moderate",
+      "ambiguity_cues": [
+        {
+          "field": "cue",
+          "value": "delayed response to a request or uncertain availability for help",
+          "provenance": {
+            "interaction_instance_id": "RI-B-014",
+            "family_code": "FCF",
+            "bank_item_id": "FCF-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-014-fit"
+            ],
+            "signal_class": "confirmatory",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.9,
+            "session_id": "SES-B",
+            "sequence": 13,
+            "presented_option_ids": [
+              "OPT-FCF-201-A"
+            ]
+          }
+        }
+      ],
+      "first_interpretations": [
+        {
+          "field": "first_interpretation",
+          "value": "another bid may feel demanding and could alter the balance of the friendship",
+          "provenance": {
+            "interaction_instance_id": "RI-B-004",
+            "family_code": "WMA",
+            "bank_item_id": "WMA-101",
+            "bank_item_version": "1.0",
+            "response_ids": [
+              "RR-B-004-meaning"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.8,
+            "session_id": "SES-B",
+            "sequence": 17,
+            "presented_option_ids": [
+              "OPT-WMA-101-A"
+            ]
+          }
+        }
+      ],
+      "working_model_self_evidence": [
+        {
+          "field": "self_meaning",
+          "value": "a direct need can feel like being too much or creating debt",
+          "provenance": {
+            "interaction_instance_id": "RI-B-009",
+            "family_code": "BSP",
+            "bank_item_id": "BSP-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-009-fear"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.85,
+            "session_id": "SES-B",
+            "sequence": 9,
+            "presented_option_ids": [
+              "OPT-BSP-201-A"
+            ]
+          }
+        }
+      ],
+      "working_model_other_evidence": [
+        {
+          "field": "other_meaning",
+          "value": "Mika may care but may not have predictable room for the request",
+          "provenance": {
+            "interaction_instance_id": "RI-B-004",
+            "family_code": "WMA",
+            "bank_item_id": "WMA-101",
+            "bank_item_version": "1.0",
+            "response_ids": [
+              "RR-B-004-meaning"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.8,
+            "session_id": "SES-B",
+            "sequence": 17,
+            "presented_option_ids": [
+              "OPT-WMA-101-A"
+            ]
+          },
+          "alternative_interpretations": [
+            "Mika's delay may be unrelated to the request."
+          ]
+        }
+      ],
+      "alternative_interpretation_reachability": [
+        {
+          "field": "alternative_reachability",
+          "value": "another explanation is cognitively available, but it does not make asking feel easier",
+          "provenance": {
+            "interaction_instance_id": "RI-B-004",
+            "family_code": "WMA",
+            "bank_item_id": "WMA-101",
+            "bank_item_version": "1.0",
+            "response_ids": [
+              "RR-B-004-alternative"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.8,
+            "session_id": "SES-B",
+            "sequence": 17,
+            "presented_option_ids": [
+              "OPT-WMA-101-A"
+            ]
+          }
+        }
+      ],
+      "deactivation_sequence": [
+        {
+          "field": "deactivation_sequence",
+          "value": "reduce the request, stop initiating, move to tasks, and handle the need alone",
+          "provenance": {
+            "interaction_instance_id": "RI-B-014",
+            "family_code": "FCF",
+            "bank_item_id": "FCF-201",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-014-fit"
+            ],
+            "signal_class": "confirmatory",
+            "capture_mode": "explicit_confirmation",
+            "user_certainty": 0.95,
+            "session_id": "SES-B",
+            "sequence": 13,
+            "presented_option_ids": [
+              "OPT-FCF-201-A"
+            ]
+          }
+        }
+      ],
+      "rupture_response": [
+        {
+          "field": "rupture_response",
+          "value": "no new bid is made while availability remains unclear",
+          "provenance": {
+            "interaction_instance_id": "RI-B-005",
+            "family_code": "BDA",
+            "bank_item_id": "BDA-206",
+            "bank_item_version": "3.0.0",
+            "response_ids": [
+              "RR-B-005-sequence"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.85,
+            "session_id": "SES-B",
+            "sequence": 7,
+            "presented_option_ids": [
+              "OPT-BDA-206-A"
+            ]
+          }
+        }
+      ],
+      "secure_exceptions": [
+        {
+          "field": "secure_exception",
+          "value": "with a predictable comparison person and a bounded request, direct asking remains available",
+          "provenance": {
+            "interaction_instance_id": "RI-B-013",
+            "family_code": "SEF",
+            "bank_item_id": "SEF-113",
+            "bank_item_version": "1.0",
+            "response_ids": [
+              "RR-B-013-resource"
+            ],
+            "signal_class": "direct",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.9,
+            "session_id": "SES-B",
+            "sequence": 12,
+            "presented_option_ids": [
+              "OPT-SEF-113-A"
+            ]
+          }
+        }
+      ],
+      "cross_relationship_comparisons": [
+        {
+          "field": "cross_relationship_difference",
+          "value": "withdrawal was present with Mika's mixed availability but not with Sam's predictable response context",
+          "provenance": {
+            "interaction_instance_id": "RI-B-013",
+            "family_code": "SEF",
+            "bank_item_id": "SEF-113",
+            "bank_item_version": "1.0",
+            "response_ids": [
+              "RR-B-013-resource"
+            ],
+            "signal_class": "confirmatory",
+            "capture_mode": "selected_option",
+            "user_certainty": 0.9,
+            "session_id": "SES-B",
+            "sequence": 12,
+            "presented_option_ids": [
+              "OPT-SEF-113-A"
+            ]
+          }
+        }
+      ],
+      "supporting_episode_ids": [
+        "EP-B-01",
+        "EP-B-02"
+      ],
+      "confidence": {
+        "grade": "medium",
+        "evidence_grades": [
+          "replicated",
+          "user_confirmed",
+          "cross_context"
+        ],
+        "rationale": "Two cues and a confirmed context comparison support a relationship-specific distancing sequence.",
+        "source_evidence_ids": [
+          "EP-B-01",
+          "EP-B-02",
+          "EP-B-03",
+          "AP-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "limits": [
+          "Anxiety is underdetermined because proximity-seeking and reassurance uptake were not adequately sampled.",
+          "Mika's mixed availability is part of the interpretation."
+        ]
+      },
+      "contradiction_ids": [
+        "CX-B-01"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_id": "CX-B-01",
+      "topic": "withdrawal versus direct asking across relationships",
+      "evidence_side_a": [
+        "EP-B-01",
+        "EP-B-02"
+      ],
+      "evidence_side_b": [
+        "EP-B-03"
+      ],
+      "source_response_ids": [
+        "RR-B-003-action",
+        "RR-B-010-action",
+        "RR-B-013-resource"
+      ],
+      "discriminator_dimensions": [
+        "person",
+        "safety_context"
+      ],
+      "status": "resolved_context_difference",
+      "resolution": "Direct asking remained available with the predictable comparison person; the withdrawal sequence stayed bounded to Mika's mixed-availability context.",
+      "resolution_evidence_ids": [
+        "EP-B-03"
+      ],
+      "report_impact": "qualify",
+      "affected_section_codes": [
+        "ATT-06",
+        "ATT-11",
+        "IFS-11"
+      ]
+    }
+  ],
+  "coverage_matrix": {
+    "contract_id": "PWQE3-CONTRACT-2",
+    "cells": [
+      {
+        "coverage_id": "CV-IFS-01",
+        "section_code": "IFS-01",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "medium",
+        "required_fields": [
+          "scope"
+        ],
+        "satisfied_fields": [
+          "scope"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "EP-B-01",
+          "EP-B-02",
+          "EP-B-03"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [
+          "EP-B-01",
+          "EP-B-02",
+          "EP-B-03"
+        ],
+        "independent_episode_count": 3,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-IFS-02",
+        "section_code": "IFS-02",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "high",
+        "required_fields": [
+          "identity",
+          "two episodes"
+        ],
+        "satisfied_fields": [
+          "identity",
+          "two episodes"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "PT-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-IFS-03",
+        "section_code": "IFS-03",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "high",
+        "required_fields": [
+          "timing",
+          "function"
+        ],
+        "satisfied_fields": [
+          "timing",
+          "function"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "PT-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-IFS-04",
+        "section_code": "IFS-04",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "high",
+        "required_fields": [
+          "user language"
+        ],
+        "satisfied_fields": [
+          "typed confirmed words"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "PT-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-IFS-05",
+        "section_code": "IFS-05",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "high",
+        "required_fields": [
+          "trigger",
+          "feared outcome"
+        ],
+        "satisfied_fields": [
+          "trigger",
+          "feared outcome"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "PT-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-IFS-06",
+        "section_code": "IFS-06",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "high",
+        "required_fields": [
+          "body",
+          "sequence",
+          "stop"
+        ],
+        "satisfied_fields": [
+          "body",
+          "sequence",
+          "stop"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "PT-B-01",
+          "ST-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-IFS-07",
+        "section_code": "IFS-07",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "high",
+        "required_fields": [
+          "payoff",
+          "cost"
+        ],
+        "satisfied_fields": [
+          "payoff",
+          "cost"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "PT-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-IFS-08",
+        "section_code": "IFS-08",
+        "applicability": "applicable",
+        "routing_state": "red",
+        "confidence": "unsupported",
+        "required_fields": [
+          "polarization evidence"
+        ],
+        "satisfied_fields": [],
+        "missing_fields": [
+          "polarization evidence"
+        ],
+        "supporting_evidence_ids": [],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [
+          "PDL"
+        ],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-IFS-09",
+        "section_code": "IFS-09",
+        "applicability": "applicable",
+        "routing_state": "red",
+        "confidence": "unsupported",
+        "required_fields": [
+          "manager-firefighter chain"
+        ],
+        "satisfied_fields": [],
+        "missing_fields": [
+          "manager-firefighter chain"
+        ],
+        "supporting_evidence_ids": [],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [
+          "BDA"
+        ],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-IFS-10",
+        "section_code": "IFS-10",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "medium",
+        "required_fields": [
+          "present-focused vulnerability"
+        ],
+        "satisfied_fields": [
+          "present-focused vulnerability"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "PT-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-IFS-11",
+        "section_code": "IFS-11",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "medium",
+        "required_fields": [
+          "choice condition"
+        ],
+        "satisfied_fields": [
+          "choice condition"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "PT-B-01",
+          "EP-B-03"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [
+          "EP-B-03"
+        ],
+        "independent_episode_count": 1,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-IFS-12",
+        "section_code": "IFS-12",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "medium",
+        "required_fields": [
+          "confidence and limits"
+        ],
+        "satisfied_fields": [
+          "confidence and limits"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "PT-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-PV-01",
+        "section_code": "PV-01",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "medium",
+        "required_fields": [
+          "self-report limit"
+        ],
+        "satisfied_fields": [
+          "self-report limit"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "ST-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-PV-02",
+        "section_code": "PV-02",
+        "applicability": "applicable",
+        "routing_state": "red",
+        "confidence": "unsupported",
+        "required_fields": [
+          "repeated ordinary baseline"
+        ],
+        "satisfied_fields": [],
+        "missing_fields": [
+          "repeated ordinary baseline"
+        ],
+        "supporting_evidence_ids": [],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [
+          "BTM",
+          "SEF"
+        ],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-PV-03",
+        "section_code": "PV-03",
+        "applicability": "applicable",
+        "routing_state": "red",
+        "confidence": "unsupported",
+        "required_fields": [
+          "activated signature"
+        ],
+        "satisfied_fields": [],
+        "missing_fields": [
+          "activated signature"
+        ],
+        "supporting_evidence_ids": [],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [
+          "FSR",
+          "BTM"
+        ],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-PV-04",
+        "section_code": "PV-04",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "medium",
+        "confidence_rationale": "BTM-201 was administered after both independent episode anchors existed and produced episode-specific comparative maps plus confirmed similarity; entry and exit evidence are also present, with a sleep-confound limit.",
+        "required_fields": [
+          "two maps",
+          "entry or exit"
+        ],
+        "satisfied_fields": [
+          "two post-anchor comparative episode maps",
+          "entry and exit"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "ST-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-PV-05",
+        "section_code": "PV-05",
+        "applicability": "applicable",
+        "routing_state": "red",
+        "confidence": "unsupported",
+        "required_fields": [
+          "mixed signature"
+        ],
+        "satisfied_fields": [],
+        "missing_fields": [
+          "mixed signature"
+        ],
+        "supporting_evidence_ids": [],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [
+          "BDA"
+        ],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-PV-06",
+        "section_code": "PV-06",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "medium",
+        "required_fields": [
+          "onset order"
+        ],
+        "satisfied_fields": [
+          "onset order"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "ST-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-PV-07",
+        "section_code": "PV-07",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "medium",
+        "required_fields": [
+          "multichannel peak"
+        ],
+        "satisfied_fields": [
+          "multichannel peak"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "ST-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-PV-08",
+        "section_code": "PV-08",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "medium",
+        "required_fields": [
+          "exit and duration"
+        ],
+        "satisfied_fields": [
+          "exit and duration"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "ST-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-PV-09",
+        "section_code": "PV-09",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "medium",
+        "confidence_rationale": "The packet preserves the immediate RSR-003 channel and its partial reported effect after BTM-201; this supports a bounded observation, not a stable efficacy claim.",
+        "required_fields": [
+          "actual channel and effect"
+        ],
+        "satisfied_fields": [
+          "immediate post-map channel and reported effect"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "ST-B-01",
+          "EP-B-02"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [
+          "EP-B-02"
+        ],
+        "independent_episode_count": 1,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-PV-10",
+        "section_code": "PV-10",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "medium",
+        "required_fields": [
+          "co-regulation effect"
+        ],
+        "satisfied_fields": [
+          "context-bounded co-regulation effect"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "ST-B-01",
+          "EP-B-03"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [
+          "EP-B-03"
+        ],
+        "independent_episode_count": 1,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-PV-11",
+        "section_code": "PV-11",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "medium",
+        "required_fields": [
+          "context and confounds"
+        ],
+        "satisfied_fields": [
+          "context and confounds"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "ST-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-ATT-01",
+        "section_code": "ATT-01",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "medium",
+        "required_fields": [
+          "referent safety"
+        ],
+        "satisfied_fields": [
+          "referent safety"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "AP-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-ATT-02",
+        "section_code": "ATT-02",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "medium",
+        "required_fields": [
+          "two cues or confirmation"
+        ],
+        "satisfied_fields": [
+          "two cues",
+          "confirmation"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "AP-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-ATT-03",
+        "section_code": "ATT-03",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "medium",
+        "required_fields": [
+          "self and other meanings"
+        ],
+        "satisfied_fields": [
+          "self and other meanings"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "AP-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-ATT-04",
+        "section_code": "ATT-04",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "medium",
+        "required_fields": [
+          "ambiguity and alternative"
+        ],
+        "satisfied_fields": [
+          "ambiguity and alternative"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "AP-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-ATT-05",
+        "section_code": "ATT-05",
+        "applicability": "applicable",
+        "routing_state": "red",
+        "confidence": "unsupported",
+        "required_fields": [
+          "proximity-seeking sequence"
+        ],
+        "satisfied_fields": [],
+        "missing_fields": [
+          "proximity-seeking sequence"
+        ],
+        "supporting_evidence_ids": [],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [
+          "BDA",
+          "RRE"
+        ],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-ATT-06",
+        "section_code": "ATT-06",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "high",
+        "required_fields": [
+          "deactivation sequence"
+        ],
+        "satisfied_fields": [
+          "replicated confirmed deactivation sequence"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "AP-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-ATT-07",
+        "section_code": "ATT-07",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "medium",
+        "required_fields": [
+          "rupture response"
+        ],
+        "satisfied_fields": [
+          "context-bounded rupture response"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "AP-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-ATT-08",
+        "section_code": "ATT-08",
+        "applicability": "applicable",
+        "routing_state": "red",
+        "confidence": "unsupported",
+        "required_fields": [
+          "repair initiated",
+          "repair received"
+        ],
+        "satisfied_fields": [],
+        "missing_fields": [
+          "repair initiated",
+          "repair received"
+        ],
+        "supporting_evidence_ids": [],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [
+          "RRE"
+        ],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-ATT-09",
+        "section_code": "ATT-09",
+        "applicability": "applicable",
+        "routing_state": "red",
+        "confidence": "unsupported",
+        "required_fields": [
+          "reassurance uptake"
+        ],
+        "satisfied_fields": [],
+        "missing_fields": [
+          "reassurance uptake"
+        ],
+        "supporting_evidence_ids": [],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [
+          "RRE"
+        ],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-ATT-10",
+        "section_code": "ATT-10",
+        "applicability": "applicable",
+        "routing_state": "red",
+        "confidence": "unsupported",
+        "required_fields": [
+          "pace thresholds"
+        ],
+        "satisfied_fields": [],
+        "missing_fields": [
+          "pace thresholds"
+        ],
+        "supporting_evidence_ids": [],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [
+          "PCR"
+        ],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-ATT-11",
+        "section_code": "ATT-11",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "medium",
+        "required_fields": [
+          "secure exception",
+          "cross-relationship difference"
+        ],
+        "satisfied_fields": [
+          "secure exception",
+          "cross-relationship difference"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "AP-B-01",
+          "EP-B-03"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [
+          "EP-B-03"
+        ],
+        "independent_episode_count": 1,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      },
+      {
+        "coverage_id": "CV-ATT-12",
+        "section_code": "ATT-12",
+        "applicability": "applicable",
+        "routing_state": "green",
+        "confidence": "medium",
+        "required_fields": [
+          "confidence and contradictions"
+        ],
+        "satisfied_fields": [
+          "confidence and resolved context difference"
+        ],
+        "missing_fields": [],
+        "supporting_evidence_ids": [
+          "AP-B-01"
+        ],
+        "open_contradiction_ids": [],
+        "eligible_next_families": [],
+        "independent_episode_ids": [],
+        "independent_episode_count": 0,
+        "applicability_evidence_ids": [],
+        "applicability_response_ids": []
+      }
+    ],
+    "last_updated": "2026-08-29T20:05:00Z",
+    "stop_eligible": false,
+    "stop_rationale": "The fictional acceptance path demonstrates the end-to-end chain but intentionally leaves unrelated report sections unsupported."
+  },
+  "selected_excerpts": [
+    {
+      "excerpt_id": "EX-B-01",
+      "text": "Give them room before they decide I am too much.",
+      "quote_eligible": true,
+      "quote_basis": "typed",
+      "source_response_ids": [
+        "RR-B-008-typed"
+      ],
+      "source_evidence_ids": [
+        "EP-B-01",
+        "PT-B-01",
+        "AP-B-01"
+      ],
+      "provenance": [
+        {
+          "interaction_instance_id": "RI-B-008",
+          "family_code": "VFR",
+          "bank_item_id": "VFR-201",
+          "bank_item_version": "3.0.0",
+          "response_ids": [
+            "RR-B-008-typed"
+          ],
+          "signal_class": "direct",
+          "capture_mode": "typed",
+          "user_certainty": 0.95,
+          "session_id": "SES-B",
+          "sequence": 8,
+          "presented_option_ids": [
+            "OPT-VFR-201-A"
+          ]
+        }
+      ],
+      "allowed_section_codes": [
+        "IFS-04",
+        "IFS-05",
+        "ATT-03",
+        "ATT-06"
+      ],
+      "redaction_applied": false
+    }
+  ],
+  "prohibitions": [
+    "no_diagnosis",
+    "no_trauma_or_developmental_origin_inference",
+    "no_exile_identity_age_or_history_inference",
+    "no_physiological_measurement_claim",
+    "no_global_attachment_style_without_cross_context_evidence",
+    "no_unattributed_quote",
+    "no_raw_answer_list_inference",
+    "no_unsupported_section_filler"
+  ],
+  "snapshot_binding": {
+    "snapshot_id": "SNP-PWQE3-FIXTURE-B",
+    "snapshot_revision": "1",
+    "evidence_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "scope_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+  },
+  "window_registry": [
+    {
+      "window_id": "WIN-B-RECENT",
+      "label": "Fictional recent assessment window"
+    }
+  ],
+  "assessment_completion": {
+    "completion_mode": "user_stop",
+    "last_completed_stage": "S2",
+    "safe_resume_stage": "S3",
+    "underdetermined_section_codes": [
+      "IFS-08",
+      "IFS-09",
+      "PV-02",
+      "PV-03",
+      "PV-05",
+      "ATT-05",
+      "ATT-08",
+      "ATT-09",
+      "ATT-10"
+    ],
+    "reason": "Fictional acceptance path stops after mapping/adjudication; optional deepening remains available."
+  }
+}

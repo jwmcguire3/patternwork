@@ -1,0 +1,460 @@
+{
+  "artifact_type": "mapping_summary",
+  "contract_id": "PWQE3-CONTRACT-2",
+  "integrity_contract_id": "PWQE3-INTEGRITY-1",
+  "package_version": "3.1.0",
+  "prompt_release": "4.1.0",
+  "report_id": "RPT-MAP-C-001",
+  "report_type": "MAP",
+  "report_version": "4.1.0",
+  "writer_template_version": "PWRP-V4.1",
+  "status": "final",
+  "packet_bindings": [
+    {
+      "report_type": "ATT",
+      "packet_id": "PKT-ATT-acceptance-c",
+      "packet_sha256": "c3becf87686cc058921d371ab309e21487e57359a24f195ace3e02dbb96b713f",
+      "snapshot_id": "SNP-PWQE3-FIXTURE-C",
+      "snapshot_revision": "1",
+      "evidence_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "scope_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    }
+  ],
+  "report_markdown": "Scope: a current non-romantic friendship and chosen recent window.\n\nTwo selected episodes describe reduced contact after uncertainty.\n\nObserved signals included chest tension, restless hands, and terse speech.\n\nThe supported sequence was uncertainty, checking, then withdrawal.\n\nA clear return time was an exception.\n\nAn ordinary task and clearer information were recorded supports.\n\nRepair uptake and several areas remain underdetermined.\n\nPass 2 is optional for remaining questions; no employment route is required.",
+  "markdown_blocks": [
+    {
+      "paragraph_id": "P-MAP-C-01",
+      "ordinal": 1,
+      "kind": "substantive",
+      "markdown": "Scope: a current non-romantic friendship and chosen recent window.",
+      "markdown_sha256": "6216d1ae8d4aa92fbd7ca12315e2f697c59933bbb346b815467aac60168d1564",
+      "trace_id": "TRC-MAP-C-01"
+    },
+    {
+      "paragraph_id": "P-MAP-C-02",
+      "ordinal": 2,
+      "kind": "substantive",
+      "markdown": "Two selected episodes describe reduced contact after uncertainty.",
+      "markdown_sha256": "e104d83e7f2b64ce1f90d5dbd9941859e023d1f17a3f8d5699d7373cd69f6ad7",
+      "trace_id": "TRC-MAP-C-02"
+    },
+    {
+      "paragraph_id": "P-MAP-C-03",
+      "ordinal": 3,
+      "kind": "substantive",
+      "markdown": "Observed signals included chest tension, restless hands, and terse speech.",
+      "markdown_sha256": "ff54802ef6ea3cfb0f4f1bac764cc9279394d960fbdac35b0d2eb138e2563839",
+      "trace_id": "TRC-MAP-C-03"
+    },
+    {
+      "paragraph_id": "P-MAP-C-04",
+      "ordinal": 4,
+      "kind": "substantive",
+      "markdown": "The supported sequence was uncertainty, checking, then withdrawal.",
+      "markdown_sha256": "9e9840d9ee976a4b1fd2dab9510f956602716ef4f46984edb88a804acb1dbb7a",
+      "trace_id": "TRC-MAP-C-04"
+    },
+    {
+      "paragraph_id": "P-MAP-C-05",
+      "ordinal": 5,
+      "kind": "substantive",
+      "markdown": "A clear return time was an exception.",
+      "markdown_sha256": "fe51fba53f9a4808706df90f6f351d7084a4263850d53cb61ee45efb4b44f11a",
+      "trace_id": "TRC-MAP-C-05"
+    },
+    {
+      "paragraph_id": "P-MAP-C-06",
+      "ordinal": 6,
+      "kind": "substantive",
+      "markdown": "An ordinary task and clearer information were recorded supports.",
+      "markdown_sha256": "5e48c111b01adc23f26df6426bd7e476818e5d77675efc0a2ea69da272b4c00c",
+      "trace_id": "TRC-MAP-C-06"
+    },
+    {
+      "paragraph_id": "P-MAP-C-07",
+      "ordinal": 7,
+      "kind": "substantive",
+      "markdown": "Repair uptake and several areas remain underdetermined.",
+      "markdown_sha256": "fa45e42534f9378f5958ccad0270b33ff7c1faf4f67cd1f164b36ebd52ab4614",
+      "trace_id": "TRC-MAP-C-07"
+    },
+    {
+      "paragraph_id": "P-MAP-C-08",
+      "ordinal": 8,
+      "kind": "substantive",
+      "markdown": "Pass 2 is optional for remaining questions; no employment route is required.",
+      "markdown_sha256": "3c83ba3537e5e595d62d63390e2b82a0775a13fb46e625fd2833895cef47d5e6",
+      "trace_id": "TRC-MAP-C-08"
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "CLM-MAP-C-01",
+      "section_code": "MAP-01",
+      "facet_kind": "episode_context",
+      "claim_text": "Scope: a current non-romantic friendship and chosen recent window.",
+      "source_object_ids": [
+        "EP-C-01"
+      ],
+      "supporting_evidence_ids": [
+        "EP-C-01"
+      ],
+      "boundaries": [
+        {
+          "episode_id": "EP-C-01",
+          "episode_sha256": "8edf3ca2677af86a242cb3f01b63198f22a1bdd91a7ef7b86205416cbaffaeff",
+          "referent_id": "REF-C-CLOSE",
+          "window_id": "WIN-C-RECENT",
+          "time_horizon": "immediate"
+        }
+      ],
+      "confidence": "medium",
+      "contradiction_links": [],
+      "limit_links": []
+    },
+    {
+      "claim_id": "CLM-MAP-C-02",
+      "section_code": "MAP-02",
+      "facet_kind": "episode_context",
+      "claim_text": "Two selected episodes describe reduced contact after uncertainty.",
+      "source_object_ids": [
+        "EP-C-01"
+      ],
+      "supporting_evidence_ids": [
+        "EP-C-01"
+      ],
+      "boundaries": [
+        {
+          "episode_id": "EP-C-01",
+          "episode_sha256": "8edf3ca2677af86a242cb3f01b63198f22a1bdd91a7ef7b86205416cbaffaeff",
+          "referent_id": "REF-C-CLOSE",
+          "window_id": "WIN-C-RECENT",
+          "time_horizon": "immediate"
+        }
+      ],
+      "confidence": "medium",
+      "contradiction_links": [],
+      "limit_links": []
+    },
+    {
+      "claim_id": "CLM-MAP-C-03",
+      "section_code": "MAP-03",
+      "facet_kind": "episode_context",
+      "claim_text": "Observed signals included chest tension, restless hands, and terse speech.",
+      "source_object_ids": [
+        "EP-C-01"
+      ],
+      "supporting_evidence_ids": [
+        "EP-C-01"
+      ],
+      "boundaries": [
+        {
+          "episode_id": "EP-C-01",
+          "episode_sha256": "8edf3ca2677af86a242cb3f01b63198f22a1bdd91a7ef7b86205416cbaffaeff",
+          "referent_id": "REF-C-CLOSE",
+          "window_id": "WIN-C-RECENT",
+          "time_horizon": "immediate"
+        }
+      ],
+      "confidence": "medium",
+      "contradiction_links": [],
+      "limit_links": []
+    },
+    {
+      "claim_id": "CLM-MAP-C-04",
+      "section_code": "MAP-04",
+      "facet_kind": "episode_context",
+      "claim_text": "The supported sequence was uncertainty, checking, then withdrawal.",
+      "source_object_ids": [
+        "EP-C-01"
+      ],
+      "supporting_evidence_ids": [
+        "EP-C-01"
+      ],
+      "boundaries": [
+        {
+          "episode_id": "EP-C-01",
+          "episode_sha256": "8edf3ca2677af86a242cb3f01b63198f22a1bdd91a7ef7b86205416cbaffaeff",
+          "referent_id": "REF-C-CLOSE",
+          "window_id": "WIN-C-RECENT",
+          "time_horizon": "immediate"
+        }
+      ],
+      "confidence": "medium",
+      "contradiction_links": [],
+      "limit_links": []
+    },
+    {
+      "claim_id": "CLM-MAP-C-05",
+      "section_code": "MAP-05",
+      "facet_kind": "episode_context",
+      "claim_text": "A clear return time was an exception.",
+      "source_object_ids": [
+        "EP-C-01"
+      ],
+      "supporting_evidence_ids": [
+        "EP-C-01"
+      ],
+      "boundaries": [
+        {
+          "episode_id": "EP-C-01",
+          "episode_sha256": "8edf3ca2677af86a242cb3f01b63198f22a1bdd91a7ef7b86205416cbaffaeff",
+          "referent_id": "REF-C-CLOSE",
+          "window_id": "WIN-C-RECENT",
+          "time_horizon": "immediate"
+        }
+      ],
+      "confidence": "medium",
+      "contradiction_links": [],
+      "limit_links": []
+    },
+    {
+      "claim_id": "CLM-MAP-C-06",
+      "section_code": "MAP-06",
+      "facet_kind": "episode_context",
+      "claim_text": "An ordinary task and clearer information were recorded supports.",
+      "source_object_ids": [
+        "EP-C-01"
+      ],
+      "supporting_evidence_ids": [
+        "EP-C-01"
+      ],
+      "boundaries": [
+        {
+          "episode_id": "EP-C-01",
+          "episode_sha256": "8edf3ca2677af86a242cb3f01b63198f22a1bdd91a7ef7b86205416cbaffaeff",
+          "referent_id": "REF-C-CLOSE",
+          "window_id": "WIN-C-RECENT",
+          "time_horizon": "immediate"
+        }
+      ],
+      "confidence": "medium",
+      "contradiction_links": [],
+      "limit_links": []
+    },
+    {
+      "claim_id": "CLM-MAP-C-07",
+      "section_code": "MAP-07",
+      "facet_kind": "uncertainty_limit",
+      "claim_text": "Repair uptake and several areas remain underdetermined.",
+      "source_object_ids": [
+        "EP-C-01",
+        "AP-C-01"
+      ],
+      "supporting_evidence_ids": [
+        "EP-C-01",
+        "AP-C-01"
+      ],
+      "boundaries": [
+        {
+          "episode_id": "EP-C-01",
+          "episode_sha256": "8edf3ca2677af86a242cb3f01b63198f22a1bdd91a7ef7b86205416cbaffaeff",
+          "referent_id": "REF-C-CLOSE",
+          "window_id": "WIN-C-RECENT",
+          "time_horizon": "immediate"
+        }
+      ],
+      "confidence": "low",
+      "contradiction_links": [
+        {
+          "contradiction_id": "CX-C-01",
+          "status": "retained_unresolved",
+          "effect": "cap_low",
+          "source_evidence_ids": [
+            "EP-C-01",
+            "AP-C-01"
+          ]
+        }
+      ],
+      "limit_links": []
+    },
+    {
+      "claim_id": "CLM-MAP-C-08",
+      "section_code": "MAP-08",
+      "facet_kind": "episode_context",
+      "claim_text": "Pass 2 is optional for remaining questions; no employment route is required.",
+      "source_object_ids": [
+        "EP-C-01"
+      ],
+      "supporting_evidence_ids": [
+        "EP-C-01"
+      ],
+      "boundaries": [
+        {
+          "episode_id": "EP-C-01",
+          "episode_sha256": "8edf3ca2677af86a242cb3f01b63198f22a1bdd91a7ef7b86205416cbaffaeff",
+          "referent_id": "REF-C-CLOSE",
+          "window_id": "WIN-C-RECENT",
+          "time_horizon": "immediate"
+        }
+      ],
+      "confidence": "medium",
+      "contradiction_links": [],
+      "limit_links": []
+    }
+  ],
+  "paragraph_traces": [
+    {
+      "trace_id": "TRC-MAP-C-01",
+      "paragraph_id": "P-MAP-C-01",
+      "paragraph_ordinal": 1,
+      "paragraph_sha256": "6216d1ae8d4aa92fbd7ca12315e2f697c59933bbb346b815467aac60168d1564",
+      "report_section_code": "MAP-01",
+      "claim_ids": [
+        "CLM-MAP-C-01"
+      ],
+      "supporting_evidence_ids": [
+        "EP-C-01"
+      ],
+      "supporting_response_ids": [],
+      "contains_exact_quote": false,
+      "confidence": "medium",
+      "contradiction_ids": [],
+      "limit_ids": [],
+      "writer_template_version": "PWRP-V4.1"
+    },
+    {
+      "trace_id": "TRC-MAP-C-02",
+      "paragraph_id": "P-MAP-C-02",
+      "paragraph_ordinal": 2,
+      "paragraph_sha256": "e104d83e7f2b64ce1f90d5dbd9941859e023d1f17a3f8d5699d7373cd69f6ad7",
+      "report_section_code": "MAP-02",
+      "claim_ids": [
+        "CLM-MAP-C-02"
+      ],
+      "supporting_evidence_ids": [
+        "EP-C-01"
+      ],
+      "supporting_response_ids": [],
+      "contains_exact_quote": false,
+      "confidence": "medium",
+      "contradiction_ids": [],
+      "limit_ids": [],
+      "writer_template_version": "PWRP-V4.1"
+    },
+    {
+      "trace_id": "TRC-MAP-C-03",
+      "paragraph_id": "P-MAP-C-03",
+      "paragraph_ordinal": 3,
+      "paragraph_sha256": "ff54802ef6ea3cfb0f4f1bac764cc9279394d960fbdac35b0d2eb138e2563839",
+      "report_section_code": "MAP-03",
+      "claim_ids": [
+        "CLM-MAP-C-03"
+      ],
+      "supporting_evidence_ids": [
+        "EP-C-01"
+      ],
+      "supporting_response_ids": [],
+      "contains_exact_quote": false,
+      "confidence": "medium",
+      "contradiction_ids": [],
+      "limit_ids": [],
+      "writer_template_version": "PWRP-V4.1"
+    },
+    {
+      "trace_id": "TRC-MAP-C-04",
+      "paragraph_id": "P-MAP-C-04",
+      "paragraph_ordinal": 4,
+      "paragraph_sha256": "9e9840d9ee976a4b1fd2dab9510f956602716ef4f46984edb88a804acb1dbb7a",
+      "report_section_code": "MAP-04",
+      "claim_ids": [
+        "CLM-MAP-C-04"
+      ],
+      "supporting_evidence_ids": [
+        "EP-C-01"
+      ],
+      "supporting_response_ids": [],
+      "contains_exact_quote": false,
+      "confidence": "medium",
+      "contradiction_ids": [],
+      "limit_ids": [],
+      "writer_template_version": "PWRP-V4.1"
+    },
+    {
+      "trace_id": "TRC-MAP-C-05",
+      "paragraph_id": "P-MAP-C-05",
+      "paragraph_ordinal": 5,
+      "paragraph_sha256": "fe51fba53f9a4808706df90f6f351d7084a4263850d53cb61ee45efb4b44f11a",
+      "report_section_code": "MAP-05",
+      "claim_ids": [
+        "CLM-MAP-C-05"
+      ],
+      "supporting_evidence_ids": [
+        "EP-C-01"
+      ],
+      "supporting_response_ids": [],
+      "contains_exact_quote": false,
+      "confidence": "medium",
+      "contradiction_ids": [],
+      "limit_ids": [],
+      "writer_template_version": "PWRP-V4.1"
+    },
+    {
+      "trace_id": "TRC-MAP-C-06",
+      "paragraph_id": "P-MAP-C-06",
+      "paragraph_ordinal": 6,
+      "paragraph_sha256": "5e48c111b01adc23f26df6426bd7e476818e5d77675efc0a2ea69da272b4c00c",
+      "report_section_code": "MAP-06",
+      "claim_ids": [
+        "CLM-MAP-C-06"
+      ],
+      "supporting_evidence_ids": [
+        "EP-C-01"
+      ],
+      "supporting_response_ids": [],
+      "contains_exact_quote": false,
+      "confidence": "medium",
+      "contradiction_ids": [],
+      "limit_ids": [],
+      "writer_template_version": "PWRP-V4.1"
+    },
+    {
+      "trace_id": "TRC-MAP-C-07",
+      "paragraph_id": "P-MAP-C-07",
+      "paragraph_ordinal": 7,
+      "paragraph_sha256": "fa45e42534f9378f5958ccad0270b33ff7c1faf4f67cd1f164b36ebd52ab4614",
+      "report_section_code": "MAP-07",
+      "claim_ids": [
+        "CLM-MAP-C-07"
+      ],
+      "supporting_evidence_ids": [
+        "EP-C-01",
+        "AP-C-01"
+      ],
+      "supporting_response_ids": [],
+      "contains_exact_quote": false,
+      "confidence": "low",
+      "contradiction_ids": [
+        "CX-C-01"
+      ],
+      "limit_ids": [],
+      "writer_template_version": "PWRP-V4.1"
+    },
+    {
+      "trace_id": "TRC-MAP-C-08",
+      "paragraph_id": "P-MAP-C-08",
+      "paragraph_ordinal": 8,
+      "paragraph_sha256": "3c83ba3537e5e595d62d63390e2b82a0775a13fb46e625fd2833895cef47d5e6",
+      "report_section_code": "MAP-08",
+      "claim_ids": [
+        "CLM-MAP-C-08"
+      ],
+      "supporting_evidence_ids": [
+        "EP-C-01"
+      ],
+      "supporting_response_ids": [],
+      "contains_exact_quote": false,
+      "confidence": "medium",
+      "contradiction_ids": [],
+      "limit_ids": [],
+      "writer_template_version": "PWRP-V4.1"
+    }
+  ],
+  "pass2_status": "available",
+  "digests": {
+    "markdown_sha256": "fac4b9c3c7fef0279e1cbdfa4f7c4b98ed62cdeea9b6734c9042d04350a8dbb2",
+    "claims_sha256": "9403ad94ee0e2887b73917be5df4e111f54491845ca0a4612f946296989a236d",
+    "paragraph_traces_sha256": "2fa9b895396bdf3b2555fcdc9f32e561e2a59f782c34d373f615683eb3818f85",
+    "artifact_sha256": "e5751b4ebc9257a4e4bcd0945c73eceb0352abe65a05f61ec87e6e3e9500580d"
+  }
+}

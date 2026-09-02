@@ -7,26 +7,42 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test",
+    "test:contracts": "tsx --test tests/contracts/*.test.ts",
+    "reports:codex": "tsx scripts/report-cli/index.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@prisma/client": "^6.7.0",
+    "@react-email/components": "^1.0.12",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
     "next": "16.0.7",
+    "pdfkit": "^0.20.2",
+    "pg": "^8.12.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
+    "react-email": "^6.9.3",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "resend": "^4.0.0",
-    "pg": "^8.12.0",
-    "@prisma/client": "^6.7.0"
+    "workflow": "^4.8.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pdfkit": "^0.17.6",
+    "@types/pg": "^8.11.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/pg": "^8.11.0",
+    "@workflow/vitest": "^4.0.21",
     "eslint": "^9",
     "eslint-config-next": "16.0.7",
+    "prisma": "^6.7.0",
     "tailwindcss": "^4",
+    "tsx": "^4.23.13",
     "typescript": "^5",
-    "prisma": "^6.7.0"
+    "vitest": "^4.1.11"
   }
 }

@@ -18,3 +18,274 @@ model SelfMapAssessmentProgress {
   @@unique([userId, assessmentKey], name: "userId_assessmentKey")
   @@index([userId])
 }
+
+enum PatternworkV31SessionStatus {
+  IN_PROGRESS
+  PASS1_COMPLETE
+  PASS2_IN_PROGRESS
+  COMPLETE
+  PAUSED
+  ABANDONED
+}
+
+enum PatternworkV31ReportType {
+  MAP
+  IFS
+  PV
+  ATT
+  SYNTHESIS
+}
+
+enum PatternworkV31RunStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+}
+
+enum PatternworkV31DeliveryStatus {
+  PENDING
+  SENDING
+  SENT
+  DELIVERED
+  BOUNCED
+  FAILED
+}
+
+enum PatternworkV31AccessTokenPurpose {
+  RESUME_ASSESSMENT
+  VIEW_REPORT
+}
+
+enum PatternworkV31PdfStatus {
+  NOT_REQUESTED
+  PENDING
+  READY
+  FAILED
+}
+
+model PatternworkV31SourceRelease {
+  id                  String   @id @default(cuid())
+  contractId          String
+  integrityContractId String
+  packageVersion      String
+  promptRelease       String
+  sourceManifestSha256 String  @unique
+  sourceManifestJson  Json
+  createdAt           DateTime @default(now())
+
+  sessions PatternworkV31AssessmentSession[]
+
+  @@unique([contractId, integrityContractId, packageVersion, promptRelease], name: "pw31_release_identity")
+}
+
+model PatternworkV31AssessmentSession {
+  id                    String                    @id @default(cuid())
+  userId                String?
+  contactEmailHash      String?
+  contactEmailCiphertext Bytes?
+  sourceReleaseId       String
+  assessmentKey         String                    @default("patternwork-v3.1")
+  status                PatternworkV31SessionStatus @default(IN_PROGRESS)
+  currentPass           Int                       @default(1)
+  currentStage          String                    @default("S0")
+  safeResumeStage       String?
+  stateCiphertext       Bytes
+  stateNonce            Bytes
+  encryptionKeyVersion  String
+  optimisticRevision    Int                       @default(0)
+  expiresAt             DateTime?
+  retentionExpiresAt    DateTime?
+  completedAt           DateTime?
+  createdAt             DateTime                  @default(now())
+  updatedAt             DateTime                  @updatedAt
+
+  sourceRelease PatternworkV31SourceRelease @relation(fields: [sourceReleaseId], references: [id], onDelete: Restrict)
+  snapshots     PatternworkV31AssessmentSnapshot[]
+  responses     PatternworkV31AssessmentResponse[]
+  accessTokens  PatternworkV31AccessToken[]
+
+  @@index([userId])
+  @@index([contactEmailHash])
+  @@index([sourceReleaseId, status])
+  @@index([expiresAt])
+  @@index([retentionExpiresAt])
+}
+
+model PatternworkV31AccessToken {
+  id                  String                           @id @default(cuid())
+  assessmentSessionId String
+  tokenHash           String                           @unique
+  purpose             PatternworkV31AccessTokenPurpose
+  expiresAt           DateTime
+  usedAt              DateTime?
+  revokedAt           DateTime?
+  createdAt           DateTime                         @default(now())
+
+  assessmentSession PatternworkV31AssessmentSession @relation(fields: [assessmentSessionId], references: [id], onDelete: Restrict)
+
+  @@index([assessmentSessionId, purpose])
+  @@index([expiresAt])
+}
+
+model PatternworkV31AssessmentResponse {
+  id                    String   @id @default(cuid())
+  assessmentSessionId   String
+  responseId            String
+  interactionInstanceId String
+  bankItemId            String
+  bankItemVersion       String
+  administrationSequence Int
+  stage                 String
+  responseCiphertext    Bytes
+  responseNonce         Bytes
+  encryptionKeyVersion  String
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  assessmentSession PatternworkV31AssessmentSession @relation(fields: [assessmentSessionId], references: [id], onDelete: Restrict)
+
+  @@unique([assessmentSessionId, responseId], name: "pw31_session_response")
+  @@unique([assessmentSessionId, interactionInstanceId], name: "pw31_session_interaction")
+  @@index([assessmentSessionId, administrationSequence])
+  @@index([bankItemId, bankItemVersion])
+}
+
+model PatternworkV31AssessmentSnapshot {
+  id                    String   @id @default(cuid())
+  assessmentSessionId   String
+  snapshotId            String
+  snapshotRevision      String
+  completedPass         Int
+  completionMode        String
+  lastCompletedStage    String
+  safeResumeStage       String?
+  contractId            String
+  integrityContractId   String
+  packetVersion         String
+  evidenceSha256        String
+  scopeSha256           String
+  canonicalJsonSha256   String
+  canonicalJsonCiphertext Bytes
+  canonicalJsonNonce    Bytes
+  encryptionKeyVersion  String
+  completedAt           DateTime
+  frozenAt              DateTime @default(now())
+
+  assessmentSession PatternworkV31AssessmentSession @relation(fields: [assessmentSessionId], references: [id], onDelete: Restrict)
+  reportRuns       PatternworkV31ReportRun[]
+  evidencePackets  PatternworkV31EvidencePacket[]
+
+  @@unique([snapshotId, snapshotRevision], name: "pw31_snapshot_identity")
+  @@unique([assessmentSessionId, completedPass, snapshotRevision], name: "pw31_session_pass_revision")
+  @@index([assessmentSessionId, frozenAt])
+}
+
+model PatternworkV31EvidencePacket {
+  id                     String   @id @default(cuid())
+  assessmentSnapshotId   String
+  packetId               String   @unique
+  reportType             PatternworkV31ReportType
+  packetVersion          String
+  completionMode         String
+  lastCompletedStage     String
+  safeResumeStage        String?
+  canonicalJsonSha256    String
+  canonicalJsonCiphertext Bytes
+  canonicalJsonNonce     Bytes
+  encryptionKeyVersion   String
+  completedAt            DateTime
+  createdAt              DateTime @default(now())
+
+  assessmentSnapshot PatternworkV31AssessmentSnapshot @relation(fields: [assessmentSnapshotId], references: [id], onDelete: Restrict)
+
+  @@unique([assessmentSnapshotId, reportType], name: "pw31_snapshot_packet_type")
+  @@index([canonicalJsonSha256])
+}
+
+model PatternworkV31ReportRun {
+  id                    String                    @id @default(cuid())
+  assessmentSnapshotId  String
+  reportType            PatternworkV31ReportType
+  idempotencyKey        String                    @unique
+  status                PatternworkV31RunStatus   @default(QUEUED)
+  provider              String?
+  model                 String?
+  promptRelease         String
+  attemptCount          Int                       @default(0)
+  providerRequestId     String?
+  openRouterGenerationId String?                   @unique
+  inputSha256           String
+  outputSha256          String?
+  inputTokens           Int?
+  outputTokens          Int?
+  reasoningTokens       Int?
+  totalTokens           Int?
+  costMicros            BigInt?
+  costCurrency          String?
+  failureCode           String?
+  failureMessage        String?
+  startedAt             DateTime?
+  finishedAt            DateTime?
+  createdAt             DateTime                  @default(now())
+  updatedAt             DateTime                  @updatedAt
+
+  assessmentSnapshot PatternworkV31AssessmentSnapshot @relation(fields: [assessmentSnapshotId], references: [id], onDelete: Restrict)
+  artifact           PatternworkV31ReportArtifact?
+
+  @@unique([assessmentSnapshotId, reportType], name: "pw31_snapshot_report_type")
+  @@index([status, createdAt])
+}
+
+model PatternworkV31ReportArtifact {
+  id                     String   @id @default(cuid())
+  reportRunId            String   @unique
+  reportId               String   @unique
+  artifactType           String
+  canonicalJsonSha256    String
+  canonicalJsonCiphertext Bytes
+  canonicalJsonNonce     Bytes
+  encryptionKeyVersion   String
+  markdownSha256         String
+  markdownCiphertext     Bytes
+  markdownNonce          Bytes
+  pdfStatus              PatternworkV31PdfStatus @default(NOT_REQUESTED)
+  pdfCiphertext          Bytes?
+  pdfNonce               Bytes?
+  pdfStorageKey          String?
+  pdfSha256              String?
+  createdAt              DateTime @default(now())
+
+  reportRun   PatternworkV31ReportRun @relation(fields: [reportRunId], references: [id], onDelete: Restrict)
+  deliveries PatternworkV31ReportDelivery[]
+
+  @@index([canonicalJsonSha256])
+}
+
+model PatternworkV31ReportDelivery {
+  id                       String                        @id @default(cuid())
+  reportArtifactId         String
+  idempotencyKey           String                        @unique
+  status                   PatternworkV31DeliveryStatus  @default(PENDING)
+  recipientEmailHash       String
+  recipientEmailCiphertext Bytes
+  emailNonce               Bytes
+  encryptionKeyVersion     String
+  bccConfigured            Boolean                       @default(false)
+  bccConfigurationFingerprint String?
+  providerMessageId        String?                       @unique
+  resendMessageId          String?                       @unique
+  attemptCount             Int                           @default(0)
+  failureCode              String?
+  failureMessage           String?
+  sentAt                   DateTime?
+  deliveredAt              DateTime?
+  createdAt                DateTime                      @default(now())
+  updatedAt                DateTime                      @updatedAt
+
+  reportArtifact PatternworkV31ReportArtifact @relation(fields: [reportArtifactId], references: [id], onDelete: Restrict)
+
+  @@index([reportArtifactId, status])
+  @@index([recipientEmailHash])
+}

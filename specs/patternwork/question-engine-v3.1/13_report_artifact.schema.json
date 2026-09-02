@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://patternwork.example/schemas/report-artifact-v3.1.schema.json",
+  "title": "Patternwork v3.1 report delivery artifacts",
+  "description": "Strict delivery contract for final layer reports and the framework-neutral Mapping Summary under PWQE3-CONTRACT-2.",
+  "oneOf": [
+    {"$ref": "#/$defs/LayerReportArtifact"},
+    {"$ref": "#/$defs/MappingSummaryArtifact"}
+  ],
+  "$defs": {
+    "NonEmptyString": {"type": "string", "minLength": 1},
+    "Sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "ReportType": {"enum": ["IFS", "PV", "ATT"]},
+    "Confidence": {"enum": ["high", "medium", "low", "unsupported"]},
+    "TimeHorizon": {"enum": ["anticipatory", "immediate", "aftermath", "multi_horizon", "uncertain"]},
+    "LayerSectionCode": {
+      "enum": [
+        "IFS-01", "IFS-02", "IFS-03", "IFS-04", "IFS-05", "IFS-06", "IFS-07", "IFS-08", "IFS-09", "IFS-10", "IFS-11", "IFS-12",
+        "PV-01", "PV-02", "PV-03", "PV-04", "PV-05", "PV-06", "PV-07", "PV-08", "PV-09", "PV-10", "PV-11",
+        "ATT-01", "ATT-02", "ATT-03", "ATT-04", "ATT-05", "ATT-06", "ATT-07", "ATT-08", "ATT-09", "ATT-10", "ATT-11", "ATT-12"
+      ]
+    },
+    "MapSectionCode": {
+      "enum": ["MAP-01", "MAP-02", "MAP-03", "MAP-04", "MAP-05", "MAP-06", "MAP-07", "MAP-08"],
+      "description": "MAP-01 scope/completion; MAP-02 episodes/contexts; MAP-03 body/action signals; MAP-04 sequences; MAP-05 variations/exceptions; MAP-06 resources/supports; MAP-07 uncertainty/contradictions/limits; MAP-08 remaining questions and optional Pass-2/resume."
+    },
+    "SourceId": {
+      "type": "string",
+      "pattern": "^(EP|PT|ST|AP|CL|CV|PKT|EX)-[A-Za-z0-9._-]+$"
+    },
+    "ResponseId": {"type": "string", "pattern": "^RR-[A-Za-z0-9._-]+$"},
+    "ContradictionId": {"type": "string", "pattern": "^CX-[A-Za-z0-9._-]+$"},
+    "LimitId": {"type": "string", "pattern": "^LIM-[A-Za-z0-9._-]+$"},
+    "ClaimId": {"type": "string", "pattern": "^CLM-(IFS|PV|ATT|MAP)-[A-Za-z0-9._-]+$"},
+    "TraceId": {"type": "string", "pattern": "^TRC-(IFS|PV|ATT|MAP)-[A-Za-z0-9._-]+$"},
+    "ParagraphId": {"type": "string", "pattern": "^P-(IFS|PV|ATT|MAP)-[A-Za-z0-9._-]+$"},
+    "EvidenceBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["episode_id", "episode_sha256", "referent_id", "window_id", "time_horizon"],
+      "properties": {
+        "episode_id": {"type": "string", "pattern": "^EP-[A-Za-z0-9._-]+$"},
+        "episode_sha256": {"$ref": "#/$defs/Sha256"},
+        "referent_id": {"type": "string", "pattern": "^REF-[A-Za-z0-9._-]+$"},
+        "window_id": {"type": "string", "pattern": "^WIN-[A-Za-z0-9._-]+$"},
+        "time_horizon": {"$ref": "#/$defs/TimeHorizon"}
+      }
+    },
+    "LimitLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["limit_id", "kind", "statement", "source_ids"],
+      "properties": {
+        "limit_id": {"$ref": "#/$defs/LimitId"},
+        "kind": {"enum": ["scope", "window", "referent", "safety", "reliability", "confound", "exception", "uncertainty", "privacy", "applicability", "other"]},
+        "statement": {"$ref": "#/$defs/NonEmptyString"},
+        "source_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/SourceId"}}
+      }
+    },
+    "ContradictionLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contradiction_id", "status", "effect", "source_evidence_ids"],
+      "properties": {
+        "contradiction_id": {"$ref": "#/$defs/ContradictionId"},
+        "status": {"enum": ["open", "retained_unresolved", "resolved_context_difference", "resolved_change_over_time", "resolved_user_correction"]},
+        "effect": {"enum": ["none", "qualify", "cap_low", "omit_claim"]},
+        "source_evidence_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/SourceId"}}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"enum": ["open", "retained_unresolved"]}}, "required": ["status"]},
+          "then": {"properties": {"effect": {"enum": ["qualify", "cap_low", "omit_claim"]}}}
+        },
+        {
+          "if": {"properties": {"status": {"enum": ["resolved_context_difference", "resolved_change_over_time", "resolved_user_correction"]}}, "required": ["status"]},
+          "then": {"properties": {"effect": {"enum": ["none", "qualify"]}}}
+        }
+      ]
+    },
+    "LayerClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id", "report_type", "section_code", "facet_kind", "object_status", "claim_text", "source_object_ids", "supporting_evidence_ids", "boundaries", "confidence", "contradiction_links", "limit_links"],
+      "properties": {
+        "claim_id": {"$ref": "#/$defs/ClaimId"},
+        "report_type": {"$ref": "#/$defs/ReportType"},
+        "section_code": {"$ref": "#/$defs/LayerSectionCode"},
+        "facet_kind": {"enum": ["protective_part_or_cluster", "self_reported_state_signature", "relationship_specific_attachment_sequence", "scope", "observation", "function", "cost", "resource", "limit"]},
+        "object_status": {"enum": ["confirmed_part", "confirmed_pattern_cluster", "tentative_cluster", "confirmed_state_signature", "confirmed_attachment_pattern", "direct_observation", "not_applicable", "underdetermined"]},
+        "claim_text": {"$ref": "#/$defs/NonEmptyString"},
+        "source_object_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/SourceId"}},
+        "supporting_evidence_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/SourceId"}},
+        "boundaries": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/EvidenceBoundary"}},
+        "confidence": {"$ref": "#/$defs/Confidence"},
+        "contradiction_links": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/ContradictionLink"}},
+        "limit_links": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/LimitLink"}}
+      },
+      "allOf": [
+        {"if": {"properties": {"report_type": {"const": "IFS"}}, "required": ["report_type"]}, "then": {"properties": {"claim_id": {"pattern": "^CLM-IFS-"}, "section_code": {"pattern": "^IFS-"}, "facet_kind": {"enum": ["protective_part_or_cluster", "scope", "observation", "function", "cost", "resource", "limit"]}, "object_status": {"enum": ["confirmed_part", "confirmed_pattern_cluster", "tentative_cluster", "direct_observation", "not_applicable", "underdetermined"]}}}},
+        {"if": {"properties": {"report_type": {"const": "PV"}}, "required": ["report_type"]}, "then": {"properties": {"claim_id": {"pattern": "^CLM-PV-"}, "section_code": {"pattern": "^PV-"}, "facet_kind": {"enum": ["self_reported_state_signature", "scope", "observation", "function", "cost", "resource", "limit"]}, "object_status": {"enum": ["confirmed_state_signature", "direct_observation", "not_applicable", "underdetermined"]}}}},
+        {"if": {"properties": {"report_type": {"const": "ATT"}}, "required": ["report_type"]}, "then": {"properties": {"claim_id": {"pattern": "^CLM-ATT-"}, "section_code": {"pattern": "^ATT-"}, "facet_kind": {"enum": ["relationship_specific_attachment_sequence", "scope", "observation", "function", "cost", "resource", "limit"]}, "object_status": {"enum": ["confirmed_attachment_pattern", "direct_observation", "not_applicable", "underdetermined"]}}}}
+      ]
+    },
+    "MappingClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id", "section_code", "facet_kind", "claim_text", "source_object_ids", "supporting_evidence_ids", "boundaries", "confidence", "contradiction_links", "limit_links"],
+      "properties": {
+        "claim_id": {"type": "string", "pattern": "^CLM-MAP-[A-Za-z0-9._-]+$"},
+        "section_code": {"$ref": "#/$defs/MapSectionCode"},
+        "facet_kind": {"enum": ["scope", "episode_context", "body_action_observation", "sequence", "variation_exception", "resource_support", "uncertainty_limit", "remaining_question"]},
+        "claim_text": {"$ref": "#/$defs/NonEmptyString"},
+        "source_object_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/SourceId"}},
+        "supporting_evidence_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/SourceId"}},
+        "boundaries": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/EvidenceBoundary"}},
+        "confidence": {"$ref": "#/$defs/Confidence"},
+        "contradiction_links": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/ContradictionLink"}},
+        "limit_links": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/LimitLink"}}
+      }
+    },
+    "ReportParagraphTrace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trace_id", "paragraph_id", "paragraph_ordinal", "paragraph_sha256", "report_section_code", "claim_ids", "supporting_evidence_ids", "supporting_response_ids", "contains_exact_quote", "confidence", "contradiction_ids", "limit_ids", "writer_template_version"],
+      "properties": {
+        "trace_id": {"$ref": "#/$defs/TraceId"},
+        "paragraph_id": {"$ref": "#/$defs/ParagraphId"},
+        "paragraph_ordinal": {"type": "integer", "minimum": 1},
+        "paragraph_sha256": {"$ref": "#/$defs/Sha256"},
+        "report_section_code": {"oneOf": [{"$ref": "#/$defs/LayerSectionCode"}, {"$ref": "#/$defs/MapSectionCode"}]},
+        "claim_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/ClaimId"}},
+        "supporting_evidence_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/SourceId"}},
+        "supporting_response_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/ResponseId"}},
+        "contains_exact_quote": {"type": "boolean"},
+        "confidence": {"$ref": "#/$defs/Confidence"},
+        "contradiction_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/ContradictionId"}},
+        "limit_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/LimitId"}},
+        "writer_template_version": {"const": "PWRP-V4.1"}
+      },
+      "allOf": [
+        {"if": {"properties": {"contains_exact_quote": {"const": true}}, "required": ["contains_exact_quote"]}, "then": {"properties": {"supporting_response_ids": {"minItems": 1}}}},
+        {"if": {"properties": {"contains_exact_quote": {"const": false}}, "required": ["contains_exact_quote"]}, "then": {"properties": {"supporting_response_ids": {"maxItems": 0}}}}
+      ]
+    },
+    "MarkdownBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["paragraph_id", "ordinal", "kind", "markdown", "markdown_sha256"],
+      "properties": {
+        "paragraph_id": {"$ref": "#/$defs/ParagraphId"},
+        "ordinal": {"type": "integer", "minimum": 1},
+        "kind": {"enum": ["substantive", "navigation"]},
+        "markdown": {"$ref": "#/$defs/NonEmptyString"},
+        "markdown_sha256": {"$ref": "#/$defs/Sha256"},
+        "trace_id": {"$ref": "#/$defs/TraceId"}
+      },
+      "allOf": [
+        {"if": {"properties": {"kind": {"const": "substantive"}}, "required": ["kind"]}, "then": {"required": ["trace_id"]}},
+        {"if": {"properties": {"kind": {"const": "navigation"}}, "required": ["kind"]}, "then": {"not": {"required": ["trace_id"]}}}
+      ]
+    },
+    "PacketBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["report_type", "packet_id", "packet_sha256", "snapshot_id", "snapshot_revision", "evidence_sha256", "scope_sha256"],
+      "properties": {
+        "report_type": {"$ref": "#/$defs/ReportType"},
+        "packet_id": {"type": "string", "pattern": "^PKT-(IFS|PV|ATT)-[A-Za-z0-9._-]+$"},
+        "packet_sha256": {"$ref": "#/$defs/Sha256"},
+        "snapshot_id": {"$ref": "#/$defs/NonEmptyString"},
+        "snapshot_revision": {"$ref": "#/$defs/NonEmptyString"},
+        "evidence_sha256": {"$ref": "#/$defs/Sha256"},
+        "scope_sha256": {"$ref": "#/$defs/Sha256"}
+      }
+    },
+    "ArtifactDigests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["markdown_sha256", "claims_sha256", "paragraph_traces_sha256", "artifact_sha256"],
+      "properties": {
+        "markdown_sha256": {"$ref": "#/$defs/Sha256"},
+        "claims_sha256": {"$ref": "#/$defs/Sha256"},
+        "paragraph_traces_sha256": {"$ref": "#/$defs/Sha256"},
+        "artifact_sha256": {"$ref": "#/$defs/Sha256", "description": "RFC 8785 SHA-256 of the artifact after removing only digests.artifact_sha256."}
+      }
+    },
+    "LayerReportArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_type", "contract_id", "integrity_contract_id", "package_version", "prompt_release", "report_id", "report_type", "report_version", "writer_template_version", "status", "packet_binding", "report_markdown", "markdown_blocks", "claims", "paragraph_traces", "digests"],
+      "properties": {
+        "artifact_type": {"const": "layer_report"},
+        "contract_id": {"const": "PWQE3-CONTRACT-2"},
+        "integrity_contract_id": {"const": "PWQE3-INTEGRITY-1"},
+        "package_version": {"const": "3.1.0"},
+        "prompt_release": {"const": "4.1.0"},
+        "report_id": {"type": "string", "pattern": "^RPT-(IFS|PV|ATT)-[A-Za-z0-9._-]+$"},
+        "report_type": {"$ref": "#/$defs/ReportType"},
+        "report_version": {"const": "4.1.0"},
+        "writer_template_version": {"const": "PWRP-V4.1"},
+        "status": {"const": "final"},
+        "packet_binding": {"$ref": "#/$defs/PacketBinding"},
+        "report_markdown": {"$ref": "#/$defs/NonEmptyString"},
+        "markdown_blocks": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/MarkdownBlock"}},
+        "claims": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/LayerClaim"}},
+        "paragraph_traces": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/ReportParagraphTrace"}},
+        "digests": {"$ref": "#/$defs/ArtifactDigests"}
+      },
+      "allOf": [
+        {"if": {"properties": {"report_type": {"const": "IFS"}}, "required": ["report_type"]}, "then": {"properties": {"report_id": {"pattern": "^RPT-IFS-"}}}},
+        {"if": {"properties": {"report_type": {"const": "PV"}}, "required": ["report_type"]}, "then": {"properties": {"report_id": {"pattern": "^RPT-PV-"}}}},
+        {"if": {"properties": {"report_type": {"const": "ATT"}}, "required": ["report_type"]}, "then": {"properties": {"report_id": {"pattern": "^RPT-ATT-"}}}}
+      ]
+    },
+    "MappingSummaryArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_type", "contract_id", "integrity_contract_id", "package_version", "prompt_release", "report_id", "report_type", "report_version", "writer_template_version", "status", "packet_bindings", "report_markdown", "markdown_blocks", "claims", "paragraph_traces", "pass2_status", "digests"],
+      "properties": {
+        "artifact_type": {"const": "mapping_summary"},
+        "contract_id": {"const": "PWQE3-CONTRACT-2"},
+        "integrity_contract_id": {"const": "PWQE3-INTEGRITY-1"},
+        "package_version": {"const": "3.1.0"},
+        "prompt_release": {"const": "4.1.0"},
+        "report_id": {"type": "string", "pattern": "^RPT-MAP-[A-Za-z0-9._-]+$"},
+        "report_type": {"const": "MAP"},
+        "report_version": {"const": "4.1.0"},
+        "writer_template_version": {"const": "PWRP-V4.1"},
+        "status": {"const": "final"},
+        "packet_bindings": {"type": "array", "minItems": 1, "maxItems": 3, "items": {"$ref": "#/$defs/PacketBinding"}},
+        "report_markdown": {"$ref": "#/$defs/NonEmptyString"},
+        "markdown_blocks": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/MarkdownBlock"}},
+        "claims": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/MappingClaim"}},
+        "paragraph_traces": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/ReportParagraphTrace"}},
+        "pass2_status": {"enum": ["not_requested", "available", "started", "completed", "paused"]},
+        "safe_resume_stage": {"enum": ["S0", "S1", "S2", "S3", "S4", "S5", "complete"]},
+        "digests": {"$ref": "#/$defs/ArtifactDigests"}
+      }
+    }
+  }
+}

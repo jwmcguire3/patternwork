@@ -1,0 +1,674 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://patternwork.example/schemas/question-engine-v3.1.schema.json",
+  "title": "Patternwork Question Engine v3.1 Report Evidence Packet",
+  "description": "Machine-readable evidence and report-packet contract for PWQE3-CONTRACT-2. It represents self-report evidence, not diagnosis or physiological measurement.",
+  "$ref": "#/$defs/ReportEvidencePacket",
+  "$defs": {
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ISODateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "Sha256": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$"
+    },
+    "WindowId": {
+      "type": "string",
+      "pattern": "^WIN-[A-Za-z0-9._-]+$"
+    },
+    "EvidenceObjectId": {
+      "type": "string",
+      "pattern": "^(EP|PT|ST|AP|CL)-[A-Za-z0-9._-]+$"
+    },
+    "EpisodeId": {
+      "type": "string",
+      "pattern": "^EP-[A-Za-z0-9._-]+$"
+    },
+    "PartId": {
+      "type": "string",
+      "pattern": "^PT-[A-Za-z0-9._-]+$"
+    },
+    "StateId": {
+      "type": "string",
+      "pattern": "^ST-[A-Za-z0-9._-]+$"
+    },
+    "AttachmentId": {
+      "type": "string",
+      "pattern": "^AP-[A-Za-z0-9._-]+$"
+    },
+    "ReferentId": {
+      "type": "string",
+      "pattern": "^REF-[A-Za-z0-9._-]+$"
+    },
+    "ResponseId": {
+      "type": "string",
+      "pattern": "^RR-[A-Za-z0-9._-]+$"
+    },
+    "InteractionInstanceId": {
+      "type": "string",
+      "pattern": "^RI-[A-Za-z0-9._-]+$"
+    },
+    "ContradictionId": {
+      "type": "string",
+      "pattern": "^CX-[A-Za-z0-9._-]+$"
+    },
+    "SectionCode": {
+      "enum": [
+        "IFS-01", "IFS-02", "IFS-03", "IFS-04", "IFS-05", "IFS-06", "IFS-07", "IFS-08", "IFS-09", "IFS-10", "IFS-11", "IFS-12",
+        "PV-01", "PV-02", "PV-03", "PV-04", "PV-05", "PV-06", "PV-07", "PV-08", "PV-09", "PV-10", "PV-11",
+        "ATT-01", "ATT-02", "ATT-03", "ATT-04", "ATT-05", "ATT-06", "ATT-07", "ATT-08", "ATT-09", "ATT-10", "ATT-11", "ATT-12"
+      ]
+    },
+    "CoverageId": {
+      "type": "string",
+      "pattern": "^CV-(IFS-(0[1-9]|1[0-2])|PV-(0[1-9]|1[01])|ATT-(0[1-9]|1[0-2]))$"
+    },
+    "InteractionFamilyCode": {
+      "enum": ["RL", "MS", "BDA", "BTM", "FSR", "VFR", "RLB", "BSP", "PIS", "PDL", "RMX", "PCR", "RRE", "WMA", "RSR", "SEF", "FCF"]
+    },
+    "EvidenceGrade": {
+      "enum": ["direct_single", "replicated", "user_confirmed", "cross_context", "contradicted"]
+    },
+    "SectionConfidence": {
+      "enum": ["high", "medium", "low", "unsupported"]
+    },
+    "ObjectConfidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["grade", "evidence_grades", "rationale", "source_evidence_ids", "open_contradiction_ids"],
+      "properties": {
+        "grade": {"$ref": "#/$defs/SectionConfidence"},
+        "evidence_grades": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/EvidenceGrade"}
+        },
+        "rationale": {"$ref": "#/$defs/NonEmptyString"},
+        "source_evidence_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/EvidenceObjectId"}
+        },
+        "open_contradiction_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/ContradictionId"}
+        },
+        "limits": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/NonEmptyString"}
+        },
+        "assessed_at": {"$ref": "#/$defs/ISODateTime"}
+      }
+    },
+    "Provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["interaction_instance_id", "family_code", "bank_item_id", "bank_item_version", "response_ids", "signal_class", "capture_mode", "session_id", "sequence", "presented_option_ids"],
+      "properties": {
+        "interaction_instance_id": {"$ref": "#/$defs/InteractionInstanceId"},
+        "family_code": {"$ref": "#/$defs/InteractionFamilyCode"},
+        "bank_item_id": {
+          "type": "string",
+          "pattern": "^(RL|MS|BDA|BTM|FSR|VFR|RLB|BSP|PIS|PDL|RMX|PCR|RRE|WMA|RSR|SEF|FCF)-[0-9]{3}$"
+        },
+        "bank_item_version": {"$ref": "#/$defs/NonEmptyString"},
+        "response_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/ResponseId"}
+        },
+        "signal_class": {"enum": ["direct", "inferred", "confirmatory"]},
+        "capture_mode": {"enum": ["selected_option", "typed", "edited_option", "explicit_confirmation", "map", "rank", "slider_or_band", "derived"]},
+        "session_id": {"type": "string", "minLength": 1},
+        "sequence": {"type": "integer", "minimum": 1},
+        "presented_option_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "rule_id": {"type": "string"},
+        "rule_version": {"type": "string"},
+        "recorded_at": {"$ref": "#/$defs/ISODateTime"},
+        "user_certainty": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"signal_class": {"const": "inferred"}}, "required": ["signal_class"]},
+          "then": {"required": ["rule_id", "rule_version"]}
+        },
+        {
+          "if": {"properties": {"capture_mode": {"enum": ["selected_option", "edited_option", "rank"]}}, "required": ["capture_mode"]},
+          "then": {"properties": {"presented_option_ids": {"minItems": 1}}}
+        }
+      ]
+    },
+    "AttributedText": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "language_mode", "quote_eligible", "quote_basis", "provenance"],
+      "properties": {
+        "text": {"$ref": "#/$defs/NonEmptyString"},
+        "language_mode": {"enum": ["words", "felt_rule", "image", "body_impulse", "action_urge", "blankness", "other"]},
+        "quote_eligible": {"type": "boolean"},
+        "quote_basis": {"enum": ["typed", "edited", "explicitly_confirmed", "not_eligible"]},
+        "provenance": {"$ref": "#/$defs/Provenance"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"quote_eligible": {"const": true}}, "required": ["quote_eligible"]},
+          "then": {
+            "required": ["quote_basis"],
+            "properties": {"quote_basis": {"enum": ["typed", "edited", "explicitly_confirmed"]}}
+          }
+        },
+        {
+          "if": {"properties": {"quote_eligible": {"const": false}}, "required": ["quote_eligible"]},
+          "then": {"properties": {"quote_basis": {"const": "not_eligible"}}}
+        }
+      ]
+    },
+    "EvidenceStatement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["field", "value", "provenance"],
+      "properties": {
+        "field": {"$ref": "#/$defs/NonEmptyString"},
+        "value": {},
+        "provenance": {"$ref": "#/$defs/Provenance"},
+        "context": {"type": "string"},
+        "alternative_interpretations": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/NonEmptyString"}
+        }
+      }
+    },
+    "RelationshipContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["referent_id", "relationship_type", "current_relevance", "safety", "reliability", "certainty"],
+      "properties": {
+        "referent_id": {"$ref": "#/$defs/ReferentId"},
+        "user_label": {"type": "string"},
+        "relationship_type": {"enum": ["partner_or_closest", "close_friend", "parent_or_caregiver", "sibling", "authority", "reliably_safe_person", "other"]},
+        "current_relevance": {"enum": ["current", "recent", "historical_but_relevant", "not_applicable", "uncertain"]},
+        "safety": {"enum": ["generally_safe", "mixed", "coercive", "threatening", "currently_unstable", "unknown", "prefer_not_to_answer"]},
+        "reliability": {"enum": ["predictable_reciprocal", "mixed", "unreliable", "unknown", "prefer_not_to_answer"]},
+        "certainty": {"type": "number", "minimum": 0, "maximum": 1},
+        "notes": {"type": "string"},
+        "provenance": {"type": "array", "items": {"$ref": "#/$defs/Provenance"}}
+      }
+    },
+    "BodyRegionObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["region", "direction", "qualities"],
+      "properties": {
+        "region": {"$ref": "#/$defs/NonEmptyString"},
+        "side_or_surface": {"enum": ["front", "back", "left", "right", "both", "internal", "unspecified"]},
+        "direction": {"enum": ["more_active", "quieter", "disappeared", "mixed", "unchanged", "uncertain"]},
+        "qualities": {"type": "array", "items": {"$ref": "#/$defs/NonEmptyString"}},
+        "intensity": {"type": "number", "minimum": 0, "maximum": 10},
+        "provenance": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/Provenance"}}
+      }
+    },
+    "CostSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "internal": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "relational": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "functional": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}}
+      }
+    },
+    "ContradictionRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contradiction_id", "topic", "evidence_side_a", "evidence_side_b", "discriminator_dimensions", "status", "report_impact"],
+      "properties": {
+        "contradiction_id": {"$ref": "#/$defs/ContradictionId"},
+        "topic": {"$ref": "#/$defs/NonEmptyString"},
+        "evidence_side_a": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/EvidenceObjectId"}},
+        "evidence_side_b": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/EvidenceObjectId"}},
+        "source_response_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/ResponseId"}},
+        "discriminator_dimensions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["person", "horizon", "intensity", "state", "identity", "time_or_change", "safety_context", "other"]}
+        },
+        "status": {"enum": ["open", "resolved_context_difference", "resolved_change_over_time", "resolved_user_correction", "retained_unresolved"]},
+        "resolution": {"type": "string"},
+        "resolution_evidence_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/EvidenceObjectId"}},
+        "report_impact": {"enum": ["none", "qualify", "cap_low", "omit_claim"]},
+        "affected_section_codes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/SectionCode"}}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"enum": ["open", "retained_unresolved"]}}, "required": ["status"]},
+          "then": {"properties": {"report_impact": {"enum": ["qualify", "cap_low", "omit_claim"]}}}
+        },
+        {
+          "if": {"properties": {"status": {"enum": ["resolved_context_difference", "resolved_change_over_time", "resolved_user_correction"]}}, "required": ["status"]},
+          "then": {"required": ["resolution", "resolution_evidence_ids"], "properties": {"report_impact": {"enum": ["none", "qualify"]}}}
+        },
+        {
+          "if": {"properties": {"report_impact": {"enum": ["qualify", "cap_low", "omit_claim"]}}, "required": ["report_impact"]},
+          "then": {"required": ["affected_section_codes"], "properties": {"affected_section_codes": {"minItems": 1}}}
+        }
+      ]
+    },
+    "EpisodeEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["episode_id", "window_id", "referent_id", "relationship_context", "life_domain", "trigger", "time_horizon", "actual_first_action", "source_response_ids", "provenance", "confidence", "contradiction_ids"],
+      "properties": {
+        "episode_id": {"$ref": "#/$defs/EpisodeId"},
+        "window_id": {"$ref": "#/$defs/WindowId"},
+        "referent_id": {"$ref": "#/$defs/ReferentId"},
+        "relationship_context": {"$ref": "#/$defs/RelationshipContext"},
+        "life_domain": {"$ref": "#/$defs/NonEmptyString"},
+        "trigger": {"$ref": "#/$defs/EvidenceStatement"},
+        "recent_window": {"type": "string"},
+        "recency": {"type": "string"},
+        "typicality": {"type": "number", "minimum": 0, "maximum": 1},
+        "frequency": {"type": "string"},
+        "intensity": {"type": "number", "minimum": 0, "maximum": 10},
+        "time_horizon": {"enum": ["anticipatory", "immediate", "aftermath", "multi_horizon", "uncertain"]},
+        "before_state": {"$ref": "#/$defs/EvidenceStatement"},
+        "first_noticed_signal": {"$ref": "#/$defs/EvidenceStatement"},
+        "onset_order": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "body_activation_map": {"type": "array", "items": {"$ref": "#/$defs/BodyRegionObservation"}},
+        "body_deactivation_map": {"type": "array", "items": {"$ref": "#/$defs/BodyRegionObservation"}},
+        "breath_changes": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "voice_changes": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "movement_changes": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "orientation_changes": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "heart_muscle_temperature": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "internal_experience": {"type": "array", "items": {"$ref": "#/$defs/AttributedText"}},
+        "first_impulse": {"$ref": "#/$defs/EvidenceStatement"},
+        "actual_first_action": {"$ref": "#/$defs/EvidenceStatement"},
+        "second_action_or_escalation": {"$ref": "#/$defs/EvidenceStatement"},
+        "other_person_response": {"$ref": "#/$defs/EvidenceStatement"},
+        "short_term_payoff": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "stopping_condition": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "costs": {"$ref": "#/$defs/CostSet"},
+        "residue_duration": {"$ref": "#/$defs/EvidenceStatement"},
+        "repair_or_recovery_attempts": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "helped_failed_or_worsened": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "user_certainty": {"type": "number", "minimum": 0, "maximum": 1},
+        "source_response_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/ResponseId"}},
+        "provenance": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/Provenance"}},
+        "confidence": {"$ref": "#/$defs/ObjectConfidence"},
+        "contradiction_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/ContradictionId"}}
+      }
+    },
+    "PartProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["part_id", "status", "role_class", "supporting_episode_ids", "identity_confirmation", "confidence", "contradiction_ids"],
+      "properties": {
+        "part_id": {"$ref": "#/$defs/PartId"},
+        "status": {"enum": ["confirmed_part", "confirmed_pattern_cluster", "tentative_cluster", "rejected"]},
+        "user_label": {"type": "string"},
+        "working_label": {"type": "string"},
+        "working_label_basis": {"const": "function_plus_feared_outcome_plus_trigger_domain"},
+        "role_class": {"enum": ["manager", "firefighter", "mixed", "uncertain"]},
+        "voice_mode": {"type": "array", "uniqueItems": true, "items": {"enum": ["words", "felt_rule", "image", "body_impulse", "action_urge", "blankness", "other", "unclear"]}},
+        "voice_samples": {"type": "array", "items": {"$ref": "#/$defs/AttributedText"}},
+        "trigger_signatures": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "referent_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/ReferentId"}},
+        "life_domains": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "time_horizons": {"type": "array", "uniqueItems": true, "items": {"enum": ["anticipatory", "immediate", "aftermath", "uncertain"]}},
+        "feared_outcomes": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "protected_feelings_or_vulnerabilities": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "body_signature": {"type": "array", "items": {"$ref": "#/$defs/BodyRegionObservation"}},
+        "strategy_sequence": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "stopping_rules": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "short_term_payoff": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "costs": {"$ref": "#/$defs/CostSet"},
+        "aftereffects": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "manager_to_firefighter_handoffs": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "allied_part_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/PartId"}},
+        "polarized_part_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/PartId"}},
+        "self_capacity_access": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "blending_conditions": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "supporting_episode_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/EpisodeId"}},
+        "identity_confirmation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "source_response_ids"],
+          "properties": {
+            "status": {"enum": ["confirmed", "cluster_only", "uncertain", "rejected"]},
+            "source_response_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/ResponseId"}},
+            "provenance": {"type": "array", "items": {"$ref": "#/$defs/Provenance"}}
+          }
+        },
+        "confidence": {"$ref": "#/$defs/ObjectConfidence"},
+        "contradiction_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/ContradictionId"}}
+      }
+    },
+    "StateSignature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state_id", "descriptive_name", "classification", "supporting_episode_ids", "body_regions", "entry_paths", "exit_paths", "confidence", "contradiction_ids", "interpretive_limit"],
+      "properties": {
+        "state_id": {"$ref": "#/$defs/StateId"},
+        "descriptive_name": {"$ref": "#/$defs/NonEmptyString"},
+        "classification": {"enum": ["baseline", "activated", "shutdown", "mixed", "connected", "uncertain"]},
+        "interpretive_limit": {"const": "self_reported_signature_not_physiological_measurement"},
+        "supporting_episode_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/EpisodeId"}},
+        "body_regions": {"type": "array", "items": {"$ref": "#/$defs/BodyRegionObservation"}},
+        "energy_direction": {"type": "array", "uniqueItems": true, "items": {"enum": ["up", "down", "mixed", "absent", "stable", "uncertain"]}},
+        "sensation_qualities": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "first_signals": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "onset_order": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "breath_heart_muscle_temperature": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "orientation_attention": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "movement_access": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "speech_access": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "social_availability": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "action_tendencies": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "entry_paths": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "exit_paths": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "transition_target_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/StateId"}},
+        "stuck_points": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "duration_and_residue": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "effective_self_regulation": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "effective_co_regulation": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "ineffective_or_aggravating_channels": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "body_confounds": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "confidence": {"$ref": "#/$defs/ObjectConfidence"},
+        "contradiction_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/ContradictionId"}}
+      }
+    },
+    "AttachmentPattern": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pattern_id", "referent_id", "relationship_context", "anxiety_estimate", "avoidance_estimate", "supporting_episode_ids", "confidence", "contradiction_ids", "scope_limit"],
+      "properties": {
+        "pattern_id": {"$ref": "#/$defs/AttachmentId"},
+        "referent_id": {"$ref": "#/$defs/ReferentId"},
+        "relationship_context": {"$ref": "#/$defs/RelationshipContext"},
+        "scope_limit": {"const": "relationship_specific_unless_cross_context_evidence_is_present"},
+        "anxiety_estimate": {"enum": ["low", "moderate", "high", "variable", "underdetermined"]},
+        "avoidance_estimate": {"enum": ["low", "moderate", "high", "variable", "underdetermined"]},
+        "ambiguity_cues": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "first_interpretations": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "working_model_self_evidence": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "working_model_other_evidence": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "alternative_interpretation_reachability": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "proximity_seeking_impulses": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "protest_sequence": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "deactivation_sequence": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "rupture_response": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "repair_initiation_sequence": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "repair_reception_sequence": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "reassurance_uptake": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "pace_thresholds": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["dimension", "applicability"],
+            "properties": {
+              "dimension": {"enum": ["contact_frequency", "emotional_disclosure", "dependence", "physical_closeness", "commitment", "space", "conflict_repair_pace", "other"]},
+              "applicability": {"enum": ["applicable", "not_applicable", "uncertain"]},
+              "too_fast": {"type": "string"},
+              "workable": {"type": "string"},
+              "too_slow": {"type": "string"},
+              "provenance": {"type": "array", "items": {"$ref": "#/$defs/Provenance"}}
+            }
+          }
+        },
+        "conflict_and_repair_tolerance": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "secure_exceptions": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "cross_relationship_comparisons": {"type": "array", "items": {"$ref": "#/$defs/EvidenceStatement"}},
+        "supporting_episode_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/EpisodeId"}},
+        "confidence": {"$ref": "#/$defs/ObjectConfidence"},
+        "contradiction_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/ContradictionId"}}
+      }
+    },
+    "CoverageCell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["coverage_id", "section_code", "applicability", "routing_state", "confidence", "required_fields", "satisfied_fields", "missing_fields", "applicability_evidence_ids", "applicability_response_ids", "independent_episode_ids", "independent_episode_count", "supporting_evidence_ids", "open_contradiction_ids", "eligible_next_families"],
+      "properties": {
+        "coverage_id": {"$ref": "#/$defs/CoverageId"},
+        "section_code": {"$ref": "#/$defs/SectionCode"},
+        "applicability": {"enum": ["applicable", "not_applicable", "undetermined"]},
+        "not_applicable_reason": {"type": "string"},
+        "routing_state": {"enum": ["green", "amber", "red", "not_applicable"]},
+        "confidence": {"$ref": "#/$defs/SectionConfidence"},
+        "confidence_rationale": {"type": "string"},
+        "required_fields": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/NonEmptyString"}},
+        "satisfied_fields": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/NonEmptyString"}},
+        "missing_fields": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/NonEmptyString"}},
+        "applicability_evidence_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/EvidenceObjectId"}},
+        "applicability_response_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/ResponseId"}},
+        "evidence_grades": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/EvidenceGrade"}},
+        "independent_episode_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/EpisodeId"}},
+        "independent_episode_count": {"type": "integer", "minimum": 0},
+        "context_count": {"type": "integer", "minimum": 0},
+        "supporting_evidence_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/EvidenceObjectId"}},
+        "open_contradiction_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/ContradictionId"}},
+        "intentional_limit": {"type": "string"},
+        "eligible_next_families": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/InteractionFamilyCode"}},
+        "updated_at": {"$ref": "#/$defs/ISODateTime"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"applicability": {"const": "not_applicable"}}, "required": ["applicability"]},
+          "then": {"required": ["not_applicable_reason"], "properties": {"routing_state": {"const": "not_applicable"}, "applicability_evidence_ids": {"minItems": 1}, "applicability_response_ids": {"minItems": 1}, "independent_episode_ids": {"maxItems": 0}, "independent_episode_count": {"const": 0}}}
+        },
+        {
+          "if": {"properties": {"routing_state": {"const": "red"}}, "required": ["routing_state"]},
+          "then": {"properties": {"confidence": {"const": "unsupported"}}}
+        },
+        {
+          "if": {"properties": {"routing_state": {"const": "green"}}, "required": ["routing_state"]},
+          "then": {"properties": {"confidence": {"enum": ["high", "medium"]}}}
+        }
+      ]
+    },
+    "CoverageMatrix": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_id", "cells", "last_updated"],
+      "properties": {
+        "contract_id": {"const": "PWQE3-CONTRACT-2"},
+        "cells": {
+          "type": "array",
+          "minItems": 35,
+          "maxItems": 35,
+          "items": {"$ref": "#/$defs/CoverageCell"},
+          "prefixItems": [
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-IFS-01"}, "section_code": {"const": "IFS-01"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-IFS-02"}, "section_code": {"const": "IFS-02"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-IFS-03"}, "section_code": {"const": "IFS-03"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-IFS-04"}, "section_code": {"const": "IFS-04"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-IFS-05"}, "section_code": {"const": "IFS-05"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-IFS-06"}, "section_code": {"const": "IFS-06"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-IFS-07"}, "section_code": {"const": "IFS-07"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-IFS-08"}, "section_code": {"const": "IFS-08"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-IFS-09"}, "section_code": {"const": "IFS-09"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-IFS-10"}, "section_code": {"const": "IFS-10"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-IFS-11"}, "section_code": {"const": "IFS-11"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-IFS-12"}, "section_code": {"const": "IFS-12"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-PV-01"}, "section_code": {"const": "PV-01"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-PV-02"}, "section_code": {"const": "PV-02"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-PV-03"}, "section_code": {"const": "PV-03"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-PV-04"}, "section_code": {"const": "PV-04"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-PV-05"}, "section_code": {"const": "PV-05"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-PV-06"}, "section_code": {"const": "PV-06"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-PV-07"}, "section_code": {"const": "PV-07"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-PV-08"}, "section_code": {"const": "PV-08"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-PV-09"}, "section_code": {"const": "PV-09"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-PV-10"}, "section_code": {"const": "PV-10"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-PV-11"}, "section_code": {"const": "PV-11"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-ATT-01"}, "section_code": {"const": "ATT-01"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-ATT-02"}, "section_code": {"const": "ATT-02"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-ATT-03"}, "section_code": {"const": "ATT-03"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-ATT-04"}, "section_code": {"const": "ATT-04"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-ATT-05"}, "section_code": {"const": "ATT-05"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-ATT-06"}, "section_code": {"const": "ATT-06"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-ATT-07"}, "section_code": {"const": "ATT-07"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-ATT-08"}, "section_code": {"const": "ATT-08"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-ATT-09"}, "section_code": {"const": "ATT-09"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-ATT-10"}, "section_code": {"const": "ATT-10"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-ATT-11"}, "section_code": {"const": "ATT-11"}}},
+            {"$ref": "#/$defs/CoverageCell", "properties": {"coverage_id": {"const": "CV-ATT-12"}, "section_code": {"const": "ATT-12"}}}
+          ]
+        },
+        "last_updated": {"$ref": "#/$defs/ISODateTime"},
+        "stop_eligible": {"type": "boolean"},
+        "stop_rationale": {"type": "string"}
+      }
+    },
+    "SelectedExcerpt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["excerpt_id", "text", "quote_eligible", "quote_basis", "source_response_ids", "source_evidence_ids", "provenance", "allowed_section_codes"],
+      "properties": {
+        "excerpt_id": {"type": "string", "pattern": "^EX-[A-Za-z0-9._-]+$"},
+        "text": {"$ref": "#/$defs/NonEmptyString"},
+        "quote_eligible": {"type": "boolean"},
+        "quote_basis": {"enum": ["typed", "edited", "explicitly_confirmed", "not_eligible"]},
+        "source_response_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/ResponseId"}},
+        "source_evidence_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/EvidenceObjectId"}},
+        "provenance": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/Provenance"}},
+        "allowed_section_codes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/SectionCode"}},
+        "redaction_applied": {"type": "boolean"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"quote_eligible": {"const": true}}, "required": ["quote_eligible"]},
+          "then": {
+            "required": ["quote_basis"],
+            "properties": {"quote_basis": {"enum": ["typed", "edited", "explicitly_confirmed"]}}
+          }
+        },
+        {
+          "if": {"properties": {"quote_eligible": {"const": false}}, "required": ["quote_eligible"]},
+          "then": {"properties": {"quote_basis": {"const": "not_eligible"}}}
+        }
+      ]
+    },
+    "ReportEvidencePacket": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["packet_id", "packet_version", "contract_id", "integrity_contract_id", "report_type", "generated_at", "snapshot_binding", "window_registry", "episode_evidence", "part_profiles", "state_signatures", "attachment_patterns", "contradictions", "coverage_matrix", "selected_excerpts", "prohibitions", "assessment_completion"],
+      "properties": {
+        "packet_id": {"type": "string", "pattern": "^PKT-(IFS|PV|ATT)-[A-Za-z0-9._-]+$"},
+        "packet_version": {"$ref": "#/$defs/NonEmptyString"},
+        "contract_id": {"const": "PWQE3-CONTRACT-2"},
+        "integrity_contract_id": {"const": "PWQE3-INTEGRITY-1"},
+        "report_type": {"enum": ["IFS", "PV", "ATT"]},
+        "generated_at": {"$ref": "#/$defs/ISODateTime"},
+        "snapshot_binding": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["snapshot_id", "snapshot_revision", "evidence_sha256", "scope_sha256"],
+          "properties": {
+            "snapshot_id": {"type": "string", "minLength": 1},
+            "snapshot_revision": {"type": "string", "minLength": 1},
+            "evidence_sha256": {"$ref": "#/$defs/Sha256"},
+            "scope_sha256": {"$ref": "#/$defs/Sha256"}
+          }
+        },
+        "window_registry": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["window_id", "label"],
+            "properties": {
+              "window_id": {"$ref": "#/$defs/WindowId"},
+              "label": {"$ref": "#/$defs/NonEmptyString"},
+              "start": {"$ref": "#/$defs/ISODateTime"},
+              "end": {"$ref": "#/$defs/ISODateTime"}
+            }
+          }
+        },
+        "applicable_windows": {"type": "array", "items": {"$ref": "#/$defs/NonEmptyString"}},
+        "relationship_contexts": {"type": "array", "items": {"$ref": "#/$defs/RelationshipContext"}},
+        "episode_evidence": {"type": "array", "items": {"$ref": "#/$defs/EpisodeEvidence"}},
+        "part_profiles": {"type": "array", "items": {"$ref": "#/$defs/PartProfile"}},
+        "state_signatures": {"type": "array", "items": {"$ref": "#/$defs/StateSignature"}},
+        "attachment_patterns": {"type": "array", "items": {"$ref": "#/$defs/AttachmentPattern"}},
+        "contradictions": {"type": "array", "items": {"$ref": "#/$defs/ContradictionRecord"}},
+        "coverage_matrix": {"$ref": "#/$defs/CoverageMatrix"},
+        "selected_excerpts": {"type": "array", "items": {"$ref": "#/$defs/SelectedExcerpt"}},
+        "prohibitions": {
+          "type": "array",
+          "minItems": 5,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "no_diagnosis",
+              "no_trauma_or_developmental_origin_inference",
+              "no_exile_identity_age_or_history_inference",
+              "no_physiological_measurement_claim",
+              "no_global_attachment_style_without_cross_context_evidence",
+              "no_unattributed_quote",
+              "no_raw_answer_list_inference",
+              "no_unsupported_section_filler"
+            ]
+          },
+          "allOf": [
+            {"contains": {"const": "no_diagnosis"}},
+            {"contains": {"const": "no_trauma_or_developmental_origin_inference"}},
+            {"contains": {"const": "no_physiological_measurement_claim"}},
+            {"contains": {"const": "no_unattributed_quote"}},
+            {"contains": {"const": "no_unsupported_section_filler"}}
+          ]
+        },
+        "assessment_completion": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["completion_mode", "last_completed_stage", "safe_resume_stage", "underdetermined_section_codes"],
+          "properties": {
+            "completion_mode": {"enum": ["pass1_complete", "pass2_complete", "user_stop", "safety_stop"]},
+            "last_completed_stage": {"enum": ["S0", "S1", "S2", "S3", "S4", "S5", "complete"]},
+            "reason": {"type": "string"},
+            "underdetermined_section_codes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/SectionCode"}},
+            "safe_resume_stage": {"enum": ["S0", "S1", "S2", "S3", "S4", "S5", "complete"]}
+          },
+          "allOf": [
+            {
+              "if": {"properties": {"completion_mode": {"const": "pass1_complete"}}, "required": ["completion_mode"]},
+              "then": {"properties": {"last_completed_stage": {"const": "S2"}, "safe_resume_stage": {"const": "S3"}}}
+            },
+            {
+              "if": {"properties": {"completion_mode": {"const": "pass2_complete"}}, "required": ["completion_mode"]},
+              "then": {"properties": {"last_completed_stage": {"const": "S5"}, "safe_resume_stage": {"const": "complete"}}}
+            },
+            {
+              "if": {"properties": {"completion_mode": {"enum": ["user_stop", "safety_stop"]}}, "required": ["completion_mode"]},
+              "then": {"required": ["reason"]}
+            }
+          ]
+        },
+        "early_stop": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["stopped_early", "underdetermined_section_codes"],
+          "properties": {
+            "stopped_early": {"type": "boolean"},
+            "reason": {"type": "string"},
+            "underdetermined_section_codes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/SectionCode"}},
+            "safe_resume_stage": {"enum": ["S0", "S1", "S2", "S3", "S4", "S5", "complete"]}
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,307 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://patternwork.example/schemas/synthesis-bundle-v3.1.schema.json",
+  "title": "Patternwork v3.1 synthesis bundle and audit artifacts",
+  "description": "Strict snapshot, link-proof, candidate-decision, synthesis-trace, and fail-closed preflight contracts for PWQE3-CONTRACT-2.",
+  "oneOf": [
+    {"$ref": "#/$defs/SynthesisBundle"},
+    {"$ref": "#/$defs/SynthesisAudit"},
+    {"$ref": "#/$defs/SynthesisPreflightError"}
+  ],
+  "$defs": {
+    "NonEmptyString": {"type": "string", "minLength": 1},
+    "Sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "ReportType": {"enum": ["IFS", "PV", "ATT"]},
+    "Confidence": {"enum": ["high", "medium", "low", "unsupported"]},
+    "ContradictionEffect": {"enum": ["none", "qualify", "cap_low", "omit_claim"]},
+    "SynthesisSectionCode": {"enum": ["SYN-01", "SYN-02", "SYN-03", "SYN-04", "SYN-05", "SYN-06", "SYN-07"]},
+    "AnySectionCode": {
+      "enum": [
+        "IFS-01", "IFS-02", "IFS-03", "IFS-04", "IFS-05", "IFS-06", "IFS-07", "IFS-08", "IFS-09", "IFS-10", "IFS-11", "IFS-12",
+        "PV-01", "PV-02", "PV-03", "PV-04", "PV-05", "PV-06", "PV-07", "PV-08", "PV-09", "PV-10", "PV-11",
+        "ATT-01", "ATT-02", "ATT-03", "ATT-04", "ATT-05", "ATT-06", "ATT-07", "ATT-08", "ATT-09", "ATT-10", "ATT-11", "ATT-12",
+        "MAP-01", "MAP-02", "MAP-03", "MAP-04", "MAP-05", "MAP-06", "MAP-07", "MAP-08",
+        "SYN-01", "SYN-02", "SYN-03", "SYN-04", "SYN-05", "SYN-06", "SYN-07"
+      ]
+    },
+    "ClaimTriple": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ifs", "pv", "attachment"],
+      "properties": {
+        "ifs": {"type": "string", "pattern": "^CLM-IFS-[A-Za-z0-9._-]+$"},
+        "pv": {"type": "string", "pattern": "^CLM-PV-[A-Za-z0-9._-]+$"},
+        "attachment": {"type": "string", "pattern": "^CLM-ATT-[A-Za-z0-9._-]+$"}
+      }
+    },
+    "SharedBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["episode_id", "episode_sha256", "referent_id", "window_id", "time_horizon"],
+      "properties": {
+        "episode_id": {"type": "string", "pattern": "^EP-[A-Za-z0-9._-]+$"},
+        "episode_sha256": {"$ref": "#/$defs/Sha256"},
+        "referent_id": {"type": "string", "pattern": "^REF-[A-Za-z0-9._-]+$"},
+        "window_id": {"type": "string", "pattern": "^WIN-[A-Za-z0-9._-]+$"},
+        "time_horizon": {"enum": ["anticipatory", "immediate", "aftermath", "multi_horizon", "uncertain"]}
+      }
+    },
+    "LinkBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["episode_bindings", "referent_id", "window_id", "time_horizon"],
+      "properties": {
+        "episode_bindings": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["episode_id", "episode_sha256"],
+            "properties": {
+              "episode_id": {"type": "string", "pattern": "^EP-[A-Za-z0-9._-]+$"},
+              "episode_sha256": {"$ref": "#/$defs/Sha256"}
+            }
+          }
+        },
+        "referent_id": {"type": "string", "pattern": "^REF-[A-Za-z0-9._-]+$"},
+        "window_id": {"type": "string", "pattern": "^WIN-[A-Za-z0-9._-]+$"},
+        "time_horizon": {"enum": ["anticipatory", "immediate", "aftermath", "multi_horizon", "uncertain"]}
+      }
+    },
+    "SnapshotManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest_id", "contract_id", "integrity_contract_id", "package_version", "snapshot_id", "snapshot_revision", "evidence_sha256", "scope_sha256", "packet_version", "report_version", "writer_template_version", "manifest_sha256"],
+      "properties": {
+        "manifest_id": {"type": "string", "pattern": "^SNAP-[A-Za-z0-9._-]+$"},
+        "contract_id": {"const": "PWQE3-CONTRACT-2"},
+        "integrity_contract_id": {"const": "PWQE3-INTEGRITY-1"},
+        "package_version": {"const": "3.1.0"},
+        "snapshot_id": {"$ref": "#/$defs/NonEmptyString"},
+        "snapshot_revision": {"$ref": "#/$defs/NonEmptyString"},
+        "evidence_sha256": {"$ref": "#/$defs/Sha256"},
+        "scope_sha256": {"$ref": "#/$defs/Sha256"},
+        "packet_version": {"const": "3.1.0"},
+        "report_version": {"const": "4.1.0"},
+        "writer_template_version": {"const": "PWRP-V4.1"},
+        "manifest_sha256": {"$ref": "#/$defs/Sha256", "description": "RFC 8785 SHA-256 after removing only manifest_sha256."}
+      }
+    },
+    "SourceArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["report_type", "packet", "packet_sha256", "report", "report_artifact_sha256"],
+      "properties": {
+        "report_type": {"$ref": "#/$defs/ReportType"},
+        "packet": {"$ref": "https://patternwork.example/schemas/question-engine-v3.1.schema.json#/$defs/ReportEvidencePacket"},
+        "packet_sha256": {"$ref": "#/$defs/Sha256"},
+        "report": {"$ref": "https://patternwork.example/schemas/report-artifact-v3.1.schema.json#/$defs/LayerReportArtifact"},
+        "report_artifact_sha256": {"$ref": "#/$defs/Sha256"}
+      }
+    },
+    "ConfirmationProvenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["response_ids", "evidence_ids"],
+      "properties": {
+        "response_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^RR-[A-Za-z0-9._-]+$"}},
+        "evidence_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^(EP|PT|ST|AP|CL)-[A-Za-z0-9._-]+$"}}
+      }
+    },
+    "CrossLayerLinkProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["link_id", "kind", "status", "claim_ids", "boundary", "confirmation_provenance", "proof_sha256"],
+      "properties": {
+        "link_id": {"type": "string", "pattern": "^XLINK-[A-Za-z0-9._-]+$"},
+        "kind": {"enum": ["convergence", "divergence"]},
+        "status": {"const": "user_confirmed"},
+        "claim_ids": {"$ref": "#/$defs/ClaimTriple"},
+        "boundary": {"$ref": "#/$defs/LinkBoundary"},
+        "confirmation_provenance": {"$ref": "#/$defs/ConfirmationProvenance"},
+        "proof_sha256": {"$ref": "#/$defs/Sha256", "description": "RFC 8785 SHA-256 after removing only proof_sha256."}
+      }
+    },
+    "SynthesisBundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_type", "bundle_id", "contract_id", "integrity_contract_id", "package_version", "prompt_release", "snapshot_manifest", "sources", "cross_layer_link_proofs", "bundle_sha256"],
+      "properties": {
+        "artifact_type": {"const": "synthesis_bundle"},
+        "bundle_id": {"type": "string", "pattern": "^SYN-BUNDLE-[A-Za-z0-9._-]+$"},
+        "contract_id": {"const": "PWQE3-CONTRACT-2"},
+        "integrity_contract_id": {"const": "PWQE3-INTEGRITY-1"},
+        "package_version": {"const": "3.1.0"},
+        "prompt_release": {"const": "4.1.0"},
+        "snapshot_manifest": {"$ref": "#/$defs/SnapshotManifest"},
+        "sources": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ifs", "pv", "attachment"],
+          "properties": {
+            "ifs": {"$ref": "#/$defs/SourceArtifact"},
+            "pv": {"$ref": "#/$defs/SourceArtifact"},
+            "attachment": {"$ref": "#/$defs/SourceArtifact"}
+          }
+        },
+        "cross_layer_link_proofs": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/CrossLayerLinkProof"}},
+        "bundle_sha256": {"$ref": "#/$defs/Sha256", "description": "RFC 8785 SHA-256 after removing only bundle_sha256."}
+      }
+    },
+    "CandidateContradiction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contradiction_id", "effect", "source_claim_ids"],
+      "properties": {
+        "contradiction_id": {"type": "string", "pattern": "^CX-[A-Za-z0-9._-]+$"},
+        "effect": {"$ref": "#/$defs/ContradictionEffect"},
+        "source_claim_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^CLM-(IFS|PV|ATT)-[A-Za-z0-9._-]+$"}}
+      }
+    },
+    "SourceConfidences": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ifs", "pv", "attachment"],
+      "properties": {
+        "ifs": {"$ref": "#/$defs/Confidence"},
+        "pv": {"$ref": "#/$defs/Confidence"},
+        "attachment": {"$ref": "#/$defs/Confidence"}
+      }
+    },
+    "CandidateAudit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "ordinal", "claim_ids", "link_basis", "decision", "source_confidences", "weakest_confidence", "effective_contradiction_effect", "contradictions", "limit_ids", "reason_codes", "reader_disposition"],
+      "properties": {
+        "candidate_id": {"type": "string", "pattern": "^SYN-CAND-[a-f0-9]{64}$", "description": "SYN-CAND- plus SHA-256 of the RFC 8785 canonical candidate seed."},
+        "ordinal": {"type": "integer", "minimum": 1},
+        "claim_ids": {"$ref": "#/$defs/ClaimTriple"},
+        "link_basis": {"enum": ["common_episode", "explicit_convergence", "explicit_divergence", "none"]},
+        "explicit_link_id": {"type": "string", "pattern": "^XLINK-[A-Za-z0-9._-]+$"},
+        "shared_boundary": {"$ref": "#/$defs/SharedBoundary"},
+        "link_boundary": {"$ref": "#/$defs/LinkBoundary"},
+        "decision": {"enum": ["eligible_convergence", "reject", "divergence_only", "underdetermined"]},
+        "source_confidences": {"$ref": "#/$defs/SourceConfidences"},
+        "weakest_confidence": {"$ref": "#/$defs/Confidence"},
+        "effective_contradiction_effect": {"$ref": "#/$defs/ContradictionEffect"},
+        "contradictions": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/CandidateContradiction"}},
+        "limit_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^LIM-[A-Za-z0-9._-]+$"}},
+        "reason_codes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["eligible_typed_triple", "eligible_explicit_link", "explicit_divergence", "missing_link", "incompatible_boundary", "tentative_source", "low_source", "unsupported_source", "omitted_source", "cap_low", "snapshot_valid"]}},
+        "reader_disposition": {"enum": ["include_convergence", "include_divergence", "audit_only"]}
+      }
+    },
+    "SynthesisParagraphTrace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trace_id", "paragraph_id", "paragraph_ordinal", "paragraph_sha256", "report_section_code", "candidate_ids", "source_claim_ids", "supporting_evidence_ids", "supporting_response_ids", "confidence", "contradiction_ids", "limit_ids", "writer_template_version"],
+      "properties": {
+        "trace_id": {"type": "string", "pattern": "^TRC-SYN-[A-Za-z0-9._-]+$"},
+        "paragraph_id": {"type": "string", "pattern": "^P-SYN-[A-Za-z0-9._-]+$"},
+        "paragraph_ordinal": {"type": "integer", "minimum": 1},
+        "paragraph_sha256": {"$ref": "#/$defs/Sha256"},
+        "report_section_code": {"$ref": "#/$defs/SynthesisSectionCode"},
+        "candidate_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^SYN-CAND-[a-f0-9]{64}$"}},
+        "source_claim_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^CLM-(IFS|PV|ATT)-[A-Za-z0-9._-]+$"}},
+        "supporting_evidence_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^(EP|PT|ST|AP|CL|CV)-[A-Za-z0-9._-]+$"}},
+        "supporting_response_ids": {"type": "array", "maxItems": 0},
+        "confidence": {"$ref": "#/$defs/Confidence"},
+        "contradiction_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^CX-[A-Za-z0-9._-]+$"}},
+        "limit_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^LIM-[A-Za-z0-9._-]+$"}},
+        "writer_template_version": {"const": "PWRP-V4.1"}
+      }
+    },
+    "SynthesisMarkdownBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["paragraph_id", "ordinal", "kind", "markdown", "markdown_sha256"],
+      "properties": {
+        "paragraph_id": {"type": "string", "pattern": "^P-SYN-[A-Za-z0-9._-]+$"},
+        "ordinal": {"type": "integer", "minimum": 1},
+        "kind": {"enum": ["substantive", "navigation"]},
+        "markdown": {"$ref": "#/$defs/NonEmptyString"},
+        "markdown_sha256": {"$ref": "#/$defs/Sha256"},
+        "trace_id": {"type": "string", "pattern": "^TRC-SYN-[A-Za-z0-9._-]+$"}
+      },
+      "allOf": [
+        {"if": {"properties": {"kind": {"const": "substantive"}}, "required": ["kind"]}, "then": {"required": ["trace_id"]}},
+        {"if": {"properties": {"kind": {"const": "navigation"}}, "required": ["kind"]}, "then": {"not": {"required": ["trace_id"]}}}
+      ]
+    },
+    "SynthesisDigests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["markdown_sha256", "candidate_audit_sha256", "paragraph_traces_sha256", "audit_sha256"],
+      "properties": {
+        "markdown_sha256": {"$ref": "#/$defs/Sha256"},
+        "candidate_audit_sha256": {"$ref": "#/$defs/Sha256"},
+        "paragraph_traces_sha256": {"$ref": "#/$defs/Sha256"},
+        "audit_sha256": {"$ref": "#/$defs/Sha256", "description": "RFC 8785 SHA-256 after removing only digests.audit_sha256."}
+      }
+    },
+    "ValidatorResults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["input_integrity_passed", "snapshot_compatibility_passed", "trace_completeness_passed", "references_passed", "contradiction_propagation_passed", "all_named_convergences_eligible", "deterministic_order_passed", "quote_prohibition_passed"],
+      "properties": {
+        "input_integrity_passed": {"const": true},
+        "snapshot_compatibility_passed": {"const": true},
+        "trace_completeness_passed": {"const": true},
+        "references_passed": {"const": true},
+        "contradiction_propagation_passed": {"const": true},
+        "all_named_convergences_eligible": {"const": true},
+        "deterministic_order_passed": {"const": true},
+        "quote_prohibition_passed": {"const": true}
+      }
+    },
+    "SynthesisAudit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_type", "audit_id", "contract_id", "integrity_contract_id", "package_version", "prompt_release", "bundle_id", "bundle_sha256", "snapshot_manifest_sha256", "reader_markdown", "markdown_blocks", "candidates", "paragraph_traces", "validator_results", "digests"],
+      "properties": {
+        "artifact_type": {"const": "synthesis_audit"},
+        "audit_id": {"type": "string", "pattern": "^SYN-AUDIT-[A-Za-z0-9._-]+$"},
+        "contract_id": {"const": "PWQE3-CONTRACT-2"},
+        "integrity_contract_id": {"const": "PWQE3-INTEGRITY-1"},
+        "package_version": {"const": "3.1.0"},
+        "prompt_release": {"const": "4.1.0"},
+        "bundle_id": {"type": "string", "pattern": "^SYN-BUNDLE-[A-Za-z0-9._-]+$"},
+        "bundle_sha256": {"$ref": "#/$defs/Sha256"},
+        "snapshot_manifest_sha256": {"$ref": "#/$defs/Sha256"},
+        "reader_markdown": {"$ref": "#/$defs/NonEmptyString"},
+        "markdown_blocks": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/SynthesisMarkdownBlock"}},
+        "candidates": {"type": "array", "items": {"$ref": "#/$defs/CandidateAudit"}},
+        "paragraph_traces": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/SynthesisParagraphTrace"}},
+        "validator_results": {"$ref": "#/$defs/ValidatorResults"},
+        "digests": {"$ref": "#/$defs/SynthesisDigests"}
+      }
+    },
+    "PreflightErrorItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "code", "message", "affected_section_codes", "invalid_or_missing_ids"],
+      "properties": {
+        "kind": {"enum": ["schema", "packet_type", "coverage", "reference", "confidence", "quote_provenance", "evidence_floor", "snapshot_compatibility", "artifact_digest", "trace_completeness", "contradiction_propagation", "cross_layer_link", "determinism", "prohibition"]},
+        "code": {"type": "string", "pattern": "^SYN-E-[A-Z0-9_]+$"},
+        "message": {"$ref": "#/$defs/NonEmptyString"},
+        "affected_section_codes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/AnySectionCode"}},
+        "invalid_or_missing_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/NonEmptyString"}}
+      }
+    },
+    "SynthesisPreflightError": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_type", "status", "requested_report_type", "contract_id", "input_ids", "errors"],
+      "properties": {
+        "artifact_type": {"const": "synthesis_preflight_error"},
+        "status": {"const": "input_contract_error"},
+        "requested_report_type": {"const": "SYNTHESIS"},
+        "contract_id": {"const": "PWQE3-CONTRACT-2"},
+        "bundle_id": {"type": "string", "pattern": "^SYN-BUNDLE-[A-Za-z0-9._-]+$"},
+        "input_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/NonEmptyString"}},
+        "errors": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/PreflightErrorItem"}}
+      }
+    }
+  }
+}
