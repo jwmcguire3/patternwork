@@ -1,6 +1,6 @@
 import { DEEPENING_ITEMS, getBankItem, MAPPING_ITEMS } from "@/lib/question-engine/manifest";
+import { ACTIVE_EXECUTABLE_ROUTING_CONTRACTS_BY_ID, type ExecutableRoutingContract } from "@/lib/question-engine/routing-contracts";
 import type { AssessmentStage, BankItemManifestEntry, InteractionFamilyCode } from "@/lib/question-engine/types";
-import type { ExecutableRoutingContract } from "@/lib/question-engine/renderable-manifest";
 import type {
   AssessmentPass,
   AssessmentResponseInput,
@@ -15,8 +15,14 @@ const HIGH_INTENSITY_FAMILIES = new Set<InteractionFamilyCode>(["BDA", "BTM", "B
 const RESOURCE_FAMILIES = new Set<InteractionFamilyCode>(["RSR", "SEF"]);
 type StickySafetyState = AssessmentRoutingState & { readonly safetyContext?: "safe" | "mixed" | "unsafe" | "unknown" };
 type TypedRoutingResponse = AssessmentResponseInput & { readonly resourceSafetyClear?: boolean };
-type ContractCompletedInteraction = CompletedInteraction & { readonly evidenceEligible?: boolean; readonly coverageSectionCodes?: readonly string[]; readonly referentPresent?: boolean; readonly safetyContextRecorded?: boolean };
-type RoutingContractInput = TypedRoutingResponse & { readonly authoredRoutingContracts?: Readonly<Record<string, ExecutableRoutingContract>> };
+type ContractCompletedInteraction = CompletedInteraction & {
+  readonly pass?: AssessmentPass;
+  readonly evidenceEligible?: boolean;
+  readonly coverageSectionCodes?: readonly string[];
+  readonly referentPresent?: boolean;
+  readonly referentId?: string;
+  readonly safetyContextRecorded?: boolean;
+};
 const FORM_BY_FAMILY: Readonly<Record<InteractionFamilyCode, InteractionForm>> = {
   RL: "threshold", MS: "recall", BDA: "recall", BTM: "map", FSR: "sort", VFR: "text",
   RLB: "sort", BSP: "threshold", PIS: "sort", PDL: "sort", RMX: "threshold", PCR: "threshold",
@@ -68,8 +74,11 @@ function planFor(pass: AssessmentPass): readonly BankItemManifestEntry[] {
   return pass === 1 ? MAPPING_ITEMS : DEEPENING_ITEMS;
 }
 
-function deriveCoverage(completed: readonly CompletedInteraction[]) {
-  const answered = completed.filter((entry) => entry.completionState === "COMPLETED" && (entry as ContractCompletedInteraction).evidenceEligible !== false);
+function deriveCoverage(completed: readonly CompletedInteraction[], pass: AssessmentPass) {
+  const answered = completed.filter((entry) => {
+    const contractEntry = entry as ContractCompletedInteraction;
+    return entry.completionState === "COMPLETED" && contractEntry.evidenceEligible !== false && (contractEntry.pass === undefined || contractEntry.pass === pass);
+  });
   const domains = new Set<string>();
   const horizons = new Set<string>();
   let ifsDirect = 0;
@@ -116,32 +125,44 @@ export function isAuthoredContractEligible(contract: ExecutableRoutingContract |
     const matches = predicates.prerequisiteBankItemIds.map((id) => completedIds.has(id));
     if (predicates.prerequisiteMode === "all" ? matches.some((match) => !match) : matches.every((match) => !match)) return false;
   }
-  if (evidence.length < predicates.minimumEpisodeAnchors) return false;
-  if (predicates.requiresReferent && !evidence.some((entry) => (entry as ContractCompletedInteraction).referentPresent)) return false;
+  if (evidence.length < predicates.minimumEvidenceResponses) return false;
+  const referentIds = new Set(evidence.map((entry) => (entry as ContractCompletedInteraction).referentId).filter((value): value is string => Boolean(value)));
+  if (referentIds.size < predicates.minimumNamedReferents) return false;
   if (predicates.requiresSafetyContext && !completed.some((entry) => (entry as ContractCompletedInteraction).safetyContextRecorded)) return false;
   if (predicates.requiresSafeContext && (state as StickySafetyState).safetyContext !== "safe") return false;
-  return predicates.always || predicates.allowedStages.length > 0 || predicates.prerequisiteBankItemIds.length > 0 || predicates.minimumEpisodeAnchors > 0 || predicates.requiresReferent || predicates.requiresSafetyContext || predicates.requiresSafeContext;
+  return true;
+}
+
+function effectiveRoutingStage(state: AssessmentRoutingState, completed: readonly CompletedInteraction[]): AssessmentStage {
+  if (state.pass !== 1) return state.stage;
+  const completedCalibrationIds = new Set(completed.filter((entry) => entry.completionState === "COMPLETED" || entry.completionState === "SKIPPED").map((entry) => entry.bankItemId));
+  return ["RL-101", "RL-102"].every((id) => completedCalibrationIds.has(id as BankItemManifestEntry["bankItemId"])) ? "S1" : "S0";
 }
 
 function chooseNext(
   state: AssessmentRoutingState,
   completed: readonly CompletedInteraction[],
   signal: { userArousal: UserArousal; unsafeContext: boolean },
-  contracts: Readonly<Record<string, ExecutableRoutingContract>>,
   selectedOptionIds: readonly string[],
   currentContract?: ExecutableRoutingContract,
 ): { item: BankItemManifestEntry | null; reason: string } {
   if (state.pendingBtmTransition) return { item: requiredResourceItem(), reason: "mandatory-post-body-map-recovery" };
-  if (state.requiresLowIntensityAfterRre) return { item: requiredResourceItem(), reason: "mandatory-post-rupture-low-intensity" };
   if (signal.userArousal === "high" || signal.unsafeContext) return { item: requiredResourceItem(), reason: signal.unsafeContext ? "unsafe-context-resource-only" : "high-arousal-resource-only" };
   if (state.consecutiveHighIntensity >= 2) return { item: requiredResourceItem(), reason: "two-high-item-limit" };
+  if (state.requiresLowIntensityAfterRre) return { item: requiredResourceItem(), reason: "mandatory-post-rupture-low-intensity" };
 
-  if (currentContract?.recoveryCompilation === "compiled" && currentContract.recovery.required) {
-    const recovery = currentContract.recovery.routeBankItemIds.map((id) => getBankItem(id)).filter((item): item is BankItemManifestEntry => Boolean(item)).find((item) => isAuthoredContractEligible(contracts[item.bankItemId], state, completed));
-    if (recovery) return { item: recovery, reason: "authored-required-recovery" };
+  if (currentContract?.recoveryCompilation === "compiled" && currentContract.recovery.mode === "required-resource") {
+    const recovery = currentContract.recovery.preferredBankItemIds.map((id) => getBankItem(id)).filter((item): item is BankItemManifestEntry => Boolean(item))[0];
+    return { item: recovery ?? requiredResourceItem(), reason: "authored-required-recovery" };
   }
-  const authoredBranchIds = currentContract?.branchCompilation === "compiled" ? currentContract.branches.filter((branch) => selectedOptionIds.includes(branch.optionId)).flatMap((branch) => branch.routeBankItemIds) : [];
-  const authoredBranch = authoredBranchIds.map((id) => getBankItem(id)).filter((item): item is BankItemManifestEntry => Boolean(item)).find((item) => isAuthoredContractEligible(contracts[item.bankItemId], state, completed));
+  const currentItem = currentContract ? getBankItem(currentContract.bankItemId) : undefined;
+  if (currentContract?.recovery.mode === "resource-ending" && currentItem && !isResourceOrOrdinary(currentItem)) {
+    const ending = currentContract.recovery.preferredBankItemIds.map((id) => getBankItem(id)).filter((item): item is BankItemManifestEntry => Boolean(item))[0];
+    return { item: ending ?? requiredResourceItem(), reason: "authored-resource-ending" };
+  }
+  const selectionState = { ...state, stage: effectiveRoutingStage(state, completed) } as AssessmentRoutingState;
+  const authoredBranchIds = currentContract?.branches.selectedOptionRoutes.filter((branch) => selectedOptionIds.includes(branch.optionId)).flatMap((branch) => branch.routeBankItemIds) ?? [];
+  const authoredBranch = authoredBranchIds.map((id) => getBankItem(id)).filter((item): item is BankItemManifestEntry => Boolean(item)).find((item) => isAuthoredContractEligible(ACTIVE_EXECUTABLE_ROUTING_CONTRACTS_BY_ID[item.bankItemId], selectionState, completed));
   if (authoredBranch) return { item: authoredBranch, reason: "authored-option-branch" };
 
   if (state.pass === 1 && state.coverage.mappingGate === "green") {
@@ -165,7 +186,7 @@ function chooseNext(
     if (completedIds.has(item.bankItemId)) return false;
     if ((state.skipCounts[item.family] ?? 0) >= 2) return false;
     if (occurrences(item.family, state.recentFamilies) >= 2) return false;
-    if (!isAuthoredContractEligible(contracts[item.bankItemId], state, completed)) return false;
+    if (!isAuthoredContractEligible(ACTIVE_EXECUTABLE_ROUTING_CONTRACTS_BY_ID[item.bankItemId], selectionState, completed)) return false;
     return true;
   });
   const differentForm = candidates.find((item) => FORM_BY_FAMILY[item.family] !== state.recentForms.at(-1));
@@ -174,7 +195,7 @@ function chooseNext(
 
   const last = completed.at(-1);
   if (!last?.resourceOrOrdinary || last.completionState !== "COMPLETED") return { item: requiredResourceItem(), reason: "resource-oriented-ending" };
-  return { item: null, reason: "pass-completion-gates-satisfied" };
+  return { item: null, reason: "pass-completion-with-limits" };
 }
 
 export function createInitialRoutingState(pass: AssessmentPass = 1): AssessmentRoutingState {
@@ -199,7 +220,7 @@ export function createInitialRoutingState(pass: AssessmentPass = 1): AssessmentR
     mappingCompleted: false,
     deepeningCompleted: false,
     fitCompleted: false,
-    coverage: deriveCoverage([]),
+    coverage: deriveCoverage([], pass),
     endingSatisfied: false,
     paused: false,
     routeTrace: [{ selectedBankItemId: first.bankItemId, reason: "canonical-plan-start" }],
@@ -229,9 +250,11 @@ export function routeAssessmentResponse(state: AssessmentRoutingState, response:
     intensity: current.intensity,
     completionState: response.completionState === "COMPLETED" ? "COMPLETED" : "SKIPPED",
     resourceOrOrdinary: isResourceOrOrdinary(item),
+    pass: state.pass,
     evidenceEligible,
     coverageSectionCodes: Array.isArray(semanticFields.coverageSectionCodes) ? semanticFields.coverageSectionCodes.filter((value): value is string => typeof value === "string") : [],
     referentPresent: typeof semanticFields.referentOptionId === "string",
+    referentId: typeof semanticFields.referentOptionId === "string" ? semanticFields.referentOptionId : undefined,
     safetyContextRecorded: ["safe", "mixed", "unsafe"].includes(String(semanticFields.safetyContext)),
   };
   const completedInteractions = [...state.completedInteractions, completedEntry];
@@ -263,16 +286,15 @@ export function routeAssessmentResponse(state: AssessmentRoutingState, response:
     safeResumeStage: current.stage,
     endingSatisfied: resourceCompleted,
     paused: false,
-    coverage: deriveCoverage(completedInteractions),
+    coverage: deriveCoverage(completedInteractions, state.pass),
   } as StickySafetyState;
-  const contractInput = response as RoutingContractInput;
-  const contracts = contractInput.authoredRoutingContracts ?? {};
   const selectedOptionIds = Object.values(semanticFields).flatMap((value) => Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === "string") : typeof value === "string" ? [value] : []);
-  const choice = chooseNext(nextBase, completedInteractions, { userArousal, unsafeContext }, contracts, selectedOptionIds, contracts[current.bankItemId]);
+  const choice = chooseNext(nextBase, completedInteractions, { userArousal, unsafeContext }, selectedOptionIds, ACTIVE_EXECUTABLE_ROUTING_CONTRACTS_BY_ID[current.bankItemId]);
   const sequence = state.administrationSequence + 1;
   const currentInteraction = choice.item ? interaction(choice.item, state.pass, sequence, choice.reason) : null;
-  const coverage = deriveCoverage(completedInteractions);
-  const passPlanComplete = state.pass === 1 ? coverage.mappingGate === "green" : coverage.deepeningGate === "green" && (state.fitCompleted || (answered && current.family === "FCF"));
+  const coverage = deriveCoverage(completedInteractions, state.pass);
+  const completedWithLimits = choice.reason === "pass-completion-with-limits";
+  const passPlanComplete = state.pass === 1 ? coverage.mappingGate === "green" || completedWithLimits : (coverage.deepeningGate === "green" && (state.fitCompleted || (answered && current.family === "FCF"))) || completedWithLimits;
   return {
     ...nextBase,
     stage: currentInteraction?.stage ?? (state.pass === 1 ? "S2" : "S5"),
@@ -302,7 +324,16 @@ export function canCompletePass(state: AssessmentRoutingState): boolean {
 
 export function startPassTwo(state: AssessmentRoutingState): AssessmentRoutingState {
   if (state.pass !== 1 || !canCompletePass(state)) throw new Error("Pass 1 is not complete.");
-  return createInitialRoutingState(2);
+  const passTwo = createInitialRoutingState(2);
+  const sticky = state as StickySafetyState;
+  return {
+    ...passTwo,
+    completedInteractions: state.completedInteractions,
+    recentFamilies: state.recentFamilies,
+    recentForms: state.recentForms,
+    safetyContext: sticky.safetyContext,
+    routeTrace: [...state.routeTrace, ...passTwo.routeTrace],
+  } as StickySafetyState;
 }
 
 export function toAssessmentStateView(

@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import type { JsonValue, LayerReportType, LayerSectionCode } from "../../question-engine/types.ts";
 import { getBankItem, LAYER_SECTION_CODES } from "../../question-engine/manifest.ts";
+import { ACTIVE_EXECUTABLE_ROUTING_CONTRACTS_BY_ID } from "../../question-engine/routing-contracts.ts";
 import type { ReportEvidencePacketV3_1 } from "../../report-contracts/types.ts";
 import type { DecryptedAssessmentSnapshot } from "./types.ts";
 
@@ -60,12 +61,9 @@ function pseudonymousId(prefix: string, value: string): string {
   return `${prefix}-${digest(value).slice(0, 24)}`;
 }
 
-const SEMANTIC_ID = /^(?:OPT-|OL-)[A-Za-z0-9._-]+$/u;
+const SEMANTIC_ID = /^[A-Za-z][A-Za-z0-9._-]{1,99}$/u;
 const SECTION_CODE = /^(?:IFS-(?:0[1-9]|1[0-2])|PV-(?:0[1-9]|1[01])|ATT-(?:0[1-9]|1[0-2]))$/u;
 const HORIZONS = new Set(["anticipatory", "immediate", "aftermath", "multi_horizon", "uncertain"]);
-const OPTION_ARRAY_FIELDS = ["choices", "rank", "zones", "relationship", "selectedOptionIds", "orderedOptionIds"] as const;
-const EPISODE_OPTION_FIELDS = ["Before", "When it first hit", "What happened next", "Later / aftermath"] as const;
-const PACE_FIELDS = ["Contact frequency", "Emotional disclosure", "Asking for help", "Space"] as const;
 
 interface TypedEvidence {
   readonly value: JsonValue;
@@ -77,110 +75,108 @@ interface TypedEvidence {
   readonly certainty?: number;
   readonly safetyContext?: "safe" | "mixed" | "unsafe" | "unknown";
   readonly evidenceDisposition: "observed" | "missing";
-  readonly objectEvidence?: {
-    readonly kind: "part_cluster" | "state_signature" | "attachment_pattern";
-    readonly candidateKey: string;
-    readonly identityStatus?: "confirmed" | "cluster_only" | "uncertain" | "rejected";
-    readonly roleClass?: "manager" | "firefighter" | "mixed" | "uncertain";
-    readonly classification?: "baseline" | "activated" | "shutdown" | "mixed" | "connected" | "uncertain";
-    readonly anxietyEstimate?: "low" | "moderate" | "high" | "variable" | "underdetermined";
-    readonly avoidanceEstimate?: "low" | "moderate" | "high" | "variable" | "underdetermined";
-    readonly bodyRegionIds: readonly string[];
-    readonly entryOptionIds: readonly string[];
-    readonly exitOptionIds: readonly string[];
-    readonly directFieldOptionIds: readonly string[];
-    readonly cueOptionIds: readonly string[];
-    readonly meaningOptionIds: readonly string[];
-    readonly moveOptionIds: readonly string[];
-    readonly referentOptionId?: string;
-    readonly fitConfirmed: boolean;
-    readonly contradicted: boolean;
+  readonly trusted?: TrustedProjection;
+}
+
+interface TrustedProjection {
+  readonly family: string;
+  readonly coverageSectionCodes: readonly LayerSectionCode[];
+  readonly referentOptionId?: string;
+  readonly partFieldOptionIds: readonly string[];
+  readonly stateMap?: { readonly optionIds: readonly string[]; readonly bodyRegions: readonly string[]; readonly direction: "activated" | "shutdown" | "mixed" | "uncertain"; readonly multivariate: boolean };
+  readonly stateEntryOptionIds: readonly string[];
+  readonly stateRecoveryOptionIds: readonly string[];
+  readonly attachmentCueIds: readonly string[];
+  readonly attachmentMeaningOptionIds: readonly string[];
+  readonly attachmentMoveOptionIds: readonly string[];
+  readonly identityDisposition: "confirmed" | "rejected" | "underdetermined";
+  readonly fitDisposition: "confirmed" | "contradicted" | "underdetermined";
+}
+
+function stringArray(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === "string" && SEMANTIC_ID.test(entry)) : [];
+}
+
+function trustedProjection(value: unknown, response: CanonicalResponse): TrustedProjection | undefined {
+  const candidate = object(object(value)?.trustedEvidence);
+  const binding = object(candidate?.binding);
+  if (candidate?.schemaVersion !== "PWTE-1" || binding?.bankItemId !== response.bankItemId || binding.bankItemVersion !== response.bankItemVersion || !/^[a-f0-9]{64}$/u.test(String(binding.authoredContentSha256))) return undefined;
+  const item = getBankItem(response.bankItemId);
+  if (!item || candidate.family !== item.family) return undefined;
+  const reviewedContract = ACTIVE_EXECUTABLE_ROUTING_CONTRACTS_BY_ID[response.bankItemId];
+  if (!reviewedContract || binding.authoredContentSha256 !== reviewedContract.provenance.authoredBlockSha256) return undefined;
+  const stateMapValue = object(candidate.stateMap);
+  const direction = stateMapValue?.direction;
+  const stateMap = stateMapValue && ["activated", "shutdown", "mixed", "uncertain"].includes(String(direction)) ? {
+    optionIds: stringArray(stateMapValue.optionIds), bodyRegions: stringArray(stateMapValue.bodyRegions),
+    direction: direction as "activated" | "shutdown" | "mixed" | "uncertain", multivariate: stateMapValue.multivariate === true,
+  } : undefined;
+  const identityDisposition = ["confirmed", "rejected", "underdetermined"].includes(String(candidate.identityDisposition)) ? candidate.identityDisposition as TrustedProjection["identityDisposition"] : "underdetermined";
+  const fitDisposition = ["confirmed", "contradicted", "underdetermined"].includes(String(candidate.fitDisposition)) ? candidate.fitDisposition as TrustedProjection["fitDisposition"] : "underdetermined";
+  return {
+    family: item.family,
+    coverageSectionCodes: Array.isArray(candidate.coverageSectionCodes) ? candidate.coverageSectionCodes.filter((entry): entry is LayerSectionCode => typeof entry === "string" && SECTION_CODE.test(entry)) : [],
+    ...(typeof candidate.referentOptionId === "string" && SEMANTIC_ID.test(candidate.referentOptionId) ? { referentOptionId: candidate.referentOptionId } : {}),
+    partFieldOptionIds: stringArray(candidate.partFieldOptionIds),
+    ...(stateMap ? { stateMap } : {}),
+    stateEntryOptionIds: stringArray(candidate.stateEntryOptionIds), stateRecoveryOptionIds: stringArray(candidate.stateRecoveryOptionIds),
+    attachmentCueIds: stringArray(candidate.attachmentCueIds), attachmentMeaningOptionIds: stringArray(candidate.attachmentMeaningOptionIds), attachmentMoveOptionIds: stringArray(candidate.attachmentMoveOptionIds),
+    identityDisposition, fitDisposition,
   };
 }
 
 /** Project only contract-enumerated typed values. privateNote and every unknown/free-text field are ignored. */
-function typedEvidence(value: unknown): TypedEvidence {
+function typedEvidence(value: unknown, response: CanonicalResponse): TypedEvidence {
   const envelope = object(value);
   const semantic = envelope?.schemaVersion === "PWRS-1" ? object(envelope.semantic) ?? {} : {};
-  const optionIds: string[] = [];
-  const addOptions = (candidate: unknown) => {
-    const values = Array.isArray(candidate) ? candidate : [candidate];
-    for (const entry of values) if (typeof entry === "string" && SEMANTIC_ID.test(entry) && !optionIds.includes(entry)) optionIds.push(entry);
-  };
-  OPTION_ARRAY_FIELDS.forEach((key) => addOptions(semantic[key]));
-  EPISODE_OPTION_FIELDS.forEach((key) => addOptions(semantic[key]));
-  PACE_FIELDS.forEach((key) => addOptions(semantic[key]));
-  addOptions(semantic["Person / role 1"]);
-  addOptions(semantic["Person / role 2"]);
-  const episodeFields = Object.fromEntries(EPISODE_OPTION_FIELDS.flatMap((key) => typeof semantic[key] === "string" && SEMANTIC_ID.test(semantic[key]) ? [[key === "Before" ? "before" : key === "When it first hit" ? "first_impact" : key === "What happened next" ? "next_action" : "aftermath", semantic[key]]] : []));
-  const paceBands = Object.fromEntries(PACE_FIELDS.flatMap((key) => typeof semantic[key] === "string" && SEMANTIC_ID.test(semantic[key]) ? [[key.toLowerCase().replaceAll(/[^a-z]+/gu, "_"), semantic[key]]] : []));
-  const coverageSectionCodes = Array.isArray(semantic.coverageSectionCodes)
-    ? semantic.coverageSectionCodes.filter((entry): entry is LayerSectionCode => typeof entry === "string" && SECTION_CODE.test(entry))
-    : [];
+  const trusted = trustedProjection(value, response);
+  const optionIds = trusted ? stringArray(object(envelope?.trustedEvidence)?.selectedOptionIds) : [];
+  const episodeFields = {};
+  const paceBands = {};
+  const coverageSectionCodes = trusted?.coverageSectionCodes ?? [];
   const certainty = typeof semantic.certainty === "number" && Number.isFinite(semantic.certainty) && semantic.certainty >= 0 && semantic.certainty <= 1 ? semantic.certainty : undefined;
   const timeHorizon = typeof semantic.timeHorizon === "string" && HORIZONS.has(semantic.timeHorizon) ? semantic.timeHorizon as TypedEvidence["timeHorizon"] : "uncertain";
   const safetyContext = ["safe", "mixed", "unsafe", "unknown"].includes(String(semantic.safetyContext)) ? semantic.safetyContext as TypedEvidence["safetyContext"] : undefined;
-  const rawObjectEvidence = object(semantic.objectEvidence);
-  const objectKind = rawObjectEvidence && ["part_cluster", "state_signature", "attachment_pattern"].includes(String(rawObjectEvidence.kind)) ? rawObjectEvidence.kind as "part_cluster" | "state_signature" | "attachment_pattern" : undefined;
-  const objectEvidence = objectKind && typeof rawObjectEvidence?.candidateKey === "string" && SEMANTIC_ID.test(rawObjectEvidence.candidateKey) ? {
-    kind: objectKind,
-    candidateKey: rawObjectEvidence.candidateKey,
-    ...(["confirmed", "cluster_only", "uncertain", "rejected"].includes(String(rawObjectEvidence.identityStatus)) ? { identityStatus: rawObjectEvidence.identityStatus as "confirmed" | "cluster_only" | "uncertain" | "rejected" } : {}),
-    ...(["manager", "firefighter", "mixed", "uncertain"].includes(String(rawObjectEvidence.roleClass)) ? { roleClass: rawObjectEvidence.roleClass as "manager" | "firefighter" | "mixed" | "uncertain" } : {}),
-    ...(["baseline", "activated", "shutdown", "mixed", "connected", "uncertain"].includes(String(rawObjectEvidence.classification)) ? { classification: rawObjectEvidence.classification as "baseline" | "activated" | "shutdown" | "mixed" | "connected" | "uncertain" } : {}),
-    ...(["low", "moderate", "high", "variable", "underdetermined"].includes(String(rawObjectEvidence.anxietyEstimate)) ? { anxietyEstimate: rawObjectEvidence.anxietyEstimate as "low" | "moderate" | "high" | "variable" | "underdetermined" } : {}),
-    ...(["low", "moderate", "high", "variable", "underdetermined"].includes(String(rawObjectEvidence.avoidanceEstimate)) ? { avoidanceEstimate: rawObjectEvidence.avoidanceEstimate as "low" | "moderate" | "high" | "variable" | "underdetermined" } : {}),
-    bodyRegionIds: Array.isArray(rawObjectEvidence.bodyRegionIds) ? rawObjectEvidence.bodyRegionIds.filter((entry): entry is string => typeof entry === "string" && SEMANTIC_ID.test(entry)) : [],
-    entryOptionIds: Array.isArray(rawObjectEvidence.entryOptionIds) ? rawObjectEvidence.entryOptionIds.filter((entry): entry is string => typeof entry === "string" && SEMANTIC_ID.test(entry)) : [],
-    exitOptionIds: Array.isArray(rawObjectEvidence.exitOptionIds) ? rawObjectEvidence.exitOptionIds.filter((entry): entry is string => typeof entry === "string" && SEMANTIC_ID.test(entry)) : [],
-    directFieldOptionIds: Array.isArray(rawObjectEvidence.directFieldOptionIds) ? rawObjectEvidence.directFieldOptionIds.filter((entry): entry is string => typeof entry === "string" && SEMANTIC_ID.test(entry)) : [],
-    cueOptionIds: Array.isArray(rawObjectEvidence.cueOptionIds) ? rawObjectEvidence.cueOptionIds.filter((entry): entry is string => typeof entry === "string" && SEMANTIC_ID.test(entry)) : [],
-    meaningOptionIds: Array.isArray(rawObjectEvidence.meaningOptionIds) ? rawObjectEvidence.meaningOptionIds.filter((entry): entry is string => typeof entry === "string" && SEMANTIC_ID.test(entry)) : [],
-    moveOptionIds: Array.isArray(rawObjectEvidence.moveOptionIds) ? rawObjectEvidence.moveOptionIds.filter((entry): entry is string => typeof entry === "string" && SEMANTIC_ID.test(entry)) : [],
-    ...(typeof rawObjectEvidence.referentOptionId === "string" && SEMANTIC_ID.test(rawObjectEvidence.referentOptionId) ? { referentOptionId: rawObjectEvidence.referentOptionId } : {}),
-    fitConfirmed: rawObjectEvidence.fitConfirmed === true,
-    contradicted: rawObjectEvidence.contradicted === true,
-  } : undefined;
   const typedValue: Record<string, JsonValue> = {
     selected_option_ids: optionIds,
     episode_fields: episodeFields,
     pace_band_ids: paceBands,
     time_horizon: timeHorizon,
-    coverage_section_codes: coverageSectionCodes,
+    coverage_section_codes: [...coverageSectionCodes],
   };
   if (certainty !== undefined) typedValue.user_certainty = certainty;
   if (safetyContext !== undefined) typedValue.safety_context = safetyContext;
   if (["low", "unknown", "elevated", "high"].includes(String(semantic.userArousal))) typedValue.user_arousal = semantic.userArousal as string;
-  if (typeof semantic.resourceSafetyClear === "boolean") typedValue.resource_safety_clear = semantic.resourceSafetyClear;
-  if (typeof semantic.eligible === "boolean") typedValue.eligible = semantic.eligible;
-  const evidenceDisposition = semantic.evidenceDisposition === "missing" ? "missing" : "observed";
+  if ((trusted?.stateRecoveryOptionIds.length ?? 0) > 0) typedValue.resource_safety_clear = true;
+  const evidenceDisposition = trusted && object(envelope?.trustedEvidence)?.evidenceDisposition === "observed" ? "observed" : "missing";
   typedValue.evidence_disposition = evidenceDisposition;
-  if (objectEvidence) typedValue.object_evidence = objectEvidence as unknown as JsonValue;
   return {
     value: typedValue,
     optionIds,
     coverageSectionCodes,
-    ...(typeof semantic.referentOptionId === "string" && SEMANTIC_ID.test(semantic.referentOptionId) ? { referentOptionId: semantic.referentOptionId } : {}),
+    ...(trusted?.referentOptionId ? { referentOptionId: trusted.referentOptionId } : {}),
     ...(typeof semantic.windowOptionId === "string" && SEMANTIC_ID.test(semantic.windowOptionId) ? { windowOptionId: semantic.windowOptionId } : {}),
     timeHorizon,
     ...(certainty !== undefined ? { certainty } : {}),
     ...(safetyContext ? { safetyContext } : {}),
-    ...(objectEvidence ? { objectEvidence } : {}),
+    ...(trusted ? { trusted } : {}),
     evidenceDisposition,
   };
 }
 
 function hasSubstantiveTypedEvidence(evidence: TypedEvidence): boolean {
-  if (evidence.evidenceDisposition === "missing") return false;
-  if (evidence.optionIds.length > 0) return true;
-  const candidate = evidence.objectEvidence;
-  return Boolean(candidate && (candidate.fitConfirmed || candidate.identityStatus === "confirmed" || candidate.directFieldOptionIds.length > 0 || candidate.bodyRegionIds.length > 0 || candidate.entryOptionIds.length > 0 || candidate.exitOptionIds.length > 0 || candidate.cueOptionIds.length > 0 || candidate.meaningOptionIds.length > 0 || candidate.moveOptionIds.length > 0));
+  return evidence.evidenceDisposition !== "missing" && Boolean(evidence.trusted) && evidence.optionIds.length > 0;
 }
 
 /** Retain a provenance-only shell for legacy answered records without treating their values as typed evidence. */
 function hasLegacyResponsePresence(value: unknown): boolean {
   const legacy = object(value);
-  if (!legacy || legacy.schemaVersion === "PWRS-1") return false;
+  if (!legacy) return false;
+  if (legacy.schemaVersion === "PWRS-1") {
+    const semantic = object(legacy.semantic) ?? {};
+    return ["choices", "rank", "zones", "relationship", "selectedOptionIds", "orderedOptionIds", "Before", "When it first hit", "What happened next", "Later / aftermath"]
+      .some((key) => Array.isArray(semantic[key]) ? (semantic[key] as unknown[]).length > 0 : typeof semantic[key] === "string" && semantic[key] !== "");
+  }
   const excluded = /^(?:note|notes|narrative|free_?text|private_?note|metadata|routing_?state)$/iu;
   return Object.entries(legacy).some(([key, candidate]) => {
     if (excluded.test(key) || candidate === null || candidate === undefined) return false;
@@ -222,7 +218,7 @@ export function buildPseudonymousPacketsFromCanonicalSnapshot(snapshot: Decrypte
   const generatedAt = typeof completion?.completed_at === "string" && Number.isFinite(Date.parse(completion.completed_at))
     ? completion.completed_at
     : new Date(0).toISOString();
-  const typedByResponse = new Map(completedResponses.map((response) => [response.responseId, typedEvidence(response.content)]));
+  const typedByResponse = new Map(completedResponses.map((response) => [response.responseId, typedEvidence(response.content, response)]));
   const completed = completedResponses.filter((response) => hasSubstantiveTypedEvidence(typedByResponse.get(response.responseId)!));
   const episodeResponses = completedResponses.filter((response) => hasSubstantiveTypedEvidence(typedByResponse.get(response.responseId)!) || hasLegacyResponsePresence(response.content));
   const firstReferent = completed.map((response) => typedByResponse.get(response.responseId)?.referentOptionId).find((value): value is string => Boolean(value));
@@ -297,78 +293,87 @@ export function buildPseudonymousPacketsFromCanonicalSnapshot(snapshot: Decrypte
       if (episode) episodeByFamily.set(family, [...(episodeByFamily.get(family) ?? []), episode.episode_id]);
     }
   });
-  const objectGroups = new Map<string, { response: CanonicalResponse; evidence: TypedEvidence; episode: typeof episodes[number]; family: string }[]>();
+  type EvidenceEntry = { response: CanonicalResponse; evidence: TypedEvidence; episode: typeof episodes[number]; family: string };
+  const validReferents = new Set(completed.flatMap((response) => {
+    const evidence = typedByResponse.get(response.responseId);
+    return getBankItem(response.bankItemId)?.family === "RL" && evidence?.trusted?.referentOptionId ? [evidence.trusted.referentOptionId] : [];
+  }));
+  const objectGroups = new Map<string, EvidenceEntry[]>();
   completed.forEach((response) => {
     const evidence = typedByResponse.get(response.responseId)!;
     const family = getBankItem(response.bankItemId)?.family;
     const episode = episodeByResponse.get(response.responseId);
-    if (!family || !evidence.objectEvidence || !episode) return;
-    const key = `${evidence.objectEvidence.kind}:${evidence.objectEvidence.candidateKey}`;
-    objectGroups.set(key, [...(objectGroups.get(key) ?? []), { response, evidence, episode, family }]);
+    if (!family || !evidence.trusted || !episode) return;
+    const assertedReferent = evidence.trusted.referentOptionId;
+    const referent = assertedReferent && validReferents.has(assertedReferent) ? assertedReferent : "unscoped";
+    objectGroups.set(referent, [...(objectGroups.get(referent) ?? []), { response, evidence, episode, family }]);
   });
   const partProfiles: JsonValue[] = [];
   const stateSignatures: JsonValue[] = [];
   const attachmentPatterns: JsonValue[] = [];
-  const PART_DIRECT = new Set(["MS", "BDA", "VFR", "RLB", "BSP", "PIS", "PDL"]);
-  const STATE_DIRECT = new Set(["BDA", "BTM", "FSR", "RSR"]);
-  const ATTACHMENT_DIRECT = new Set(["MS", "BDA", "WMA", "RRE", "PCR", "RMX"]);
-  for (const entries of objectGroups.values()) {
-    const exemplar = entries[0]?.evidence.objectEvidence;
-    if (!exemplar || entries.some((entry) => entry.evidence.objectEvidence?.contradicted)) continue;
-    const fit = entries.some((entry) => entry.family === "FCF" && entry.evidence.objectEvidence?.fitConfirmed === true);
-    const directFor = (families: ReadonlySet<string>) => entries.filter((entry) => families.has(entry.family) && (entry.evidence.objectEvidence?.directFieldOptionIds.length ?? 0) > 0);
+  const PART_DIRECT = new Set(["MS", "BDA", "VFR", "RLB", "BSP", "PDL"]);
+  for (const [referentKey, entries] of objectGroups) {
+    const contradicted = entries.some((entry) => entry.evidence.trusted?.fitDisposition === "contradicted" || entry.evidence.trusted?.identityDisposition === "rejected");
+    const fitEntry = entries.find((entry) => entry.family === "FCF" && entry.evidence.trusted?.fitDisposition === "confirmed");
+    const identityEntry = entries.find((entry) => entry.family === "PIS" && entry.evidence.trusted?.identityDisposition === "confirmed") ?? fitEntry;
+    const fit = Boolean(fitEntry) && !contradicted;
     const confidence = (objectId: string, episodeIds: readonly string[]) => ({
       grade: "medium", evidence_grades: ["replicated", "user_confirmed"],
       rationale: "Two independent typed direct episode anchors and explicit fit confirmation satisfy the bounded object floor.",
       source_evidence_ids: [objectId, ...episodeIds], open_contradiction_ids: [], limits: ["Object semantics are limited to explicitly typed fields and authored family mappings."], assessed_at: generatedAt,
     });
-    if (exemplar.kind === "part_cluster") {
-      const direct = directFor(PART_DIRECT);
+    {
+      const direct = entries.filter((entry) => PART_DIRECT.has(entry.family) && (entry.evidence.trusted?.partFieldOptionIds.length ?? 0) > 0);
       const episodeIds = [...new Set(direct.map((entry) => entry.episode.episode_id))];
-      const confirmation = entries.find((entry) => entry.family === "FCF" && entry.evidence.objectEvidence?.identityStatus === "confirmed");
-      if (episodeIds.length < 2 || !confirmation || !fit) continue;
-      const partId = pseudonymousId("PT", `${snapshot.snapshotId}:${exemplar.candidateKey}`);
-      partProfiles.push({
-        part_id: partId, status: "confirmed_part", role_class: exemplar.roleClass ?? "uncertain", supporting_episode_ids: episodeIds,
-        identity_confirmation: { status: "confirmed", source_response_ids: [pseudonymousId("RR", confirmation.response.responseId)], provenance: confirmation.episode.provenance },
-        confidence: confidence(partId, episodeIds), contradiction_ids: [],
-      } as unknown as JsonValue);
-    } else if (exemplar.kind === "state_signature") {
-      const direct = directFor(STATE_DIRECT);
+      if (episodeIds.length >= 2 && identityEntry && fitEntry && fit) {
+        const partId = pseudonymousId("PT", `${snapshot.snapshotId}:${referentKey}:part`);
+        partProfiles.push({
+          part_id: partId, status: "confirmed_part", role_class: "uncertain", supporting_episode_ids: episodeIds,
+          identity_confirmation: { status: "confirmed", source_response_ids: [pseudonymousId("RR", identityEntry.response.responseId)], provenance: identityEntry.episode.provenance },
+          confidence: confidence(partId, episodeIds), contradiction_ids: [],
+        } as unknown as JsonValue);
+      }
+    }
+    {
+      const maps = entries.filter((entry) => entry.evidence.trusted?.stateMap?.multivariate === true);
+      const episodeIds = [...new Set(maps.map((entry) => entry.episode.episode_id))];
+      const regions = [...new Set(maps.flatMap((entry) => entry.evidence.trusted?.stateMap?.bodyRegions ?? []))];
+      const directions = [...new Set(maps.map((entry) => entry.evidence.trusted?.stateMap?.direction).filter((value): value is "activated" | "shutdown" | "mixed" => Boolean(value) && value !== "uncertain"))];
+      const entryEntries = entries.filter((entry) => (entry.evidence.trusted?.stateEntryOptionIds.length ?? 0) > 0);
+      const recoveryEntries = entries.filter((entry) => (entry.evidence.trusted?.stateRecoveryOptionIds.length ?? 0) > 0);
+      const entryIds = [...new Set(entryEntries.flatMap((entry) => entry.evidence.trusted?.stateEntryOptionIds ?? []))];
+      const recoveryIds = [...new Set(recoveryEntries.flatMap((entry) => entry.evidence.trusted?.stateRecoveryOptionIds ?? []))];
+      if (episodeIds.length >= 2 && regions.length >= 2 && directions.length === 1 && entryIds.length + recoveryIds.length > 0 && fitEntry && fit) {
+        const stateId = pseudonymousId("ST", `${snapshot.snapshotId}:${referentKey}:state`);
+        const provenance = maps[0].episode.provenance[0];
+        const statement = (field: string, value: JsonValue) => ({ field, value, provenance });
+        stateSignatures.push({
+          state_id: stateId, descriptive_name: `Repeated self-reported ${directions[0]} signature`, classification: directions[0], interpretive_limit: "self_reported_signature_not_physiological_measurement",
+          supporting_episode_ids: episodeIds, body_regions: regions.map((region) => ({ region, direction: "uncertain", qualities: [] })),
+          entry_paths: entryIds.map((id) => statement("typed_entry_option_id", id)), exit_paths: recoveryIds.map((id) => statement("typed_recovery_option_id", id)),
+          confidence: confidence(stateId, episodeIds), contradiction_ids: [],
+        } as unknown as JsonValue);
+      }
+    }
+    {
+      const direct = entries.filter((entry) => (entry.evidence.trusted?.attachmentCueIds.length ?? 0) > 0 && ((entry.evidence.trusted?.attachmentMeaningOptionIds.length ?? 0) > 0 || (entry.evidence.trusted?.attachmentMoveOptionIds.length ?? 0) > 0));
       const episodeIds = [...new Set(direct.map((entry) => entry.episode.episode_id))];
-      const regions = [...new Set(direct.flatMap((entry) => entry.evidence.objectEvidence?.bodyRegionIds ?? []))];
-      const entryIds = [...new Set(direct.flatMap((entry) => entry.evidence.objectEvidence?.entryOptionIds ?? []))];
-      const exitIds = [...new Set(direct.flatMap((entry) => entry.evidence.objectEvidence?.exitOptionIds ?? []))];
-      const classifications = [...new Set(direct.map((entry) => entry.evidence.objectEvidence?.classification).filter((value): value is NonNullable<typeof exemplar.classification> => Boolean(value) && value !== "uncertain"))];
-      if (episodeIds.length < 2 || regions.length < 2 || entryIds.length + exitIds.length < 1 || classifications.length !== 1 || !fit) continue;
-      const stateId = pseudonymousId("ST", `${snapshot.snapshotId}:${exemplar.candidateKey}`);
-      const provenance = direct[0].episode.provenance[0];
-      const statement = (field: string, value: JsonValue) => ({ field, value, provenance });
-      stateSignatures.push({
-        state_id: stateId, descriptive_name: `Repeated self-reported ${classifications[0]} signature`, classification: classifications[0], interpretive_limit: "self_reported_signature_not_physiological_measurement",
-        supporting_episode_ids: episodeIds, body_regions: regions.map((region) => ({ region, direction: "uncertain", qualities: [] })),
-        entry_paths: entryIds.map((id) => statement("typed_entry_option_id", id)), exit_paths: exitIds.map((id) => statement("typed_exit_option_id", id)),
-        confidence: confidence(stateId, episodeIds), contradiction_ids: [],
-      } as unknown as JsonValue);
-    } else {
-      const direct = entries.filter((entry) => ATTACHMENT_DIRECT.has(entry.family) && (entry.evidence.objectEvidence?.cueOptionIds.length ?? 0) > 0 && ((entry.evidence.objectEvidence?.meaningOptionIds.length ?? 0) > 0 || (entry.evidence.objectEvidence?.moveOptionIds.length ?? 0) > 0));
-      const episodeIds = [...new Set(direct.map((entry) => entry.episode.episode_id))];
-      const referents = [...new Set(direct.map((entry) => entry.evidence.objectEvidence?.referentOptionId).filter((value): value is string => Boolean(value)))];
-      const anxieties = [...new Set(direct.map((entry) => entry.evidence.objectEvidence?.anxietyEstimate).filter((value): value is NonNullable<typeof exemplar.anxietyEstimate> => Boolean(value) && value !== "underdetermined"))];
-      const avoidances = [...new Set(direct.map((entry) => entry.evidence.objectEvidence?.avoidanceEstimate).filter((value): value is NonNullable<typeof exemplar.avoidanceEstimate> => Boolean(value) && value !== "underdetermined"))];
-      if (episodeIds.length < 2 || referents.length !== 1 || anxieties.length !== 1 || avoidances.length !== 1 || !fit) continue;
-      const patternId = pseudonymousId("AP", `${snapshot.snapshotId}:${exemplar.candidateKey}:${referents[0]}`);
-      const attachmentReferentId = pseudonymousId("REF", `${snapshot.snapshotId}:${referents[0]}`);
-      const provenance = direct[0].episode.provenance[0];
-      const statement = (field: string, value: JsonValue) => ({ field, value, provenance });
-      attachmentPatterns.push({
-        pattern_id: patternId, referent_id: attachmentReferentId, relationship_context: { ...relationshipContext, referent_id: attachmentReferentId },
-        scope_limit: "relationship_specific_unless_cross_context_evidence_is_present", anxiety_estimate: anxieties[0], avoidance_estimate: avoidances[0],
-        ambiguity_cues: [...new Set(direct.flatMap((entry) => entry.evidence.objectEvidence?.cueOptionIds ?? []))].map((id) => statement("typed_cue_option_id", id)),
-        first_interpretations: [...new Set(direct.flatMap((entry) => entry.evidence.objectEvidence?.meaningOptionIds ?? []))].map((id) => statement("typed_meaning_option_id", id)),
-        proximity_seeking_impulses: [...new Set(direct.flatMap((entry) => entry.evidence.objectEvidence?.moveOptionIds ?? []))].map((id) => statement("typed_move_option_id", id)),
-        supporting_episode_ids: episodeIds, confidence: confidence(patternId, episodeIds), contradiction_ids: [],
-      } as unknown as JsonValue);
+      const cues = [...new Set(direct.flatMap((entry) => entry.evidence.trusted?.attachmentCueIds ?? []))];
+      const meanings = [...new Set(direct.flatMap((entry) => entry.evidence.trusted?.attachmentMeaningOptionIds ?? []))];
+      const moves = [...new Set(direct.flatMap((entry) => entry.evidence.trusted?.attachmentMoveOptionIds ?? []))];
+      if (referentKey !== "unscoped" && episodeIds.length >= 2 && cues.length >= 2 && meanings.length + moves.length > 0 && fitEntry && fit) {
+        const patternId = pseudonymousId("AP", `${snapshot.snapshotId}:${referentKey}:attachment`);
+        const attachmentReferentId = pseudonymousId("REF", `${snapshot.snapshotId}:${referentKey}`);
+        const provenance = direct[0].episode.provenance[0];
+        const statement = (field: string, value: JsonValue) => ({ field, value, provenance });
+        attachmentPatterns.push({
+          pattern_id: patternId, referent_id: attachmentReferentId, relationship_context: { ...relationshipContext, referent_id: attachmentReferentId },
+          scope_limit: "relationship_specific_unless_cross_context_evidence_is_present", anxiety_estimate: "underdetermined", avoidance_estimate: "underdetermined",
+          ambiguity_cues: cues.map((id) => statement("authored_cue_source", id)), first_interpretations: meanings.map((id) => statement("typed_meaning_option_id", id)),
+          proximity_seeking_impulses: moves.map((id) => statement("typed_move_option_id", id)), supporting_episode_ids: episodeIds,
+          confidence: confidence(patternId, episodeIds), contradiction_ids: [],
+        } as unknown as JsonValue);
+      }
     }
   }
   const objectSupportBySection: Readonly<Record<string, readonly JsonValue[]>> = {
@@ -418,14 +423,14 @@ export function buildPseudonymousPacketsFromCanonicalSnapshot(snapshot: Decrypte
   const lastCompleted = completedResponses.at(-1);
   const lastFamily = lastCompleted ? getBankItem(lastCompleted.bankItemId)?.family : undefined;
   const lastEvidence = lastCompleted ? typedByResponse.get(lastCompleted.responseId) : undefined;
-  const endingFloor = (lastFamily === "RSR" || lastFamily === "SEF") && Boolean(lastEvidence && (lastEvidence.optionIds.length > 0 || object(lastEvidence.value)?.resource_safety_clear === true));
+  const endingFloor = (lastFamily === "RSR" || lastFamily === "SEF") && (lastEvidence?.trusted?.stateRecoveryOptionIds.length ?? 0) > 0;
   const objectFloors = partProfiles.length > 0 && stateSignatures.length > 0 && attachmentPatterns.length > 0;
   const mandatoryCoverageFloor = cells.every((cell) => cell.routing_state === "green" || (cell.routing_state === "amber" && Boolean(cell.intentional_limit)));
   let unresolvedUnsafeContext = false;
   for (const response of completedResponses) {
     const evidence = typedByResponse.get(response.responseId);
     if (evidence?.safetyContext === "unsafe") unresolvedUnsafeContext = true;
-    if (["RSR", "SEF"].includes(getBankItem(response.bankItemId)?.family ?? "") && object(evidence?.value)?.resource_safety_clear === true) unresolvedUnsafeContext = false;
+    if (["RSR", "SEF"].includes(getBankItem(response.bankItemId)?.family ?? "") && (evidence?.trusted?.stateRecoveryOptionIds.length ?? 0) > 0) unresolvedUnsafeContext = false;
   }
   const typedStopEligible = snapshot.completedPass === 2
     && objectFloors

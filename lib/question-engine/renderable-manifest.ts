@@ -3,7 +3,14 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { loadAuthoredInstrumentManifest, type AuthoredBankItemDefinition } from "./authored-manifest.ts";
 import { LAYER_SECTION_CODES } from "./manifest.ts";
+import {
+  ACTIVE_EXECUTABLE_ROUTING_CONTRACTS_BY_ID,
+  assertAuthoredRoutingSurfaceBindings,
+  type ExecutableRoutingContract,
+} from "./routing-contracts.ts";
 import type { BankItemId, LayerSectionCode } from "./types.ts";
+
+export type { ExecutableRoutingContract } from "./routing-contracts.ts";
 
 const RESPONSE_LIBRARY_SOURCE = "specs/patternwork/question-engine-v3.1/05_response_option_libraries.md";
 
@@ -65,30 +72,8 @@ export interface RenderableInteractionDefinition extends AuthoredBankItemDefinit
     readonly routeBankItemIds: readonly BankItemId[];
     readonly safetyGates: readonly string[];
     readonly canonicalPostBodyRecoveryRequired: boolean;
-    readonly executable: ExecutableRoutingContract;
+    readonly executable?: ExecutableRoutingContract;
   };
-}
-
-export interface ExecutableRoutingContract {
-  readonly bankItemId: BankItemId;
-  readonly compilation: "compiled" | "partial" | "unsupported";
-  readonly eligibilityCompilation: "compiled" | "partial" | "unsupported";
-  readonly branchCompilation: "compiled" | "partial" | "unsupported";
-  readonly recoveryCompilation: "compiled" | "partial" | "unsupported";
-  readonly uncompiledFragments: readonly string[];
-  readonly provenance: { readonly sourcePath: string; readonly sourceLine: number };
-  readonly eligibility: {
-    readonly always: boolean;
-    readonly allowedStages: readonly string[];
-    readonly prerequisiteBankItemIds: readonly BankItemId[];
-    readonly prerequisiteMode: "any" | "all";
-    readonly minimumEpisodeAnchors: number;
-    readonly requiresReferent: boolean;
-    readonly requiresSafetyContext: boolean;
-    readonly requiresSafeContext: boolean;
-  };
-  readonly branches: readonly { readonly optionId: string; readonly routeBankItemIds: readonly BankItemId[] }[];
-  readonly recovery: { readonly required: boolean; readonly routeBankItemIds: readonly BankItemId[] };
 }
 
 export interface StructuredInstrumentManifest {
@@ -208,91 +193,6 @@ function parseBurden(value: string): RenderableInteractionDefinition["burden"] {
   return { authored, ...(label ? { label } : {}), ...(numeric ? { numericIntensity: Number(numeric[1]) } : {}) };
 }
 
-function compileRoutingContract(
-  bankItemId: BankItemId,
-  eligibility: string,
-  branches: string,
-  recovery: string,
-  optionGroups: readonly RenderableOptionGroup[],
-  provenance: { readonly sourcePath: string; readonly sourceLine: number },
-): ExecutableRoutingContract {
-  const clean = (value: string) => value.replaceAll("`", "").replace(/[.]+$/u, "").trim();
-  const eligibilityClauses = eligibility.split(";").map(clean).filter(Boolean);
-  let always = false;
-  const allowedStages = new Set<string>();
-  const prerequisiteBankItemIds = new Set<BankItemId>();
-  let prerequisiteMode: "any" | "all" = "any";
-  let prerequisiteDisjunction = false;
-  let minimumEpisodeAnchors = 0;
-  let requiresReferent = false;
-  let requiresSafetyContext = false;
-  let requiresSafeContext = false;
-  const uncompiledEligibility: string[] = [];
-  for (const clause of eligibilityClauses) {
-    if (/^always(?: first| optional)?$|^no psychological eligibility required$/iu.test(clause)) { always = true; continue; }
-    if (/^(?:S[0-5](?:\/S[0-5])?)(?: complete)?$/u.test(clause)) { for (const stage of clause.match(/S[0-5]/gu) ?? []) allowedStages.add(stage); continue; }
-    const prerequisite = clause.match(/^((?:(?:RL|MS|BDA|BTM|FSR|VFR|RLB|BSP|PIS|PDL|RMX|PCR|RRE|WMA|RSR|SEF|FCF)-\d{3})(?:\s*(?:\+|and|or)\s*(?:(?:RL|MS|BDA|BTM|FSR|VFR|RLB|BSP|PIS|PDL|RMX|PCR|RRE|WMA|RSR|SEF|FCF)-\d{3}))*)\s+(?:complete|completed|reviewed)$/u);
-    if (prerequisite) {
-      for (const id of prerequisite[1].match(/(?:RL|MS|BDA|BTM|FSR|VFR|RLB|BSP|PIS|PDL|RMX|PCR|RRE|WMA|RSR|SEF|FCF)-\d{3}/gu) ?? []) prerequisiteBankItemIds.add(id as BankItemId);
-      if (/\bor\b/u.test(prerequisite[1])) prerequisiteDisjunction = true;
-      continue;
-    }
-    if (/^(?:one selected REF-\*|REF-\* of type [a-z_-]+|(?:named|selected|chosen|active|applicable) (?:relational )?REF-\*)$/iu.test(clause)) { requiresReferent = true; continue; }
-    const episode = clause.match(/^(?:at least )?(two|2\+?|one|1) (?:independent )?(?:manageable |concrete |representative )?((?:RL|MS|BDA|BTM|FSR|VFR|RLB|BSP|PIS|PDL|RMX|PCR|RRE|WMA|RSR|SEF|FCF)-\d{3} )?(?:conflict )?episode(?: anchors?)?(?: exists| anchored| reported)?$/iu);
-    if (episode) { minimumEpisodeAnchors = /two|2/iu.test(episode[1]) ? 2 : 1; if (episode[2]) prerequisiteBankItemIds.add(episode[2].trim() as BankItemId); continue; }
-    if (/^safety(?:\/reliability)? (?:context|screen) (?:complete|recorded)$/iu.test(clause)) { requiresSafetyContext = true; continue; }
-    if (/^(?:safety gate (?:required|passed)|safe enough to recall|no current danger)$/iu.test(clause)) { requiresSafeContext = true; continue; }
-    uncompiledEligibility.push(clause);
-  }
-  const authoredOptions = optionGroups.flatMap((group) => group.options);
-  const uncompiledBranches: string[] = [];
-  const branchesByOption: { optionId: string; routeBankItemIds: BankItemId[] }[] = [];
-  for (const clauseValue of branches.split(";")) {
-    const clause = clean(clauseValue);
-    if (!clause || /^none needed$/iu.test(clause)) continue;
-    const routeBankItemIds = [...new Set([...clause.matchAll(/\b((?:RL|MS|BDA|BTM|FSR|VFR|RLB|BSP|PIS|PDL|RMX|PCR|RRE|WMA|RSR|SEF|FCF)-\d{3})\b/gu)].map((match) => match[1] as BankItemId))];
-    const option = authoredOptions.find((candidate) => {
-      const authoredId = candidate.authored.match(/`([^`]+)`/u)?.[1];
-      return Boolean(authoredId && new RegExp(`(?:^|[^A-Za-z0-9_])${authoredId.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&")}(?:[^A-Za-z0-9_]|$)`, "iu").test(clause));
-    });
-    if (option && routeBankItemIds.length > 0 && /^(?:a selected )?[A-Za-z0-9_ -]+\s+(?:routes? to|unlocks?|→)\s+(?:(?:RL|MS|BDA|BTM|FSR|VFR|RLB|BSP|PIS|PDL|RMX|PCR|RRE|WMA|RSR|SEF|FCF)-\d{3})(?:\s*(?:,|or)\s*(?:(?:RL|MS|BDA|BTM|FSR|VFR|RLB|BSP|PIS|PDL|RMX|PCR|RRE|WMA|RSR|SEF|FCF)-\d{3}))*$/iu.test(clause)) branchesByOption.push({ optionId: option.optionId, routeBankItemIds });
-    else uncompiledBranches.push(clause);
-  }
-  const recoveryText = clean(recovery);
-  const recoveryRouteIds = [...new Set([...recoveryText.matchAll(/\b((?:RL|MS|BDA|BTM|FSR|VFR|RLB|BSP|PIS|PDL|RMX|PCR|RRE|WMA|RSR|SEF|FCF)-\d{3})\b/gu)].map((match) => match[1] as BankItemId))];
-  const recoveryNone = !recoveryText || /^(?:none|none needed|low intensity by design|resource item by design)$/iu.test(recoveryText);
-  const recoveryExact = /^(?:mandatory |follow with )?(?:(?:RL|MS|BDA|BTM|FSR|VFR|RLB|BSP|PIS|PDL|RMX|PCR|RRE|WMA|RSR|SEF|FCF)-\d{3})(?:\s*(?:,|or)\s*(?:(?:RL|MS|BDA|BTM|FSR|VFR|RLB|BSP|PIS|PDL|RMX|PCR|RRE|WMA|RSR|SEF|FCF)-\d{3}))*$/iu.test(recoveryText);
-  const uncompiledRecovery = recoveryNone || recoveryExact ? [] : recoveryText ? [recoveryText] : [];
-  const eligibilityCompilation = eligibilityClauses.length === 0 ? "unsupported" : uncompiledEligibility.length === 0 ? "compiled" : uncompiledEligibility.length === eligibilityClauses.length ? "unsupported" : "partial";
-  prerequisiteMode = prerequisiteBankItemIds.size > 1 && !prerequisiteDisjunction ? "all" : "any";
-  const branchClauses = branches.split(";").map(clean).filter((clause) => clause && !/^none needed$/iu.test(clause));
-  const branchCompilation = branchClauses.length === 0 ? "compiled" : uncompiledBranches.length === 0 ? "compiled" : uncompiledBranches.length === branchClauses.length ? "unsupported" : "partial";
-  const recoveryCompilation = uncompiledRecovery.length === 0 ? "compiled" : "unsupported";
-  const uncompiledFragments = [...uncompiledEligibility, ...uncompiledBranches, ...uncompiledRecovery];
-  const compilation = uncompiledFragments.length === 0 ? "compiled" : uncompiledFragments.length < eligibilityClauses.length + branchClauses.length + (recoveryText ? 1 : 0) ? "partial" : "unsupported";
-  return {
-    bankItemId,
-    compilation,
-    eligibilityCompilation,
-    branchCompilation,
-    recoveryCompilation,
-    uncompiledFragments,
-    provenance,
-    eligibility: {
-      always,
-      allowedStages: [...allowedStages],
-      prerequisiteBankItemIds: [...prerequisiteBankItemIds],
-      prerequisiteMode,
-      minimumEpisodeAnchors,
-      requiresReferent,
-      requiresSafetyContext,
-      requiresSafeContext,
-    },
-    branches: branchesByOption,
-    recovery: { required: recoveryExact && /^(?:mandatory|follow with)/iu.test(recoveryText), routeBankItemIds: recoveryRouteIds },
-  };
-}
-
 function parseItem(item: AuthoredBankItemDefinition): RenderableInteractionDefinition {
   const markdown = item.authoredMarkdown;
   const promptField = field(markdown, ["prompt"]);
@@ -314,6 +214,7 @@ function parseItem(item: AuthoredBankItemDefinition): RenderableInteractionDefin
   const routeBankItemIds = [...new Set([...`${branches} ${recovery}`.matchAll(/`?((?:RL|MS|BDA|BTM|FSR|VFR|RLB|BSP|PIS|PDL|RMX|PCR|RRE|WMA|RSR|SEF|FCF)-\d{3})`?/gu)].map((match) => match[1] as BankItemId))];
   const safetyText = [eligibility, branches, limits, recovery].join(" ");
   const optionGroups = parseOptions(optionSource, item.bankItemId);
+  const executable = ACTIVE_EXECUTABLE_ROUTING_CONTRACTS_BY_ID[item.bankItemId];
   return {
     ...item,
     eligibility,
@@ -334,7 +235,7 @@ function parseItem(item: AuthoredBankItemDefinition): RenderableInteractionDefin
       routeBankItemIds,
       safetyGates: sentencesContaining(safetyText, /safe|unsafe|danger|coerc|threat|distress|arousal|pause/iu),
       canonicalPostBodyRecoveryRequired: item.bankItemId === "BTM-109" || /canonical transition gate/iu.test(branches),
-      executable: compileRoutingContract(item.bankItemId, eligibility, branches, recovery, optionGroups, { sourcePath: item.sourcePath, sourceLine: item.sourceLine }),
+      ...(executable ? { executable } : {}),
     },
   };
 }
@@ -374,6 +275,7 @@ async function loadResponseLibraries(workspaceRoot: string): Promise<ResponseLib
 
 export async function loadStructuredInstrumentManifest(workspaceRoot = process.cwd()): Promise<StructuredInstrumentManifest> {
   const [authored, responseLibraries] = await Promise.all([loadAuthoredInstrumentManifest(workspaceRoot), loadResponseLibraries(workspaceRoot)]);
+  assertAuthoredRoutingSurfaceBindings(authored.bankItems.filter((item) => ACTIVE_EXECUTABLE_ROUTING_CONTRACTS_BY_ID[item.bankItemId]));
   const items = authored.bankItems.map(parseItem);
   return {
     items,

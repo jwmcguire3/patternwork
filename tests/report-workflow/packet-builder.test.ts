@@ -6,6 +6,8 @@ import { prepareAndValidateInputs } from "../../lib/server/reports/validation.ts
 import type { DecryptedAssessmentSnapshot } from "../../lib/server/reports/types.ts";
 import { buildGenerationPrompt } from "../../lib/server/reports/prompts.ts";
 import type { JsonValue } from "../../lib/question-engine/types.ts";
+import { loadStructuredInstrumentManifest } from "../../lib/question-engine/renderable-manifest.ts";
+import { deriveTrustedEvidenceForAuthoredResponse } from "../../lib/server/assessment/trusted-evidence.ts";
 
 function snapshot(completedPass: 1 | 2 = 1, response: JsonValue = { schemaVersion: "PWRS-1", semantic: { choices: ["OPT-MS-101-wait-a1b2c3d4"], timeHorizon: "immediate", certainty: 0.7, coverageSectionCodes: ["IFS-02"] } }, routingState?: JsonValue): DecryptedAssessmentSnapshot {
   return {
@@ -85,27 +87,39 @@ test("Pass 2 routing flags alone never assert stop eligibility", () => {
   assert.equal(gated[0].coverage_matrix.stop_eligible, false);
 });
 
-function objectSnapshot(options: { oneOff?: boolean; contradicted?: boolean; omitFit?: boolean } = {}): DecryptedAssessmentSnapshot {
+async function objectSnapshot(options: { omitFit?: boolean; contradicted?: boolean } = {}): Promise<DecryptedAssessmentSnapshot> {
+  const manifest = await loadStructuredInstrumentManifest();
+  const option = (bankItemId:string, label:RegExp) => manifest.itemById.get(bankItemId)!.optionGroups.flatMap((group) => group.options).find((candidate) => label.test(candidate.label))!.optionId;
+  const referent = option("RL-101", /^A close friend$/iu);
   const rows: Record<string, JsonValue>[] = [];
-  const add = (bankItemId:string, objectEvidence:Record<string,JsonValue>, semantic:Record<string,JsonValue>={}) => rows.push({
-    responseId:`response-${rows.length+1}`, interactionInstanceId:`interaction-${rows.length+1}`, bankItemId, bankItemVersion:"3.1.0",
-    administrationSequence:rows.length+1, stage:bankItemId==="FCF-201"?"S5":"S3", completionState:"COMPLETED", responseOrder:["OPT-observed-aabbccdd"],
-    content:{ response:{ schemaVersion:"PWRS-1", semantic:{ choices:["OPT-observed-aabbccdd"], coverageSectionCodes:[], ...semantic, objectEvidence } } },
-  });
-  const directCount = options.oneOff ? 1 : 2;
-  for (let index=0; index<directCount; index+=1) add(index===0?"VFR-201":"RLB-201", { kind:"part_cluster", candidateKey:"OPT-part-care-aabbccdd", roleClass:"uncertain", directFieldOptionIds:[`OPT-part-field-${index}-aabbccdd`], contradicted:options.contradicted===true });
-  add("FCF-201", { kind:"part_cluster", candidateKey:"OPT-part-care-aabbccdd", identityStatus:"confirmed", fitConfirmed:!options.omitFit, directFieldOptionIds:[] });
-  for (let index=0; index<directCount; index+=1) add(index===0?"BTM-201":"FSR-201", { kind:"state_signature", candidateKey:"OPT-state-activated-aabbccdd", classification:"activated", bodyRegionIds:[`OPT-region-${index}-aabbccdd`], entryOptionIds:index===0?["OPT-entry-aabbccdd"]:[], exitOptionIds:index===1?["OPT-exit-aabbccdd"]:[], directFieldOptionIds:[`OPT-state-field-${index}-aabbccdd`], contradicted:options.contradicted===true });
-  add("FCF-201", { kind:"state_signature", candidateKey:"OPT-state-activated-aabbccdd", classification:"activated", fitConfirmed:!options.omitFit, bodyRegionIds:[], entryOptionIds:[], exitOptionIds:[], directFieldOptionIds:[] });
-  for (let index=0; index<directCount; index+=1) add(index===0?"WMA-201":"BDA-205", { kind:"attachment_pattern", candidateKey:"OPT-attachment-sequence-aabbccdd", referentOptionId:"OPT-referent-friend-aabbccdd", anxietyEstimate:"moderate", avoidanceEstimate:"low", cueOptionIds:[`OPT-cue-${index}-aabbccdd`], meaningOptionIds:[`OPT-meaning-${index}-aabbccdd`], moveOptionIds:[`OPT-move-${index}-aabbccdd`], directFieldOptionIds:[], contradicted:options.contradicted===true }, { referentOptionId:"OPT-referent-friend-aabbccdd", safetyContext:"safe" });
-  add("FCF-201", { kind:"attachment_pattern", candidateKey:"OPT-attachment-sequence-aabbccdd", referentOptionId:"OPT-referent-friend-aabbccdd", anxietyEstimate:"moderate", avoidanceEstimate:"low", fitConfirmed:!options.omitFit, cueOptionIds:[], meaningOptionIds:[], moveOptionIds:[], directFieldOptionIds:[] });
-  add("RSR-201", { kind:"state_signature", candidateKey:"OPT-resource-only-aabbccdd", classification:"connected", bodyRegionIds:[], entryOptionIds:[], exitOptionIds:[], directFieldOptionIds:[] }, { resourceSafetyClear:true });
+  const add = async (bankItemId:string, choices:string[]) => {
+    const definition = manifest.itemById.get(bankItemId)!;
+    const response = { schemaVersion:"PWRS-1", bankItemId, semantic:{ choices, referentOptionId:referent, safetyContext:"safe" } } as unknown as Record<string, JsonValue>;
+    const trustedEvidence = await deriveTrustedEvidenceForAuthoredResponse(bankItemId, definition.version, response);
+    rows.push({
+      responseId:`response-${rows.length+1}`, interactionInstanceId:`interaction-${rows.length+1}`, bankItemId, bankItemVersion:definition.version,
+      administrationSequence:rows.length+1, stage:bankItemId==="FCF-201"?"S5":"S3", completionState:"COMPLETED", responseOrder:choices,
+      content:{ response:{ ...response, ...(trustedEvidence ? { trustedEvidence:trustedEvidence as unknown as JsonValue } : {}) } },
+    });
+  };
+  await add("RL-101", [referent]);
+  await add("VFR-201", [option("VFR-201", /^Words or a sentence$/iu)]);
+  await add("RLB-201", [option("RLB-201", /^restart$/iu)]);
+  await add("BTM-201", ["UP-H-01", "UP-TC-02", option("BTM-201", /^mostly the same signature$/iu)]);
+  await add("BTM-201", ["UP-GP-01", "UP-AH-01", option("BTM-201", /^same core with different intensity$/iu)]);
+  await add("FSR-201", [option("FSR-201", /^body region\/quality$/iu)]);
+  await add("MS-101", [option("MS-101", /I send another message/iu)]);
+  await add("WMA-101", [option("WMA-101", /I am not important enough/iu)]);
+  await add("BDA-205", ["AU-RT-01", "OM-RP-01"]);
+  await add("PIS-201", [option("PIS-201", /^same internal presence\/pattern$/iu)]);
+  if (!options.omitFit) await add("FCF-201", [option("FCF-201", options.contradicted ? /^does not match$/iu : /^matches$/iu)]);
+  await add("RSR-201", [option("RSR-201", /^available now$/iu)]);
   const base = snapshot(2);
   return { ...base, canonicalSnapshot:{ ...base.canonicalSnapshot, responses:rows } };
 }
 
 test("replicated typed direct evidence plus FCF confirmation creates schema-valid bounded objects", async () => {
-  const packets = buildPseudonymousPacketsFromCanonicalSnapshot(objectSnapshot());
+  const packets = buildPseudonymousPacketsFromCanonicalSnapshot(await objectSnapshot());
   for (const packet of packets) {
     assert.equal(packet.part_profiles.length, 1);
     assert.equal(packet.state_signatures.length, 1);
@@ -116,8 +130,8 @@ test("replicated typed direct evidence plus FCF confirmation creates schema-vali
   }
 });
 
-test("one-off, contradicted, or unconfirmed typed evidence never creates promoted objects", () => {
-  for (const candidate of [objectSnapshot({oneOff:true}), objectSnapshot({contradicted:true}), objectSnapshot({omitFit:true})]) {
+test("contradicted or unconfirmed authored evidence never creates promoted objects", async () => {
+  for (const candidate of [await objectSnapshot({contradicted:true}), await objectSnapshot({omitFit:true})]) {
     const packet = buildPseudonymousPacketsFromCanonicalSnapshot(candidate)[0];
     assert.deepEqual(packet.part_profiles, []);
     assert.deepEqual(packet.state_signatures, []);

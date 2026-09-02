@@ -58,22 +58,21 @@ test("answerless COMPLETED responses remain non-evidence and cannot advance cove
   assert.equal(next.mappingCompleted, false);
 });
 
-test("only fully compiled eligibility predicates execute; partial prose branches fail closed", async () => {
+test("reviewed active eligibility contracts execute without caller injection", async () => {
   const manifest = await loadStructuredInstrumentManifest();
-  const ms101 = manifest.itemById.get("MS-101")!.deterministicRouting.executable;
-  const rl102 = manifest.itemById.get("RL-102")!.deterministicRouting.executable;
+  const ms101 = manifest.itemById.get("MS-101")!.deterministicRouting.executable!;
+  const rl102 = manifest.itemById.get("RL-102")!.deterministicRouting.executable!;
   assert.equal(ms101.eligibilityCompilation, "compiled");
-  assert.equal(rl102.eligibilityCompilation, "partial");
-  assert.ok(rl102.uncompiledFragments.length > 0);
-  const state = { ...createInitialRoutingState(1), stage:"S1" } as never;
+  assert.equal(rl102.eligibilityCompilation, "compiled");
+  assert.deepEqual(rl102.uncompiledFragments, []);
+  const state = { ...createInitialRoutingState(1), stage:"S1" as const };
   const completed = [{ bankItemId:"RL-102", completionState:"COMPLETED", evidenceEligible:true, referentPresent:true }] as never;
   assert.equal(isAuthoredContractEligible(ms101, state, completed), true);
-  assert.equal(isAuthoredContractEligible(rl102, state, completed), false);
+  assert.equal(isAuthoredContractEligible(rl102, { ...state, stage:"S0" as const }, completed), true);
 
-  const contracts = Object.fromEntries(manifest.items.map((item) => [item.bankItemId, item.deterministicRouting.executable]));
   const initial = createInitialRoutingState(1);
   const closest = manifest.itemById.get("RL-101")!.optionGroups.flatMap((group) => group.options).find((option) => /`closest`/u.test(option.authored))!.optionId;
-  const next = routeAssessmentResponse(initial, { interactionInstanceId:initial.currentInteraction!.interactionInstanceId, bankItemId:"RL-101", completionState:"COMPLETED", response:typed({ choices:[closest], referentOptionId:closest }), authoredRoutingContracts:contracts } as never);
+  const next = routeAssessmentResponse(initial, { interactionInstanceId:initial.currentInteraction!.interactionInstanceId, bankItemId:"RL-101", completionState:"COMPLETED", response:typed({ choices:[closest], referentOptionId:closest }) } as never);
   assert.notEqual(next.currentInteraction?.routeReason, "authored-option-branch");
 });
 

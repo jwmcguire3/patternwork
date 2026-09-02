@@ -54,13 +54,13 @@ function piiIssues(value: unknown, path = "$", issues: ValidationIssue[] = []): 
   return issues;
 }
 
-const TYPED_VALUE_KEYS = new Set(["selected_option_ids", "episode_fields", "pace_band_ids", "time_horizon", "coverage_section_codes", "user_certainty", "safety_context", "user_arousal", "resource_safety_clear", "eligible", "evidence_disposition", "object_evidence"]);
+const TYPED_VALUE_KEYS = new Set(["selected_option_ids", "episode_fields", "pace_band_ids", "time_horizon", "coverage_section_codes", "user_certainty", "safety_context", "user_arousal", "resource_safety_clear", "eligible", "evidence_disposition"]);
 const TYPED_ENUMS = new Set(["anticipatory", "immediate", "aftermath", "multi_horizon", "uncertain", "safe", "mixed", "unsafe", "unknown", "low", "elevated", "high", "moderate", "variable", "underdetermined", "observed", "missing", "part_cluster", "state_signature", "attachment_pattern", "confirmed", "cluster_only", "rejected", "manager", "firefighter", "baseline", "activated", "shutdown", "connected"]);
 
 function typedLeafAllowed(value: unknown): boolean {
   if (typeof value === "boolean") return true;
   if (typeof value === "number") return Number.isFinite(value) && value >= 0 && value <= 1;
-  if (typeof value === "string") return /^(?:(?:OPT-|OL-)[A-Za-z0-9._-]+|(?:IFS|PV|ATT)-\d{2})$/u.test(value) || TYPED_ENUMS.has(value);
+  if (typeof value === "string") return /^(?:OPT-[A-Za-z0-9._-]+|(?:AG|AT|AU|BASE|BL|CF|CI|CR|CRG|DOWN|FO|IR|MIX|OM|RG|RI|RP|UN|UP)-[A-Z0-9-]+|(?:IFS|PV|ATT)-\d{2})$/u.test(value) || TYPED_ENUMS.has(value);
   if (Array.isArray(value)) return value.every(typedLeafAllowed);
   const record = object(value);
   return Boolean(record && Object.values(record).every(typedLeafAllowed));

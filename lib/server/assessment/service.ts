@@ -29,6 +29,7 @@ import { canCompletePass, createInitialRoutingState, pauseRoutingState, resumeRo
 import { abandonedRetentionExpiresAt, completedRetentionExpiresAt, planExpiredAssessmentDeletion } from "./retention.ts";
 import type { AssessmentPass, AssessmentResponseInput, AssessmentRoutingState } from "./types.ts";
 import { defaultWorkflowEnqueuer, type WorkflowEnqueuer } from "./workflow-adapter.ts";
+import { deriveTrustedEvidenceForAuthoredResponse, trustedEvidenceJson } from "./trusted-evidence.ts";
 
 const ACCESS_TOKEN_SCOPE = "RESUME_ASSESSMENT" as const;
 
@@ -101,26 +102,10 @@ async function authoredInteraction(current: AssessmentRoutingState["currentInter
 }
 
 const SEMANTIC_ID = /^(?:OPT-|OL-)[A-Za-z0-9._-]+$/u;
+const OPTION_TOKEN = /^[A-Za-z][A-Za-z0-9._-]{1,99}$/u;
 const SECTION_CODE = /^(?:IFS-(?:0[1-9]|1[0-2])|PV-(?:0[1-9]|1[01])|ATT-(?:0[1-9]|1[0-2]))$/u;
 const OPTION_ARRAY_FIELDS = new Set(["choices", "rank", "zones", "relationship", "selectedOptionIds", "orderedOptionIds"]);
 const OPTION_FIELDS = new Set(["Before", "When it first hit", "What happened next", "Later / aftermath", "Person / role 1", "Person / role 2", "Contact frequency", "Emotional disclosure", "Asking for help", "Space", "referentOptionId", "windowOptionId"]);
-
-function normalizeObjectEvidence(value: unknown): Prisma.JsonObject | undefined {
-  const candidate = object(value);
-  if (!candidate || !["part_cluster", "state_signature", "attachment_pattern"].includes(String(candidate.kind)) || typeof candidate.candidateKey !== "string" || !SEMANTIC_ID.test(candidate.candidateKey)) return undefined;
-  const result: Record<string, Prisma.JsonValue> = { kind: candidate.kind as string, candidateKey: candidate.candidateKey };
-  const enums: Readonly<Record<string, readonly string[]>> = {
-    identityStatus: ["confirmed", "cluster_only", "uncertain", "rejected"], roleClass: ["manager", "firefighter", "mixed", "uncertain"],
-    classification: ["baseline", "activated", "shutdown", "mixed", "connected", "uncertain"], anxietyEstimate: ["low", "moderate", "high", "variable", "underdetermined"],
-    avoidanceEstimate: ["low", "moderate", "high", "variable", "underdetermined"],
-  };
-  for (const [key, allowed] of Object.entries(enums)) if (typeof candidate[key] === "string" && allowed.includes(candidate[key])) result[key] = candidate[key] as string;
-  for (const key of ["bodyRegionIds", "entryOptionIds", "exitOptionIds", "directFieldOptionIds", "cueOptionIds", "meaningOptionIds", "moveOptionIds"] as const) if (Array.isArray(candidate[key])) result[key] = candidate[key].filter((entry): entry is string => typeof entry === "string" && SEMANTIC_ID.test(entry));
-  if (typeof candidate.referentOptionId === "string" && SEMANTIC_ID.test(candidate.referentOptionId)) result.referentOptionId = candidate.referentOptionId;
-  if (typeof candidate.fitConfirmed === "boolean") result.fitConfirmed = candidate.fitConfirmed;
-  if (typeof candidate.contradicted === "boolean") result.contradicted = candidate.contradicted;
-  return result as Prisma.JsonObject;
-}
 
 function object(value: unknown): Record<string, unknown> | undefined {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : undefined;
@@ -132,8 +117,8 @@ export function normalizeTypedAssessmentResponse(value: unknown, bankItemId?: st
   const candidate = root.schemaVersion === "PWRS-1" ? object(root.semantic) ?? {} : root;
   const semantic: Record<string, Prisma.JsonValue> = {};
   for (const [key, raw] of Object.entries(candidate)) {
-    if (OPTION_ARRAY_FIELDS.has(key) && Array.isArray(raw)) semantic[key] = raw.filter((entry): entry is string => typeof entry === "string" && SEMANTIC_ID.test(entry));
-    else if (OPTION_FIELDS.has(key) && typeof raw === "string" && SEMANTIC_ID.test(raw)) semantic[key] = raw;
+    if (OPTION_ARRAY_FIELDS.has(key) && Array.isArray(raw)) semantic[key] = raw.filter((entry): entry is string => typeof entry === "string" && OPTION_TOKEN.test(entry));
+    else if (OPTION_FIELDS.has(key) && typeof raw === "string" && OPTION_TOKEN.test(raw)) semantic[key] = raw;
     else if (key === "coverageSectionCodes" && Array.isArray(raw)) semantic[key] = raw.filter((entry): entry is string => typeof entry === "string" && SECTION_CODE.test(entry));
     else if (key === "safetyContext" && ["safe", "mixed", "unsafe", "unknown"].includes(String(raw))) semantic[key] = raw as string;
     else if (key === "userArousal" && ["low", "unknown", "elevated", "high"].includes(String(raw))) semantic[key] = raw as string;
@@ -141,10 +126,6 @@ export function normalizeTypedAssessmentResponse(value: unknown, bankItemId?: st
     else if (key === "evidenceDisposition" && ["observed", "missing"].includes(String(raw))) semantic[key] = raw as string;
     else if (key === "certainty" && typeof raw === "number" && Number.isFinite(raw) && raw >= 0 && raw <= 1) semantic[key] = raw;
     else if (["resourceSafetyClear", "quotePermission", "eligible"].includes(key) && typeof raw === "boolean") semantic[key] = raw;
-    else if (key === "objectEvidence") {
-      const objectEvidence = normalizeObjectEvidence(raw);
-      if (objectEvidence) semantic[key] = objectEvidence;
-    }
   }
   return {
     schemaVersion: "PWRS-1",
@@ -168,7 +149,7 @@ const DEFAULT_HORIZON_BY_FAMILY: Readonly<Record<string, "anticipatory" | "immed
   BDA: "multi_horizon", BTM: "immediate", FSR: "immediate", RRE: "aftermath", RSR: "aftermath", SEF: "aftermath", VFR: "anticipatory", WMA: "anticipatory",
 };
 
-async function enrichResponseFromAuthoredContract(response: Prisma.JsonObject, bankItemId: string): Promise<Prisma.JsonObject> {
+async function enrichResponseFromAuthoredContract(response: Prisma.JsonObject, bankItemId: string, bankItemVersion: string): Promise<Prisma.JsonObject> {
   structuredManifestPromise ??= loadStructuredInstrumentManifest();
   const manifest = await structuredManifestPromise;
   const definition = manifest.itemById.get(bankItemId);
@@ -187,10 +168,12 @@ async function enrichResponseFromAuthoredContract(response: Prisma.JsonObject, b
       ...(definition?.responseLibraryIds.flatMap((libraryId) => manifest.responseLibraryById.get(libraryId)?.options ?? []).map((option) => ({ ...option, authored:option.optionId })) ?? []),
     ];
     const missingIds = new Set(authoredOptions.filter((option) => /(?:^|[_ -])(?:not[_ -]?sure|no[_ -]?memory|skip)(?:[_ -]|$)/iu.test(`${option.optionId} ${option.authored} ${option.label}`)).map((option) => option.optionId));
-    const substantiveOther = Object.entries(semantic).some(([key, value]) => ["rank", "zones", "relationship", "Before", "When it first hit", "What happened next", "Later / aftermath", "objectEvidence"].includes(key) && (Array.isArray(value) ? value.length > 0 : Boolean(value)));
+    const substantiveOther = Object.entries(semantic).some(([key, value]) => ["rank", "zones", "relationship", "Before", "When it first hit", "What happened next", "Later / aftermath"].includes(key) && (Array.isArray(value) ? value.length > 0 : Boolean(value)));
     semantic.evidenceDisposition = selected.length > 0 && selected.every((id) => missingIds.has(id) || /not-sure|no-memory|skip/iu.test(id)) && !substantiveOther ? "missing" : "observed";
   }
-  return { ...response, semantic } as Prisma.JsonObject;
+  const normalized = { ...response, semantic } as Prisma.JsonObject;
+  const trustedEvidence = await deriveTrustedEvidenceForAuthoredResponse(bankItemId, bankItemVersion, normalized as unknown as import("../../question-engine/types.ts").JsonObject);
+  return { ...normalized, ...(trustedEvidence ? { trustedEvidence: trustedEvidenceJson(trustedEvidence) } : {}) } as Prisma.JsonObject;
 }
 
 export function reportArtifactUrl(assessmentSessionId: string, reportId?: string): string {
@@ -375,7 +358,7 @@ export async function saveAssessmentResponse(
     const current = state.currentInteraction;
     if (!current || current.interactionInstanceId !== input.interactionInstanceId || (input.bankItemId && current.bankItemId !== input.bankItemId)) throw new AssessmentError("invalid", "Response does not match the current interaction.");
     const timestamp = now();
-    const response = await enrichResponseFromAuthoredContract(normalizeTypedAssessmentResponse(input.response, current.bankItemId), current.bankItemId);
+    const response = await enrichResponseFromAuthoredContract(normalizeTypedAssessmentResponse(input.response, current.bankItemId), current.bankItemId, current.bankItemVersion);
     const encryptedResponse = encryptJson({ response }, responsePurpose(sessionId, input.interactionInstanceId), keyring);
     const safety = responseSafetySignals(response);
     structuredManifestPromise ??= loadStructuredInstrumentManifest();

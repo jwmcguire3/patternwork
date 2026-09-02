@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { loadStructuredInstrumentManifest } from "../../lib/question-engine/renderable-manifest.ts";
+import { ACTIVE_EXECUTABLE_ROUTING_CONTRACTS, EXECUTABLE_ROUTING_CONTRACT_VERSION } from "../../lib/question-engine/routing-contracts.ts";
 
 test("every authored option has a stable semantic ID and repeated manifest loads reproduce it", async () => {
   const first = await loadStructuredInstrumentManifest();
@@ -12,15 +13,18 @@ test("every authored option has a stable semantic ID and repeated manifest loads
   assert.deepEqual(firstOptions, flatten(second));
 });
 
-test("routing compiler records provenance and never promotes partially consumed prose", async () => {
+test("every active item uses a fully reviewed executable contract bound to authored provenance", async () => {
   const manifest = await loadStructuredInstrumentManifest();
-  const partial = manifest.itemById.get("RL-102")!.deterministicRouting.executable;
-  assert.equal(partial.eligibilityCompilation, "partial");
-  assert.ok(partial.uncompiledFragments.some((fragment) => /referents actually used/iu.test(fragment)));
-  assert.match(partial.provenance.sourcePath, /03_core_mapping_bank\.md$/u);
-  assert.ok(partial.provenance.sourceLine > 0);
-  const compiledEligibility = manifest.itemById.get("MS-101")!.deterministicRouting.executable;
-  assert.equal(compiledEligibility.eligibilityCompilation, "compiled");
-  assert.deepEqual(compiledEligibility.eligibility.prerequisiteBankItemIds, ["RL-102"]);
-  assert.equal(compiledEligibility.eligibility.requiresReferent, true);
+  assert.equal(ACTIVE_EXECUTABLE_ROUTING_CONTRACTS.length, 61);
+  for (const contract of ACTIVE_EXECUTABLE_ROUTING_CONTRACTS) {
+    const item = manifest.itemById.get(contract.bankItemId)!;
+    assert.equal(item.deterministicRouting.executable, contract);
+    assert.equal(contract.contractVersion, EXECUTABLE_ROUTING_CONTRACT_VERSION);
+    assert.equal(contract.compilation, "compiled");
+    assert.equal(contract.eligibilityCompilation, "compiled");
+    assert.equal(contract.branchCompilation, "compiled");
+    assert.equal(contract.recoveryCompilation, "compiled");
+    assert.deepEqual(contract.uncompiledFragments, []);
+    assert.equal(contract.provenance.authoredBlockSha256, item.authoredContentSha256);
+  }
 });
