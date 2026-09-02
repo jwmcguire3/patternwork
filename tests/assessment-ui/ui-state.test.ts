@@ -18,7 +18,7 @@ test("preserves authoritative response-library IDs for body controls and persist
   const state = normaliseAssessmentState({ status:"IN_PROGRESS", currentInteraction:{ interactionInstanceId:"ri", bankItemId:"BTM-201", authored:{ prompt:"Map", responseLibraries:[{ libraryId:"OL-BQ-UP-HEAD-01", options:[{ optionId:"UP-H-01", label:"Pressure behind my eyes or forehead" }] }] } } });
   assert.deepEqual(state.interaction?.options, [{ id:"UP-H-01", label:"Pressure behind my eyes or forehead" }]);
   assert.deepEqual(responseOrderForDraft({ zones:["UP-H-01"] }), ["UP-H-01"]);
-  assert.deepEqual(responseOrderForDraft({ note:"private", safetyContext:"safe", zones:["UP-H-01"] }), ["UP-H-01"]);
+  assert.deepEqual(responseOrderForDraft({ note:"UP-PRIVATE-SECRET", safetyContext:"safe", zones:["UP-H-01"] }, ["UP-H-01"]), ["UP-H-01"]);
 });
 test("derives non-positional semantic IDs and keeps encrypted notes outside semantic values", () => {
   assert.equal(semanticOptionId("scope", "First"), semanticOptionId("scope", "First"));

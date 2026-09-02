@@ -24,18 +24,16 @@ function record(value: unknown): Record<string, unknown> | undefined {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : undefined;
 }
 
-export function responseOrderForDraft(draft: Record<string, unknown>): string[] {
+export function responseOrderForDraft(draft: Record<string, unknown>, allowedOptionIds: readonly string[] = []): string[] {
   const authoredOptionId = /^(?:(?:OPT-|OL-)[A-Za-z0-9._-]+|(?:AG|AT|AU|BASE|BL|CF|CI|CR|CRG|DOWN|FO|IR|MIX|OM|RG|RI|RP|UN|UP)-[A-Z0-9._-]+)$/iu;
+  const allowed = new Set(allowedOptionIds);
+  const answerFields = ["choices", "rank", "zones", "relationship", "selectedOptionIds", "orderedOptionIds", "Before", "When it first hit", "What happened next", "Later / aftermath", "Person / role 1", "Person / role 2", "Contact frequency", "Emotional disclosure", "Asking for help", "Space"] as const;
   const found: string[] = [];
   const visit = (value: unknown) => {
-    if (typeof value === "string" && authoredOptionId.test(value) && !found.includes(value)) found.push(value);
+    if (typeof value === "string" && authoredOptionId.test(value) && (allowed.size === 0 || allowed.has(value)) && !found.includes(value)) found.push(value);
     else if (Array.isArray(value)) value.forEach(visit);
-    else {
-      const nested = record(value);
-      if (nested) Object.values(nested).forEach(visit);
-    }
   };
-  visit(draft);
+  for (const field of answerFields) visit(draft[field]);
   return found;
 }
 

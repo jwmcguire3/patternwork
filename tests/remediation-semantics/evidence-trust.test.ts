@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { loadStructuredInstrumentManifest } from "../../lib/question-engine/renderable-manifest.ts";
-import { enrichResponseFromAuthoredContract, establishedReferentFromRoutingState, normalizeTypedAssessmentResponse } from "../../lib/server/assessment/service.ts";
+import { enrichResponseFromAuthoredContract, establishedReferentFromRoutingState, normalizeTypedAssessmentResponse, trustedResponseOrderFromResponse } from "../../lib/server/assessment/service.ts";
 import { createInitialRoutingState } from "../../lib/server/assessment/routing.ts";
 import { deriveTrustedEvidenceForAuthoredResponse, referencedLibraries } from "../../lib/server/assessment/trusted-evidence.ts";
 import { buildPseudonymousPacketsFromCanonicalSnapshot } from "../../lib/server/reports/packet-builder.ts";
@@ -111,4 +111,16 @@ test("packet promotion ignores a fully populated client objectEvidence payload",
   assert.deepEqual(packet.attachment_patterns, []);
   assert.equal(packet.coverage_matrix.stop_eligible, false);
   assert.doesNotMatch(JSON.stringify(packet), /client-candidate|client-direct|client-region|client-cue|client-meaning|client-move/u);
+});
+
+test("private-note-shaped tokens never enter trusted response-order provenance", async () => {
+  const manifest = await loadStructuredInstrumentManifest();
+  const definition = manifest.itemById.get("BTM-201")!;
+  const response = await enrichResponseFromAuthoredContract(
+    normalizeTypedAssessmentResponse({ schemaVersion:"PWRS-1", privateNote:"UP-PRIVATE-SECRET", semantic:{ zones:["UP-H-01"] } }, "BTM-201"),
+    "BTM-201",
+    definition.version,
+  );
+  assert.deepEqual(trustedResponseOrderFromResponse(response), ["UP-H-01"]);
+  assert.doesNotMatch(JSON.stringify(trustedResponseOrderFromResponse(response)), /PRIVATE-SECRET/u);
 });

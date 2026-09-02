@@ -177,6 +177,13 @@ export function establishedReferentFromRoutingState(state: AssessmentRoutingStat
     .find((entry) => entry.family === "RL" && entry.completionState === "COMPLETED" && entry.evidenceEligible === true && typeof entry.referentId === "string")?.referentId;
 }
 
+export function trustedResponseOrderFromResponse(response: unknown): string[] {
+  const selectedOptionIds = object(object(response)?.trustedEvidence)?.selectedOptionIds;
+  return Array.isArray(selectedOptionIds)
+    ? selectedOptionIds.filter((value): value is string => typeof value === "string" && OPTION_TOKEN.test(value))
+    : [];
+}
+
 export function reportArtifactUrl(assessmentSessionId: string, reportId?: string): string {
   return `/reports/${encodeURIComponent(assessmentSessionId)}${reportId ? `#${encodeURIComponent(reportId)}` : ""}`;
 }
@@ -361,6 +368,7 @@ export async function saveAssessmentResponse(
     const timestamp = now();
     const establishedReferent = establishedReferentFromRoutingState(state);
     const response = await enrichResponseFromAuthoredContract(normalizeTypedAssessmentResponse(input.response, current.bankItemId), current.bankItemId, current.bankItemVersion, establishedReferent);
+    const trustedResponseOrder = trustedResponseOrderFromResponse(response);
     const encryptedResponse = encryptJson({ response }, responsePurpose(sessionId, input.interactionInstanceId), keyring);
     const safety = responseSafetySignals(response);
     structuredManifestPromise ??= loadStructuredInstrumentManifest();
@@ -380,7 +388,7 @@ export async function saveAssessmentResponse(
         stage: current.stage,
         completionState: input.completionState,
         requestSha256,
-        responseOrderJson: normalizedResponseOrder,
+        responseOrderJson: trustedResponseOrder,
         responseCiphertext: prismaBytes(encryptedResponse.ciphertext),
         responseNonce: prismaBytes(encryptedResponse.nonce),
         encryptionKeyVersion: encryptedResponse.keyVersion,
@@ -391,7 +399,7 @@ export async function saveAssessmentResponse(
         responseId,
         completionState: input.completionState,
         requestSha256,
-        responseOrderJson: normalizedResponseOrder,
+        responseOrderJson: trustedResponseOrder,
         responseCiphertext: prismaBytes(encryptedResponse.ciphertext),
         responseNonce: prismaBytes(encryptedResponse.nonce),
         encryptionKeyVersion: encryptedResponse.keyVersion,
