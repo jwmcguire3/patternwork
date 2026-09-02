@@ -25,9 +25,10 @@ function record(value: unknown): Record<string, unknown> | undefined {
 }
 
 export function responseOrderForDraft(draft: Record<string, unknown>): string[] {
+  const authoredOptionId = /^(?:(?:OPT-|OL-)[A-Za-z0-9._-]+|(?:AG|AT|AU|BASE|BL|CF|CI|CR|CRG|DOWN|FO|IR|MIX|OM|RG|RI|RP|UN|UP)-[A-Z0-9._-]+)$/iu;
   const found: string[] = [];
   const visit = (value: unknown) => {
-    if (typeof value === "string" && /^(?:OPT-|OL-)[A-Za-z0-9._-]+$/u.test(value) && !found.includes(value)) found.push(value);
+    if (typeof value === "string" && authoredOptionId.test(value) && !found.includes(value)) found.push(value);
     else if (Array.isArray(value)) value.forEach(visit);
     else {
       const nested = record(value);
@@ -81,7 +82,7 @@ export function normaliseAssessmentState(input: unknown): AssessmentState {
       const value = record(option) ?? {};
       const label = String(value.label ?? value.optionId ?? "");
       return { id: String(value.optionId ?? semanticOptionId(bankItemId || "unknown", label)), label };
-    }),
+    }).filter((option, index, all) => option.id && all.findIndex((candidate) => candidate.id === option.id) === index),
   } : null;
   const mapped = statusMap[rawStatus] ?? rawStatus as AssessmentStatus;
   const status = reportStatus === "GENERATING"

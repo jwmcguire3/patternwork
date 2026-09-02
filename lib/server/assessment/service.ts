@@ -29,7 +29,7 @@ import { canCompletePass, createInitialRoutingState, pauseRoutingState, resumeRo
 import { abandonedRetentionExpiresAt, completedRetentionExpiresAt, planExpiredAssessmentDeletion } from "./retention.ts";
 import type { AssessmentPass, AssessmentResponseInput, AssessmentRoutingState } from "./types.ts";
 import { defaultWorkflowEnqueuer, type WorkflowEnqueuer } from "./workflow-adapter.ts";
-import { deriveTrustedEvidenceForAuthoredResponse, trustedEvidenceJson } from "./trusted-evidence.ts";
+import { deriveTrustedEvidenceForAuthoredResponse, referencedLibraries, trustedEvidenceJson } from "./trusted-evidence.ts";
 
 const ACCESS_TOKEN_SCOPE = "RESUME_ASSESSMENT" as const;
 
@@ -91,18 +91,15 @@ async function authoredInteraction(current: AssessmentRoutingState["currentInter
       eligibility: definition.eligibility,
       burden: definition.burden,
       optionGroups: definition.optionGroups,
-      responseLibraries: definition.responseLibraryIds.flatMap((libraryId) => {
-        const library = manifest.responseLibraryById.get(libraryId);
-        return library ? [{ libraryId: library.libraryId, title: library.title, options: library.options }] : [];
-      }),
+      responseLibraries: referencedLibraries(manifest, definition.responseLibraryReferences, definition.responseLibraryIds)
+        .map((library) => ({ libraryId: library.libraryId, title: library.title, options: library.options })),
       limits: definition.limits,
       recovery: definition.recovery,
     },
   };
 }
 
-const SEMANTIC_ID = /^(?:OPT-|OL-)[A-Za-z0-9._-]+$/u;
-const OPTION_TOKEN = /^[A-Za-z][A-Za-z0-9._-]{1,99}$/u;
+const OPTION_TOKEN = /^(?:(?:OPT-|OL-)[A-Za-z0-9._-]+|(?:AG|AT|AU|BASE|BL|CF|CI|CR|CRG|DOWN|FO|IR|MIX|OM|RG|RI|RP|UN|UP)-[A-Z0-9._-]+)$/iu;
 const SECTION_CODE = /^(?:IFS-(?:0[1-9]|1[0-2])|PV-(?:0[1-9]|1[01])|ATT-(?:0[1-9]|1[0-2]))$/u;
 const OPTION_ARRAY_FIELDS = new Set(["choices", "rank", "zones", "relationship", "selectedOptionIds", "orderedOptionIds"]);
 const OPTION_FIELDS = new Set(["Before", "When it first hit", "What happened next", "Later / aftermath", "Person / role 1", "Person / role 2", "Contact frequency", "Emotional disclosure", "Asking for help", "Space", "referentOptionId", "windowOptionId"]);
@@ -149,7 +146,7 @@ const DEFAULT_HORIZON_BY_FAMILY: Readonly<Record<string, "anticipatory" | "immed
   BDA: "multi_horizon", BTM: "immediate", FSR: "immediate", RRE: "aftermath", RSR: "aftermath", SEF: "aftermath", VFR: "anticipatory", WMA: "anticipatory",
 };
 
-async function enrichResponseFromAuthoredContract(response: Prisma.JsonObject, bankItemId: string, bankItemVersion: string): Promise<Prisma.JsonObject> {
+export async function enrichResponseFromAuthoredContract(response: Prisma.JsonObject, bankItemId: string, bankItemVersion: string, trustedReferentOptionId?: string): Promise<Prisma.JsonObject> {
   structuredManifestPromise ??= loadStructuredInstrumentManifest();
   const manifest = await structuredManifestPromise;
   const definition = manifest.itemById.get(bankItemId);
@@ -157,10 +154,7 @@ async function enrichResponseFromAuthoredContract(response: Prisma.JsonObject, b
   if (!Array.isArray(semantic.coverageSectionCodes) || semantic.coverageSectionCodes.length === 0) semantic.coverageSectionCodes = [...(definition?.supportedReportSections ?? [])];
   if (typeof semantic.eligible !== "boolean") semantic.eligible = true;
   if (typeof semantic.timeHorizon !== "string") semantic.timeHorizon = DEFAULT_HORIZON_BY_FAMILY[definition?.family ?? ""] ?? "uncertain";
-  if (definition?.family === "RL" && typeof semantic.referentOptionId !== "string" && Array.isArray(semantic.choices)) {
-    const referentOptionId = semantic.choices.find((value): value is string => typeof value === "string" && SEMANTIC_ID.test(value));
-    if (referentOptionId) semantic.referentOptionId = referentOptionId;
-  }
+  delete semantic.referentOptionId;
   if (semantic.evidenceDisposition !== "missing") {
     const selected = Array.isArray(semantic.choices) ? semantic.choices.filter((value): value is string => typeof value === "string") : [];
     const authoredOptions = [
@@ -172,8 +166,15 @@ async function enrichResponseFromAuthoredContract(response: Prisma.JsonObject, b
     semantic.evidenceDisposition = selected.length > 0 && selected.every((id) => missingIds.has(id) || /not-sure|no-memory|skip/iu.test(id)) && !substantiveOther ? "missing" : "observed";
   }
   const normalized = { ...response, semantic } as Prisma.JsonObject;
-  const trustedEvidence = await deriveTrustedEvidenceForAuthoredResponse(bankItemId, bankItemVersion, normalized as unknown as import("../../question-engine/types.ts").JsonObject);
-  return { ...normalized, ...(trustedEvidence ? { trustedEvidence: trustedEvidenceJson(trustedEvidence) } : {}) } as Prisma.JsonObject;
+  const trustedEvidence = await deriveTrustedEvidenceForAuthoredResponse(bankItemId, bankItemVersion, normalized as unknown as import("../../question-engine/types.ts").JsonObject, trustedReferentOptionId);
+  if (trustedEvidence?.referentOptionId) semantic.referentOptionId = trustedEvidence.referentOptionId;
+  return { ...response, semantic, ...(trustedEvidence ? { trustedEvidence: trustedEvidenceJson(trustedEvidence) } : {}) } as Prisma.JsonObject;
+}
+
+export function establishedReferentFromRoutingState(state: AssessmentRoutingState): string | undefined {
+  return [...state.completedInteractions].reverse()
+    .map((entry) => entry as typeof entry & { evidenceEligible?: boolean; referentId?: string })
+    .find((entry) => entry.family === "RL" && entry.completionState === "COMPLETED" && entry.evidenceEligible === true && typeof entry.referentId === "string")?.referentId;
 }
 
 export function reportArtifactUrl(assessmentSessionId: string, reportId?: string): string {
@@ -342,7 +343,7 @@ export async function saveAssessmentResponse(
   const { db, keyring, now } = deps(dependencies);
   const responseId = `pwr_${sha256(`${sessionId}:${input.idempotencyKey}`).slice(0, 40)}`;
   const normalizedResponse = normalizeTypedAssessmentResponse(input.response, input.bankItemId);
-  const normalizedResponseOrder = (input.responseOrder ?? []).filter((value) => SEMANTIC_ID.test(value));
+  const normalizedResponseOrder = (input.responseOrder ?? []).filter((value) => OPTION_TOKEN.test(value));
   const requestSha256 = sha256(canonicalize({ interactionInstanceId: input.interactionInstanceId, completionState: input.completionState, response: normalizedResponse, responseOrder: normalizedResponseOrder }));
   return db.$transaction(async (tx) => {
     const session = await tx.patternworkV31AssessmentSession.findUnique({ where: { id: sessionId } });
@@ -358,7 +359,8 @@ export async function saveAssessmentResponse(
     const current = state.currentInteraction;
     if (!current || current.interactionInstanceId !== input.interactionInstanceId || (input.bankItemId && current.bankItemId !== input.bankItemId)) throw new AssessmentError("invalid", "Response does not match the current interaction.");
     const timestamp = now();
-    const response = await enrichResponseFromAuthoredContract(normalizeTypedAssessmentResponse(input.response, current.bankItemId), current.bankItemId, current.bankItemVersion);
+    const establishedReferent = establishedReferentFromRoutingState(state);
+    const response = await enrichResponseFromAuthoredContract(normalizeTypedAssessmentResponse(input.response, current.bankItemId), current.bankItemId, current.bankItemVersion, establishedReferent);
     const encryptedResponse = encryptJson({ response }, responsePurpose(sessionId, input.interactionInstanceId), keyring);
     const safety = responseSafetySignals(response);
     structuredManifestPromise ??= loadStructuredInstrumentManifest();

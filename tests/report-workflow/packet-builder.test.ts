@@ -7,7 +7,7 @@ import type { DecryptedAssessmentSnapshot } from "../../lib/server/reports/types
 import { buildGenerationPrompt } from "../../lib/server/reports/prompts.ts";
 import type { JsonValue } from "../../lib/question-engine/types.ts";
 import { loadStructuredInstrumentManifest } from "../../lib/question-engine/renderable-manifest.ts";
-import { deriveTrustedEvidenceForAuthoredResponse } from "../../lib/server/assessment/trusted-evidence.ts";
+import { enrichResponseFromAuthoredContract, normalizeTypedAssessmentResponse } from "../../lib/server/assessment/service.ts";
 
 function snapshot(completedPass: 1 | 2 = 1, response: JsonValue = { schemaVersion: "PWRS-1", semantic: { choices: ["OPT-MS-101-wait-a1b2c3d4"], timeHorizon: "immediate", certainty: 0.7, coverageSectionCodes: ["IFS-02"] } }, routingState?: JsonValue): DecryptedAssessmentSnapshot {
   return {
@@ -94,12 +94,14 @@ async function objectSnapshot(options: { omitFit?: boolean; contradicted?: boole
   const rows: Record<string, JsonValue>[] = [];
   const add = async (bankItemId:string, choices:string[]) => {
     const definition = manifest.itemById.get(bankItemId)!;
-    const response = { schemaVersion:"PWRS-1", bankItemId, semantic:{ choices, referentOptionId:referent, safetyContext:"safe" } } as unknown as Record<string, JsonValue>;
-    const trustedEvidence = await deriveTrustedEvidenceForAuthoredResponse(bankItemId, definition.version, response);
+    const response = await enrichResponseFromAuthoredContract(
+      normalizeTypedAssessmentResponse({ schemaVersion:"PWRS-1", semantic:{ choices, referentOptionId:"OPT-client-tamper", safetyContext:"safe" } }, bankItemId),
+      bankItemId, definition.version, bankItemId.startsWith("RL-") ? undefined : referent,
+    );
     rows.push({
       responseId:`response-${rows.length+1}`, interactionInstanceId:`interaction-${rows.length+1}`, bankItemId, bankItemVersion:definition.version,
       administrationSequence:rows.length+1, stage:bankItemId==="FCF-201"?"S5":"S3", completionState:"COMPLETED", responseOrder:choices,
-      content:{ response:{ ...response, ...(trustedEvidence ? { trustedEvidence:trustedEvidence as unknown as JsonValue } : {}) } },
+      content:{ response:response as unknown as JsonValue },
     });
   };
   await add("RL-101", [referent]);

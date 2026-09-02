@@ -15,6 +15,17 @@ const HIGH_INTENSITY_FAMILIES = new Set<InteractionFamilyCode>(["BDA", "BTM", "B
 const RESOURCE_FAMILIES = new Set<InteractionFamilyCode>(["RSR", "SEF"]);
 type StickySafetyState = AssessmentRoutingState & { readonly safetyContext?: "safe" | "mixed" | "unsafe" | "unknown" };
 type TypedRoutingResponse = AssessmentResponseInput & { readonly resourceSafetyClear?: boolean };
+type TrustedRoutingEvidence = {
+  readonly schemaVersion: "PWTE-1";
+  readonly binding: { readonly bankItemId: string; readonly bankItemVersion: string; readonly authoredContentSha256: string };
+  readonly family: string;
+  readonly selectedOptionIds: readonly string[];
+  readonly coverageSectionCodes: readonly string[];
+  readonly evidenceDisposition: "observed" | "missing";
+  readonly referentOptionId?: string;
+  readonly stateMap?: { readonly optionIds: readonly string[] };
+  readonly stateRecoveryOptionIds: readonly string[];
+};
 type ContractCompletedInteraction = CompletedInteraction & {
   readonly pass?: AssessmentPass;
   readonly evidenceEligible?: boolean;
@@ -113,6 +124,31 @@ function deriveCoverage(completed: readonly CompletedInteraction[], pass: Assess
 
 function occurrences(family: InteractionFamilyCode, recent: readonly InteractionFamilyCode[]): number {
   return recent.filter((candidate) => candidate === family).length;
+}
+
+function record(value: unknown): Record<string, unknown> | undefined {
+  return value !== null && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : undefined;
+}
+
+function trustedRoutingEvidence(response: AssessmentResponseInput, current: InteractionViewModel): TrustedRoutingEvidence | undefined {
+  const root = record(response.response);
+  const candidate = record(root?.trustedEvidence);
+  const binding = record(candidate?.binding);
+  const activeContract = ACTIVE_EXECUTABLE_ROUTING_CONTRACTS_BY_ID[current.bankItemId];
+  if (candidate?.schemaVersion !== "PWTE-1"
+    || binding?.bankItemId !== current.bankItemId
+    || binding?.bankItemVersion !== current.bankItemVersion
+    || typeof binding.authoredContentSha256 !== "string"
+    || (activeContract && binding.authoredContentSha256 !== activeContract.provenance.authoredBlockSha256)
+    || candidate.family !== current.family
+    || !Array.isArray(candidate.selectedOptionIds)
+    || !candidate.selectedOptionIds.every((value) => typeof value === "string")
+    || !Array.isArray(candidate.coverageSectionCodes)
+    || !candidate.coverageSectionCodes.every((value) => typeof value === "string")
+    || !Array.isArray(candidate.stateRecoveryOptionIds)
+    || !candidate.stateRecoveryOptionIds.every((value) => typeof value === "string")
+    || (candidate.evidenceDisposition !== "observed" && candidate.evidenceDisposition !== "missing")) return undefined;
+  return candidate as unknown as TrustedRoutingEvidence;
 }
 
 export function isAuthoredContractEligible(contract: ExecutableRoutingContract | undefined, state: AssessmentRoutingState, completed: readonly CompletedInteraction[]): boolean {
@@ -235,12 +271,9 @@ export function routeAssessmentResponse(state: AssessmentRoutingState, response:
   const item = getBankItem(current.bankItemId);
   if (!item) throw new Error(`Unknown bank item ${current.bankItemId}.`);
 
-  const semantic = response.response && typeof response.response === "object" && !Array.isArray(response.response)
-    ? (response.response as Record<string, unknown>).semantic
-    : undefined;
-  const semanticFields = semantic && typeof semantic === "object" && !Array.isArray(semantic) ? semantic as Record<string, unknown> : {};
-  const substantiveKeys = new Set(["choices", "rank", "zones", "relationship", "selectedOptionIds", "orderedOptionIds", "Before", "When it first hit", "What happened next", "Later / aftermath", "Person / role 1", "Person / role 2", "Contact frequency", "Emotional disclosure", "Asking for help", "Space", "objectEvidence"]);
-  const evidenceEligible = semanticFields.eligible !== false && semanticFields.evidenceDisposition !== "missing" && Object.entries(semanticFields).some(([key, value]) => substantiveKeys.has(key) && (Array.isArray(value) ? value.length > 0 : value !== undefined && value !== null && value !== ""));
+  const trustedEvidence = trustedRoutingEvidence(response, current);
+  const semanticFields = record(record(response.response)?.semantic) ?? {};
+  const evidenceEligible = trustedEvidence?.evidenceDisposition === "observed" && trustedEvidence.selectedOptionIds.length > 0;
   const completedEntry: ContractCompletedInteraction = {
     interactionInstanceId: current.interactionInstanceId,
     bankItemId: current.bankItemId,
@@ -252,15 +285,18 @@ export function routeAssessmentResponse(state: AssessmentRoutingState, response:
     resourceOrOrdinary: isResourceOrOrdinary(item),
     pass: state.pass,
     evidenceEligible,
-    coverageSectionCodes: Array.isArray(semanticFields.coverageSectionCodes) ? semanticFields.coverageSectionCodes.filter((value): value is string => typeof value === "string") : [],
-    referentPresent: typeof semanticFields.referentOptionId === "string",
-    referentId: typeof semanticFields.referentOptionId === "string" ? semanticFields.referentOptionId : undefined,
+    coverageSectionCodes: evidenceEligible ? trustedEvidence.coverageSectionCodes : [],
+    referentPresent: evidenceEligible && typeof trustedEvidence.referentOptionId === "string",
+    referentId: evidenceEligible && typeof trustedEvidence.referentOptionId === "string" ? trustedEvidence.referentOptionId : undefined,
     safetyContextRecorded: ["safe", "mixed", "unsafe"].includes(String(semanticFields.safetyContext)),
   };
   const completedInteractions = [...state.completedInteractions, completedEntry];
   if (response.completionState === "PARTIAL") throw new Error("Partial responses do not advance routing.");
   const answered = response.completionState === "COMPLETED" && evidenceEligible;
-  const resourceCompleted = answered && completedEntry.resourceOrOrdinary;
+  const resourceEvidenceObserved = current.family === "RSR" || current.family === "SEF"
+    ? (trustedEvidence?.stateRecoveryOptionIds.length ?? 0) > 0
+    : current.family === "BTM" ? Boolean(trustedEvidence?.stateMap) : true;
+  const resourceCompleted = answered && completedEntry.resourceOrOrdinary && resourceEvidenceObserved;
   const typedResponse = response as TypedRoutingResponse;
   const resourceSafetyClear = resourceCompleted && typedResponse.resourceSafetyClear === true;
   const priorUnsafe = (state as StickySafetyState).safetyContext === "unsafe";
@@ -288,7 +324,7 @@ export function routeAssessmentResponse(state: AssessmentRoutingState, response:
     paused: false,
     coverage: deriveCoverage(completedInteractions, state.pass),
   } as StickySafetyState;
-  const selectedOptionIds = Object.values(semanticFields).flatMap((value) => Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === "string") : typeof value === "string" ? [value] : []);
+  const selectedOptionIds = evidenceEligible ? trustedEvidence.selectedOptionIds : [];
   const choice = chooseNext(nextBase, completedInteractions, { userArousal, unsafeContext }, selectedOptionIds, ACTIVE_EXECUTABLE_ROUTING_CONTRACTS_BY_ID[current.bankItemId]);
   const sequence = state.administrationSequence + 1;
   const currentInteraction = choice.item ? interaction(choice.item, state.pass, sequence, choice.reason) : null;
