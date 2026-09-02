@@ -42,7 +42,10 @@ export async function passReportWorkflow(input: PassReportWorkflowInput): Promis
   const prepared = await prepareReportInputsStep(input);
   const initialized = await initializeReportRunsStep(input, prepared);
   const reportTypes: readonly ReportType[] = input.completedPass === 1 ? ["MAP"] : ["IFS", "PV", "ATT", "SYNTHESIS"];
-  if (initialized.alreadyReleased) return { status: "already_released", reportTypes };
+  if (initialized.alreadyReleased) {
+    await deliverReleasedReportsStep(input);
+    return { status: "already_released", reportTypes };
+  }
 
   const generated: GeneratedCanonicalArtifact[] = [];
   let spentMicros = 0;

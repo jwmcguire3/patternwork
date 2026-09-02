@@ -6,9 +6,11 @@ import type { LayerReportArtifact, ReportEvidencePacketV3_1, SynthesisAudit } fr
 import { UNQUALIFIED_MOCK_MODEL_POLICY } from "../../lib/server/openrouter/policy.ts";
 import type { OpenRouterGenerationRequest, OpenRouterGenerationResult, OpenRouterTransport, OpenRouterUsage } from "../../lib/server/openrouter/types.ts";
 import { buildPseudonymousPacketsFromCanonicalSnapshot } from "../../lib/server/reports/packet-builder.ts";
+import { setReportWorkflowDependenciesForTests } from "../../lib/server/reports/dependencies.ts";
 import { ReportPipelineError, runPassReportPipeline } from "../../lib/server/reports/pipeline.ts";
 import { buildValidatedSynthesisBundle } from "../../lib/server/reports/synthesis.ts";
 import type { DecryptedAssessmentSnapshot, GeneratedCanonicalArtifact, PassReportWorkflowInput, PreparedReportInputs, ReportWorkflowDependencies, ReportWorkflowPersistence } from "../../lib/server/reports/types.ts";
+import { passReportWorkflow } from "../../workflows/pass-report.ts";
 
 function snapshot(completedPass: 1 | 2): DecryptedAssessmentSnapshot {
   return {
@@ -74,7 +76,8 @@ class RecordingPersistence implements ReportWorkflowPersistence {
   readonly failures: string[] = [];
   releases = 0;
   releasedTypes: ReportType[] = [];
-  async initializeRuns() { return { alreadyReleased: false }; }
+  constructor(private readonly alreadyReleased = false) {}
+  async initializeRuns() { return { alreadyReleased: this.alreadyReleased }; }
   async persistUsage(_input: PassReportWorkflowInput, generated: GeneratedCanonicalArtifact) { this.usages.push(generated.reportType); }
   async releaseAtomically(_input: PassReportWorkflowInput, generated: readonly GeneratedCanonicalArtifact[]) { this.releases += 1; this.releasedTypes = generated.map((item) => item.reportType); }
   async persistFailure(_input: PassReportWorkflowInput, code: string) { this.failures.push(code); }
@@ -123,4 +126,30 @@ test("invalid generation records failure and never releases partial artifacts", 
   assert.deepEqual(persistence.usages, []);
   assert.deepEqual(persistence.failures, ["artifact_validation_failed"]);
   assert.equal(provider.calls.length, 3);
+});
+
+test("an already released workflow still invokes idempotent delivery", async () => {
+  const previousNodeEnv = process.env.NODE_ENV;
+  Reflect.set(process.env, "NODE_ENV", "test");
+  const snapshotValue = snapshot(2);
+  const persistence = new RecordingPersistence(true);
+  const provider = new QueueProvider([]);
+  const delivered: PassReportWorkflowInput[] = [];
+  const configured: ReportWorkflowDependencies = {
+    ...dependencies(snapshotValue, provider, persistence),
+    delivery: { async deliverReleased(input) { delivered.push({ ...input, snapshotId: snapshotValue.snapshotId }); } },
+  };
+  setReportWorkflowDependenciesForTests(configured);
+  const input = { assessmentSessionId: "session", snapshotId: "pwsn_pipeline", completedPass: 2, invocationKey: "stable" } as const;
+  try {
+    const result = await passReportWorkflow(input);
+    assert.equal(result.status, "already_released");
+    assert.deepEqual(delivered, [input]);
+    assert.equal(provider.calls.length, 0);
+    assert.equal(persistence.releases, 0);
+  } finally {
+    setReportWorkflowDependenciesForTests(undefined);
+    if (previousNodeEnv === undefined) Reflect.deleteProperty(process.env, "NODE_ENV");
+    else Reflect.set(process.env, "NODE_ENV", previousNodeEnv);
+  }
 });

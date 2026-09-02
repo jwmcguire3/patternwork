@@ -12,7 +12,9 @@ const labels: Readonly<Record<string, string>> = { MAP: "Mapping Summary", IFS: 
 export default async function ReportBundlePage({ params }: { readonly params: Promise<{ assessmentId: string }> }) {
   const { assessmentId } = await params;
   const jar = await cookies();
-  const authorized = authorizedSessionFromCookies({ assessment: jar.get(ASSESSMENT_SESSION_COOKIE)?.value, report: jar.get(REPORT_VIEW_COOKIE)?.value });
+  const assessmentCookie = jar.get(ASSESSMENT_SESSION_COOKIE)?.value;
+  const authorized = authorizedSessionFromCookies({ assessment: assessmentCookie, report: jar.get(REPORT_VIEW_COOKIE)?.value });
+  const canDelete = authorizedSessionFromCookies({ assessment: assessmentCookie }) === assessmentId;
   if (!authorized || authorized !== assessmentId) notFound();
   const [sets, progress] = await Promise.all([loadActiveReportSets(assessmentId), loadReportProgress(assessmentId)]);
   return <main className={styles.shell}>
@@ -25,6 +27,6 @@ export default async function ReportBundlePage({ params }: { readonly params: Pr
         <div className={styles.markdown}><ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml>{artifact.markdown}</ReactMarkdown></div>
       </article>)}
     </section>)}
-    <footer className={styles.danger}><h2>Privacy controls</h2><p>You can permanently remove the assessment, responses, reports, PDFs, links, and delivery records.</p><DeleteAssessmentButton /></footer>
+    <footer className={styles.danger}><h2>Privacy controls</h2><p>You can permanently remove the assessment, responses, reports, PDFs, links, and delivery records.</p>{canDelete?<DeleteAssessmentButton />:<p>For deletion, open your assessment resume link first. Report-view links cannot change or delete your saved assessment.</p>}</footer>
   </main>;
 }

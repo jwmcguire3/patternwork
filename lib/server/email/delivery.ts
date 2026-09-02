@@ -24,6 +24,47 @@ interface DeliveryArtifact {
   readonly pdfSha256: string;
 }
 
+export type DeliveryDispatchStatus = "PENDING" | "SENDING" | "SENT" | "DELIVERED" | "BOUNCED" | "FAILED";
+
+export interface DeliveryDispatchRecord {
+  readonly id: string;
+  readonly status: DeliveryDispatchStatus;
+}
+
+export interface DeliveryDispatchPart {
+  readonly idempotencyKey: string;
+  readonly message: Parameters<EmailTransport["send"]>[0];
+}
+
+export interface DeliveryDispatchPersistence {
+  prepare(part: DeliveryDispatchPart): Promise<DeliveryDispatchRecord>;
+  markSending(record: DeliveryDispatchRecord): Promise<void>;
+  markSent(record: DeliveryDispatchRecord, providerMessageId: string): Promise<void>;
+  markFailed(record: DeliveryDispatchRecord, error: unknown): Promise<void>;
+}
+
+export async function dispatchDeliveryParts(
+  parts: readonly DeliveryDispatchPart[],
+  persistence: DeliveryDispatchPersistence,
+  transport: EmailTransport,
+): Promise<void> {
+  for (const part of parts) {
+    const record = await persistence.prepare(part);
+    if (record.status === "SENT" || record.status === "DELIVERED") continue;
+    await persistence.markSending(record);
+    let sent: Awaited<ReturnType<EmailTransport["send"]>>;
+    try {
+      sent = await transport.send(part.message, part.idempotencyKey);
+    } catch (error) {
+      await persistence.markFailed(record, error);
+      throw error;
+    }
+    // A provider acceptance and its database acknowledgement are separate events.
+    // If this write fails, replay uses the same provider idempotency key and record.
+    await persistence.markSent(record, sent.id);
+  }
+}
+
 export function base64AttachmentSize(bytes: number): number { return Math.ceil(bytes / 3) * 4; }
 
 export function splitAttachments(attachments: readonly EmailAttachment[]): readonly (readonly EmailAttachment[])[] {
@@ -79,6 +120,11 @@ export class PrismaResendReportDelivery implements ReportDeliveryBoundary {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
     if (!from || !bcc || !baseUrl) throw new Error("EMAIL_FROM, REPORT_BCC_EMAIL, and NEXT_PUBLIC_APP_URL are required for report delivery.");
     const bccFingerprint = bccConfigurationFingerprint(bcc);
+    const dispatchParts: DeliveryDispatchPart[] = [];
+    const records = new Map<string, {
+      readonly artifactId: string;
+      readonly recipient: ReturnType<typeof encryptString>;
+    }>();
     for (const [partIndex, part] of parts.entries()) {
       const key = reportDeliveryIdempotencyKey(input, partIndex + 1, parts.length);
       const token = deterministicViewToken(key);
@@ -87,22 +133,35 @@ export class PrismaResendReportDelivery implements ReportDeliveryBoundary {
       const bundleUrl = new URL("/reports", baseUrl); bundleUrl.searchParams.set("token", token);
       const deliveryId = `pwrd_${sha256(key).slice(0, 28)}`;
       const recipient = encryptString(email, `patternwork:report-delivery-email:${deliveryId}`, keyring);
-      const record = await prisma.patternworkV31ReportDelivery.upsert({ where: { idempotencyKey: key }, create: {
-        id: deliveryId, reportArtifactId: artifacts[Math.min(partIndex, artifacts.length - 1)].id, idempotencyKey: key, status: "PENDING",
-        recipientEmailHash: emailLookupHash(email), recipientEmailCiphertext: Uint8Array.from(recipient.ciphertext), emailNonce: Uint8Array.from(recipient.nonce),
-        encryptionKeyVersion: recipient.keyVersion, bccConfigured: true, bccConfigurationFingerprint: bccFingerprint,
-      }, update: {} });
-      if (["SENT", "DELIVERED"].includes(record.status)) continue;
-      await prisma.patternworkV31ReportDelivery.update({ where: { id: record.id }, data: { status: "SENDING", attemptCount: { increment: 1 }, failureCode: null, failureMessage: null } });
-      try {
-        const html = await render(ReportDeliveryEmail({ pass: input.completedPass, bundleUrl: bundleUrl.toString(), ...(parts.length === 2 ? { part: { index: (partIndex + 1) as 1 | 2, total: 2 as const } } : {}) }));
-        const sent = await this.transport.send({ from, to: email, bcc, subject: input.completedPass === 1 ? "Your Patternwork Mapping Summary" : parts.length === 2 ? `Your Patternwork reports (${partIndex + 1} of 2)` : "Your Patternwork reports are ready", html, attachments: part }, key);
-        await prisma.patternworkV31ReportDelivery.update({ where: { id: record.id }, data: { status: "SENT", providerMessageId: sent.id, resendMessageId: sent.id, sentAt: new Date() } });
-      } catch (error) {
-        await prisma.patternworkV31ReportDelivery.update({ where: { id: record.id }, data: { status: "FAILED", failureCode: "resend_send_failed", failureMessage: (error instanceof Error ? error.message : String(error)).slice(0, 1000) } });
-        throw error;
-      }
+      records.set(key, { artifactId: artifacts[Math.min(partIndex, artifacts.length - 1)].id, recipient });
+      const html = await render(ReportDeliveryEmail({ pass: input.completedPass, bundleUrl: bundleUrl.toString(), ...(parts.length === 2 ? { part: { index: (partIndex + 1) as 1 | 2, total: 2 as const } } : {}) }));
+      dispatchParts.push({
+        idempotencyKey: key,
+        message: { from, to: email, bcc, subject: input.completedPass === 1 ? "Your Patternwork Mapping Summary" : parts.length === 2 ? `Your Patternwork reports (${partIndex + 1} of 2)` : "Your Patternwork reports are ready", html, attachments: part },
+      });
     }
+    await dispatchDeliveryParts(dispatchParts, {
+      async prepare(part) {
+        const prepared = records.get(part.idempotencyKey);
+        if (!prepared) throw new Error("Delivery part metadata is unavailable.");
+        const deliveryId = `pwrd_${sha256(part.idempotencyKey).slice(0, 28)}`;
+        const record = await prisma.patternworkV31ReportDelivery.upsert({ where: { idempotencyKey: part.idempotencyKey }, create: {
+          id: deliveryId, reportArtifactId: prepared.artifactId, idempotencyKey: part.idempotencyKey, status: "PENDING",
+          recipientEmailHash: emailLookupHash(email), recipientEmailCiphertext: Uint8Array.from(prepared.recipient.ciphertext), emailNonce: Uint8Array.from(prepared.recipient.nonce),
+          encryptionKeyVersion: prepared.recipient.keyVersion, bccConfigured: true, bccConfigurationFingerprint: bccFingerprint,
+        }, update: {} });
+        return { id: record.id, status: record.status };
+      },
+      async markSending(record) {
+        await prisma.patternworkV31ReportDelivery.update({ where: { id: record.id }, data: { status: "SENDING", attemptCount: { increment: 1 }, failureCode: null, failureMessage: null } });
+      },
+      async markSent(record, providerMessageId) {
+        await prisma.patternworkV31ReportDelivery.update({ where: { id: record.id }, data: { status: "SENT", providerMessageId, resendMessageId: providerMessageId, sentAt: new Date() } });
+      },
+      async markFailed(record, error) {
+        await prisma.patternworkV31ReportDelivery.update({ where: { id: record.id }, data: { status: "FAILED", failureCode: "resend_send_failed", failureMessage: (error instanceof Error ? error.message : String(error)).slice(0, 1000) } });
+      },
+    }, this.transport);
   }
 }
 

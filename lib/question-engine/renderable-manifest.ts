@@ -8,7 +8,7 @@ import type { BankItemId, LayerSectionCode } from "./types.ts";
 const RESPONSE_LIBRARY_SOURCE = "specs/patternwork/question-engine-v3.1/05_response_option_libraries.md";
 
 export interface RenderableOption {
-  readonly optionId?: string;
+  readonly optionId: string;
   readonly label: string;
   readonly authored: string;
 }
@@ -114,12 +114,20 @@ function cleanLabel(value: string): string {
   return value.trim().replace(/^[-–—]\s*/u, "").replace(/^[“”"'`]+|[“”"'`.,;]+$/gu, "").replace(/\s+/gu, " ").trim();
 }
 
-function parseOptions(source: string): RenderableOptionGroup[] {
+function semanticOptionId(bankItemId: BankItemId, label: string, authored: string): string {
+  const semanticDigest = createHash("sha256")
+    .update(`${bankItemId}\u0000${cleanLabel(label).normalize("NFKC").toLowerCase()}\u0000${authored.trim().normalize("NFKC")}`, "utf8")
+    .digest("hex")
+    .slice(0, 16);
+  return `OPT-${bankItemId}-${semanticDigest}`;
+}
+
+function parseOptions(source: string, bankItemId: BankItemId): RenderableOptionGroup[] {
   const options: RenderableOption[] = [];
   const add = (labelValue: string, authored: string, optionId?: string) => {
     const label = cleanLabel(labelValue);
     if (!label || label.includes(":") || label.length > 240 || options.some((option) => option.label === label && option.optionId === optionId)) return;
-    options.push({ ...(optionId ? { optionId } : {}), label, authored: authored.trim() });
+    options.push({ optionId: optionId?.startsWith("OL-") ? optionId : semanticOptionId(bankItemId, label, authored), label, authored: authored.trim() });
   };
 
   for (const match of source.matchAll(/-\s+`([^`]+)`\s*:\s*“([^”]+)”/gu)) add(match[2], match[0], match[1]);
@@ -203,7 +211,7 @@ function parseItem(item: AuthoredBankItemDefinition): RenderableInteractionDefin
     burden: parseBurden(burdenField),
     mechanic: mechanics || item.title,
     prompt,
-    optionGroups: parseOptions(optionSource),
+    optionGroups: parseOptions(optionSource, item.bankItemId),
     responseLibraryIds,
     responseLibraryReferences,
     rawEvidenceFields: { authored: rawEvidence, normalizedTokens: normalizedFieldTokens(rawEvidence) },

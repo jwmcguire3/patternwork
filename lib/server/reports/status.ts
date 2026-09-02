@@ -1,5 +1,5 @@
 import { prisma } from "../../prisma.ts";
-import { cookieKeyringFromEnv, readSessionCookieValue, scopedAccessTokenHash, ASSESSMENT_SESSION_COOKIE } from "../security/index.ts";
+import { ASSESSMENT_SESSION_COOKIE, constantTimeEqual, cookieKeyringFromEnv, readSessionCookieValue } from "../security/index.ts";
 
 export interface ReportStatusAuthorizationBoundary {
   authorize(request: Request, assessmentSessionId: string): Promise<boolean>;
@@ -17,12 +17,6 @@ export interface ReportRunStatus {
   readonly artifactAvailable: boolean;
   readonly reportId?: string;
   readonly failureCode?: string;
-  readonly model?: string;
-  readonly inputTokens?: number;
-  readonly outputTokens?: number;
-  readonly reasoningTokens?: number;
-  readonly totalTokens?: number;
-  readonly costMicros?: string;
   readonly updatedAt: string;
 }
 
@@ -32,15 +26,6 @@ export interface ReportSessionStatus {
 }
 
 interface StatusPrisma {
-  patternworkV31AccessToken: {
-    findUnique(args: unknown): Promise<{
-      assessmentSessionId: string;
-      purpose: string;
-      expiresAt: Date;
-      usedAt: Date | null;
-      revokedAt: Date | null;
-    } | null>;
-  };
   patternworkV31AssessmentSession: {
     findUnique(args: unknown): Promise<{
       id: string;
@@ -51,12 +36,6 @@ interface StatusPrisma {
           reportType: string;
           status: string;
           failureCode: string | null;
-          model: string | null;
-          inputTokens: number | null;
-          outputTokens: number | null;
-          reasoningTokens: number | null;
-          totalTokens: number | null;
-          costMicros: bigint | null;
           updatedAt: Date;
           artifact: { reportId: string; artifactStatus: string } | null;
         }>;
@@ -81,21 +60,10 @@ export class DefaultReportStatusAuthorization implements ReportStatusAuthorizati
   async authorize(request: Request, assessmentSessionId: string): Promise<boolean> {
     try {
       const claim = readSessionCookieValue(cookie(request, ASSESSMENT_SESSION_COOKIE), cookieKeyringFromEnv());
-      if (claim?.sessionId === assessmentSessionId) return true;
+      return Boolean(claim?.sessionId && constantTimeEqual(claim.sessionId, assessmentSessionId));
     } catch {
-      // A missing keyring or malformed cookie falls through to the scoped view token.
+      return false;
     }
-    const authorization = request.headers.get("authorization");
-    const token = authorization?.match(/^Bearer\s+(.+)$/iu)?.[1];
-    if (!token) return false;
-    const record = await statusPrisma.patternworkV31AccessToken.findUnique({ where: { tokenHash: scopedAccessTokenHash(token, "VIEW_REPORT") } });
-    return Boolean(
-      record &&
-      record.assessmentSessionId === assessmentSessionId &&
-      record.purpose === "VIEW_REPORT" &&
-      !record.revokedAt &&
-      record.expiresAt > new Date(),
-    );
   }
 }
 
@@ -116,12 +84,6 @@ export class PrismaReportStatusPersistence implements ReportStatusPersistenceBou
                 reportType: true,
                 status: true,
                 failureCode: true,
-                model: true,
-                inputTokens: true,
-                outputTokens: true,
-                reasoningTokens: true,
-                totalTokens: true,
-                costMicros: true,
                 updatedAt: true,
                 artifact: { select: { reportId: true, artifactStatus: true } },
               },
@@ -141,12 +103,6 @@ export class PrismaReportStatusPersistence implements ReportStatusPersistenceBou
         artifactAvailable: run.artifact?.artifactStatus === "ACTIVE",
         ...(run.artifact?.artifactStatus === "ACTIVE" ? { reportId: run.artifact.reportId } : {}),
         ...(run.failureCode ? { failureCode: run.failureCode } : {}),
-        ...(run.model ? { model: run.model } : {}),
-        ...(run.inputTokens !== null ? { inputTokens: run.inputTokens } : {}),
-        ...(run.outputTokens !== null ? { outputTokens: run.outputTokens } : {}),
-        ...(run.reasoningTokens !== null ? { reasoningTokens: run.reasoningTokens } : {}),
-        ...(run.totalTokens !== null ? { totalTokens: run.totalTokens } : {}),
-        ...(run.costMicros !== null ? { costMicros: run.costMicros.toString() } : {}),
         updatedAt: run.updatedAt.toISOString(),
       }))),
     };

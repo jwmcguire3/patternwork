@@ -1,6 +1,6 @@
 # Hub run ledger
 
-- State: phase 3 integrated; phase 4 independent acceptance in progress
+- State: phase 4 remediation integrated; independent retest pending
 - Status: active
 - Accepted contract: `PWQE3-CONTRACT-2` / `PWQE3-INTEGRITY-1`
 - Base commit: `aa8f50a901ffbd62ad33a35343bfcb4bf6418fba`
@@ -14,6 +14,6 @@
 - Generated artifacts: source manifests and schemas are committed; drift checks must fail on unreviewed changes.
 - Active ownership: hub; all editing workers stopped before the frozen acceptance checkpoint.
 - Current checkpoint: `PWQE3-CONTRACT-2` / `PWQE3-INTEGRITY-1` accepted 2026-09-02 after hub verification.
-- Findings: none before independent acceptance
-- Verification: 74/74 integrated tests, TypeScript, Prisma validation, and the Next.js production build pass, including 14 durable Workflow steps. Browser acceptance covers consent, the static non-saving test, desktop/mobile responsiveness, report landing, and the `/selfmap` redirect with no console errors. A representative Mapping Summary PDF passed text extraction, page-count, rasterization, and visual inspection. Lint has no errors; two generated Workflow routes contain redundant suppression comments.
+- Findings: `PWQE3-ACC-1` through `PWQE3-ACC-8` accepted and remediated; independent retest pending on the next frozen checkpoint.
+- Verification: 104/104 integrated tests, TypeScript, Prisma validation, and two consecutive Next.js production builds pass, including 14 durable Workflow steps. Browser acceptance covers consent, semantic/safety controls, encrypted private-note labeling, the static non-saving test, desktop/mobile responsiveness, report landing, and the `/selfmap` redirect with no console errors. A representative Mapping Summary PDF passed text extraction, page-count, rasterization, and visual inspection. Lint has no errors; two generated Workflow routes contain redundant suppression comments.
 - Activation remains blocked on production credentials, a live PostgreSQL migration, reviewed OpenRouter qualification output, representative report acceptance, and verified Resend configuration.

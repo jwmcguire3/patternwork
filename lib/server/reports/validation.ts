@@ -17,11 +17,15 @@ import type { DecryptedAssessmentSnapshot, PreparedReportInputs } from "./types.
 const FORBIDDEN_KEYS = new Set([
   "email", "email_address", "contact_email", "phone", "phone_number", "street_address",
   "mailing_address", "full_name", "legal_name", "raw_answers", "flat_answers", "answers",
-  "response_list", "all_responses",
+  "response_list", "all_responses", "note", "notes", "narrative", "private_note", "privatenote",
+  "free_text", "freetext", "user_label", "account_id", "account_number",
 ]);
 const EMAIL = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/iu;
 const PHONE = /(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}/u;
 const SSN = /\b\d{3}-\d{2}-\d{4}\b/u;
+const INTERNATIONAL_PHONE = /(?:^|\s)\+\d(?:[\s().-]*\d){7,14}(?:\s|$)/u;
+const ACCOUNT_ID = /\b(?:account|acct|member|customer)[\s:#-]*(?:id|number|no\.?|#)?[\s:#-]*[A-Z0-9-]{5,}\b/iu;
+const STREET_ADDRESS = /\b\d{1,6}\s+[\p{L}0-9.'-]+(?:\s+[\p{L}0-9.'-]+){0,5}\s+(?:street|st|road|rd|avenue|ave|boulevard|blvd|lane|ln|drive|dr|way|court|ct)\b/iu;
 
 function object(value: unknown): Record<string, unknown> | undefined {
   return typeof value === "object" && value !== null && !Array.isArray(value) ? value as Record<string, unknown> : undefined;
@@ -29,7 +33,7 @@ function object(value: unknown): Record<string, unknown> | undefined {
 
 function piiIssues(value: unknown, path = "$", issues: ValidationIssue[] = []): ValidationIssue[] {
   if (typeof value === "string") {
-    if (EMAIL.test(value) || PHONE.test(value) || SSN.test(value)) {
+    if (EMAIL.test(value) || PHONE.test(value) || INTERNATIONAL_PHONE.test(value) || SSN.test(value) || ACCOUNT_ID.test(value) || STREET_ADDRESS.test(value)) {
       issues.push({ code: "direct_pii", path, message: "Provider input contains direct contact or government-identifier data." });
     }
     return issues;
@@ -47,6 +51,44 @@ function piiIssues(value: unknown, path = "$", issues: ValidationIssue[] = []): 
     }
     piiIssues(child, childPath, issues);
   }
+  return issues;
+}
+
+const TYPED_VALUE_KEYS = new Set(["selected_option_ids", "episode_fields", "pace_band_ids", "time_horizon", "coverage_section_codes", "user_certainty", "safety_context", "user_arousal", "resource_safety_clear", "eligible"]);
+const TYPED_ENUMS = new Set(["anticipatory", "immediate", "aftermath", "multi_horizon", "uncertain", "safe", "mixed", "unsafe", "unknown", "low", "elevated", "high"]);
+
+function typedLeafAllowed(value: unknown): boolean {
+  if (typeof value === "boolean") return true;
+  if (typeof value === "number") return Number.isFinite(value) && value >= 0 && value <= 1;
+  if (typeof value === "string") return /^(?:(?:OPT-|OL-)[A-Za-z0-9._-]+|(?:IFS|PV|ATT)-\d{2})$/u.test(value) || TYPED_ENUMS.has(value);
+  if (Array.isArray(value)) return value.every(typedLeafAllowed);
+  const record = object(value);
+  return Boolean(record && Object.values(record).every(typedLeafAllowed));
+}
+
+function semanticBoundaryIssues(packetValues: readonly JsonObject[]): ValidationIssue[] {
+  const issues: ValidationIssue[] = [];
+  packetValues.forEach((packet, packetIndex) => {
+    const contexts = Array.isArray(packet.relationship_contexts) ? packet.relationship_contexts : [];
+    contexts.forEach((context, index) => {
+      const value = object(context);
+      if (value && ("notes" in value || "user_label" in value)) issues.push({ code: "free_text_boundary", path: `$.packets[${packetIndex}].relationship_contexts[${index}]`, message: "Provider packets may not contain respondent-authored labels or notes." });
+    });
+    const excerpts = Array.isArray(packet.selected_excerpts) ? packet.selected_excerpts : [];
+    if (excerpts.length > 0) issues.push({ code: "free_text_boundary", path: `$.packets[${packetIndex}].selected_excerpts`, message: "Provider packets may not contain respondent excerpts." });
+    const episodes = Array.isArray(packet.episode_evidence) ? packet.episode_evidence : [];
+    episodes.forEach((episode, index) => {
+      const entry = object(episode);
+      const action = object(entry?.actual_first_action);
+      const typedValue = object(action?.value);
+      if (entry?.life_domain !== `interaction_family_${object(entry?.provenance)?.family_code ?? ""}` && !/^interaction_family_[A-Z]{2,3}$/u.test(String(entry?.life_domain))) {
+        issues.push({ code: "free_text_boundary", path: `$.packets[${packetIndex}].episode_evidence[${index}].life_domain`, message: "Episode life_domain must be a canonical interaction-family value." });
+      }
+      if (action?.field !== "typed_semantic_response" || !typedValue || Object.keys(typedValue).some((key) => !TYPED_VALUE_KEYS.has(key)) || !Object.values(typedValue ?? {}).every(typedLeafAllowed)) {
+        issues.push({ code: "raw_answer_boundary", path: `$.packets[${packetIndex}].episode_evidence[${index}].actual_first_action`, message: "Evidence actions must contain only allowlisted typed semantics." });
+      }
+    });
+  });
   return issues;
 }
 
@@ -80,7 +122,7 @@ export async function prepareAndValidateInputs(
   const integrity = await verifyPatternworkSourceIntegrity(workspaceRoot);
   if (!integrity.ok) return integrity;
   const packets: ReportEvidencePacketV3_1[] = [];
-  const issues: ValidationIssue[] = [...piiIssues(packetValues)];
+  const issues: ValidationIssue[] = [...piiIssues(packetValues), ...semanticBoundaryIssues(packetValues)];
   for (const [index, value] of packetValues.entries()) {
     const result = await validateReportEvidencePacket(value, workspaceRoot);
     if (result.ok) packets.push(result.value);

@@ -77,6 +77,7 @@ export interface QualificationRunRecord {
   readonly sourcePacketSha256: string;
   readonly requestedModel: string;
   readonly requestedReasoningEffort: string;
+  readonly requestedMaxOutputTokens: number;
   readonly provider?: "openrouter";
   readonly actualModel?: string;
   readonly generationId?: string;
@@ -102,7 +103,7 @@ export interface QualificationSelection {
 }
 
 export interface QualificationRunManifest {
-  readonly manifestVersion: "1";
+  readonly manifestVersion: "2";
   readonly status: "running" | "machine_failed" | "pending_review";
   readonly contractId: "PWQE3-CONTRACT-2";
   readonly integrityContractId: "PWQE3-INTEGRITY-1";
@@ -110,6 +111,7 @@ export interface QualificationRunManifest {
   readonly fixtureSetSha256: string;
   readonly sourceManifestSha256: string;
   readonly candidateOrderSha256: string;
+  readonly candidates: readonly QualifiedModelTier[];
   readonly startedAt: string;
   readonly updatedAt: string;
   readonly costCapMicros: number;
@@ -350,7 +352,7 @@ export async function runOpenRouterQualification(options: RunQualificationOption
   if (fixtureSet.fixtures.length !== QUALIFICATION_RUNS_PER_CANDIDATE) throw new Error("Qualification requires exactly the canonical A/B/C fixture set.");
   const candidateOrderSha256 = sha256Canonical(candidates);
   let manifest = await options.filesystem.loadRun(options.outputDirectory) ?? {
-    manifestVersion: "1",
+    manifestVersion: "2",
     status: "running",
     contractId: "PWQE3-CONTRACT-2",
     integrityContractId: "PWQE3-INTEGRITY-1",
@@ -358,6 +360,7 @@ export async function runOpenRouterQualification(options: RunQualificationOption
     fixtureSetSha256: fixtureSet.fixtureSetSha256,
     sourceManifestSha256: fixtureSet.sourceManifestSha256,
     candidateOrderSha256,
+    candidates: structuredClone(candidates),
     startedAt: now().toISOString(),
     updatedAt: now().toISOString(),
     costCapMicros: options.costCapMicros,
@@ -365,7 +368,7 @@ export async function runOpenRouterQualification(options: RunQualificationOption
     runs: [],
     selections: {},
   } satisfies QualificationRunManifest;
-  if (manifest.fixtureSetSha256 !== fixtureSet.fixtureSetSha256 || manifest.sourceManifestSha256 !== fixtureSet.sourceManifestSha256 || manifest.candidateOrderSha256 !== candidateOrderSha256 || manifest.costCapMicros !== options.costCapMicros) throw new Error("Resumed qualification manifest does not match fixture, source, candidate, or cost-cap identity.");
+  if (manifest.manifestVersion !== "2" || manifest.fixtureSetSha256 !== fixtureSet.fixtureSetSha256 || manifest.sourceManifestSha256 !== fixtureSet.sourceManifestSha256 || manifest.candidateOrderSha256 !== candidateOrderSha256 || sha256Canonical(manifest.candidates) !== candidateOrderSha256 || manifest.costCapMicros !== options.costCapMicros) throw new Error("Resumed qualification manifest does not match fixture, source, candidate, or cost-cap identity.");
   if (manifest.status === "pending_review") {
     const pins = draftPins(manifest, candidates);
     return pendingResult(manifest, pins);
@@ -393,6 +396,7 @@ export async function runOpenRouterQualification(options: RunQualificationOption
           key, reportType, candidate: candidate.name, fixtureId: fixture.id, repetition: 1, status: "started",
           inputSha256: sha256Canonical(input.input), sourcePacketSha256: fixture.sourcePacketSha256,
           requestedModel: candidate.model, requestedReasoningEffort: candidate.reasoningEffort,
+          requestedMaxOutputTokens: UNQUALIFIED_MOCK_MODEL_POLICY[reportType].maxOutputTokens,
         };
         manifest = replaceRun(manifest, record, now());
         await options.filesystem.saveRun(options.outputDirectory, manifest);
@@ -480,23 +484,47 @@ export class StrictQualificationReviewer implements QualificationReviewerBoundar
       pending.qualificationRunSha256 !== sha256Canonical(pending.run) ||
       pending.draftPinsSha256 !== sha256Canonical(pending.draftPins) ||
       pending.fixtureSetSha256 !== pending.run.fixtureSetSha256 ||
-      pending.sourceManifestSha256 !== pending.run.sourceManifestSha256
+      pending.sourceManifestSha256 !== pending.run.sourceManifestSha256 ||
+      pending.run.manifestVersion !== "2" ||
+      pending.run.candidateOrderSha256 !== sha256Canonical(pending.run.candidates)
     ) throw new Error("Pending review package digest or qualification identity is invalid.");
     for (const reportType of QUALIFICATION_REPORT_ORDER) {
       const selection = pending.run.selections[reportType];
-      if (!selection || pending.draftPins[reportType].tier !== selection.candidate || selection.runKeys.length !== QUALIFICATION_RUNS_PER_CANDIDATE) {
+      const pin = pending.draftPins[reportType];
+      const candidateIndex = pending.run.candidates.findIndex((candidate) => candidate.name === selection?.candidate);
+      const candidate = pending.run.candidates[candidateIndex];
+      const escalation = pending.run.candidates[Math.min(candidateIndex + 1, pending.run.candidates.length - 1)];
+      if (
+        !selection || !candidate || !escalation || selection.runKeys.length !== QUALIFICATION_RUNS_PER_CANDIDATE ||
+        new Set(selection.runKeys).size !== QUALIFICATION_RUNS_PER_CANDIDATE ||
+        selection.model !== candidate.model || selection.reasoningEffort !== candidate.reasoningEffort ||
+        pin.tier !== selection.candidate || pin.model !== selection.model || pin.reasoningEffort !== selection.reasoningEffort ||
+        pin.escalationTier !== escalation.name || pin.escalationModel !== escalation.model || pin.escalationReasoningEffort !== escalation.reasoningEffort ||
+        !Number.isSafeInteger(pin.maxOutputTokens) || pin.maxOutputTokens < 1_024
+      ) {
         throw new Error(`Pending review package has no bound three-run ${reportType} selection.`);
       }
+      const fixtureIds = new Set<string>();
       for (const key of selection.runKeys) {
         const run = pending.run.runs.find((candidateRun) => candidateRun.key === key);
-        if (!run?.machinePassed || !run.artifactPath || !run.artifactSha256) throw new Error(`Pending review package has invalid selected ${reportType} evidence.`);
+        if (
+          !run?.machinePassed || run.status !== "completed" || run.reportType !== reportType || run.candidate !== selection.candidate ||
+          run.requestedModel !== pin.model || run.requestedReasoningEffort !== pin.reasoningEffort || run.requestedMaxOutputTokens !== pin.maxOutputTokens ||
+          !run.artifactPath || !run.artifactSha256
+        ) throw new Error(`Pending review package has invalid selected ${reportType} evidence.`);
+        fixtureIds.add(run.fixtureId);
       }
+      if (["A", "B", "C"].some((fixtureId) => !fixtureIds.has(fixtureId))) throw new Error(`Pending review package has invalid selected ${reportType} fixture coverage.`);
     }
     if (approval.status !== "approved" || approval.qualificationRunSha256 !== pending.qualificationRunSha256 || approval.draftPinsSha256 !== pending.draftPinsSha256) throw new Error("Review approval is not bound to this qualification run and draft pin set.");
     if (!approval.reviewedBy.trim() || Number.isNaN(Date.parse(approval.reviewedAt)) || Object.values(approval.checklist).some((value) => value !== true)) throw new Error("Review approval lacks reviewer identity, timestamp, or completed checklist evidence.");
     return {
-      manifestVersion: "1", status: "reviewed", contractId: "PWQE3-CONTRACT-2", integrityContractId: "PWQE3-INTEGRITY-1", promptRelease: "4.1.0",
-      fixtureSetSha256: pending.fixtureSetSha256, reviewedAt: approval.reviewedAt, reviewedBy: approval.reviewedBy,
+      manifestVersion: "2", status: "reviewed", contractId: "PWQE3-CONTRACT-2", integrityContractId: "PWQE3-INTEGRITY-1", promptRelease: "4.1.0",
+      fixtureSetSha256: pending.fixtureSetSha256, sourceManifestSha256: pending.sourceManifestSha256,
+      qualificationRunSha256: pending.qualificationRunSha256, candidateOrderSha256: pending.run.candidateOrderSha256,
+      draftPinsSha256: pending.draftPinsSha256, approvalSha256: sha256Canonical(approval),
+      reviewedAt: approval.reviewedAt, reviewedBy: approval.reviewedBy,
+      candidates: structuredClone(pending.run.candidates), approval: structuredClone(approval),
       pins: pending.draftPins as ReviewedQualificationManifest["pins"],
     };
   }

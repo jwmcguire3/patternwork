@@ -56,34 +56,72 @@ function digest(value: string): string {
   return createHash("sha256").update(value, "utf8").digest("hex");
 }
 
-function safe(value: string): string {
-  return value.replaceAll(/[^A-Za-z0-9._-]/gu, "-");
-}
-
 function pseudonymousId(prefix: string, value: string): string {
   return `${prefix}-${digest(value).slice(0, 24)}`;
 }
 
-function redact(value: unknown, key = ""): JsonValue {
-  if (["email", "contactEmail", "phone", "address", "fullName", "name"].includes(key)) return "[redacted]";
-  if (typeof value === "string") {
-    return value
-      .replaceAll(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/giu, "[redacted-email]")
-      .replaceAll(/(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}/gu, "[redacted-phone]")
-      .replaceAll(/\b\d{3}-\d{2}-\d{4}\b/gu, "[redacted-id]");
-  }
-  if (value === null || typeof value === "boolean" || typeof value === "number") return value;
-  if (Array.isArray(value)) return value.map((item) => redact(item));
-  const record = object(value);
-  if (!record) return String(value);
-  let privateField = 0;
-  return Object.fromEntries(Object.entries(record).map(([childKey, child]) => {
-    if (["email", "email_address", "contact_email", "phone", "phone_number", "street_address", "mailing_address", "full_name", "legal_name", "fullName", "name"].includes(childKey)) {
-      privateField += 1;
-      return [`private_field_${privateField}`, "[redacted]"];
-    }
-    return [childKey, redact(child, childKey)];
-  }));
+const SEMANTIC_ID = /^(?:OPT-|OL-)[A-Za-z0-9._-]+$/u;
+const SECTION_CODE = /^(?:IFS-(?:0[1-9]|1[0-2])|PV-(?:0[1-9]|1[01])|ATT-(?:0[1-9]|1[0-2]))$/u;
+const HORIZONS = new Set(["anticipatory", "immediate", "aftermath", "multi_horizon", "uncertain"]);
+const OPTION_ARRAY_FIELDS = ["choices", "rank", "zones", "relationship", "selectedOptionIds", "orderedOptionIds"] as const;
+const EPISODE_OPTION_FIELDS = ["Before", "When it first hit", "What happened next", "Later / aftermath"] as const;
+const PACE_FIELDS = ["Contact frequency", "Emotional disclosure", "Asking for help", "Space"] as const;
+
+interface TypedEvidence {
+  readonly value: JsonValue;
+  readonly optionIds: readonly string[];
+  readonly coverageSectionCodes: readonly LayerSectionCode[];
+  readonly referentOptionId?: string;
+  readonly windowOptionId?: string;
+  readonly timeHorizon: "anticipatory" | "immediate" | "aftermath" | "multi_horizon" | "uncertain";
+  readonly certainty?: number;
+  readonly safetyContext?: "safe" | "mixed" | "unsafe" | "unknown";
+}
+
+/** Project only contract-enumerated typed values. privateNote and every unknown/free-text field are ignored. */
+function typedEvidence(value: unknown): TypedEvidence {
+  const envelope = object(value);
+  const semantic = envelope?.schemaVersion === "PWRS-1" ? object(envelope.semantic) ?? {} : {};
+  const optionIds: string[] = [];
+  const addOptions = (candidate: unknown) => {
+    const values = Array.isArray(candidate) ? candidate : [candidate];
+    for (const entry of values) if (typeof entry === "string" && SEMANTIC_ID.test(entry) && !optionIds.includes(entry)) optionIds.push(entry);
+  };
+  OPTION_ARRAY_FIELDS.forEach((key) => addOptions(semantic[key]));
+  EPISODE_OPTION_FIELDS.forEach((key) => addOptions(semantic[key]));
+  PACE_FIELDS.forEach((key) => addOptions(semantic[key]));
+  addOptions(semantic["Person / role 1"]);
+  addOptions(semantic["Person / role 2"]);
+  const episodeFields = Object.fromEntries(EPISODE_OPTION_FIELDS.flatMap((key) => typeof semantic[key] === "string" && SEMANTIC_ID.test(semantic[key]) ? [[key === "Before" ? "before" : key === "When it first hit" ? "first_impact" : key === "What happened next" ? "next_action" : "aftermath", semantic[key]]] : []));
+  const paceBands = Object.fromEntries(PACE_FIELDS.flatMap((key) => typeof semantic[key] === "string" && SEMANTIC_ID.test(semantic[key]) ? [[key.toLowerCase().replaceAll(/[^a-z]+/gu, "_"), semantic[key]]] : []));
+  const coverageSectionCodes = Array.isArray(semantic.coverageSectionCodes)
+    ? semantic.coverageSectionCodes.filter((entry): entry is LayerSectionCode => typeof entry === "string" && SECTION_CODE.test(entry))
+    : [];
+  const certainty = typeof semantic.certainty === "number" && Number.isFinite(semantic.certainty) && semantic.certainty >= 0 && semantic.certainty <= 1 ? semantic.certainty : undefined;
+  const timeHorizon = typeof semantic.timeHorizon === "string" && HORIZONS.has(semantic.timeHorizon) ? semantic.timeHorizon as TypedEvidence["timeHorizon"] : "uncertain";
+  const safetyContext = ["safe", "mixed", "unsafe", "unknown"].includes(String(semantic.safetyContext)) ? semantic.safetyContext as TypedEvidence["safetyContext"] : undefined;
+  const typedValue: Record<string, JsonValue> = {
+    selected_option_ids: optionIds,
+    episode_fields: episodeFields,
+    pace_band_ids: paceBands,
+    time_horizon: timeHorizon,
+    coverage_section_codes: coverageSectionCodes,
+  };
+  if (certainty !== undefined) typedValue.user_certainty = certainty;
+  if (safetyContext !== undefined) typedValue.safety_context = safetyContext;
+  if (["low", "unknown", "elevated", "high"].includes(String(semantic.userArousal))) typedValue.user_arousal = semantic.userArousal as string;
+  if (typeof semantic.resourceSafetyClear === "boolean") typedValue.resource_safety_clear = semantic.resourceSafetyClear;
+  if (typeof semantic.eligible === "boolean") typedValue.eligible = semantic.eligible;
+  return {
+    value: typedValue,
+    optionIds,
+    coverageSectionCodes,
+    ...(typeof semantic.referentOptionId === "string" && SEMANTIC_ID.test(semantic.referentOptionId) ? { referentOptionId: semantic.referentOptionId } : {}),
+    ...(typeof semantic.windowOptionId === "string" && SEMANTIC_ID.test(semantic.windowOptionId) ? { windowOptionId: semantic.windowOptionId } : {}),
+    timeHorizon,
+    ...(certainty !== undefined ? { certainty } : {}),
+    ...(safetyContext ? { safetyContext } : {}),
+  };
 }
 
 function canonicalResponses(snapshot: DecryptedAssessmentSnapshot): CanonicalResponse[] {
@@ -104,7 +142,7 @@ function canonicalResponses(snapshot: DecryptedAssessmentSnapshot): CanonicalRes
       administrationSequence: sequence,
       stage: typeof response.stage === "string" ? response.stage : "S0",
       completionState: typeof response.completionState === "string" ? response.completionState : "SKIPPED",
-      responseOrder: Array.isArray(response.responseOrder) ? response.responseOrder.filter((item): item is string => typeof item === "string") : [],
+      responseOrder: Array.isArray(response.responseOrder) ? response.responseOrder.filter((item): item is string => typeof item === "string" && SEMANTIC_ID.test(item)) : [],
       content: object(response.content)?.response ?? response.content ?? null,
     };
   }).sort((left, right) => left.administrationSequence - right.administrationSequence);
@@ -118,16 +156,21 @@ export function buildPseudonymousPacketsFromCanonicalSnapshot(snapshot: Decrypte
   const generatedAt = typeof completion?.completed_at === "string" && Number.isFinite(Date.parse(completion.completed_at))
     ? completion.completed_at
     : new Date(0).toISOString();
-  const windowId = `WIN-${safe(snapshot.snapshotId)}`;
-  const referentId = pseudonymousId("REF", snapshot.snapshotId);
+  const typedByResponse = new Map(completed.map((response) => [response.responseId, typedEvidence(response.content)]));
+  const firstReferent = completed.map((response) => typedByResponse.get(response.responseId)?.referentOptionId).find((value): value is string => Boolean(value));
+  const firstWindow = completed.map((response) => typedByResponse.get(response.responseId)?.windowOptionId).find((value): value is string => Boolean(value));
+  const windowId = pseudonymousId("WIN", `${snapshot.snapshotId}:${firstWindow ?? "snapshot"}`);
+  const referentId = pseudonymousId("REF", `${snapshot.snapshotId}:${firstReferent ?? "unspecified"}`);
+  const safetyValues = completed.map((response) => typedByResponse.get(response.responseId)?.safetyContext);
+  const relationshipSafety = safetyValues.includes("unsafe") ? "coercive" : safetyValues.includes("mixed") ? "mixed" : safetyValues.includes("safe") ? "generally_safe" : "unknown";
+  const certaintyValues = completed.map((response) => typedByResponse.get(response.responseId)?.certainty).filter((value): value is number => value !== undefined);
   const relationshipContext = {
     referent_id: referentId,
     relationship_type: "other",
     current_relevance: "uncertain",
-    safety: "unknown",
+    safety: relationshipSafety,
     reliability: "unknown",
-    certainty: 0,
-    notes: "Pseudonymous assessment context; relationship specificity was not structurally captured by the persistence response contract.",
+    certainty: certaintyValues.length > 0 ? Math.min(...certaintyValues) : 0,
     provenance: [],
   } as const;
   const episodes = completed.map((response) => {
@@ -135,6 +178,7 @@ export function buildPseudonymousPacketsFromCanonicalSnapshot(snapshot: Decrypte
     if (!item) throw new Error(`Canonical response references unknown bank item ${response.bankItemId}.`);
     const responseId = pseudonymousId("RR", response.responseId);
     const episodeId = pseudonymousId("EP", `${snapshot.snapshotId}:${response.interactionInstanceId}`);
+    const evidence = typedByResponse.get(response.responseId)!;
     const provenance = {
       interaction_instance_id: pseudonymousId("RI", response.interactionInstanceId),
       family_code: item.family,
@@ -154,10 +198,11 @@ export function buildPseudonymousPacketsFromCanonicalSnapshot(snapshot: Decrypte
       window_id: windowId,
       referent_id: referentId,
       relationship_context: relationshipContext,
-      life_domain: `assessment interaction ${item.family}`,
-      trigger: statement("administered_context", item.title),
-      time_horizon: "uncertain",
-      actual_first_action: statement("reported_response", redact(response.content)),
+      life_domain: `interaction_family_${item.family}`,
+      trigger: statement("administered_bank_item", item.bankItemId),
+      time_horizon: evidence.timeHorizon,
+      actual_first_action: statement("typed_semantic_response", evidence.value),
+      ...(evidence.certainty !== undefined ? { user_certainty: evidence.certainty } : {}),
       source_response_ids: [responseId],
       provenance: [provenance],
       confidence: {
@@ -166,7 +211,7 @@ export function buildPseudonymousPacketsFromCanonicalSnapshot(snapshot: Decrypte
         rationale: "One attributable completed interaction; no replication or confirmation is inferred by the deterministic builder.",
         source_evidence_ids: [episodeId],
         open_contradiction_ids: [],
-        limits: ["The persistence response contract does not yet expose typed referent, window, horizon, certainty, or field semantics."],
+        limits: ["Only allowlisted typed semantics were admitted; encrypted notes and unknown fields were excluded."],
         assessed_at: generatedAt,
       },
       contradiction_ids: [],
@@ -176,12 +221,16 @@ export function buildPseudonymousPacketsFromCanonicalSnapshot(snapshot: Decrypte
   completed.forEach((response, index) => {
     const family = getBankItem(response.bankItemId)?.family;
     if (!family) return;
-    episodeByFamily.set(family, [...(episodeByFamily.get(family) ?? []), episodes[index].episode_id]);
+    const evidence = typedByResponse.get(response.responseId)!;
+    if (evidence.optionIds.length > 0 || evidence.coverageSectionCodes.length > 0 || evidence.certainty !== undefined) {
+      episodeByFamily.set(family, [...(episodeByFamily.get(family) ?? []), episodes[index].episode_id]);
+    }
   });
   const cells = LAYER_SECTION_CODES.map((sectionCode) => {
-    const supporting = [...episodeByFamily.entries()]
+    const explicitlyCovered = completed.flatMap((response, index) => typedByResponse.get(response.responseId)?.coverageSectionCodes.includes(sectionCode) ? [episodes[index].episode_id] : []);
+    const supporting = [...new Set([...explicitlyCovered, ...[...episodeByFamily.entries()]
       .filter(([family]) => FAMILY_SECTION_MAP[family]?.includes(sectionCode))
-      .flatMap(([, ids]) => ids);
+      .flatMap(([, ids]) => ids)])];
     const families = [...episodeByFamily.keys()].filter((family) => FAMILY_SECTION_MAP[family]?.includes(sectionCode));
     return {
       coverage_id: `CV-${sectionCode}`,
@@ -209,6 +258,16 @@ export function buildPseudonymousPacketsFromCanonicalSnapshot(snapshot: Decrypte
   const assessmentCompletion = snapshot.completedPass === 1
     ? { completion_mode: "pass1_complete", last_completed_stage: "S2", safe_resume_stage: "S3", underdetermined_section_codes: LAYER_SECTION_CODES }
     : { completion_mode: "pass2_complete", last_completed_stage: "S5", safe_resume_stage: "complete", underdetermined_section_codes: LAYER_SECTION_CODES };
+  const routing = object(snapshot.canonicalSnapshot.routing_state);
+  const routingCoverage = object(routing?.coverage);
+  const typedStopEligible = snapshot.completedPass === 2
+    && routing?.deepeningCompleted === true
+    && routing?.fitCompleted === true
+    && routing?.endingSatisfied === true
+    && routing?.pendingBtmTransition === false
+    && routing?.requiresLowIntensityAfterRre === false
+    && routing?.safetyContext !== "unsafe"
+    && routingCoverage?.deepeningGate === "green";
   return (["IFS", "PV", "ATT"] as const).map((reportType: LayerReportType) => ({
     packet_id: `PKT-${reportType}-${digest(`${snapshot.snapshotId}:${reportType}`).slice(0, 24)}`,
     packet_version: "3.1.0",
@@ -230,7 +289,7 @@ export function buildPseudonymousPacketsFromCanonicalSnapshot(snapshot: Decrypte
     state_signatures: [],
     attachment_patterns: [],
     contradictions: [],
-    coverage_matrix: { contract_id: "PWQE3-CONTRACT-2", cells, last_updated: generatedAt, stop_eligible: true, stop_rationale: "Assessment pass completed; deeper claims remain underdetermined." },
+    coverage_matrix: { contract_id: "PWQE3-CONTRACT-2", cells, last_updated: generatedAt, stop_eligible: typedStopEligible, stop_rationale: typedStopEligible ? "Typed Pass-2 coverage, fit, ending, and safety gates passed." : "Stop is not claimed because one or more typed Pass-2 coverage, fit, ending, or safety gates are absent." },
     selected_excerpts: [],
     prohibitions: [...PROHIBITIONS],
     assessment_completion: assessmentCompletion,

@@ -12,6 +12,9 @@ import type {
 
 const HIGH_INTENSITY_FAMILIES = new Set<InteractionFamilyCode>(["BDA", "BTM", "BSP", "PDL", "RRE"]);
 const RESOURCE_FAMILIES = new Set<InteractionFamilyCode>(["RSR", "SEF"]);
+type StickySafetyState = AssessmentRoutingState & { readonly safetyContext?: "safe" | "mixed" | "unsafe" | "unknown" };
+type TypedRoutingResponse = AssessmentResponseInput & { readonly resourceSafetyClear?: boolean };
+type ContractCompletedInteraction = CompletedInteraction & { readonly evidenceEligible?: boolean; readonly coverageSectionCodes?: readonly string[] };
 const FORM_BY_FAMILY: Readonly<Record<InteractionFamilyCode, InteractionForm>> = {
   RL: "threshold", MS: "recall", BDA: "recall", BTM: "map", FSR: "sort", VFR: "text",
   RLB: "sort", BSP: "threshold", PIS: "sort", PDL: "sort", RMX: "threshold", PCR: "threshold",
@@ -64,7 +67,7 @@ function planFor(pass: AssessmentPass): readonly BankItemManifestEntry[] {
 }
 
 function deriveCoverage(completed: readonly CompletedInteraction[]) {
-  const answered = completed.filter((entry) => entry.completionState === "COMPLETED");
+  const answered = completed.filter((entry) => entry.completionState === "COMPLETED" && (entry as ContractCompletedInteraction).evidenceEligible !== false);
   const domains = new Set<string>();
   const horizons = new Set<string>();
   let ifsDirect = 0;
@@ -180,7 +183,12 @@ export function routeAssessmentResponse(state: AssessmentRoutingState, response:
   const item = getBankItem(current.bankItemId);
   if (!item) throw new Error(`Unknown bank item ${current.bankItemId}.`);
 
-  const completedEntry: CompletedInteraction = {
+  const semantic = response.response && typeof response.response === "object" && !Array.isArray(response.response)
+    ? (response.response as Record<string, unknown>).semantic
+    : undefined;
+  const semanticFields = semantic && typeof semantic === "object" && !Array.isArray(semantic) ? semantic as Record<string, unknown> : {};
+  const evidenceEligible = semanticFields.eligible !== false && Object.entries(semanticFields).some(([key, value]) => !["safetyContext", "userArousal", "resourceSafetyClear", "eligible"].includes(key) && (Array.isArray(value) ? value.length > 0 : value !== undefined && value !== null && value !== ""));
+  const completedEntry: ContractCompletedInteraction = {
     interactionInstanceId: current.interactionInstanceId,
     bankItemId: current.bankItemId,
     family: current.family,
@@ -189,11 +197,17 @@ export function routeAssessmentResponse(state: AssessmentRoutingState, response:
     intensity: current.intensity,
     completionState: response.completionState === "COMPLETED" ? "COMPLETED" : "SKIPPED",
     resourceOrOrdinary: isResourceOrOrdinary(item),
+    evidenceEligible,
+    coverageSectionCodes: Array.isArray(semanticFields.coverageSectionCodes) ? semanticFields.coverageSectionCodes.filter((value): value is string => typeof value === "string") : [],
   };
   const completedInteractions = [...state.completedInteractions, completedEntry];
   if (response.completionState === "PARTIAL") throw new Error("Partial responses do not advance routing.");
-  const answered = response.completionState === "COMPLETED";
+  const answered = response.completionState === "COMPLETED" && semanticFields.eligible !== false;
   const resourceCompleted = answered && completedEntry.resourceOrOrdinary;
+  const typedResponse = response as TypedRoutingResponse;
+  const resourceSafetyClear = resourceCompleted && typedResponse.resourceSafetyClear === true;
+  const priorUnsafe = (state as StickySafetyState).safetyContext === "unsafe";
+  const unsafeContext = resourceSafetyClear ? false : priorUnsafe || response.unsafeContext === true;
   const pendingBtmTransition = answered && current.family === "BTM" ? true : state.pendingBtmTransition && !resourceCompleted;
   const requiresLowIntensityAfterRre = answered && current.family === "RRE" ? true : state.requiresLowIntensityAfterRre && !resourceCompleted;
   const recentFamilies = [...state.recentFamilies, current.family].slice(-5);
@@ -201,7 +215,7 @@ export function routeAssessmentResponse(state: AssessmentRoutingState, response:
   const skipCounts = { ...state.skipCounts };
   if (response.completionState === "SKIPPED") skipCounts[current.family] = (skipCounts[current.family] ?? 0) + 1;
   const userArousal = response.userArousal ?? state.userArousal;
-  const nextBase: AssessmentRoutingState = {
+  const nextBase = {
     ...state,
     completedInteractions,
     recentFamilies,
@@ -211,12 +225,13 @@ export function routeAssessmentResponse(state: AssessmentRoutingState, response:
     requiresLowIntensityAfterRre,
     skipCounts,
     userArousal,
+    safetyContext: unsafeContext ? "unsafe" : resourceSafetyClear ? "safe" : (state as StickySafetyState).safetyContext ?? "unknown",
     safeResumeStage: current.stage,
     endingSatisfied: resourceCompleted,
     paused: false,
     coverage: deriveCoverage(completedInteractions),
-  };
-  const choice = chooseNext(nextBase, completedInteractions, { userArousal, unsafeContext: response.unsafeContext === true });
+  } as StickySafetyState;
+  const choice = chooseNext(nextBase, completedInteractions, { userArousal, unsafeContext });
   const sequence = state.administrationSequence + 1;
   const currentInteraction = choice.item ? interaction(choice.item, state.pass, sequence, choice.reason) : null;
   const coverage = deriveCoverage(completedInteractions);
@@ -245,7 +260,7 @@ export function resumeRoutingState(state: AssessmentRoutingState): AssessmentRou
 
 export function canCompletePass(state: AssessmentRoutingState): boolean {
   const planComplete = state.pass === 1 ? state.mappingCompleted : state.deepeningCompleted && state.fitCompleted;
-  return planComplete && state.endingSatisfied && !state.pendingBtmTransition && !state.requiresLowIntensityAfterRre && state.currentInteraction === null;
+  return planComplete && state.endingSatisfied && !state.pendingBtmTransition && !state.requiresLowIntensityAfterRre && (state as StickySafetyState).safetyContext !== "unsafe" && state.currentInteraction === null;
 }
 
 export function startPassTwo(state: AssessmentRoutingState): AssessmentRoutingState {

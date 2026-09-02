@@ -100,18 +100,68 @@ async function authoredInteraction(current: AssessmentRoutingState["currentInter
   };
 }
 
-function responseSafetySignals(value: unknown): { userArousal: "low" | "unknown" | "elevated" | "high"; unsafeContext: boolean } {
-  const strings: string[] = [];
-  const visit = (candidate: unknown) => {
-    if (typeof candidate === "string") strings.push(candidate.normalize("NFKC").toLowerCase());
-    else if (Array.isArray(candidate)) candidate.forEach(visit);
-    else if (candidate && typeof candidate === "object") Object.values(candidate as Record<string, unknown>).forEach(visit);
+const SEMANTIC_ID = /^(?:OPT-|OL-)[A-Za-z0-9._-]+$/u;
+const SECTION_CODE = /^(?:IFS-(?:0[1-9]|1[0-2])|PV-(?:0[1-9]|1[01])|ATT-(?:0[1-9]|1[0-2]))$/u;
+const OPTION_ARRAY_FIELDS = new Set(["choices", "rank", "zones", "relationship", "selectedOptionIds", "orderedOptionIds"]);
+const OPTION_FIELDS = new Set(["Before", "When it first hit", "What happened next", "Later / aftermath", "Person / role 1", "Person / role 2", "Contact frequency", "Emotional disclosure", "Asking for help", "Space", "referentOptionId", "windowOptionId"]);
+
+function object(value: unknown): Record<string, unknown> | undefined {
+  return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : undefined;
+}
+
+/** Default-deny response normalization. Unknown values remain private only when explicitly sent as privateNote. */
+export function normalizeTypedAssessmentResponse(value: unknown, bankItemId?: string): Prisma.JsonObject {
+  const root = object(value) ?? {};
+  const candidate = root.schemaVersion === "PWRS-1" ? object(root.semantic) ?? {} : root;
+  const semantic: Record<string, Prisma.JsonValue> = {};
+  for (const [key, raw] of Object.entries(candidate)) {
+    if (OPTION_ARRAY_FIELDS.has(key) && Array.isArray(raw)) semantic[key] = raw.filter((entry): entry is string => typeof entry === "string" && SEMANTIC_ID.test(entry));
+    else if (OPTION_FIELDS.has(key) && typeof raw === "string" && SEMANTIC_ID.test(raw)) semantic[key] = raw;
+    else if (key === "coverageSectionCodes" && Array.isArray(raw)) semantic[key] = raw.filter((entry): entry is string => typeof entry === "string" && SECTION_CODE.test(entry));
+    else if (key === "safetyContext" && ["safe", "mixed", "unsafe", "unknown"].includes(String(raw))) semantic[key] = raw as string;
+    else if (key === "userArousal" && ["low", "unknown", "elevated", "high"].includes(String(raw))) semantic[key] = raw as string;
+    else if (key === "timeHorizon" && ["anticipatory", "immediate", "aftermath", "multi_horizon", "uncertain"].includes(String(raw))) semantic[key] = raw as string;
+    else if (key === "certainty" && typeof raw === "number" && Number.isFinite(raw) && raw >= 0 && raw <= 1) semantic[key] = raw;
+    else if (["resourceSafetyClear", "quotePermission", "eligible"].includes(key) && typeof raw === "boolean") semantic[key] = raw;
+  }
+  return {
+    schemaVersion: "PWRS-1",
+    ...(typeof bankItemId === "string" ? { bankItemId } : {}),
+    semantic,
+    ...(root.schemaVersion === "PWRS-1" && typeof root.privateNote === "string" ? { privateNote: root.privateNote } : typeof root.note === "string" ? { privateNote: root.note } : {}),
+  } as Prisma.JsonObject;
+}
+
+export function responseSafetySignals(value: unknown): { userArousal: "low" | "unknown" | "elevated" | "high"; unsafeContext: boolean; resourceSafetyClear: boolean } {
+  const semantic = object(object(value)?.semantic);
+  const userArousal = semantic?.userArousal;
+  return {
+    userArousal: userArousal === "low" || userArousal === "elevated" || userArousal === "high" ? userArousal : "unknown",
+    unsafeContext: semantic?.safetyContext === "unsafe",
+    resourceSafetyClear: semantic?.resourceSafetyClear === true,
   };
-  visit(value);
-  const high = strings.some((entry) => /(^|[-_ ])(too[-_ ]much|stop|arousal[-_ ]high|overwhelmed)([-_ ]|$)/.test(entry));
-  const elevated = strings.some((entry) => /(^|[-_ ])(arousal[-_ ]elevated|distressed|harder)([-_ ]|$)/.test(entry));
-  const unsafeContext = strings.some((entry) => /(^|[-_ ])(unsafe|threatening|controlling|coercive)([-_ ]|$)/.test(entry));
-  return { userArousal: high ? "high" : elevated ? "elevated" : "unknown", unsafeContext };
+}
+
+const DEFAULT_HORIZON_BY_FAMILY: Readonly<Record<string, "anticipatory" | "immediate" | "aftermath" | "multi_horizon" | "uncertain">> = {
+  BDA: "multi_horizon", BTM: "immediate", FSR: "immediate", RRE: "aftermath", RSR: "aftermath", SEF: "aftermath", VFR: "anticipatory", WMA: "anticipatory",
+};
+
+async function enrichResponseFromAuthoredContract(response: Prisma.JsonObject, bankItemId: string): Promise<Prisma.JsonObject> {
+  structuredManifestPromise ??= loadStructuredInstrumentManifest();
+  const definition = (await structuredManifestPromise).itemById.get(bankItemId);
+  const semantic = { ...(object(response.semantic) ?? {}) } as Record<string, Prisma.JsonValue>;
+  if (!Array.isArray(semantic.coverageSectionCodes) || semantic.coverageSectionCodes.length === 0) semantic.coverageSectionCodes = [...(definition?.supportedReportSections ?? [])];
+  if (typeof semantic.eligible !== "boolean") semantic.eligible = true;
+  if (typeof semantic.timeHorizon !== "string") semantic.timeHorizon = DEFAULT_HORIZON_BY_FAMILY[definition?.family ?? ""] ?? "uncertain";
+  if (definition?.family === "RL" && typeof semantic.referentOptionId !== "string" && Array.isArray(semantic.choices)) {
+    const referentOptionId = semantic.choices.find((value): value is string => typeof value === "string" && SEMANTIC_ID.test(value));
+    if (referentOptionId) semantic.referentOptionId = referentOptionId;
+  }
+  return { ...response, semantic } as Prisma.JsonObject;
+}
+
+export function reportArtifactUrl(assessmentSessionId: string, reportId?: string): string {
+  return `/reports/${encodeURIComponent(assessmentSessionId)}${reportId ? `#${encodeURIComponent(reportId)}` : ""}`;
 }
 
 async function ensureSourceRelease(database: Database) {
@@ -256,13 +306,15 @@ async function hydrateStateView(
   const snapshots = await client.patternworkV31AssessmentSnapshot.findMany({ where: { assessmentSessionId: session.id }, include: { reportRuns: { include: { artifact: true } } } });
   const runs = snapshots.flatMap((snapshot) => snapshot.reportRuns);
   const reportStatus = runs.some((run) => run.artifact?.artifactStatus === "ACTIVE") ? "READY" : runs.some((run) => run.status === "FAILED" || run.artifact?.artifactStatus === "FAILED") ? "FAILED" : snapshots.length > 0 ? "GENERATING" : "NOT_STARTED";
-  const ready = runs.find((run) => run.artifact?.artifactStatus === "ACTIVE")?.artifact;
+  const readyRun = runs.find((run) => run.artifact?.artifactStatus === "ACTIVE");
+  const mappingRun = runs.find((run) => run.reportType === "MAP" && run.artifact?.artifactStatus === "ACTIVE");
   return {
     ...base,
     currentInteraction: await authoredInteraction(routingState.currentInteraction),
     currentResponse: currentResponse && saved ? { completionState: currentResponse.completionState as "PARTIAL" | "COMPLETED" | "SKIPPED", response: saved.response, responseOrder: Array.isArray(currentResponse.responseOrderJson) ? currentResponse.responseOrderJson.filter((entry): entry is string => typeof entry === "string") : [] } : null,
     reportStatus,
-    reportReadyUrl: ready ? `/reports/${ready.reportId}` : null,
+    reportReadyUrl: readyRun?.artifact ? reportArtifactUrl(session.id, readyRun.artifact.reportId) : null,
+    mappingSummaryUrl: mappingRun?.artifact ? reportArtifactUrl(session.id, mappingRun.artifact.reportId) : null,
   } as const;
 }
 
@@ -273,7 +325,9 @@ export async function saveAssessmentResponse(
 ) {
   const { db, keyring, now } = deps(dependencies);
   const responseId = `pwr_${sha256(`${sessionId}:${input.idempotencyKey}`).slice(0, 40)}`;
-  const requestSha256 = sha256(canonicalize({ interactionInstanceId: input.interactionInstanceId, completionState: input.completionState, response: input.response ?? null, responseOrder: input.responseOrder ?? [] }));
+  const normalizedResponse = normalizeTypedAssessmentResponse(input.response, input.bankItemId);
+  const normalizedResponseOrder = (input.responseOrder ?? []).filter((value) => SEMANTIC_ID.test(value));
+  const requestSha256 = sha256(canonicalize({ interactionInstanceId: input.interactionInstanceId, completionState: input.completionState, response: normalizedResponse, responseOrder: normalizedResponseOrder }));
   return db.$transaction(async (tx) => {
     const session = await tx.patternworkV31AssessmentSession.findUnique({ where: { id: sessionId } });
     if (!session || !["IN_PROGRESS", "PASS2_IN_PROGRESS", "PAUSED"].includes(session.status)) throw new AssessmentError("unauthorized", "Assessment session is unavailable.");
@@ -288,9 +342,10 @@ export async function saveAssessmentResponse(
     const current = state.currentInteraction;
     if (!current || current.interactionInstanceId !== input.interactionInstanceId || (input.bankItemId && current.bankItemId !== input.bankItemId)) throw new AssessmentError("invalid", "Response does not match the current interaction.");
     const timestamp = now();
-    const encryptedResponse = encryptJson({ response: input.response ?? null }, responsePurpose(sessionId, input.interactionInstanceId), keyring);
-    const safety = responseSafetySignals(input.response);
-    const routedInput = { ...input, bankItemId: current.bankItemId, userArousal: safety.userArousal, unsafeContext: safety.unsafeContext };
+    const response = await enrichResponseFromAuthoredContract(normalizeTypedAssessmentResponse(input.response, current.bankItemId), current.bankItemId);
+    const encryptedResponse = encryptJson({ response }, responsePurpose(sessionId, input.interactionInstanceId), keyring);
+    const safety = responseSafetySignals(response);
+    const routedInput = { ...input, response: response as unknown as AssessmentResponseInput["response"], bankItemId: current.bankItemId, userArousal: safety.userArousal, unsafeContext: safety.unsafeContext, resourceSafetyClear: safety.resourceSafetyClear };
     const nextState = input.completionState === "PARTIAL" ? state : routeAssessmentResponse(state, routedInput);
     const encryptedState = encryptJson(nextState, statePurpose(sessionId), keyring);
     await tx.patternworkV31AssessmentResponse.upsert({
@@ -305,7 +360,7 @@ export async function saveAssessmentResponse(
         stage: current.stage,
         completionState: input.completionState,
         requestSha256,
-        responseOrderJson: [...(input.responseOrder ?? [])],
+        responseOrderJson: normalizedResponseOrder,
         responseCiphertext: prismaBytes(encryptedResponse.ciphertext),
         responseNonce: prismaBytes(encryptedResponse.nonce),
         encryptionKeyVersion: encryptedResponse.keyVersion,
@@ -316,7 +371,7 @@ export async function saveAssessmentResponse(
         responseId,
         completionState: input.completionState,
         requestSha256,
-        responseOrderJson: [...(input.responseOrder ?? [])],
+        responseOrderJson: normalizedResponseOrder,
         responseCiphertext: prismaBytes(encryptedResponse.ciphertext),
         responseNonce: prismaBytes(encryptedResponse.nonce),
         encryptionKeyVersion: encryptedResponse.keyVersion,

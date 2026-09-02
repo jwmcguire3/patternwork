@@ -23,6 +23,7 @@ import type {
   OpenRouterTransport,
 } from "../../lib/server/openrouter/types.ts";
 import type { ReviewedQualificationManifest } from "../../lib/server/openrouter/policy.ts";
+import { sha256Canonical } from "../../lib/report-contracts/delivery-validator.ts";
 
 const REPORTS = ["MAP", "IFS", "PV", "ATT", "SYNTHESIS"] as const satisfies readonly ReportType[];
 const CANDIDATES = ["luna-low", "luna-medium", "terra-medium", "sol-high"] as const;
@@ -200,6 +201,14 @@ test("never marks machine output reviewed and binds explicit approval to run and
   const reviewed = await approveOpenRouterQualification(result, approval, "memory", filesystem);
   assert.equal(reviewed.status, "reviewed");
   assert.equal(reviewed.reviewedBy, "independent-reviewer");
+  assert.equal(reviewed.sourceManifestSha256, result.sourceManifestSha256);
+  assert.equal(reviewed.qualificationRunSha256, result.qualificationRunSha256);
+  assert.equal(reviewed.draftPinsSha256, result.draftPinsSha256);
+  assert.equal(reviewed.candidateOrderSha256, result.run.candidateOrderSha256);
+  assert.equal(reviewed.approvalSha256, sha256Canonical(approval));
+  assert.deepEqual(reviewed.approval, approval);
+  assert.deepEqual(reviewed.pins, result.draftPins);
+  assert.deepEqual(reviewed.candidates, result.run.candidates);
 });
 
 test("accounts actual provider cost and enforces the cap before a live call", async () => {
@@ -223,4 +232,31 @@ test("accounts actual provider cost and enforces the cap before a live call", as
     costCapMicros: 1,
   }), /cost cap/u);
   assert.equal(blockedProvider.calls.length, 0);
+});
+
+test("reviewer rejects rehashed arbitrary models and unreviewed token limits", async () => {
+  const { result } = await qualify(new TestProvider(() => true));
+  assert.equal(result.status, "pending_review");
+  if (!("run" in result)) return;
+  const approvalFor = (pending: PendingQualificationResult): QualificationReviewApproval => ({
+    status: "approved",
+    qualificationRunSha256: pending.qualificationRunSha256,
+    draftPinsSha256: pending.draftPinsSha256,
+    reviewedBy: "independent-reviewer",
+    reviewedAt: "2026-09-02T13:00:00Z",
+    checklist: {
+      allOutputsReviewed: true,
+      prohibitedClaimsReviewed: true,
+      traceabilityReviewed: true,
+      fixtureComparabilityReviewed: true,
+      pinsApproved: true,
+    },
+  });
+  const arbitraryModelPins = { ...result.draftPins, MAP: { ...result.draftPins.MAP, model: "arbitrary/model" } };
+  const arbitraryModel = { ...result, draftPins: arbitraryModelPins, draftPinsSha256: sha256Canonical(arbitraryModelPins) };
+  assert.throws(() => new StrictQualificationReviewer().approve(arbitraryModel, approvalFor(arbitraryModel)), /bound three-run MAP selection/u);
+
+  const unreviewedTokenPins = { ...result.draftPins, MAP: { ...result.draftPins.MAP, maxOutputTokens: 999_999 } };
+  const unreviewedTokenLimit = { ...result, draftPins: unreviewedTokenPins, draftPinsSha256: sha256Canonical(unreviewedTokenPins) };
+  assert.throws(() => new StrictQualificationReviewer().approve(unreviewedTokenLimit, approvalFor(unreviewedTokenLimit)), /invalid selected MAP evidence/u);
 });

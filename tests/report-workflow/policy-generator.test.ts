@@ -2,10 +2,14 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import type { JsonObject } from "../../lib/question-engine/types.ts";
+import { sha256Canonical } from "../../lib/report-contracts/delivery-validator.ts";
 import {
+  QUALIFICATION_MODEL_ORDER,
   UNQUALIFIED_MOCK_MODEL_POLICY,
   UnqualifiedModelPolicyError,
   activateReviewedQualificationManifest,
+  type ReviewedQualificationManifest,
+  type ReviewedQualificationPin,
 } from "../../lib/server/openrouter/policy.ts";
 import type { OpenRouterGenerationRequest, OpenRouterGenerationResult, OpenRouterTransport, OpenRouterUsage } from "../../lib/server/openrouter/types.ts";
 import { generateCanonicalReport } from "../../lib/server/reports/generator.ts";
@@ -30,22 +34,40 @@ class QueueProvider implements OpenRouterTransport {
   }
 }
 
-function reviewedManifest(): string {
+function reviewedManifest(): { raw: string; sha256: string } {
   const pins = {
-    MAP: { tier: "luna-low", model: "reviewed/luna", reasoningEffort: "low", escalationTier: "luna-medium", escalationModel: "reviewed/luna", escalationReasoningEffort: "medium", maxOutputTokens: 16_000 },
-    IFS: { tier: "luna-medium", model: "reviewed/luna", reasoningEffort: "medium", escalationTier: "terra-medium", escalationModel: "reviewed/terra", escalationReasoningEffort: "medium", maxOutputTokens: 20_000 },
-    PV: { tier: "luna-medium", model: "reviewed/luna", reasoningEffort: "medium", escalationTier: "terra-medium", escalationModel: "reviewed/terra", escalationReasoningEffort: "medium", maxOutputTokens: 20_000 },
-    ATT: { tier: "terra-medium", model: "reviewed/terra", reasoningEffort: "medium", escalationTier: "sol-high", escalationModel: "reviewed/sol", escalationReasoningEffort: "high", maxOutputTokens: 20_000 },
-    SYNTHESIS: { tier: "terra-medium", model: "reviewed/terra", reasoningEffort: "medium", escalationTier: "sol-high", escalationModel: "reviewed/sol", escalationReasoningEffort: "high", maxOutputTokens: 16_000 },
+    MAP: { tier: "luna-low", model: QUALIFICATION_MODEL_ORDER[0].model, reasoningEffort: "low", escalationTier: "luna-medium", escalationModel: QUALIFICATION_MODEL_ORDER[1].model, escalationReasoningEffort: "medium", maxOutputTokens: 16_000 },
+    IFS: { tier: "luna-medium", model: QUALIFICATION_MODEL_ORDER[1].model, reasoningEffort: "medium", escalationTier: "terra-medium", escalationModel: QUALIFICATION_MODEL_ORDER[2].model, escalationReasoningEffort: "medium", maxOutputTokens: 20_000 },
+    PV: { tier: "luna-medium", model: QUALIFICATION_MODEL_ORDER[1].model, reasoningEffort: "medium", escalationTier: "terra-medium", escalationModel: QUALIFICATION_MODEL_ORDER[2].model, escalationReasoningEffort: "medium", maxOutputTokens: 20_000 },
+    ATT: { tier: "terra-medium", model: QUALIFICATION_MODEL_ORDER[2].model, reasoningEffort: "medium", escalationTier: "sol-high", escalationModel: QUALIFICATION_MODEL_ORDER[3].model, escalationReasoningEffort: "high", maxOutputTokens: 20_000 },
+    SYNTHESIS: { tier: "terra-medium", model: QUALIFICATION_MODEL_ORDER[2].model, reasoningEffort: "medium", escalationTier: "sol-high", escalationModel: QUALIFICATION_MODEL_ORDER[3].model, escalationReasoningEffort: "high", maxOutputTokens: 16_000 },
+  } satisfies Readonly<Record<"MAP" | "IFS" | "PV" | "ATT" | "SYNTHESIS", ReviewedQualificationPin>>;
+  const qualificationRunSha256 = "c".repeat(64);
+  const draftPinsSha256 = sha256Canonical(pins);
+  const approval = {
+    status: "approved" as const,
+    qualificationRunSha256,
+    draftPinsSha256,
+    reviewedBy: "review-board",
+    reviewedAt: "2026-09-02T12:00:00Z",
+    checklist: { allOutputsReviewed: true as const, prohibitedClaimsReviewed: true as const, traceabilityReviewed: true as const, fixtureComparabilityReviewed: true as const, pinsApproved: true as const },
   };
-  return JSON.stringify({ manifestVersion: "1", status: "reviewed", contractId: "PWQE3-CONTRACT-2", integrityContractId: "PWQE3-INTEGRITY-1", promptRelease: "4.1.0", fixtureSetSha256: "a".repeat(64), reviewedAt: "2026-09-02T12:00:00Z", reviewedBy: "review-board", pins });
+  const manifest: ReviewedQualificationManifest = {
+    manifestVersion: "2", status: "reviewed", contractId: "PWQE3-CONTRACT-2", integrityContractId: "PWQE3-INTEGRITY-1", promptRelease: "4.1.0",
+    fixtureSetSha256: "a".repeat(64), sourceManifestSha256: "b".repeat(64), qualificationRunSha256,
+    candidateOrderSha256: sha256Canonical(QUALIFICATION_MODEL_ORDER), draftPinsSha256, approvalSha256: sha256Canonical(approval),
+    reviewedAt: approval.reviewedAt, reviewedBy: approval.reviewedBy, candidates: QUALIFICATION_MODEL_ORDER, approval, pins,
+  };
+  return { raw: JSON.stringify(manifest), sha256: sha256Canonical(manifest) };
 }
 
 test("live model activation fails closed without reviewed qualification evidence", () => {
   assert.throws(() => activateReviewedQualificationManifest(undefined), UnqualifiedModelPolicyError);
-  const activated = activateReviewedQualificationManifest(reviewedManifest());
-  assert.equal(activated.policy.MAP.model, "reviewed/luna");
-  assert.equal(activated.policy.ATT.escalationModel, "reviewed/sol");
+  const reviewed = reviewedManifest();
+  assert.throws(() => activateReviewedQualificationManifest(reviewed.raw), /SHA-256/u);
+  const activated = activateReviewedQualificationManifest(reviewed.raw, reviewed.sha256);
+  assert.equal(activated.policy.MAP.model, QUALIFICATION_MODEL_ORDER[0].model);
+  assert.equal(activated.policy.ATT.escalationModel, QUALIFICATION_MODEL_ORDER[3].model);
 });
 
 test("validator rejection gets one same-tier repair and aggregates actual usage", async () => {

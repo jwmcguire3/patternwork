@@ -5,6 +5,7 @@ import {
   CanonicalQualificationFixtures,
   NodeQualificationFilesystem,
   approveOpenRouterQualification,
+  qualificationManifestDigest,
   runOpenRouterQualification,
   type PendingQualificationResult,
   type QualificationReviewApproval,
@@ -16,7 +17,11 @@ const USAGE = `Usage:
 
 The first command runs live machine qualification and writes a pending-review
 package. The second binds an explicit human approval to that exact run and pin
-digest, then writes reviewed-activation-manifest.json.`;
+digest, then writes reviewed-activation-manifest.json.
+
+Production activation requires both deployment variables:
+  OPENROUTER_QUALIFICATION_MANIFEST_JSON=<reviewed-activation-manifest.json contents>
+  OPENROUTER_QUALIFICATION_MANIFEST_SHA256=<canonical digest printed after approval>`;
 
 interface Arguments {
   readonly outputDirectory: string;
@@ -62,7 +67,7 @@ async function main(): Promise<void> {
     const pending = await jsonFile<PendingQualificationResult>(path.join(args.outputDirectory, "pending-review.json"));
     const approval = await jsonFile<QualificationReviewApproval>(args.approvalPath);
     const reviewed = await approveOpenRouterQualification(pending, approval, args.outputDirectory, filesystem);
-    process.stdout.write(`Reviewed activation manifest written for ${reviewed.reviewedBy}.\n`);
+    process.stdout.write(`Reviewed activation manifest written for ${reviewed.reviewedBy}.\nOPENROUTER_QUALIFICATION_MANIFEST_SHA256=${qualificationManifestDigest(reviewed)}\n`);
     return;
   }
   const apiKey = process.env.OPENROUTER_API_KEY;

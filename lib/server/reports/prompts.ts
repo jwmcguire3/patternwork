@@ -32,6 +32,23 @@ export interface LoadedReportPrompt {
   readonly schemaName: string;
 }
 
+const PRIVATE_INPUT_KEYS = new Set(["narrative", "privateNote", "private_note", "freeText", "free_text", "raw_answers", "answers", "all_responses"]);
+const DIRECT_PII = /(?:\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b|(?:^|\s)\+\d(?:[\s().-]*\d){7,14}(?:\s|$)|\b\d{3}-\d{2}-\d{4}\b|\b(?:account|acct|member|customer)[\s:#-]*(?:id|number|no\.?|#)?[\s:#-]*[A-Z0-9-]{5,}\b)/iu;
+
+/** Final synchronous fail-closed check immediately before prompt serialization. */
+export function assertProviderPromptPrivacy(input: unknown, path = "$"): void {
+  if (typeof input === "string") {
+    if (DIRECT_PII.test(input)) throw new Error(`Provider prompt privacy boundary rejected direct identifying data at ${path}.`);
+    return;
+  }
+  if (Array.isArray(input)) return input.forEach((value, index) => assertProviderPromptPrivacy(value, `${path}[${index}]`));
+  if (!input || typeof input !== "object") return;
+  for (const [key, value] of Object.entries(input as Record<string, unknown>)) {
+    if (PRIVATE_INPUT_KEYS.has(key)) throw new Error(`Provider prompt privacy boundary rejected free text at ${path}.${key}.`);
+    assertProviderPromptPrivacy(value, `${path}.${key}`);
+  }
+}
+
 export async function loadReportPrompt(reportType: ReportType, workspaceRoot = process.cwd()): Promise<LoadedReportPrompt> {
   const [shared, specific, writer, schemas] = await Promise.all([
     readFile(path.join(workspaceRoot, PROMPT_DIRECTORY, "prompt_v4_1_shared_contract.md"), "utf8"),
@@ -53,6 +70,7 @@ export async function loadReportPrompt(reportType: ReportType, workspaceRoot = p
 }
 
 export function buildGenerationPrompt(reportType: ReportType, input: JsonObject): string {
+  assertProviderPromptPrivacy(input);
   return [
     `Requested report type: ${reportType}`,
     "The following object is the complete validated, pseudonymous input contract. It contains no email, direct contact data, or flat raw-answer list.",
