@@ -98,14 +98,6 @@ export interface Pwqe51RouteCandidate {
   readonly targetIds: readonly string[];
   readonly priority: number;
   readonly stage: "mapping" | "deepening";
-  /** Existing actual occurrence used as the source of a controlled repeat. */
-  readonly replayOfOccurrenceId?: string;
-  readonly replayTargetId?: string;
-  readonly comparisonIds?: readonly [string, string];
-  readonly requirementGain?: number;
-  readonly decisionCost?: number;
-  readonly openedOrder?: number;
-  readonly shortBlock?: boolean;
 }
 export interface Pwqe51RouterResult {
   readonly sourceRelease: string;
@@ -343,22 +335,6 @@ function buildBaseTargets(input: Pwqe51RouterInput, source: Pwqe51SourcePackage,
         if (NEXT_TARGETS.has(targetId) && ["D07.nothing", "D07.changed"].some((x) => optionIds.has(x))) { state = "resolved_descriptively"; reason = "no_actual_later_action"; resolutionIds = own.filter((o) => o.itemId === "D07").map((o) => o.id); }
         else if (NEXT_TARGETS.has(targetId) && optionIds.has("D08.different")) { state = "unresolved"; reason = "different_occurrences_require_rebinding"; resolutionIds = own.filter((o) => o.itemId === "D08").map((o) => o.id); }
         else if (targetId === "need_exposure" && ["D18.none", "D21.none", "D21.practical", "D17.none"].some((x) => optionIds.has(x))) { state = "supports_alternative"; reason = "reported_no_exposure_difficulty_or_practical_barrier"; resolutionIds = own.filter((o) => ["D18.none", "D21.none", "D21.practical", "D17.none"].includes(o.optionId)).map((o) => o.id); }
-        else if (targetId === "recurrence") {
-          const originalActions = own.filter((o) => o.stepId === "first" && ["first_action", "next_action", "later_action", "during_action", "self_response"].includes(o.capture ?? "") && !["M02.none", "D07.nothing"].includes(o.optionId));
-          const related = episodes.filter((other) => other.actual && other.id !== episode.id && (other.distinctFrom.includes(episode.id) || episode.distinctFrom.includes(other.id)));
-          const matched = related.find((other) => {
-            const otherActions = observations.filter((o) => o.occurrenceId === other.id && o.stepId === "first" && ["first_action", "next_action", "later_action", "during_action", "self_response"].includes(o.capture ?? ""));
-            return originalActions.some((o) => otherActions.some((otherAction) => o.optionId === otherAction.optionId));
-          });
-          if (matched) {
-            state = "resolved_descriptively";
-            reason = "same_action_in_confirmed_distinct_occasions_without_implied_shared_function";
-            resolutionIds = [...new Set([...originalActions, ...observations.filter((o) => o.occurrenceId === matched.id && o.stepId === "first")].map((o) => o.id))];
-          } else if (answers.length) {
-            state = "resolved_descriptively";
-            reason = "recurrence_discriminator_answered_without_second_occurrence";
-          }
-        }
         else if (answers.length) {
           const values = new Set(answers.map((o) => o.optionId));
           const hasPractical = [...values].some((x) => PRACTICAL_OPTIONS.has(x));
@@ -376,12 +352,6 @@ function buildBaseTargets(input: Pwqe51RouterInput, source: Pwqe51SourcePackage,
         if (state === "open" && Number(def.default_priority) === 6 && !requested && !focused.has(episode.id) && details.size === 0) { state = "abandoned_low_value"; reason = "texture_not_requested"; }
         const missing = [...active].reverse().find((r) => candidateItems.includes(r.questionId) && r.occurrenceId === episode.id && r.stepId === stepId && r.status !== "answered");
         if (state === "open" && missing) { state = missing.status === "skip" ? "declined" : missing.status === "no_event" || missing.status === "not_applicable" ? "unavailable" : "unresolved"; reason = `discriminator_${missing.status}`; }
-        const binding = input.closedBindings?.[id];
-        if (binding) {
-          state = binding === "same" ? "resolved_descriptively" : binding === "skip" ? "declined" : binding === "unknown" ? "unresolved" : "unavailable";
-          reason = `occurrence_binding_${binding}`;
-        }
-        if (input.rejectedTargetIds?.includes(id)) { state = "unresolved"; reason = "respondent_rejected_interpretation"; }
         output.push({ id, targetId, occurrenceId: episode.id, stepId, state, reason, sourceObservationIds: [...new Set(origins.map((o) => o.id))], resolutionObservationIds: resolutionIds, candidateItems: state === "open" ? candidateItems : [], priority: Number(def.default_priority ?? 4) });
       }
     }
@@ -411,7 +381,7 @@ function coverageTargets(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, 
     }
     for (const episode of episodes) {
       if (!episode.actual) continue;
-      const comparisonPairs: (readonly string[] | undefined)[] = scope === "comparison" ? (input.distinctPairs ?? []).filter((p) => p[0] === episode.id) : [undefined];
+      const comparisonPairs: (readonly string[] | undefined)[] = scope === "comparison" ? (input.distinctPairs ?? []).filter((p) => p.includes(episode.id)) : [undefined];
       for (const comparisonIds of comparisonPairs) {
         const stepId = scope;
         const id = keyFor(ruleId, episode.id, stepId, comparisonIds);
@@ -494,10 +464,9 @@ function sequenceEdges(active: readonly Normalized[], observations: readonly Pwq
   return edges;
 }
 
-function candidateAllowed(q: Pwqe51Question, episodeId: string, active: readonly Normalized[], source: Pwqe51SourcePackage, opted: Set<string>, derivedFlags: ReturnType<typeof derivePwqe51Flags>, comparisonIds?: readonly [string, string]): boolean {
+function candidateAllowed(q: Pwqe51Question, episodeId: string, active: readonly Normalized[], source: Pwqe51SourcePackage, opted: Set<string>, flagsByEpisodeStep: ReturnType<typeof derivePwqe51Flags>["flagsByEpisodeStep"]): boolean {
   const own = active.filter((r) => r.occurrenceId === episodeId);
-  if (q.episode_family === "comparison" && (!comparisonIds || comparisonIds.length !== 2)) return false;
-  if (own.some((r) => r.questionId === q.id && r.stepId === q.step_binding && (q.episode_family !== "comparison" || comparisonIds))) return false;
+  if (own.some((r) => r.questionId === q.id && r.stepId === q.step_binding)) return false;
   if (q.eligibility.topic_opt_in && !opted.has(q.eligibility.topic_opt_in)) return false;
   if (q.eligibility.requires_answered.some((id) => !own.some((r) => r.questionId === id && answered(r)))) return false;
   const gate = obj(source.itemGates.gates[q.id]);
@@ -513,54 +482,25 @@ function candidateAllowed(q: Pwqe51Question, episodeId: string, active: readonly
   // step binding: D07 follows a qualifying first move; D08 follows an actual
   // next move. Other items remain bound to their own step's flags.
   const evidenceStep = q.id === "D07" ? "first" : q.id === "D08" ? "next" : q.step_binding;
-  const flags = new Set(derivedFlags.flagsByEpisodeStep[pwqe51EpisodeStepKey(episodeId, evidenceStep)] ?? []);
-  if (comparisonIds) for (const flag of derivedFlags.comparisonFlagsByPair[pwqe51ComparisonPairKey(comparisonIds[0], comparisonIds[1])] ?? []) flags.add(flag);
+  const flags = new Set(flagsByEpisodeStep[pwqe51EpisodeStepKey(episodeId, evidenceStep)] ?? []);
   if (requiredFlags.some((required) => !flags.has(required))) return false;
   return true;
-}
-
-function buildConfirmedComparisonTargets(input: Pwqe51RouterInput, observations: readonly Pwqe51Observation[], episodes: readonly Pwqe51Episode[]): Pwqe51TargetResolution[] {
-  const byId = new Map(episodes.map((episode) => [episode.id, episode]));
-  const targets: Pwqe51TargetResolution[] = [];
-  for (const pair of input.distinctPairs ?? []) {
-    const [first, second] = pair;
-    if (!byId.get(first)?.actual || !byId.get(second)?.actual) continue;
-    const firstActions = observations.filter((o) => o.occurrenceId === first && o.stepId === "first" && ["first_action", "next_action", "later_action", "during_action", "self_response"].includes(o.capture ?? ""));
-    const secondActions = observations.filter((o) => o.occurrenceId === second && o.stepId === "first" && ["first_action", "next_action", "later_action", "during_action", "self_response"].includes(o.capture ?? ""));
-    if (!firstActions.length || !secondActions.length) continue;
-    const matched = firstActions.some((o) => secondActions.some((other) => o.optionId === other.optionId));
-    for (const definition of [
-      { id: "contrast_context", item: "D56", priority: 5, eligible: true },
-      { id: "contrast_goal", item: "D57", priority: 3, eligible: matched },
-    ]) {
-      if (!definition.eligible) continue;
-      const instance = keyFor(definition.id, first, "comparison", pair);
-      const answered = observations.filter((o) => o.itemId === definition.item && o.occurrenceId === first);
-      const closed = input.closedBindings?.[instance];
-      const state: Pwqe51TargetState = closed ? "unavailable" : answered.length ? "resolved_descriptively" : "open";
-      targets.push({ id: instance, targetId: definition.id, occurrenceId: first, stepId: "comparison", comparisonIds: [first, second], state,
-        reason: closed ? "comparison_binding_closed" : answered.length ? "comparison_answered" : "confirmed_pair_needs_comparison",
-        sourceObservationIds: [...new Set([...firstActions, ...secondActions].map((o) => o.id))],
-        resolutionObservationIds: answered.map((o) => o.id),
-        candidateItems: state === "open" ? [definition.item] : [], priority: definition.priority });
-    }
-  }
-  return targets;
 }
 
 function makeCandidates(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, active: readonly Normalized[], targets: readonly Pwqe51TargetResolution[], episodes: readonly Pwqe51Episode[], observations: readonly Pwqe51Observation[], derivedFlags: ReturnType<typeof derivePwqe51Flags>) {
   const phase = input.phase ?? "mapping";
   const candidates: Pwqe51RouteCandidate[] = [];
-  const topics = new Set(input.optedInTopics ?? []);
-  const questionById = new Map(source.questionBank.items.map((q) => [q.id, q]));
   if (phase === "mapping") {
     const mapping = source.questionBank.items.filter((item) => item.stage === "mapping");
     const offered = new Set(active.filter((r) => mapping.some((q) => q.id === r.questionId)).map((r) => r.questionId));
     const pending = mapping.filter((q) => !offered.has(q.id));
+    const topics = new Set(input.optedInTopics ?? []);
     for (const q of pending) {
       const parents = q.eligibility.requires_answered;
       const parentRows = active.filter((r) => parents.length > 0 && r.questionId === parents[0] && answered(r));
       if (parents.length > 0 && parentRows.length === 0) continue;
+      // M28 is a distinct comparison screen. It must wait until the rest of Mapping
+      // is covered and an actual comparison source exists.
       if (q.id === "M28") {
         const otherPending = pending.some((item) => !["M28", "M29", "M30"].includes(item.id));
         const comparable = episodes.some((ep) => ep.actual && observations.some((o) => o.occurrenceId === ep.id && ["first_action", "next_action"].includes(o.capture ?? "")));
@@ -570,90 +510,54 @@ function makeCandidates(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, a
       const parentEpisode = parentRows.at(-1)?.occurrenceId;
       const boundEpisode = parentEpisode ?? input.occurrenceBindings?.[bindingKey];
       if (boundEpisode) {
-        if (parents.length > 0 && !candidateAllowed(q, boundEpisode, active, source, topics, derivedFlags)) continue;
-        candidates.push({ questionId: q.id, occurrenceId: boundEpisode, stepId: q.step_binding, targetIds: [bindingKey], priority: parents.length ? 1 : 2, stage: "mapping", requirementGain: 1, decisionCost: 1, shortBlock: parents.length > 0 });
+        // A root Mapping item creates its actual/typicality episode. Before it
+        // is answered there cannot yet be response-derived basis/flags, so do
+        // not apply post-answer eligibility to this first administration.
+        // Parent-bound items still require their normal answer, topic, option,
+        // basis, and derived-flag guards.
+        if (parents.length > 0 && !candidateAllowed(q, boundEpisode, active, source, topics, derivedFlags.flagsByEpisodeStep)) continue;
+        candidates.push({ questionId: q.id, occurrenceId: boundEpisode, stepId: q.step_binding, targetIds: [`coverage:${q.id}`], priority: parents.length ? 1 : 2, stage: "mapping" });
       } else if (!parents.length) {
-        candidates.push({ questionId: q.id, occurrenceId: null, bindingKey, bindingRequest: "new_actual_occurrence", stepId: q.step_binding, targetIds: [bindingKey], priority: 2, stage: "mapping", requirementGain: 1, decisionCost: 1 });
+        candidates.push({ questionId: q.id, occurrenceId: null, bindingKey, bindingRequest: "new_actual_occurrence", stepId: q.step_binding, targetIds: [`coverage:${q.id}`], priority: 2, stage: "mapping" });
       }
     }
   } else {
-    const replayRoots = new Set(strings(obj(source.routingTargets.operators.REPLAY).allowed_roots));
-    const replayByNewEpisode = new Map(Object.entries(input.occurrenceBindings ?? {}).filter(([key]) => key.startsWith("replay:")).map(([key, id]) => [id, key]));
-    // A replayed root's authored short follow-up belongs to its own confirmed actual episode.
-    for (const response of active) {
-      if (!replayByNewEpisode.has(response.occurrenceId) || response.status !== "answered" || response.basis !== "actual_recalled") continue;
-      const roots = { M02: ["M03"], M04: ["M05", "M06"], M08: ["M09"], M10: ["M11", "M12"], M11: ["M12"], M15: ["M16"], M17: ["M18", "M19"], M20: ["M21"], M26: ["M27"], M28: ["M29", "M30"] } as Record<string, string[]>;
-      for (const child of roots[response.questionId] ?? []) {
-        const q = questionById.get(child);
-        if (!q || !candidateAllowed(q, response.occurrenceId, active, source, topics, derivedFlags)) continue;
-        candidates.push({ questionId: child, occurrenceId: response.occurrenceId, stepId: q.step_binding,
-          targetIds: [`replay_attached:${response.responseId}:${child}`], priority: 1, stage: "deepening", requirementGain: 1, decisionCost: 1, shortBlock: true });
-      }
-    }
     for (const target of targets.filter((t) => t.state === "open")) {
-      for (const item of target.candidateItems) {
-        if (item.startsWith("REPLAY")) {
-          const sourceEpisode = episodes.find((episode) => episode.id === target.occurrenceId);
-          const replayRoot = item.includes(":") ? item.split(":")[1] : active.find((r) => r.occurrenceId === sourceEpisode?.id && r.basis === "actual_recalled")?.questionId;
-          if (!sourceEpisode?.actual || !replayRoot || !replayRoots.has(replayRoot) || replayByNewEpisode.has(sourceEpisode.id)) continue;
-          const question = questionById.get(replayRoot);
-          if (!question) continue;
-          const bindingKey = `replay:${target.id}:${replayRoot}`;
-          const episodeId = input.occurrenceBindings?.[bindingKey] ?? null;
-          if (episodeId && active.some((r) => r.occurrenceId === episodeId)) continue; // One attempt per replay source/target.
-          if (input.closedBindings?.[target.id]) continue;
-          candidates.push({ questionId: replayRoot, occurrenceId: episodeId,
-            ...(episodeId ? {} : { bindingKey, bindingRequest: "new_actual_occurrence" as const }),
-            stepId: "first", targetIds: [target.id], replayOfOccurrenceId: sourceEpisode.id, replayTargetId: target.id,
-            priority: target.priority, stage: "deepening", requirementGain: 2, decisionCost: 1 });
-          continue;
-        }
-        const q = questionById.get(item);
-        if (!q || !candidateAllowed(q, target.occurrenceId, active, source, topics, derivedFlags, target.comparisonIds)) continue;
-        candidates.push({ questionId: q.id, occurrenceId: target.occurrenceId, stepId: q.step_binding,
-          targetIds: [target.id], comparisonIds: target.comparisonIds, priority: target.priority, stage: "deepening",
-          requirementGain: 1, decisionCost: item === "D36" ? 2 : 1, shortBlock: target.priority === 1,
-          openedOrder: Math.min(...target.sourceObservationIds.map((id) => observations.findIndex((o) => o.id === id)).filter((index) => index >= 0), 99999) });
-      }
+      const q = source.questionBank.items.find((item) => item.id === target.candidateItems[0]);
+      if (!q || !candidateAllowed(q, target.occurrenceId, active, source, new Set(input.optedInTopics ?? []), derivedFlags.flagsByEpisodeStep)) continue;
+      candidates.push({ questionId: q.id, occurrenceId: target.occurrenceId, stepId: q.step_binding, targetIds: [target.id], priority: target.priority, stage: "deepening" });
     }
     for (const entry of source.routingTargets.entry_points) {
       if (!(input.optedInTopics ?? []).includes(String(entry.id))) continue;
       const itemId = String(entry.first_item);
-      const q = questionById.get(itemId);
+      const q = source.questionBank.items.find((item) => item.id === itemId);
       if (!q) continue;
       const bindingKey = `entry:${entry.id}`;
       const bound = input.occurrenceBindings?.[bindingKey];
       const occurrenceId = bound ?? (q.eligibility.requires_answered.length ? active.find((r) => answered(r))?.occurrenceId : undefined);
       if (occurrenceId) {
-        const unansweredRoot = q.eligibility.requires_answered.length === 0 && !active.some((response) => response.occurrenceId === occurrenceId);
-        if (unansweredRoot || candidateAllowed(q, occurrenceId, active, source, topics, derivedFlags)) candidates.push({ questionId: itemId, occurrenceId, stepId: "first", targetIds: [`entry:${entry.id}`], priority: 4, stage: "deepening", requirementGain: 1, decisionCost: 1 });
-      } else if (!q.eligibility.requires_answered.length) candidates.push({ questionId: itemId, occurrenceId: null, bindingKey, bindingRequest: "new_actual_occurrence", stepId: "first", targetIds: [`entry:${entry.id}`], priority: 4, stage: "deepening", requirementGain: 1, decisionCost: 1 });
+        // An entry root establishes its own episode basis. Its server-bound
+        // occurrence is necessarily unanswered at first, so actual-basis and
+        // response-derived flag guards cannot be evaluated until the response
+        // is recorded. The explicit topic opt-in above remains mandatory.
+        const unansweredRoot = q.eligibility.requires_answered.length === 0
+          && !active.some((response) => response.occurrenceId === occurrenceId);
+        if (unansweredRoot || candidateAllowed(q, occurrenceId, active, source, new Set(input.optedInTopics ?? []), derivedFlags.flagsByEpisodeStep)) candidates.push({ questionId: itemId, occurrenceId, stepId: "first", targetIds: [`entry:${entry.id}`], priority: 4, stage: "deepening" });
+      } else if (!q.eligibility.requires_answered.length) candidates.push({ questionId: itemId, occurrenceId: null, bindingKey, bindingRequest: "new_actual_occurrence", stepId: "first", targetIds: [`entry:${entry.id}`], priority: 4, stage: "deepening" });
     }
   }
   const contextLast = new Map<string, number>();
-  active.forEach((response, index) => contextLast.set(questionById.get(response.questionId)?.context ?? "", index));
-  const recentlyOptional = active.filter((response) => questionById.get(response.questionId)?.stage === "deepening").slice(-4);
-  const repeatedContext = recentlyOptional.length === 4 && recentlyOptional.every((r) => questionById.get(r.questionId)?.context === questionById.get(recentlyOptional[0]!.questionId)?.context)
-    ? questionById.get(recentlyOptional[0]!.questionId)?.context : undefined;
+  active.forEach((response, index) => contextLast.set(source.questionBank.items.find((q) => q.id === response.questionId)?.context ?? "", index));
   const focused = new Set(input.focusOccurrences ?? []);
-  const candidatesByKey = new Map<string, Pwqe51RouteCandidate>();
-  for (const c of candidates) {
-    const key = [c.questionId, c.occurrenceId ?? c.bindingKey ?? "", c.stepId, c.comparisonIds?.join(":") ?? ""].join("|");
-    const prior = candidatesByKey.get(key);
-    if (!prior) candidatesByKey.set(key, c);
-    else candidatesByKey.set(key, { ...(prior.priority <= c.priority ? prior : c), targetIds: [...new Set([...prior.targetIds, ...c.targetIds])] });
-  }
-  const eligible = [...candidatesByKey.values()].filter((c) => (c.decisionCost ?? 1) + active.length + (input.controls?.length ?? 0) <= (input.decisionLimit ?? 72));
-  return eligible.sort((a, b) => {
-    const aq = questionById.get(a.questionId)!; const bq = questionById.get(b.questionId)!;
+  const questions = new Map(source.questionBank.items.map((q) => [q.id, q]));
+  return candidates.sort((a, b) => {
+    const aq = questions.get(a.questionId)!; const bq = questions.get(b.questionId)!;
     const af = a.occurrenceId !== null && focused.has(a.occurrenceId); const bf = b.occurrenceId !== null && focused.has(b.occurrenceId);
-    const peer = (c: Pwqe51RouteCandidate, q: Pwqe51Question) => repeatedContext === q.context && !c.shortBlock
-      && !(c.occurrenceId !== null && focused.has(c.occurrenceId))
-      && eligible.some((other) => other.priority === c.priority && questionById.get(other.questionId)?.context !== repeatedContext) ? 1 : 0;
-    return a.priority - b.priority || Number(bf) - Number(af) || peer(a, aq) - peer(b, bq)
-      || (b.requirementGain ?? 1) - (a.requirementGain ?? 1) || (a.decisionCost ?? 1) - (b.decisionCost ?? 1)
+    const ar = aq.eligibility.requires_answered.length; const br = bq.eligibility.requires_answered.length;
+    const ad = aq.selection.mode === "partial_order" ? Number(aq.selection.max_select ?? 1) + 1 : aq.selection.mode === "single" ? 1 : 3;
+    const bd = bq.selection.mode === "partial_order" ? Number(bq.selection.max_select ?? 1) + 1 : bq.selection.mode === "single" ? 1 : 3;
+    return a.priority - b.priority || Number(bf) - Number(af) || br - ar || ad - bd
       || (contextLast.get(aq.context) ?? -1) - (contextLast.get(bq.context) ?? -1)
-      || (a.openedOrder ?? 99999) - (b.openedOrder ?? 99999)
       || a.questionId.localeCompare(b.questionId) || (a.occurrenceId ?? "").localeCompare(b.occurrenceId ?? "") || a.stepId.localeCompare(b.stepId);
   });
 }
@@ -714,7 +618,7 @@ export function compilePwqe51Route(input: Pwqe51RouterInput, source: Pwqe51Sourc
     currentContextFacts: input.contextFacts,
     enabledTopics: input.optedInTopics ?? [],
   });
-  const targets = [...buildBaseTargets(input, source, active, observations, episodes, derivedFlags), ...buildConfirmedComparisonTargets(input, observations, episodes), ...coverageTargets(input, source, active, observations, episodes, derivedFlags)].sort((a, b) => a.id.localeCompare(b.id));
+  const targets = [...buildBaseTargets(input, source, active, observations, episodes, derivedFlags), ...coverageTargets(input, source, active, observations, episodes, derivedFlags)].sort((a, b) => a.id.localeCompare(b.id));
   const sequence = sequenceEdges(active, observations);
   const administrationCount = new Set(normalized.all.map((r) => `${r.questionId}\u0000${r.occurrenceId}\u0000${r.stepId}`)).size;
   const totalLimit = Math.min(input.totalLimit ?? 56, 56);
