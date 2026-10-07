@@ -15,7 +15,21 @@ export interface PassReportWorkflowInput {
   readonly assessmentSessionId: string;
   readonly snapshotId: string;
   readonly completedPass: 1 | 2;
+  /** Required for durable workflows; optional only for the offline report CLI/test pipeline. */
+  readonly attemptId?: string;
+  readonly attemptNumber?: number;
   readonly invocationKey: string;
+}
+
+export type ReportAttemptPhase = "ENQUEUE" | "PREFLIGHT" | "GENERATION" | "PDF" | "RELEASE";
+export type ReportFailureCategory = "TRANSIENT" | "STALLED" | "CONFIGURATION" | "VALIDATION" | "COST" | "PDF" | "DELIVERY" | "INTERNAL";
+export type ReportRetryAudience = "USER" | "OPERATOR" | "NONE";
+
+export interface ClassifiedReportFailure {
+  readonly category: ReportFailureCategory;
+  readonly retryAudience: ReportRetryAudience;
+  readonly code: string;
+  readonly message: string;
 }
 
 export interface DecryptedAssessmentSnapshot {
@@ -33,6 +47,11 @@ export interface DecryptedAssessmentSnapshot {
 export interface PreparedReportInputs {
   readonly snapshot: Omit<DecryptedAssessmentSnapshot, "canonicalSnapshot" | "persistedPackets">;
   readonly packets: readonly ReportEvidencePacketV3_1[];
+  readonly routerPacket?: JsonObject;
+  readonly contractVersion?: "v3.1" | "v6";
+  readonly sourceManifestSha256?: string;
+  readonly qualificationManifestSha256?: string;
+  readonly modelPolicy?: ActivatedReportModelPolicy;
 }
 
 export interface SnapshotPacketBoundary {
@@ -44,8 +63,36 @@ export type AggregatedOpenRouterUsage = ReturnType<typeof totalUsage>;
 
 export interface GeneratedCanonicalArtifact {
   readonly reportType: ReportType;
-  readonly artifact: ReportArtifact | SynthesisAudit;
+  readonly artifact: ReportArtifact | SynthesisAudit | Pwqe6ReportArtifact;
   readonly usage: AggregatedOpenRouterUsage;
+}
+
+export interface Pwqe6ReportDraft extends JsonObject {
+  readonly release_id: string;
+  readonly snapshot_id: string;
+  readonly report_type: ReportType;
+  readonly title: string;
+  readonly sections: JsonObject[];
+  readonly claims: JsonObject[];
+  readonly name_registry: JsonObject[];
+  readonly reflection_questions: string[];
+}
+
+export interface Pwqe6ReportArtifact extends JsonObject {
+  readonly artifact_type: "pwqe6_report";
+  readonly contract_id: "patternwork-report-v6-design";
+  readonly integrity_contract_id: "patternwork-router-evidence-v1";
+  readonly package_version: "PWQE-5.0.0-design.1";
+  readonly prompt_release: "6.0";
+  readonly report_id: string;
+  readonly report_type: ReportType;
+  readonly snapshot_id: string;
+  readonly source_manifest_sha256: string;
+  readonly qualification_manifest_sha256: string;
+  readonly packet_id: string;
+  readonly report_markdown: string;
+  readonly draft: Pwqe6ReportDraft;
+  readonly digests: JsonObject & { readonly artifact_sha256: string };
 }
 
 export interface PreparedPdfArtifact {
@@ -79,6 +126,7 @@ export interface ReportWorkflowPersistence {
 }
 
 export interface ReportWorkflowDependencies {
+  readonly claimAttempt?: (input: PassReportWorkflowInput) => Promise<"claimed" | "already_released">;
   readonly snapshotBoundary: SnapshotPacketBoundary;
   readonly provider: OpenRouterTransport;
   readonly persistence: ReportWorkflowPersistence;
@@ -87,6 +135,7 @@ export interface ReportWorkflowDependencies {
   readonly modelPolicy: ActivatedReportModelPolicy;
   readonly pdfVerification?: PdfVerificationBoundary;
   readonly delivery?: ReportDeliveryBoundary;
+  readonly preflight?: () => Promise<void>;
 }
 
 export interface SynthesisInput {

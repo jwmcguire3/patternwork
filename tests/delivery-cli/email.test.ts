@@ -24,6 +24,7 @@ test("webhook state changes require a valid timestamped signature", () => {
   const id = "msg_1"; const timestamp = String(Math.floor(Date.now() / 1000));
   const signature = createHmac("sha256", secretBytes).update(`${id}.${timestamp}.${payload}`).digest("base64");
   const event = verifyResendWebhook(payload, new Headers({ "svix-id": id, "svix-timestamp": timestamp, "svix-signature": `v1,${signature}` }), secret);
+  assert.equal(event.id, id);
   assert.equal(deliveryStatusForResendEvent(event.type), "DELIVERED");
   assert.throws(() => verifyResendWebhook(payload, new Headers({ "svix-id": id, "svix-timestamp": timestamp, "svix-signature": "v1,bad" }), secret), /invalid/u);
 });

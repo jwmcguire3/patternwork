@@ -65,13 +65,59 @@ function parseUsage(body: Record<string, unknown>, response: Response, requested
   };
 }
 
-async function responseMessage(response: Response): Promise<string> {
+function safeProviderField(value: unknown): string | undefined {
+  if (typeof value !== "string" || value.length > 96 || !/^[a-zA-Z0-9_.:/-]+$/.test(value)) return undefined;
+  return value;
+}
+
+const PROVIDER_ERROR_HINTS = [
+  ["reasoning", /reasoning|effort/],
+  ["schema", /schema|response_format|structured output/],
+  ["schema_required", /required.{0,32}(missing|must|include|array|every)|all fields.{0,32}required/],
+  ["schema_closed_object", /additional.?properties/],
+  ["schema_keyword", /unsupported.{0,32}(schema|keyword)|keyword.{0,32}not supported/],
+  ["schema_root", /root.{0,32}(object|anyof)|root level/],
+  ["schema_reference", /\$ref|reference.{0,32}(schema|definition)|definition.{0,32}reference/],
+  ["schema_limits", /schema.{0,32}(too large|too many|limit|nesting)|(?:too large|too many).{0,32}schema/],
+  ["privacy", /zdr|zero.data.retention|data_collection|privacy/],
+  ["model", /model|endpoint|provider/],
+  ["tokens", /token|context.length|maximum length/],
+  ["account", /account|credit|balance|quota|billing/],
+  ["auth", /unauthorized|authentication|api.key|permission/],
+] as const;
+
+async function responseError(response: Response): Promise<{ message: string; providerCode?: string; providerParam?: string; providerName?: string; providerUpstreamCode?: string; providerMetadataKeys?: readonly string[]; providerHints?: readonly string[] }> {
   try {
     const body = asObject(await response.json());
     const error = asObject(body?.error);
-    return typeof error?.message === "string" ? error.message : `OpenRouter returned HTTP ${response.status}.`;
+    const providerCode = typeof error?.code === "number" && Number.isFinite(error.code)
+      ? String(error.code)
+      : safeProviderField(error?.code);
+    const providerParam = safeProviderField(error?.param);
+    const metadata = asObject(error?.metadata);
+    const providerName = safeProviderField(metadata?.provider_name);
+    const providerUpstreamCode = safeProviderField(metadata?.provider_error_code);
+    const routerMetadata = asObject(body?.openrouter_metadata);
+    const metadataKeys = [
+      ...(metadata ? Object.keys(metadata).map((key) => `error.${key}`) : []),
+      ...(routerMetadata ? Object.keys(routerMetadata).map((key) => `router.${key}`) : []),
+    ];
+    const providerMetadataKeys = metadataKeys.filter((key) => /^[a-zA-Z0-9_.-]{1,72}$/.test(key)).slice(0, 16);
+    const diagnosticText = JSON.stringify([metadata, routerMetadata]).toLowerCase();
+    const providerHints = PROVIDER_ERROR_HINTS
+      .filter(([, pattern]) => pattern.test(diagnosticText))
+      .map(([hint]) => hint);
+    return {
+      message: typeof error?.message === "string" ? error.message : `OpenRouter returned HTTP ${response.status}.`,
+      ...(providerCode ? { providerCode } : {}),
+      ...(providerParam ? { providerParam } : {}),
+      ...(providerName ? { providerName } : {}),
+      ...(providerUpstreamCode ? { providerUpstreamCode } : {}),
+      ...(providerMetadataKeys?.length ? { providerMetadataKeys } : {}),
+      ...(providerHints.length ? { providerHints } : {}),
+    };
   } catch {
-    return `OpenRouter returned HTTP ${response.status}.`;
+    return { message: `OpenRouter returned HTTP ${response.status}.` };
   }
 }
 
@@ -106,6 +152,7 @@ export class OpenRouterClient implements OpenRouterTransport {
         headers: {
           authorization: `Bearer ${this.apiKey}`,
           "content-type": "application/json",
+          "x-openrouter-metadata": "enabled",
           "x-request-id": request.idempotencyKey,
           ...(this.appUrl ? { "http-referer": this.appUrl } : {}),
           ...(this.appTitle ? { "x-title": this.appTitle } : {}),
@@ -117,8 +164,8 @@ export class OpenRouterClient implements OpenRouterTransport {
             { role: "user", content: request.prompt },
           ],
           stream: false,
-          max_tokens: request.maxOutputTokens,
-          reasoning: { effort: request.reasoningEffort, exclude: true },
+          max_completion_tokens: request.maxOutputTokens,
+          reasoning: { effort: request.reasoningEffort },
           provider: OPENROUTER_PROVIDER_POLICY,
           response_format: {
             type: "json_schema",
@@ -140,14 +187,23 @@ export class OpenRouterClient implements OpenRouterTransport {
     }
 
     if (!response.ok) {
-      const message = await responseMessage(response);
+      const providerError = await responseError(response);
+      const errorDetails = {
+        statusCode: response.status,
+        ...(providerError.providerCode ? { providerCode: providerError.providerCode } : {}),
+        ...(providerError.providerParam ? { providerParam: providerError.providerParam } : {}),
+        ...(providerError.providerName ? { providerName: providerError.providerName } : {}),
+        ...(providerError.providerUpstreamCode ? { providerUpstreamCode: providerError.providerUpstreamCode } : {}),
+        ...(providerError.providerMetadataKeys ? { providerMetadataKeys: providerError.providerMetadataKeys } : {}),
+        ...(providerError.providerHints ? { providerHints: providerError.providerHints } : {}),
+      };
       if (response.status === 429) {
-        throw new OpenRouterTransportError("rate_limited", message, { retryable: true, retryAfterMs: retryAfterMs(response) });
+        throw new OpenRouterTransportError("rate_limited", providerError.message, { ...errorDetails, retryable: true, retryAfterMs: retryAfterMs(response) });
       }
       if (response.status >= 500) {
-        throw new OpenRouterTransportError("server_error", message, { retryable: true, retryAfterMs: retryAfterMs(response) });
+        throw new OpenRouterTransportError("server_error", providerError.message, { ...errorDetails, retryable: true, retryAfterMs: retryAfterMs(response) });
       }
-      throw new OpenRouterTransportError("client_error", message, { retryable: false });
+      throw new OpenRouterTransportError("client_error", providerError.message, { ...errorDetails, retryable: false });
     }
 
     let body: Record<string, unknown>;

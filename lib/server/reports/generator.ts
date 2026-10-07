@@ -13,21 +13,27 @@ import {
   type OpenRouterTransport,
   type OpenRouterUsage,
 } from "../openrouter/types.ts";
-import { buildGenerationPrompt, buildRepairPrompt, loadReportPrompt } from "./prompts.ts";
+import { buildGenerationPrompt, buildRepairPrompt, loadPwqe6ReportPrompt, loadReportPrompt } from "./prompts.ts";
 import type { GeneratedCanonicalArtifact, ReportGenerationOutcome } from "./types.ts";
 import { validateCanonicalArtifact } from "./validation.ts";
+import { validatePwqe6ReportDraft } from "./pwqe6-validation.ts";
+import type { Pwqe5SourcePackage } from "./pwqe6-source.ts";
 
 export interface GenerateCanonicalReportOptions {
   readonly reportType: ReportType;
   readonly input: JsonObject;
-  readonly packets: readonly ReportEvidencePacketV3_1[];
+  readonly packets: readonly JsonObject[];
   readonly provider: OpenRouterTransport;
   readonly invocationKey: string;
   readonly spentMicros: number;
   readonly costCapMicros: number;
   readonly workspaceRoot?: string;
-  readonly synthesisBundle?: SynthesisBundle;
+  readonly synthesisBundle?: SynthesisBundle | JsonObject;
   readonly modelPolicy: ActivatedReportModelPolicy;
+  readonly contractVersion?: "v3.1" | "v6";
+  readonly source?: Pwqe5SourcePackage;
+  readonly qualificationManifestSha256?: string;
+  readonly snapshotId?: string;
 }
 
 function invalidJsonIssue(result: Extract<OpenRouterGenerationResult, { ok: false }>): ValidationIssue {
@@ -46,7 +52,9 @@ function failure(
 }
 
 export async function generateCanonicalReport(options: GenerateCanonicalReportOptions): Promise<ReportGenerationOutcome> {
-  const promptPackage = await loadReportPrompt(options.reportType, options.workspaceRoot);
+  const promptPackage = options.contractVersion === "v6"
+    ? await loadPwqe6ReportPrompt(options.reportType, options.workspaceRoot)
+    : await loadReportPrompt(options.reportType, options.workspaceRoot);
   const config = options.modelPolicy[options.reportType];
   const escalationTierIndex = config.escalationTier;
   const usages: OpenRouterUsage[] = [];
@@ -78,13 +86,24 @@ export async function generateCanonicalReport(options: GenerateCanonicalReportOp
   const validate = async (result: OpenRouterGenerationResult) => {
     if (!result.ok) return { ok: false as const, issues: [invalidJsonIssue(result)] };
     previousOutput = result.output;
-    const validation = await validateCanonicalArtifact(
-      options.reportType,
-      result.output,
-      options.packets,
-      options.workspaceRoot,
-      options.synthesisBundle,
-    );
+    const validation = options.contractVersion === "v6"
+      ? options.source && options.qualificationManifestSha256 && options.snapshotId && options.packets.length === 1
+        ? validatePwqe6ReportDraft({
+            value: result.output,
+            reportType: options.reportType,
+            snapshotId: options.snapshotId,
+            packet: options.packets[0],
+            source: options.source,
+            qualificationManifestSha256: options.qualificationManifestSha256,
+          })
+        : { ok: false as const, issues: [{ code: "pwqe6_generation_binding", path: "$", message: "PWQE6 source, activation, snapshot, and packet bindings are required." }] }
+      : await validateCanonicalArtifact(
+          options.reportType,
+          result.output,
+          options.packets as ReportEvidencePacketV3_1[],
+          options.workspaceRoot,
+          options.synthesisBundle as SynthesisBundle | undefined,
+        );
     return validation.ok
       ? { ok: true as const, artifact: validation.value }
       : { ok: false as const, issues: validation.issues };

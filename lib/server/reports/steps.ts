@@ -1,9 +1,7 @@
 import { FatalError, RetryableError } from "workflow";
 import type { JsonObject, ReportType } from "../../question-engine/types.ts";
-import type { SynthesisBundle } from "../../report-contracts/types.ts";
 import { getReportWorkflowDependencies } from "./dependencies.ts";
 import { generateCanonicalReport } from "./generator.ts";
-import { buildValidatedSynthesisBundle } from "./synthesis.ts";
 import type {
   GeneratedCanonicalArtifact,
   PassReportWorkflowInput,
@@ -11,14 +9,45 @@ import type {
   PreparedReportInputs,
   ReportGenerationFailure,
 } from "./types.ts";
-import { prepareAndValidateInputs } from "./validation.ts";
+import { preparePwqe6ReportInputs } from "./pwqe6-validation.ts";
+import { assertPwqe6ReportActivationReady } from "./pwqe6-readiness.ts";
+import { loadPwqe5SourcePackage } from "./pwqe6-source.ts";
+import { claimReportAttempt, failReportAttempt, heartbeatReportAttempt } from "./attempts.ts";
+import type { ClassifiedReportFailure } from "./types.ts";
+import { dispatchReportAttemptNotification } from "../notifications/report-status.ts";
+
+export async function claimReportAttemptStep(input: PassReportWorkflowInput): Promise<"claimed" | "already_released"> {
+  "use step";
+  const claim = getReportWorkflowDependencies().claimAttempt;
+  if (claim) return claim(input);
+  return claimReportAttempt(input);
+}
+claimReportAttemptStep.maxRetries = 3;
+
+export async function heartbeatReportAttemptStep(input: PassReportWorkflowInput, phase: "PREFLIGHT" | "GENERATION" | "PDF" | "RELEASE"): Promise<void> {
+  "use step";
+  await heartbeatReportAttempt(input, phase);
+}
+
+export async function persistUnexpectedReportFailureStep(input: PassReportWorkflowInput, failure: ClassifiedReportFailure): Promise<void> {
+  "use step";
+  await failReportAttempt(input, failure);
+}
+persistUnexpectedReportFailureStep.maxRetries = 3;
+
+export async function dispatchReportFailureNotificationStep(input: PassReportWorkflowInput): Promise<void> {
+  "use step";
+  if (input.attemptId) await dispatchReportAttemptNotification(input.attemptId, "REPORT_FAILED");
+}
+dispatchReportFailureNotificationStep.maxRetries = 3;
 
 export async function prepareReportInputsStep(input: PassReportWorkflowInput): Promise<PreparedReportInputs> {
   "use step";
   const dependencies = getReportWorkflowDependencies();
+  await dependencies.preflight?.();
   const snapshot = await dependencies.snapshotBoundary.loadAndDecryptSnapshot(input);
-  const packetValues = await dependencies.snapshotBoundary.buildPseudonymousPackets(snapshot);
-  const validation = await prepareAndValidateInputs(snapshot, packetValues, dependencies.workspaceRoot);
+  const activation = await assertPwqe6ReportActivationReady({ workspaceRoot: dependencies.workspaceRoot, snapshot: snapshot.canonicalSnapshot });
+  const validation = await preparePwqe6ReportInputs(snapshot, activation, dependencies.workspaceRoot);
   if (!validation.ok) throw new FatalError(`input_contract_invalid:${JSON.stringify(validation.issues)}`);
   return validation.value;
 }
@@ -35,21 +64,25 @@ export async function generateReportStep(
   reportType: ReportType,
   reportInput: JsonObject,
   spentMicros: number,
-  synthesisBundle?: SynthesisBundle,
+  synthesisBundle?: JsonObject,
 ): Promise<GeneratedCanonicalArtifact | ReportGenerationFailure> {
   "use step";
   const dependencies = getReportWorkflowDependencies();
   const outcome = await generateCanonicalReport({
     reportType,
     input: reportInput,
-    packets: prepared.packets,
+    packets: prepared.contractVersion === "v6" && prepared.routerPacket ? [prepared.routerPacket] : prepared.packets,
     provider: dependencies.provider,
     invocationKey: input.invocationKey,
     spentMicros,
     costCapMicros: dependencies.costCapMicros ?? 20_000_000,
     workspaceRoot: dependencies.workspaceRoot,
     synthesisBundle,
-    modelPolicy: dependencies.modelPolicy,
+    modelPolicy: prepared.modelPolicy ?? dependencies.modelPolicy!,
+    contractVersion: prepared.contractVersion,
+    source: prepared.contractVersion === "v6" ? await loadPwqe5SourcePackage(dependencies.workspaceRoot) : undefined,
+    qualificationManifestSha256: prepared.qualificationManifestSha256,
+    snapshotId: prepared.snapshot.snapshotId,
   });
   if (!outcome.ok && outcome.failure.retryable) {
     throw new RetryableError(`${outcome.failure.code}:${outcome.failure.message}`, { retryAfter: "30s" });
@@ -67,10 +100,26 @@ export async function buildSynthesisBundleStep(
   input: PassReportWorkflowInput,
   prepared: PreparedReportInputs,
   generated: readonly GeneratedCanonicalArtifact[],
-): Promise<SynthesisBundle> {
+): Promise<JsonObject> {
   "use step";
   try {
-    return buildValidatedSynthesisBundle(prepared, generated);
+    const packet = prepared.routerPacket;
+    if (prepared.contractVersion !== "v6" || !packet || !prepared.sourceManifestSha256 || !prepared.qualificationManifestSha256) {
+      throw new Error("PWQE6 synthesis requires a reviewed activation and a single validated router packet.");
+    }
+    const layers = generated.filter((item) => item.reportType !== "SYNTHESIS");
+    if (layers.length !== 3 || layers.some((item) => item.artifact.artifact_type !== "pwqe6_report")) {
+      throw new Error("PWQE6 synthesis requires validated IFS, PV, and ATT layer drafts.");
+    }
+    return {
+      release_id: "PWQE-5.0.0-design.1",
+      snapshot_id: prepared.snapshot.snapshotId,
+      report_type: "SYNTHESIS",
+      source_manifest_sha256: prepared.sourceManifestSha256,
+      qualification_manifest_sha256: prepared.qualificationManifestSha256,
+      packet,
+      layer_reports: layers.map((item) => ({ report_type: item.reportType, draft: (item.artifact as JsonObject).draft })),
+    } as JsonObject;
   } catch (error) {
     await getReportWorkflowDependencies().persistence.persistFailure(input, "synthesis_bundle_invalid", error instanceof Error ? error.message : String(error), "SYNTHESIS", []);
     throw new FatalError(error instanceof Error ? error.message : String(error));
@@ -83,7 +132,7 @@ export async function renderReportPdfsStep(input: PassReportWorkflowInput, prepa
   try {
     const { renderAndVerifyCanonicalPdf } = await import("../pdf/index.ts");
     return await Promise.all(generated.map(async (item) => {
-      const pdf = await renderAndVerifyCanonicalPdf({ reportType: item.reportType, artifact: item.artifact, packets: prepared.packets, workspaceRoot: dependencies.workspaceRoot, verification: dependencies.pdfVerification });
+      const pdf = await renderAndVerifyCanonicalPdf({ reportType: item.reportType, artifact: item.artifact, packets: prepared.packets, routerPacket: prepared.routerPacket, snapshotId: prepared.snapshot.snapshotId, contractVersion: prepared.contractVersion, workspaceRoot: dependencies.workspaceRoot, verification: dependencies.pdfVerification });
       return { reportType: item.reportType, filename: pdf.filename, bytesBase64: pdf.bytes.toString("base64"), sha256: pdf.sha256, sourceMarkdownSha256: pdf.sourceMarkdownSha256, pageCount: pdf.pageCount, pngPageCount: pdf.pngPageCount };
     }));
   } catch (error) {

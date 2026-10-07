@@ -19,6 +19,10 @@ The v3.1 implementation is complete and has passed its local acceptance gate. Pr
 - Canonical report JSON is authoritative. Markdown and PDF files are validated derivatives.
 - Live database migration, OpenRouter qualification, representative report review, Vercel Workflow/cron deployment, and Resend verification remain deployment gates. Mocked or local success does not satisfy them.
 
+## Current assessment release
+
+New assessment sessions use the byte-pinned PWQE5 source package and the PWQE6 report path. The migration intentionally has no legacy assessment support because the user confirmed that no old assessments need to be preserved. The imported question package and router are still marked as design candidates; live assessment start and report generation fail closed until provider qualification and human review produce the exact deployment-pinned activation manifest. See [`docs/plans/pwqe5-production-integration/run-ledger.md`](docs/plans/pwqe5-production-integration/run-ledger.md), [`migration-notes.md`](docs/plans/pwqe5-production-integration/migration-notes.md), and [`remaining-production-work.md`](docs/plans/pwqe5-production-integration/remaining-production-work.md).
+
 The implementation record and latest gate status live in [`docs/plans/question-engine-v3-1-openrouter/run-ledger.md`](docs/plans/question-engine-v3-1-openrouter/run-ledger.md).
 
 ## End-to-end flow
@@ -64,11 +68,12 @@ Completion is evidence-driven, so the UI shows stage progress rather than promis
 | [`workflows/pass-report.ts`](workflows/pass-report.ts) | Production Vercel Workflow entry point. Pass 1 generates `MAP`; Pass 2 generates `IFS`, `PV`, `ATT`, then `SYNTHESIS`. |
 | [`prisma/schema.prisma`](prisma/schema.prisma) | PostgreSQL data model, including retained legacy models and additive v3.1 models. |
 | [`prisma/migrations/20260902150000_patternwork_v31_persistence/`](prisma/migrations/20260902150000_patternwork_v31_persistence/) | Additive v3.1 migration. It does not delete historical assessment data. |
-| [`specs/patternwork/`](specs/patternwork/) | Immutable, versioned Question Engine v3.1 and Report Prompts v4.1 source packages plus source hashes. |
+| [`specs/patternwork/`](specs/patternwork/) | Immutable, versioned PWQE5 question and PWQE6 report source packages plus pinned source hashes. Earlier packages remain as historical source files only. |
 | [`scripts/report-cli/`](scripts/report-cli/) | Local Codex report path reusing production packet, prompt, schema, validator, synthesis, PDF, and naming contracts. |
 | [`scripts/qualify-openrouter/`](scripts/qualify-openrouter/) | Live OpenRouter model qualification and explicit human-approval tooling. |
 | [`tests/`](tests/) | Contract, safety/routing, UI, persistence, privacy, workflow, delivery, PDF, CLI, qualification, retention, and replay tests. |
-| [`docs/plans/question-engine-v3-1-openrouter/`](docs/plans/question-engine-v3-1-openrouter/) | Accepted plan, phase packets, contract IDs, run ledger, verification record, and activation gates. |
+| [`docs/plans/pwqe5-production-integration/`](docs/plans/pwqe5-production-integration/) | PWQE5 migration run ledger, explicit no-legacy migration notes, and remaining production activation work. |
+| [`docs/pwqe6-report-workflow.md`](docs/pwqe6-report-workflow.md) | PWQE6 report packet, generation, lineage, artifact, and PDF validation boundaries. |
 
 Other public pages such as `/`, `/method`, `/companion`, and `/cannawithdrawl` are existing site content and are not part of the v3.1 engine.
 
@@ -229,6 +234,7 @@ Use [`.env.template`](.env.template) as the sanitized variable-name inventory. I
 | `OPENROUTER_QUALIFICATION_MANIFEST_SHA256` | Canonical SHA-256 printed by the approval command for that exact manifest. Never use a placeholder or a differently serialized file hash. |
 | `OPENROUTER_APP_URL` | Optional OpenRouter application/referrer URL. |
 | `OPENROUTER_APP_NAME` | Optional OpenRouter application name. |
+| `PDFTOTEXT_PATH`, `PDFINFO_PATH`, `PDFTOPPM_PATH` | Optional absolute Poppler executable paths for PDF text, metadata, and raster verification. The commands must otherwise be on the runtime `PATH`; report preflight fails closed when any is unavailable. |
 | `OPENROUTER_MODEL_LUNA`, `OPENROUTER_MODEL_TERRA`, `OPENROUTER_MODEL_SOL` | Optional qualification candidate overrides. Changing one requires requalification. |
 | `OPENROUTER_MODEL_DEEPSEEK` | Not currently read by the application. Setting it has no effect unless the reviewed qualification policy is deliberately extended and requalified. |
 | `NEXT_PUBLIC_SHOW_ASSESSMENT_DEVTOOLS` | Set to `true` only when browser development controls should be visible. |
@@ -237,27 +243,47 @@ Compatibility fallbacks `PATTERNWORK_APP_URL` and `PATTERNWORK_EMAIL_HMAC_KEY` e
 
 Generate each secret independently. Never reuse the encryption, HMAC, cookie, cron, or webhook secret for another purpose.
 
+Before accepting a completed pass, verify lifecycle migrations, reviewed model binding, delivery configuration, and PDF tooling without generating a report:
+
+```bash
+npm run reports:preflight
+```
+
+Operator recovery is bound to the failed or stalled attempt ledger entry:
+
+```bash
+npm run reports:retry -- --attempt <attempt-id>
+```
+
+Successful attempts replay only failed delivery; they do not regenerate released reports.
+
 ## OpenRouter qualification and activation
 
 Runtime generation fails closed unless a reviewed manifest and its deployment-pinned digest validate exactly. The candidate ladder is Luna/low, Luna/medium, Terra/medium, then Sol/high. Mapping, layer, and synthesis routes are pinned independently to the lowest configuration that passes every machine and human gate.
 
 1. Configure `OPENROUTER_API_KEY`, a deliberate `OPENROUTER_MAX_COST_PER_ASSESSMENT_USD`, and any model overrides.
-2. Run live A/B/C fixture qualification:
+2. The offline source-fixture check validates the 9 fictional worked profiles and 14 negative cases. It makes no provider calls and creates no approval:
 
    ```bash
-   npm run reports:qualify -- --output .tmp/openrouter-qualification
+   npm run reports:qualify -- --offline-fixtures
    ```
 
-3. Review the generated artifacts for prohibited claims, traceability, fixture comparability, and content quality. The result remains `pending_review` until human approval.
-4. Create approval JSON bound to the `qualificationRunSha256` and `draftPinsSha256` in `pending-review.json`. Its exact type is `QualificationReviewApproval` in [`lib/server/openrouter/qualification.ts`](lib/server/openrouter/qualification.ts).
-5. Bind that approval to the exact run:
+3. Run live PWQE5 model qualification to write a pending review package:
 
    ```bash
-   npm run reports:qualify -- --output .tmp/openrouter-qualification --approval approval.json
+   npm run reports:qualify -- --output .tmp/pwqe5-qualification
    ```
 
-6. Put the full contents of `reviewed-activation-manifest.json` into `OPENROUTER_QUALIFICATION_MANIFEST_JSON`. Put the exact printed digest into `OPENROUTER_QUALIFICATION_MANIFEST_SHA256`.
-7. Redeploy, run a representative end-to-end assessment, and approve the reports before enabling production delivery.
+4. Review the generated drafts and evidence for prohibited claims, traceability, fixture comparability, and content quality. The result remains `pending_review` until human approval.
+5. Create approval JSON bound to the exact qualification run and draft-pin digests. Its exact type is `Pwqe5QualificationReviewApproval` in [`lib/server/openrouter/pwqe5-qualification.ts`](lib/server/openrouter/pwqe5-qualification.ts).
+6. Bind that approval to the exact run:
+
+   ```bash
+   npm run reports:qualify -- --output .tmp/pwqe5-qualification --approval approval.json
+   ```
+
+7. Put the full contents of `reviewed-activation-manifest.json` into `OPENROUTER_QUALIFICATION_MANIFEST_JSON`. Put the exact printed digest into `OPENROUTER_QUALIFICATION_MANIFEST_SHA256`.
+8. Redeploy, run a representative end-to-end assessment, and approve the reports before enabling production delivery.
 
 A changed prompt, schema, source manifest, candidate model, reasoning effort, output-token limit, pin set, approval, or digest invalidates activation and requires requalification.
 
@@ -337,7 +363,7 @@ Preserve these boundaries:
 - Keep canonical JSON authoritative and bind derivatives by digest.
 - Keep report release all-or-nothing and delivery replay-safe.
 - Keep authorization scoped; never authorize by email alone.
-- Preserve immutable historical snapshots and legacy rows.
+- Preserve immutable historical snapshots. This PWQE5 migration has no legacy assessment support, as explicitly authorized by the user.
 - Do not weaken schema, traceability, prohibited-claim, source-integrity, qualification, cost, or retention gates to make a test pass.
 - Do not claim live PostgreSQL, OpenRouter, Resend, Workflow, or cron success unless exercised in that environment.
 - Update tests and this README when paths, contracts, variables, or operational behavior change.

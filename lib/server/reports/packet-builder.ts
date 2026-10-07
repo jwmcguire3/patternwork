@@ -3,6 +3,7 @@ import type { JsonValue, LayerReportType, LayerSectionCode } from "../../questio
 import { getBankItem, LAYER_SECTION_CODES } from "../../question-engine/manifest.ts";
 import { ACTIVE_EXECUTABLE_ROUTING_CONTRACTS_BY_ID } from "../../question-engine/routing-contracts.ts";
 import type { ReportEvidencePacketV3_1 } from "../../report-contracts/types.ts";
+import { assertCanonicalCompletionBoundary } from "../assessment/completion-boundary.ts";
 import type { DecryptedAssessmentSnapshot } from "./types.ts";
 
 interface CanonicalResponse {
@@ -215,6 +216,7 @@ export function buildPseudonymousPacketsFromCanonicalSnapshot(snapshot: Decrypte
   const completedResponses = responses.filter((response) => response.completionState === "COMPLETED");
   if (completedResponses.length === 0) throw new Error("Canonical snapshot contains no completed responses from which to build evidence packets.");
   const completion = object(snapshot.canonicalSnapshot.assessment_completion);
+  const completionBoundary = assertCanonicalCompletionBoundary(snapshot.completedPass, completion);
   const generatedAt = typeof completion?.completed_at === "string" && Number.isFinite(Date.parse(completion.completed_at))
     ? completion.completed_at
     : new Date(0).toISOString();
@@ -417,9 +419,12 @@ export function buildPseudonymousPacketsFromCanonicalSnapshot(snapshot: Decrypte
       updated_at: generatedAt,
     };
   });
-  const assessmentCompletion = snapshot.completedPass === 1
-    ? { completion_mode: "pass1_complete", last_completed_stage: "S2", safe_resume_stage: "S3", underdetermined_section_codes: LAYER_SECTION_CODES }
-    : { completion_mode: "pass2_complete", last_completed_stage: "S5", safe_resume_stage: "complete", underdetermined_section_codes: LAYER_SECTION_CODES };
+  const assessmentCompletion = {
+    completion_mode: completionBoundary.completionMode,
+    last_completed_stage: completionBoundary.lastCompletedStage,
+    safe_resume_stage: completionBoundary.safeResumeStage,
+    underdetermined_section_codes: LAYER_SECTION_CODES,
+  };
   const lastCompleted = completedResponses.at(-1);
   const lastFamily = lastCompleted ? getBankItem(lastCompleted.bankItemId)?.family : undefined;
   const lastEvidence = lastCompleted ? typedByResponse.get(lastCompleted.responseId) : undefined;

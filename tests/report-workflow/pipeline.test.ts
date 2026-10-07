@@ -13,6 +13,9 @@ import type { DecryptedAssessmentSnapshot, GeneratedCanonicalArtifact, PassRepor
 import { passReportWorkflow } from "../../workflows/pass-report.ts";
 
 function snapshot(completedPass: 1 | 2): DecryptedAssessmentSnapshot {
+  const completion = completedPass === 1
+    ? { completion_mode: "pass1_complete", last_completed_stage: "S2", safe_resume_stage: "S3" }
+    : { completion_mode: "pass2_complete", last_completed_stage: "S5", safe_resume_stage: "complete" };
   return {
     databaseId: "db-snapshot",
     assessmentSessionId: "session",
@@ -22,7 +25,7 @@ function snapshot(completedPass: 1 | 2): DecryptedAssessmentSnapshot {
     evidenceSha256: "a".repeat(64),
     scopeSha256: "b".repeat(64),
     canonicalSnapshot: {
-      assessment_completion: { completed_at: "2026-09-02T12:00:00.000Z" },
+      assessment_completion: { ...completion, completed_at: "2026-09-02T12:00:00.000Z" },
       responses: [{ responseId: "response", interactionInstanceId: "interaction", bankItemId: "MS-101", bankItemVersion: "1.0", administrationSequence: 1, stage: "S1", completionState: "COMPLETED", responseOrder: [], content: { response: { observation: "waited" } } }],
     },
   };
@@ -137,10 +140,11 @@ test("an already released workflow still invokes idempotent delivery", async () 
   const delivered: PassReportWorkflowInput[] = [];
   const configured: ReportWorkflowDependencies = {
     ...dependencies(snapshotValue, provider, persistence),
+    claimAttempt: async () => "already_released",
     delivery: { async deliverReleased(input) { delivered.push({ ...input, snapshotId: snapshotValue.snapshotId }); } },
   };
   setReportWorkflowDependenciesForTests(configured);
-  const input = { assessmentSessionId: "session", snapshotId: "pwsn_pipeline", completedPass: 2, invocationKey: "stable" } as const;
+  const input = { assessmentSessionId: "session", snapshotId: "pwsn_pipeline", completedPass: 2, invocationKey: "stable", attemptId: "attempt-released", attemptNumber: 1 } as const;
   try {
     const result = await passReportWorkflow(input);
     assert.equal(result.status, "already_released");

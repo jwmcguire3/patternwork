@@ -56,6 +56,54 @@ enum PatternworkV31DeliveryStatus {
 enum PatternworkV31AccessTokenPurpose {
   RESUME_ASSESSMENT
   VIEW_REPORT
+  EXPORT_RESPONSES
+}
+
+enum PatternworkV31ReportAttemptStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  FAILED
+  STALLED
+}
+
+enum PatternworkV31ReportAttemptPhase {
+  ENQUEUE
+  PREFLIGHT
+  GENERATION
+  PDF
+  RELEASE
+}
+
+enum PatternworkV31ReportAttemptRequester {
+  COMPLETION
+  USER
+  OPERATOR
+  BACKFILL
+}
+
+enum PatternworkV31ReportFailureCategory {
+  TRANSIENT
+  STALLED
+  CONFIGURATION
+  VALIDATION
+  COST
+  PDF
+  DELIVERY
+  INTERNAL
+}
+
+enum PatternworkV31RetryAudience {
+  USER
+  OPERATOR
+  NONE
+}
+
+enum PatternworkV31NotificationType {
+  RESUME_LINK
+  REPORT_STARTED
+  REPORT_FAILED
+  EXPORT_LINK
 }
 
 enum PatternworkV31PdfStatus {
@@ -115,6 +163,7 @@ model PatternworkV31AssessmentSession {
   snapshots     PatternworkV31AssessmentSnapshot[]
   responses     PatternworkV31AssessmentResponse[]
   accessTokens  PatternworkV31AccessToken[]
+  notifications PatternworkV31Notification[]
 
   @@index([userId])
   @@index([contactEmailHash])
@@ -187,9 +236,12 @@ model PatternworkV31AssessmentSnapshot {
   encryptionKeyVersion  String
   completedAt           DateTime
   frozenAt              DateTime @default(now())
+  currentReportAttemptNumber Int  @default(0)
 
   assessmentSession PatternworkV31AssessmentSession @relation(fields: [assessmentSessionId], references: [id], onDelete: Restrict)
   reportRuns       PatternworkV31ReportRun[]
+  reportAttempts   PatternworkV31ReportWorkflowAttempt[]
+  notifications    PatternworkV31Notification[]
   evidencePackets  PatternworkV31EvidencePacket[]
 
   @@unique([snapshotId, snapshotRevision], name: "pw31_snapshot_identity")
@@ -247,10 +299,43 @@ model PatternworkV31ReportRun {
   updatedAt             DateTime                  @updatedAt
 
   assessmentSnapshot PatternworkV31AssessmentSnapshot @relation(fields: [assessmentSnapshotId], references: [id], onDelete: Restrict)
+  reportWorkflowAttempt PatternworkV31ReportWorkflowAttempt @relation(fields: [reportWorkflowAttemptId], references: [id], onDelete: Restrict)
+  reportWorkflowAttemptId String
   artifact           PatternworkV31ReportArtifact?
 
   @@unique([assessmentSnapshotId, reportType], name: "pw31_snapshot_report_type")
   @@index([status, createdAt])
+  @@index([reportWorkflowAttemptId, status])
+}
+
+model PatternworkV31ReportWorkflowAttempt {
+  id                    String                              @id
+  assessmentSnapshotId  String
+  attemptNumber         Int
+  invocationKey         String                              @unique
+  requestIdempotencyKey String?                             @unique
+  workflowRunId         String?                             @unique
+  watchdogRunId         String?                             @unique
+  status                PatternworkV31ReportAttemptStatus   @default(QUEUED)
+  phase                 PatternworkV31ReportAttemptPhase    @default(ENQUEUE)
+  requestedBy           PatternworkV31ReportAttemptRequester
+  failureCategory       PatternworkV31ReportFailureCategory?
+  retryAudience         PatternworkV31RetryAudience         @default(NONE)
+  failureCode           String?
+  failureMessage        String?
+  heartbeatAt           DateTime                            @default(now())
+  startedAt             DateTime?
+  reportsReleasedAt     DateTime?
+  finishedAt            DateTime?
+  createdAt             DateTime                            @default(now())
+  updatedAt             DateTime                            @updatedAt
+
+  assessmentSnapshot PatternworkV31AssessmentSnapshot @relation(fields: [assessmentSnapshotId], references: [id], onDelete: Restrict)
+  reportRuns         PatternworkV31ReportRun[]
+  notifications      PatternworkV31Notification[]
+
+  @@unique([assessmentSnapshotId, attemptNumber], name: "pw31_snapshot_report_attempt")
+  @@index([status, heartbeatAt])
 }
 
 model PatternworkV31ReportArtifact {
@@ -304,4 +389,70 @@ model PatternworkV31ReportDelivery {
 
   @@index([reportArtifactId, status])
   @@index([recipientEmailHash])
+}
+
+model PatternworkV31Notification {
+  id                       String                       @id
+  assessmentSessionId      String
+  assessmentSnapshotId     String?
+  reportWorkflowAttemptId  String?
+  type                     PatternworkV31NotificationType
+  idempotencyKey           String                       @unique
+  status                   PatternworkV31DeliveryStatus @default(PENDING)
+  recipientEmailHash       String
+  recipientEmailCiphertext Bytes
+  emailNonce               Bytes
+  actionUrlCiphertext      Bytes
+  actionUrlNonce           Bytes
+  encryptionKeyVersion     String
+  providerMessageId        String?                      @unique
+  resendMessageId          String?                      @unique
+  attemptCount             Int                          @default(0)
+  failureCode              String?
+  failureMessage           String?
+  sentAt                   DateTime?
+  deliveredAt              DateTime?
+  createdAt                DateTime                     @default(now())
+  updatedAt                DateTime                     @updatedAt
+
+  assessmentSession     PatternworkV31AssessmentSession       @relation(fields: [assessmentSessionId], references: [id], onDelete: Restrict)
+  assessmentSnapshot    PatternworkV31AssessmentSnapshot?      @relation(fields: [assessmentSnapshotId], references: [id], onDelete: Restrict)
+  reportWorkflowAttempt PatternworkV31ReportWorkflowAttempt?   @relation(fields: [reportWorkflowAttemptId], references: [id], onDelete: Restrict)
+
+  @@index([assessmentSessionId, type, status])
+  @@index([assessmentSnapshotId, type])
+  @@index([recipientEmailHash])
+}
+
+model PatternworkV31NotificationWebhookEvent {
+  id                String   @id
+  providerEventId   String   @unique
+  providerMessageId String?
+  eventType         String
+  payloadSha256     String
+  receivedAt        DateTime @default(now())
+
+  @@index([providerMessageId])
+}
+
+model PatternworkDebugReportRun {
+  id                String   @id
+  profileId         String
+  mode              String
+  status            String   @default("QUEUED")
+  phase             String   @default("QUEUED")
+  progressNote      String   @default("Waiting for the report workflow.")
+  requestedModel    String
+  reasoningEffort   String
+  workflowRunId     String?  @unique
+  resultJson        Json?
+  totalCostMicros   BigInt   @default(0)
+  failureCode       String?
+  heartbeatAt       DateTime @default(now())
+  completedAt       DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([status, updatedAt])
+  @@index([profileId, createdAt])
 }

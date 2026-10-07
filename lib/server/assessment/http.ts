@@ -18,6 +18,7 @@ export function publicBaseUrl(request: NextRequest): string {
 
 export function assessmentErrorStatus(error: unknown): number {
   if (!(error instanceof AssessmentError)) return 500;
+  if (error.code === "report_unavailable") return 503;
   if (error.code === "conflict") return 409;
   if (error.code === "invalid" || error.code === "completion_blocked") return 422;
   if (error.code === "expired" || error.code === "replayed" || error.code === "not_found") return 410;

@@ -112,7 +112,14 @@ test("candidate and approval evidence cannot be rewritten under a substituted ou
   const candidates: QualifiedModelTier[] = manifest.candidates.map((candidate) => ({ ...candidate }));
   candidates[0] = { ...candidates[0], model: "arbitrary/model" };
   const candidateRewrite = { ...manifest, candidates, candidateOrderSha256: sha256Canonical(candidates) };
+  const priorModelCandidates = manifest.candidates.map((candidate, index) => ({
+    ...candidate,
+    model: "openai/gpt-5.6-luna",
+    reasoningEffort: (["low", "medium", "medium", "high"] as const)[index],
+  }));
+  const priorModelRewrite = { ...manifest, candidates: priorModelCandidates, candidateOrderSha256: sha256Canonical(priorModelCandidates) };
   const approvalRewrite = { ...manifest, approval: { ...manifest.approval, reviewedBy: "different-reviewer" } };
-  assert.throws(() => activate(candidateRewrite), /reviewed pin/u);
+  assert.throws(() => activate(candidateRewrite), /configured OpenRouter model/u);
+  assert.throws(() => activate(priorModelRewrite), /configured OpenRouter model/u);
   assert.throws(() => activate(approvalRewrite), /approval evidence/u);
 });

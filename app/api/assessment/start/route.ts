@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
   try { body = await request.json(); } catch { return NextResponse.json({ error: "Invalid request." }, { status: 400 }); }
   const email = typeof body.email === "string" ? body.email.trim() : "";
   const consentVersion = typeof body.consentVersion === "string" ? body.consentVersion.trim() : "";
-  if (!emailPattern.test(email) || !consentVersion) return NextResponse.json({ error: "Email and consent are required." }, { status: 400 });
+  if (!emailPattern.test(email) || consentVersion !== "PWQE5-CONSENT-1") return NextResponse.json({ error: "Email and current consent are required." }, { status: 400 });
 
   try {
     const existingSessionId = authenticatedAssessmentSessionId(request);
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const created = await startAssessment({ email, consentVersion, baseUrl: publicBaseUrl(request) });
-    const response = NextResponse.json({ state: created.state }, { status: 201 });
+    const response = NextResponse.json({ state: created.state, notificationStatus: created.notificationStatus }, { status: 201 });
     response.cookies.set(ASSESSMENT_SESSION_COOKIE, issueSessionCookieValue(created.sessionId, cookieKeyringFromEnv()), assessmentSessionCookieOptions);
     return response;
   } catch (error) {

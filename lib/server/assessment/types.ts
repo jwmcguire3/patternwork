@@ -97,6 +97,12 @@ export interface AssessmentStateView {
   readonly canPause: boolean;
   readonly completedCount: number;
   readonly currentResponse?: { readonly completionState: CompletionState; readonly response: JsonValue; readonly responseOrder: readonly string[] } | null;
-  readonly reportStatus?: "NOT_STARTED" | "GENERATING" | "READY" | "FAILED";
+  readonly reportStatus?: "NOT_STARTED" | "QUEUED" | "GENERATING" | "READY" | "FAILED";
   readonly reportReadyUrl?: string | null;
+  readonly deliveryStatus?: "NOT_STARTED" | "PENDING" | "SENT" | "DELIVERED" | "FAILED";
+  readonly failureCategory?: string;
+  readonly retryAudience?: "USER" | "OPERATOR" | "NONE";
+  readonly canRetry?: boolean;
+  readonly currentAttempt?: { readonly id: string; readonly attemptNumber: number; readonly status: string; readonly startedAt?: string; readonly updatedAt: string } | null;
+  readonly resumeNotificationStatus?: "NOT_STARTED" | "PENDING" | "SENT" | "DELIVERED" | "FAILED";
 }

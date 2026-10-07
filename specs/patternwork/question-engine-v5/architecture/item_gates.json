@@ -1,0 +1,168 @@
+{
+  "scope": "All flags must be server-derived from identified answers/episode bindings. This declaration is not a complete production derivation implementation.",
+  "gates": {
+    "M14": {
+      "exclude_parent_options": [
+        "M13.nothing"
+      ]
+    },
+    "M27": {
+      "exclude_parent_options": [
+        "M26.sequential"
+      ]
+    },
+    "D07": {
+      "required_flags": [
+        "actual_first_move"
+      ]
+    },
+    "D08": {
+      "required_flags": [
+        "actual_next_move"
+      ],
+      "exclude_parent_options": [
+        "D07.nothing"
+      ]
+    },
+    "D09": {
+      "required_flags": [
+        "actual_next_move"
+      ],
+      "exclude_parent_options": [
+        "D07.nothing",
+        "D08.different"
+      ]
+    },
+    "D10": {
+      "required_flags": [
+        "actual_next_move"
+      ],
+      "exclude_parent_options": [
+        "D07.nothing",
+        "D08.different"
+      ]
+    },
+    "D11": {
+      "required_flags": [
+        "actual_next_move"
+      ],
+      "exclude_parent_options": [
+        "D07.nothing",
+        "D08.different"
+      ]
+    },
+    "D12": {
+      "required_flags": [
+        "actual_simultaneous_wants"
+      ]
+    },
+    "D13": {
+      "required_flags": [
+        "actual_simultaneous_wants"
+      ]
+    },
+    "D14": {
+      "required_flags": [
+        "actual_simultaneous_wants"
+      ]
+    },
+    "D15": {
+      "required_parent_options": [
+        "M05.attack"
+      ]
+    },
+    "D19": {
+      "required_flags": [
+        "reported_exposure_concern"
+      ]
+    },
+    "D23": {
+      "required_flags": [
+        "actual_feeling_episode"
+      ]
+    },
+    "D27": {
+      "required_flags": [
+        "actual_need_disclosure"
+      ]
+    },
+    "D31": {
+      "required_flags": [
+        "actual_selected_step"
+      ]
+    },
+    "D34": {
+      "required_flags": [
+        "actual_low_response"
+      ]
+    },
+    "D36": {
+      "required_flags": [
+        "actual_recovery_episode"
+      ]
+    },
+    "D37": {
+      "required_flags": [
+        "actual_easing"
+      ]
+    },
+    "D38": {
+      "required_flags": [
+        "actual_helpful_social_effect"
+      ]
+    },
+    "D41": {
+      "required_flags": [
+        "body_detail_allowed"
+      ]
+    },
+    "D43": {
+      "required_flags": [
+        "actual_wait_response"
+      ]
+    },
+    "D46": {
+      "required_flags": [
+        "actual_space_or_distance_episode"
+      ]
+    },
+    "D50": {
+      "required_flags": [
+        "actual_received_repair"
+      ]
+    },
+    "D51": {
+      "required_flags": [
+        "actual_received_repair"
+      ]
+    },
+    "D55": {
+      "required_flags": [
+        "actual_bothersome_comment"
+      ]
+    },
+    "D56": {
+      "required_flags": [
+        "two_distinct_actual_episodes"
+      ]
+    },
+    "D57": {
+      "required_flags": [
+        "two_distinct_actual_episodes",
+        "matched_reported_behavior"
+      ]
+    },
+    "D58": {
+      "required_flags": [
+        "two_distinct_actual_episodes",
+        "reported_candidate_trigger",
+        "matched_reported_behavior"
+      ]
+    },
+    "D59": {
+      "required_flags": [
+        "actual_response_stop"
+      ]
+    }
+  }
+}

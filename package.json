@@ -12,6 +12,8 @@
     "test:contracts": "tsx --test tests/contracts/*.test.ts",
     "reports:codex": "tsx scripts/report-cli/index.ts",
     "reports:qualify": "tsx scripts/qualify-openrouter/index.ts",
+    "reports:preflight": "tsx scripts/report-preflight/index.ts",
+    "reports:retry": "tsx scripts/report-retry/index.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {

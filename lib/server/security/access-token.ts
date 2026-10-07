@@ -1,14 +1,19 @@
 import { constantTimeEqual, randomOpaqueToken, sha256 } from "./crypto.ts";
 
 export const ACCESS_TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000;
-export type AccessTokenScope = "RESUME_ASSESSMENT" | "VIEW_REPORT";
+export const RESPONSE_EXPORT_ACCESS_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
+export type AccessTokenScope = "RESUME_ASSESSMENT" | "VIEW_REPORT" | "EXPORT_RESPONSES";
+
+export function accessTokenTtlMs(scope: AccessTokenScope): number {
+  return scope === "EXPORT_RESPONSES" ? RESPONSE_EXPORT_ACCESS_TOKEN_TTL_MS : ACCESS_TOKEN_TTL_MS;
+}
 
 export function scopedAccessTokenHash(token: string, scope: AccessTokenScope): string {
   return sha256(`patternwork:access-token:${scope}:${token}`);
 }
 
 export function issueScopedAccessToken(scope: AccessTokenScope, now = new Date(), token = randomOpaqueToken()) {
-  return { token, tokenHash: scopedAccessTokenHash(token, scope), scope, expiresAt: new Date(now.getTime() + ACCESS_TOKEN_TTL_MS) };
+  return { token, tokenHash: scopedAccessTokenHash(token, scope), scope, expiresAt: new Date(now.getTime() + accessTokenTtlMs(scope)) };
 }
 
 export function validateScopedAccessToken(

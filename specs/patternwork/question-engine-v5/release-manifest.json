@@ -1,0 +1,102 @@
+{
+  "manifestVersion": "1",
+  "release": "PWQE-5.0.0-design.1",
+  "routerVersion": "PW-ROUTER-1.0.0-candidate.1",
+  "promptRelease": "6.0",
+  "evidenceContract": "patternwork-router-evidence-v1",
+  "reportContract": "patternwork-report-v6-design",
+  "schemaRevisions": {
+    "routerPacket": "urn:patternwork:router-evidence:1",
+    "reportDraft": "draft-2020-12"
+  },
+  "bindings": {
+    "questionBankPath": "assessment/question_bank.json",
+    "routingTargetsPath": "architecture/routing_targets.json",
+    "itemGatesPath": "architecture/item_gates.json",
+    "routerPacketSchemaPath": "schemas/router_packet.schema.json",
+    "reportDraftSchemaPath": "schemas/report_draft.schema.json"
+  },
+  "sourceSha256": "bc94e4f06e8331725df477f258754e807bae9ad9e22a2987bcffed67fa839b7c",
+  "sourceReleaseManifestSha256": "bb773492b9b941c038a6a87b545a8cfd1dd7afbaeac056c8eb56eefafe80007a",
+  "counts": {
+    "questionBank": 1,
+    "routingAssets": 2,
+    "workedExamples": 1,
+    "negativeExamples": 1,
+    "reportPrompts": 7,
+    "schemas": 2,
+    "sourceAssets": 14
+  },
+  "files": [
+    {
+      "path": "assessment/question_bank.json",
+      "bytes": 330964,
+      "sha256": "ab6d2d51461976a7826eef63c6468033eba331008ef382d51ec194ee48ce8d16"
+    },
+    {
+      "path": "architecture/routing_targets.json",
+      "bytes": 46829,
+      "sha256": "f6d9eab4c3478055403500e285cb41c64500385c15e50b88ee42a6d37e265977"
+    },
+    {
+      "path": "architecture/item_gates.json",
+      "bytes": 3146,
+      "sha256": "d7b72aab20d9b3a2890279be8f334cb17f8842ed0e82ac6a1e3f9471461ac7fd"
+    },
+    {
+      "path": "examples/worked_paths.json",
+      "bytes": 54853,
+      "sha256": "7a3422b052aa524429c3da8e608c06fa3ef6c323cc4f8728fbb09ca42e8dbf93"
+    },
+    {
+      "path": "examples/negative_cases.json",
+      "bytes": 3955,
+      "sha256": "9e8bb8356bccf35ac5f5a13bdfab9d7db1a358cf69ad4db4e77e9185d6ccbd36"
+    },
+    {
+      "path": "reports/00_SHARED_REPORT_PROMPT_v6.md",
+      "bytes": 9889,
+      "sha256": "1752655412940e6cb4f4ed718bfeecc27e763c2639fe394720e02dc68525a633"
+    },
+    {
+      "path": "reports/01_MAPPING_REPORT_PROMPT.md",
+      "bytes": 919,
+      "sha256": "7b1dc18abdf75e86e59c00efe30317da829ce1ed2593560af6ba8b38a1b2c76b"
+    },
+    {
+      "path": "reports/02_IFS_REPORT_PROMPT.md",
+      "bytes": 1064,
+      "sha256": "4803ec125c09a7aa030deb3c61e71370731b2ca5281a0871552d6060ff4379a2"
+    },
+    {
+      "path": "reports/03_STATE_REPORT_PROMPT.md",
+      "bytes": 979,
+      "sha256": "b901d1b6312c711743bb21f93c746652bb0e5a38a77b2fcc093c2a827cc723fa"
+    },
+    {
+      "path": "reports/04_ATTACHMENT_REPORT_PROMPT.md",
+      "bytes": 1011,
+      "sha256": "0caa2ce5173a5c9af7398920a76dea6a67c128f1beb91c8efd7e5949097a722a"
+    },
+    {
+      "path": "reports/05_SYNTHESIS_REPORT_PROMPT.md",
+      "bytes": 998,
+      "sha256": "0b9f2b5f24755ee3f02350ecb7e693fb17a03d8a54595d2314e516005dcc6dbb"
+    },
+    {
+      "path": "reports/06_REVIEWER_PROMPT.md",
+      "bytes": 2075,
+      "sha256": "ed2731739cdc2ed3a5254a663d0a41e15fb50067a5af968ca0fe4c0669d275fa"
+    },
+    {
+      "path": "schemas/report_draft.schema.json",
+      "bytes": 4929,
+      "sha256": "12083e2135609380fff3cf9efb5da6859e8c529fbdaa77411aa6d0d193d7e798"
+    },
+    {
+      "path": "schemas/router_packet.schema.json",
+      "bytes": 20704,
+      "sha256": "0e4e62a10ca14841b0c90f22465761f33fc0975c874dc045a6cda3f242bdb24a"
+    }
+  ]
+}

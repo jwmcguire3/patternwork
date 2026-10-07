@@ -1,0 +1,224 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Patternwork v6 design report draft",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "release_id",
+    "snapshot_id",
+    "report_type",
+    "title",
+    "sections",
+    "claims",
+    "name_registry",
+    "reflection_questions"
+  ],
+  "properties": {
+    "release_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "snapshot_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "report_type": {
+      "enum": [
+        "MAP",
+        "IFS",
+        "PV",
+        "ATT",
+        "SYNTHESIS"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "heading",
+          "text",
+          "claim_ids"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "heading": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "claim_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "text",
+          "kind",
+          "scope",
+          "evidence_ids",
+          "counterevidence_ids",
+          "rationale",
+          "remaining_uncertainty"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "reported",
+              "supported_interpretation",
+              "open_question",
+              "not_assessed"
+            ]
+          },
+          "scope": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "occurrence_ids",
+              "person_ids",
+              "description"
+            ],
+            "properties": {
+              "occurrence_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "uniqueItems": true
+              },
+              "person_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "uniqueItems": true
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "counterevidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "remaining_uncertainty": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "reported",
+                    "supported_interpretation"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "evidence_ids": {
+                  "minItems": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "name_registry": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name_id",
+          "name",
+          "role",
+          "author_generated",
+          "supporting_claim_ids"
+        ],
+        "properties": {
+          "name_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "manager",
+              "firefighter",
+              "context_dependent",
+              "vulnerable_part",
+              "descriptive_pattern"
+            ]
+          },
+          "author_generated": {
+            "type": "boolean"
+          },
+          "supporting_claim_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    "reflection_questions": {
+      "type": "array",
+      "maxItems": 2,
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
