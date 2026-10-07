@@ -1,0 +1,1671 @@
+{
+  "release": "PWQE-5.1.0-candidate.1",
+  "plans": [
+    {
+      "id": "C01",
+      "title": "Smaller request with difficulty allowing need inside",
+      "fictional": true,
+      "config": {
+        "people": {
+          "P1": "partner",
+          "P2": "supervisor",
+          "P3": "friend"
+        },
+        "referents": {
+          "evaluator": "P2",
+          "boundary_person": "P2",
+          "close_person": "P1",
+          "support_person": "P3",
+          "repair_person": "P1",
+          "conflict_person": "P1"
+        },
+        "topics": [
+          "body_detail"
+        ],
+        "focus_topics": [],
+        "details": []
+      },
+      "focus_roots": [
+        "M20"
+      ],
+      "answers": {
+        "M20": [
+          {
+            "selected": [
+              "M20.small"
+            ]
+          }
+        ],
+        "M21": [
+          {
+            "selected": [
+              "M21.burden"
+            ]
+          }
+        ],
+        "D17": [
+          {
+            "selected": [
+              "D17.care"
+            ]
+          }
+        ],
+        "D18": [
+          {
+            "selected": [
+              "D18.need"
+            ]
+          }
+        ],
+        "D21": [
+          {
+            "selected": [
+              "D21.visible"
+            ]
+          }
+        ],
+        "D19": [
+          {
+            "selected": [
+              "D19.burden"
+            ]
+          }
+        ],
+        "D20": [
+          {
+            "selected": [
+              "D20.need"
+            ]
+          }
+        ],
+        "D65": [
+          {
+            "selected": [
+              "D65.judge"
+            ]
+          }
+        ],
+        "D66": [
+          {
+            "selected": [
+              "D66.compelled"
+            ]
+          }
+        ],
+        "D67": [
+          {
+            "selected": [
+              "D67.not_allowed"
+            ]
+          }
+        ],
+        "D68": [
+          {
+            "selected": [
+              "D68.pushed"
+            ]
+          }
+        ],
+        "D69": [
+          {
+            "selected": [
+              "D69.less_notice"
+            ]
+          }
+        ],
+        "D91": [
+          {
+            "selected": [
+              "D91.offered"
+            ]
+          }
+        ],
+        "D92": [
+          {
+            "selected": [
+              "D92.more_hidden"
+            ]
+          }
+        ]
+      },
+      "expected_items": [
+        "D20",
+        "D65",
+        "D66",
+        "D67",
+        "D68",
+        "D69",
+        "D91",
+        "D92"
+      ],
+      "forbidden_items": [],
+      "semantic_review_notes": [
+        "Current internal exclusion may support an IFS interpretation; age and childhood origins remain unavailable.",
+        "Getting what was asked for and getting what was needed are distinct."
+      ]
+    },
+    {
+      "id": "C02",
+      "title": "Same outward request with internal permission",
+      "fictional": true,
+      "config": {
+        "people": {
+          "P1": "partner",
+          "P2": "supervisor",
+          "P3": "friend"
+        },
+        "referents": {
+          "evaluator": "P2",
+          "boundary_person": "P2",
+          "close_person": "P1",
+          "support_person": "P3",
+          "repair_person": "P1",
+          "conflict_person": "P1"
+        },
+        "topics": [
+          "body_detail"
+        ],
+        "focus_topics": [],
+        "details": []
+      },
+      "focus_roots": [
+        "M20"
+      ],
+      "answers": {
+        "M20": [
+          {
+            "selected": [
+              "M20.small"
+            ]
+          }
+        ],
+        "M21": [
+          {
+            "selected": [
+              "M21.burden"
+            ]
+          }
+        ],
+        "D17": [
+          {
+            "selected": [
+              "D17.care"
+            ]
+          }
+        ],
+        "D18": [
+          {
+            "selected": [
+              "D18.need"
+            ]
+          }
+        ],
+        "D21": [
+          {
+            "selected": [
+              "D21.visible"
+            ]
+          }
+        ],
+        "D19": [
+          {
+            "selected": [
+              "D19.burden"
+            ]
+          }
+        ],
+        "D20": [
+          {
+            "selected": [
+              "D20.none"
+            ]
+          }
+        ],
+        "D65": [
+          {
+            "selected": [
+              "D65.patient"
+            ]
+          }
+        ],
+        "D66": [
+          {
+            "selected": [
+              "D66.choice"
+            ]
+          }
+        ],
+        "D67": [
+          {
+            "selected": [
+              "D67.not_allowed"
+            ]
+          }
+        ],
+        "D68": [
+          {
+            "selected": [
+              "D68.pushed"
+            ]
+          }
+        ],
+        "D69": [
+          {
+            "selected": [
+              "D69.hidden_only"
+            ]
+          }
+        ],
+        "D91": [
+          {
+            "selected": [
+              "D91.offered"
+            ]
+          }
+        ],
+        "D92": [
+          {
+            "selected": [
+              "D92.more_asked"
+            ]
+          }
+        ],
+        "D23": [
+          {
+            "selected": [
+              "D23.stay"
+            ]
+          }
+        ]
+      },
+      "expected_items": [
+        "D20",
+        "D65",
+        "D66",
+        "D23",
+        "D69",
+        "D91",
+        "D92"
+      ],
+      "forbidden_items": [
+        "D67",
+        "D68"
+      ],
+      "semantic_review_notes": [
+        "Outwardly reduced need is not enough for an exile formulation.",
+        "Room to feel and choose is not a measured Self score."
+      ]
+    },
+    {
+      "id": "C03",
+      "title": "Pride that is difficult to allow",
+      "fictional": true,
+      "config": {
+        "people": {
+          "P1": "partner",
+          "P2": "supervisor",
+          "P3": "friend"
+        },
+        "referents": {
+          "evaluator": "P2",
+          "boundary_person": "P2",
+          "close_person": "P1",
+          "support_person": "P3",
+          "repair_person": "P1",
+          "conflict_person": "P1"
+        },
+        "topics": [
+          "body_detail"
+        ],
+        "focus_topics": [
+          "self_expression"
+        ],
+        "details": []
+      },
+      "focus_roots": [
+        "D72"
+      ],
+      "answers": {
+        "D72": [
+          {
+            "selected": [
+              "D72.pride"
+            ]
+          }
+        ],
+        "D73": [
+          {
+            "selected": [
+              "D73.wrong"
+            ]
+          }
+        ],
+        "D74": [
+          {
+            "selected": [
+              "D74.push"
+            ]
+          }
+        ],
+        "D65": [
+          {
+            "selected": [
+              "D65.judge"
+            ]
+          }
+        ],
+        "D66": [
+          {
+            "selected": [
+              "D66.compelled"
+            ]
+          }
+        ]
+      },
+      "expected_items": [
+        "D72",
+        "D73",
+        "D74",
+        "D65",
+        "D66"
+      ],
+      "forbidden_items": [],
+      "semantic_review_notes": [
+        "Exclusion need not concern a hurt-child narrative. Do not invent an exile from one answer."
+      ]
+    },
+    {
+      "id": "C04",
+      "title": "Private ambition that remains welcome inside",
+      "fictional": true,
+      "config": {
+        "people": {
+          "P1": "partner",
+          "P2": "supervisor",
+          "P3": "friend"
+        },
+        "referents": {
+          "evaluator": "P2",
+          "boundary_person": "P2",
+          "close_person": "P1",
+          "support_person": "P3",
+          "repair_person": "P1",
+          "conflict_person": "P1"
+        },
+        "topics": [
+          "body_detail"
+        ],
+        "focus_topics": [
+          "self_expression"
+        ],
+        "details": []
+      },
+      "focus_roots": [
+        "D72"
+      ],
+      "answers": {
+        "D72": [
+          {
+            "selected": [
+              "D72.interest"
+            ]
+          }
+        ],
+        "D73": [
+          {
+            "selected": [
+              "D73.privacy"
+            ]
+          }
+        ],
+        "D74": [
+          {
+            "selected": [
+              "D74.allow"
+            ]
+          }
+        ],
+        "D65": [
+          {
+            "selected": [
+              "D65.curious"
+            ]
+          }
+        ],
+        "D66": [
+          {
+            "selected": [
+              "D66.choice"
+            ]
+          }
+        ],
+        "D23": [
+          {
+            "selected": [
+              "D23.stay"
+            ]
+          }
+        ]
+      },
+      "expected_items": [
+        "D72",
+        "D73",
+        "D74",
+        "D65",
+        "D66",
+        "D23"
+      ],
+      "forbidden_items": [],
+      "semantic_review_notes": [
+        "Chosen privacy and internal acceptance remain ordinary alternatives."
+      ]
+    },
+    {
+      "id": "C05",
+      "title": "Force and updating of a current self-conclusion",
+      "fictional": true,
+      "config": {
+        "people": {
+          "P1": "partner",
+          "P2": "supervisor",
+          "P3": "friend"
+        },
+        "referents": {
+          "evaluator": "P2",
+          "boundary_person": "P2",
+          "close_person": "P1",
+          "support_person": "P3",
+          "repair_person": "P1",
+          "conflict_person": "P1"
+        },
+        "topics": [
+          "body_detail"
+        ],
+        "focus_topics": [],
+        "details": []
+      },
+      "focus_roots": [
+        "M04"
+      ],
+      "answers": {
+        "M04": [
+          {
+            "selected": [
+              "M04.fix"
+            ]
+          }
+        ],
+        "M05": [
+          {
+            "selected": [
+              "M05.attack"
+            ]
+          }
+        ],
+        "M06": [
+          {
+            "selected": [
+              "M06.worse"
+            ]
+          }
+        ],
+        "D15": [
+          {
+            "selected": [
+              "D15.prevent"
+            ]
+          }
+        ],
+        "D22": [
+          {
+            "selected": [
+              "D22.not_enough"
+            ]
+          }
+        ],
+        "D70": [
+          {
+            "selected": [
+              "D70.certain"
+            ]
+          }
+        ],
+        "D71": [
+          {
+            "selected": [
+              "D71.discounted"
+            ]
+          }
+        ],
+        "D65": [
+          {
+            "selected": [
+              "D65.remove"
+            ]
+          }
+        ],
+        "D66": [
+          {
+            "selected": [
+              "D66.compelled"
+            ]
+          }
+        ]
+      },
+      "expected_items": [
+        "D22",
+        "D70",
+        "D71",
+        "D65",
+        "D66"
+      ],
+      "forbidden_items": [],
+      "semantic_review_notes": [
+        "The current force of a belief is not its acquisition history."
+      ]
+    },
+    {
+      "id": "C06",
+      "title": "Two concerns without a forced shared exile",
+      "fictional": true,
+      "config": {
+        "people": {
+          "P1": "partner",
+          "P2": "supervisor",
+          "P3": "friend"
+        },
+        "referents": {
+          "evaluator": "P2",
+          "boundary_person": "P2",
+          "close_person": "P1",
+          "support_person": "P3",
+          "repair_person": "P1",
+          "conflict_person": "P1"
+        },
+        "topics": [
+          "body_detail"
+        ],
+        "focus_topics": [],
+        "details": []
+      },
+      "focus_roots": [
+        "M26"
+      ],
+      "answers": {
+        "M26": [
+          {
+            "selected": [
+              "M26.rest"
+            ]
+          }
+        ],
+        "M27": [
+          {
+            "selected": [
+              "M27.alternate"
+            ]
+          }
+        ],
+        "D12": [
+          {
+            "selected": [
+              "D12.cost"
+            ]
+          }
+        ],
+        "D13": [
+          {
+            "selected": [
+              "D13.failure"
+            ]
+          }
+        ],
+        "D14": [
+          {
+            "selected": [
+              "D14.demand"
+            ]
+          }
+        ],
+        "D75": [
+          {
+            "selected": [
+              "D75.clearer"
+            ]
+          }
+        ],
+        "D76": [
+          {
+            "selected": [
+              "D76.different"
+            ]
+          }
+        ],
+        "D65": [
+          {
+            "selected": [
+              "D65.curious"
+            ]
+          }
+        ],
+        "D66": [
+          {
+            "selected": [
+              "D66.choice"
+            ]
+          }
+        ]
+      },
+      "expected_items": [
+        "D12",
+        "D13",
+        "D14",
+        "D75",
+        "D76"
+      ],
+      "forbidden_items": [],
+      "semantic_review_notes": [
+        "Reported competing concerns can remain different; a shared protected part is not compulsory."
+      ]
+    },
+    {
+      "id": "C07",
+      "title": "Continuity examined after two distinct reviews",
+      "fictional": true,
+      "config": {
+        "people": {
+          "P1": "partner",
+          "P2": "supervisor",
+          "P3": "friend"
+        },
+        "referents": {
+          "evaluator": "P2",
+          "boundary_person": "P2",
+          "close_person": "P1",
+          "support_person": "P3",
+          "repair_person": "P1",
+          "conflict_person": "P1"
+        },
+        "topics": [
+          "body_detail"
+        ],
+        "focus_topics": [],
+        "details": [
+          "recurrence"
+        ]
+      },
+      "focus_roots": [
+        "M02"
+      ],
+      "answers": {
+        "M02": [
+          {
+            "selected": [
+              "M02.rehearse"
+            ]
+          },
+          {
+            "selected": [
+              "M02.rehearse"
+            ]
+          }
+        ],
+        "M03": [
+          {
+            "selected": [
+              "M03.exposure"
+            ]
+          },
+          {
+            "selected": [
+              "M03.exposure"
+            ]
+          }
+        ],
+        "D04": [
+          {
+            "selected": [
+              "D04.sign"
+            ]
+          },
+          {
+            "selected": [
+              "D04.sign"
+            ]
+          }
+        ],
+        "D05": [
+          {
+            "selected": [
+              "D05.usual"
+            ]
+          },
+          {
+            "selected": [
+              "D05.usual"
+            ]
+          }
+        ],
+        "D56": [
+          {
+            "selected": [
+              "D56.same"
+            ]
+          }
+        ],
+        "D57": [
+          {
+            "selected": [
+              "D57.same"
+            ]
+          }
+        ],
+        "D77": [
+          {
+            "selected": [
+              "D77.concern"
+            ]
+          }
+        ]
+      },
+      "expected_items": [
+        "D56",
+        "D57",
+        "D77"
+      ],
+      "forbidden_items": [],
+      "semantic_review_notes": [
+        "Two confirmed episodes give repeated action; continuity of identity remains an interpretation."
+      ]
+    },
+    {
+      "id": "C08",
+      "title": "An actual return after a change of response",
+      "fictional": true,
+      "config": {
+        "people": {
+          "P1": "partner",
+          "P2": "supervisor",
+          "P3": "friend"
+        },
+        "referents": {
+          "evaluator": "P2",
+          "boundary_person": "P2",
+          "close_person": "P1",
+          "support_person": "P3",
+          "repair_person": "P1",
+          "conflict_person": "P1"
+        },
+        "topics": [
+          "body_detail"
+        ],
+        "focus_topics": [
+          "conflict"
+        ],
+        "details": [
+          "recurrence"
+        ]
+      },
+      "focus_roots": [
+        "D61"
+      ],
+      "answers": {
+        "D61": [
+          {
+            "selected": [
+              "D61.explain"
+            ]
+          }
+        ],
+        "D02": [
+          {
+            "selected": [
+              "D02.prevent"
+            ]
+          }
+        ],
+        "D03": [
+          {
+            "selected": [
+              "D03.connection"
+            ]
+          }
+        ],
+        "D07": [
+          {
+            "selected": [
+              "D07.leave"
+            ]
+          }
+        ],
+        "D08": [
+          {
+            "selected": [
+              "D08.after_failed"
+            ]
+          }
+        ],
+        "D09": [
+          {
+            "selected": [
+              "D09.relief"
+            ]
+          }
+        ],
+        "D10": [
+          {
+            "selected": [
+              "D10.relief"
+            ]
+          }
+        ],
+        "D11": [
+          {
+            "selected": [
+              "D11.urgent"
+            ]
+          }
+        ],
+        "D78": [
+          {
+            "selected": [
+              "D78.returned"
+            ]
+          }
+        ],
+        "D79": [
+          {
+            "selected": [
+              "D79.reaction"
+            ]
+          }
+        ],
+        "D99": [
+          {
+            "selected": [
+              "D99.similar"
+            ]
+          }
+        ]
+      },
+      "expected_items": [
+        "D07",
+        "D08",
+        "D78",
+        "D79",
+        "D99"
+      ],
+      "forbidden_items": [],
+      "semantic_review_notes": [
+        "A return is at a new temporal step. Reported typicality is not several independently recalled episodes."
+      ]
+    },
+    {
+      "id": "C09",
+      "title": "The response ends without returning",
+      "fictional": true,
+      "config": {
+        "people": {
+          "P1": "partner",
+          "P2": "supervisor",
+          "P3": "friend"
+        },
+        "referents": {
+          "evaluator": "P2",
+          "boundary_person": "P2",
+          "close_person": "P1",
+          "support_person": "P3",
+          "repair_person": "P1",
+          "conflict_person": "P1"
+        },
+        "topics": [
+          "body_detail"
+        ],
+        "focus_topics": [
+          "conflict"
+        ],
+        "details": []
+      },
+      "focus_roots": [
+        "D61"
+      ],
+      "answers": {
+        "D61": [
+          {
+            "selected": [
+              "D61.explain"
+            ]
+          }
+        ],
+        "D02": [
+          {
+            "selected": [
+              "D02.prevent"
+            ]
+          }
+        ],
+        "D03": [
+          {
+            "selected": [
+              "D03.connection"
+            ]
+          }
+        ],
+        "D07": [
+          {
+            "selected": [
+              "D07.leave"
+            ]
+          }
+        ],
+        "D08": [
+          {
+            "selected": [
+              "D08.after_failed"
+            ]
+          }
+        ],
+        "D09": [
+          {
+            "selected": [
+              "D09.relief"
+            ]
+          }
+        ],
+        "D10": [
+          {
+            "selected": [
+              "D10.relief"
+            ]
+          }
+        ],
+        "D11": [
+          {
+            "selected": [
+              "D11.urgent"
+            ]
+          }
+        ],
+        "D78": [
+          {
+            "selected": [
+              "D78.no"
+            ]
+          }
+        ],
+        "D79": [
+          {
+            "selected": [
+              "D79.reaction"
+            ]
+          }
+        ],
+        "D99": [
+          {
+            "selected": [
+              "D99.once"
+            ]
+          }
+        ]
+      },
+      "expected_items": [
+        "D78"
+      ],
+      "forbidden_items": [
+        "D79"
+      ],
+      "semantic_review_notes": [
+        "Do not call the one-way sequence a recurring feedback loop."
+      ]
+    },
+    {
+      "id": "C10",
+      "title": "Functioning, ease, timing and changed interpretation",
+      "fictional": true,
+      "config": {
+        "people": {
+          "P1": "partner",
+          "P2": "supervisor",
+          "P3": "friend"
+        },
+        "referents": {
+          "evaluator": "P2",
+          "boundary_person": "P2",
+          "close_person": "P1",
+          "support_person": "P3",
+          "repair_person": "P1",
+          "conflict_person": "P1"
+        },
+        "topics": [
+          "body_detail"
+        ],
+        "focus_topics": [],
+        "details": [
+          "state",
+          "texture"
+        ]
+      },
+      "focus_roots": [
+        "M10"
+      ],
+      "answers": {
+        "M10": [
+          {
+            "selected": [
+              "M10.words"
+            ]
+          }
+        ],
+        "M11": [
+          {
+            "selected": [
+              "M11.quiet"
+            ]
+          }
+        ],
+        "M12": [
+          {
+            "selected": [
+              "M12.function"
+            ]
+          }
+        ],
+        "M13": [
+          {
+            "selected": [
+              "M13.quiet"
+            ]
+          }
+        ],
+        "M14": [
+          {
+            "selected": [
+              "M14.choice"
+            ]
+          }
+        ],
+        "D29": [
+          {
+            "selected": [
+              "D29.narrow"
+            ]
+          }
+        ],
+        "D30": [
+          {
+            "selected": [
+              "D30.stuck"
+            ]
+          }
+        ],
+        "D32": [
+          {
+            "selected": [
+              "D32.both"
+            ]
+          }
+        ],
+        "D33": [
+          {
+            "selected": [
+              "D33.later"
+            ]
+          }
+        ],
+        "D34": [
+          {
+            "selected": [
+              "D34.words"
+            ]
+          }
+        ],
+        "D35": [
+          {
+            "selected": [
+              "D35.choice"
+            ]
+          }
+        ],
+        "D36": [
+          {
+            "selected": [
+              "D36.input",
+              "D36.words",
+              "D36.think"
+            ],
+            "mode": "ordered"
+          }
+        ],
+        "D37": [
+          {
+            "selected": [
+              "D37.part"
+            ]
+          }
+        ],
+        "D80": [
+          {
+            "selected": [
+              "D80.task"
+            ]
+          }
+        ],
+        "D81": [
+          {
+            "selected": [
+              "D81.steady_strained"
+            ]
+          }
+        ],
+        "D82": [
+          {
+            "selected": [
+              "D82.gradual"
+            ]
+          }
+        ],
+        "D83": [
+          {
+            "selected": [
+              "D83.settle"
+            ]
+          }
+        ],
+        "D84": [
+          {
+            "selected": [
+              "D84.later_day"
+            ]
+          }
+        ],
+        "D85": [
+          {
+            "selected": [
+              "D85.function_first"
+            ]
+          }
+        ],
+        "D86": [
+          {
+            "selected": [
+              "D86.setting"
+            ]
+          }
+        ],
+        "D100": [
+          {
+            "selected": [
+              "D100.same_less"
+            ]
+          }
+        ]
+      },
+      "expected_items": [
+        "D80",
+        "D81",
+        "D82",
+        "D83",
+        "D84",
+        "D85",
+        "D86",
+        "D100"
+      ],
+      "forbidden_items": [],
+      "semantic_review_notes": [
+        "Approximate intervals are recalled estimates, not measured autonomic recovery.",
+        "Function and ease are separate channels."
+      ]
+    },
+    {
+      "id": "C11",
+      "title": "Company has an effect and an aftermath",
+      "fictional": true,
+      "config": {
+        "people": {
+          "P1": "partner",
+          "P2": "supervisor",
+          "P3": "friend"
+        },
+        "referents": {
+          "evaluator": "P2",
+          "boundary_person": "P2",
+          "close_person": "P1",
+          "support_person": "P3",
+          "repair_person": "P1",
+          "conflict_person": "P1"
+        },
+        "topics": [
+          "body_detail"
+        ],
+        "focus_topics": [],
+        "details": []
+      },
+      "focus_roots": [
+        "M10"
+      ],
+      "answers": {
+        "M10": [
+          {
+            "selected": [
+              "M10.urgent"
+            ]
+          }
+        ],
+        "M11": [
+          {
+            "selected": [
+              "M11.reduce"
+            ]
+          }
+        ],
+        "M12": [
+          {
+            "selected": [
+              "M12.same"
+            ]
+          }
+        ],
+        "M13": [
+          {
+            "selected": [
+              "M13.company"
+            ]
+          }
+        ],
+        "M14": [
+          {
+            "selected": [
+              "M14.settled"
+            ]
+          }
+        ],
+        "D87": [
+          {
+            "selected": [
+              "D87.settled"
+            ]
+          }
+        ],
+        "D88": [
+          {
+            "selected": [
+              "D88.held"
+            ]
+          }
+        ],
+        "D86": [
+          {
+            "selected": [
+              "D86.support"
+            ]
+          }
+        ]
+      },
+      "expected_items": [
+        "D87",
+        "D88"
+      ],
+      "forbidden_items": [],
+      "semantic_review_notes": [
+        "A reported company effect does not establish physiological coupling or a universal co-regulator."
+      ]
+    },
+    {
+      "id": "C12",
+      "title": "Current expectations around relationship uncertainty",
+      "fictional": true,
+      "config": {
+        "people": {
+          "P1": "partner",
+          "P2": "supervisor",
+          "P3": "friend"
+        },
+        "referents": {
+          "evaluator": "P2",
+          "boundary_person": "P2",
+          "close_person": "P1",
+          "support_person": "P3",
+          "repair_person": "P1",
+          "conflict_person": "P1"
+        },
+        "topics": [
+          "body_detail"
+        ],
+        "focus_topics": [],
+        "details": []
+      },
+      "focus_roots": [
+        "M17"
+      ],
+      "answers": {
+        "M17": [
+          {
+            "selected": [
+              "M17.send"
+            ]
+          }
+        ],
+        "M18": [
+          {
+            "selected": [
+              "M18.upset"
+            ]
+          }
+        ],
+        "M19": [
+          {
+            "selected": [
+              "M19.ease"
+            ]
+          }
+        ],
+        "D43": [
+          {
+            "selected": [
+              "D43.okay"
+            ]
+          }
+        ],
+        "D44": [
+          {
+            "selected": [
+              "D44.reliable"
+            ]
+          }
+        ],
+        "D45": [
+          {
+            "selected": [
+              "D45.return"
+            ]
+          }
+        ],
+        "D89": [
+          {
+            "selected": [
+              "D89.not_need"
+            ]
+          }
+        ],
+        "D90": [
+          {
+            "selected": [
+              "D90.dismiss"
+            ]
+          }
+        ],
+        "D42": [
+          {
+            "selected": [
+              "D42.fine"
+            ]
+          }
+        ]
+      },
+      "expected_items": [
+        "D43",
+        "D45",
+        "D89",
+        "D90"
+      ],
+      "forbidden_items": [],
+      "semantic_review_notes": [
+        "The working expectations belong to the sampled wait and relationship."
+      ]
+    },
+    {
+      "id": "C13",
+      "title": "Private importance, desired pace and showing interest",
+      "fictional": true,
+      "config": {
+        "people": {
+          "P1": "partner",
+          "P2": "supervisor",
+          "P3": "friend"
+        },
+        "referents": {
+          "evaluator": "P2",
+          "boundary_person": "P2",
+          "close_person": "P1",
+          "support_person": "P3",
+          "repair_person": "P1",
+          "conflict_person": "P1"
+        },
+        "topics": [
+          "body_detail",
+          "growing_closeness"
+        ],
+        "focus_topics": [
+          "growing_closeness"
+        ],
+        "details": []
+      },
+      "focus_roots": [
+        "D52"
+      ],
+      "answers": {
+        "D52": [
+          {
+            "selected": [
+              "D52.fast"
+            ]
+          }
+        ],
+        "D53": [
+          {
+            "selected": [
+              "D53.small"
+            ]
+          }
+        ],
+        "D93": [
+          {
+            "selected": [
+              "D93.slower"
+            ]
+          }
+        ],
+        "D94": [
+          {
+            "selected": [
+              "D94.expectations"
+            ]
+          }
+        ],
+        "D95": [
+          {
+            "selected": [
+              "D95.exposed"
+            ]
+          }
+        ]
+      },
+      "expected_items": [
+        "D52",
+        "D53",
+        "D93",
+        "D94",
+        "D95"
+      ],
+      "forbidden_items": [],
+      "semantic_review_notes": [
+        "This is a stage of one actual connection, not a lifetime selective-bonding classification."
+      ]
+    },
+    {
+      "id": "C14",
+      "title": "What remains unfinished after repair",
+      "fictional": true,
+      "config": {
+        "people": {
+          "P1": "partner",
+          "P2": "supervisor",
+          "P3": "friend"
+        },
+        "referents": {
+          "evaluator": "P2",
+          "boundary_person": "P2",
+          "close_person": "P1",
+          "support_person": "P3",
+          "repair_person": "P1",
+          "conflict_person": "P1"
+        },
+        "topics": [
+          "body_detail"
+        ],
+        "focus_topics": [],
+        "details": []
+      },
+      "focus_roots": [
+        "M24"
+      ],
+      "answers": {
+        "M24": [
+          {
+            "selected": [
+              "M24.outward"
+            ]
+          }
+        ],
+        "D50": [
+          {
+            "selected": [
+              "D50.time"
+            ]
+          }
+        ],
+        "D51": [
+          {
+            "selected": [
+              "D51.mixed"
+            ]
+          }
+        ],
+        "D96": [
+          {
+            "selected": [
+              "D96.consistent"
+            ]
+          }
+        ]
+      },
+      "expected_items": [
+        "D50",
+        "D51",
+        "D96"
+      ],
+      "forbidden_items": [],
+      "semantic_review_notes": [
+        "Continued need for consistency is not automatically inability to receive repair."
+      ]
+    },
+    {
+      "id": "C15",
+      "title": "Support for exploration without permission-seeking",
+      "fictional": true,
+      "config": {
+        "people": {
+          "P1": "partner",
+          "P2": "supervisor",
+          "P3": "friend"
+        },
+        "referents": {
+          "evaluator": "P2",
+          "boundary_person": "P2",
+          "close_person": "P1",
+          "support_person": "P3",
+          "repair_person": "P1",
+          "conflict_person": "P1"
+        },
+        "topics": [
+          "body_detail"
+        ],
+        "focus_topics": [
+          "exploration"
+        ],
+        "details": []
+      },
+      "focus_roots": [
+        "D97"
+      ],
+      "answers": {
+        "D97": [
+          {
+            "selected": [
+              "D97.encourage"
+            ]
+          }
+        ],
+        "D98": [
+          {
+            "selected": [
+              "D98.encouraged"
+            ]
+          }
+        ]
+      },
+      "expected_items": [
+        "D97",
+        "D98"
+      ],
+      "forbidden_items": [],
+      "semantic_review_notes": [
+        "Support can encourage exploration while the decision remains the respondent’s. No attachment classification is measured."
+      ]
+    },
+    {
+      "id": "C16",
+      "title": "Approval rather than encouragement",
+      "fictional": true,
+      "config": {
+        "people": {
+          "P1": "partner",
+          "P2": "supervisor",
+          "P3": "friend"
+        },
+        "referents": {
+          "evaluator": "P2",
+          "boundary_person": "P2",
+          "close_person": "P1",
+          "support_person": "P3",
+          "repair_person": "P1",
+          "conflict_person": "P1"
+        },
+        "topics": [
+          "body_detail"
+        ],
+        "focus_topics": [
+          "exploration"
+        ],
+        "details": []
+      },
+      "focus_roots": [
+        "D97"
+      ],
+      "answers": {
+        "D97": [
+          {
+            "selected": [
+              "D97.approval"
+            ]
+          }
+        ],
+        "D98": [
+          {
+            "selected": [
+              "D98.permission"
+            ]
+          }
+        ]
+      },
+      "expected_items": [
+        "D97",
+        "D98"
+      ],
+      "forbidden_items": [],
+      "semantic_review_notes": [
+        "The same involvement channel can serve a different reported function."
+      ]
+    }
+  ]
+}

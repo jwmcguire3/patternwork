@@ -7,6 +7,7 @@ import { renderAndVerifyCanonicalPdf } from "../../lib/server/pdf/index.ts";
 import { buildGenerationPrompt, loadReportPrompt } from "../../lib/server/reports/prompts.ts";
 import { buildValidatedSynthesisBundle } from "../../lib/server/reports/synthesis.ts";
 import type { AggregatedOpenRouterUsage, GeneratedCanonicalArtifact, PreparedReportInputs, Pwqe6ReportArtifact } from "../../lib/server/reports/types.ts";
+import type { Pwrp71ReportArtifact } from "../../lib/server/reports/pwrp71-validation.ts";
 import { validateCanonicalArtifact } from "../../lib/server/reports/validation.ts";
 import { PrismaReportWorkflowPersistence } from "../../lib/server/reports/dependencies.ts";
 import { prisma } from "../../lib/prisma.ts";
@@ -19,7 +20,7 @@ const emptyUsage: AggregatedOpenRouterUsage = { generationId: "codex-local", gen
 export interface RunCliInput { readonly inputPath: string; readonly outputDirectory: string; readonly workspaceRoot?: string; readonly processBoundary?: CodexProcessBoundary; readonly persistAssessmentId?: string }
 
 function safeName(type: ReportType): string { return type.toLowerCase(); }
-function markdown(artifact: ReportArtifact | SynthesisAudit | Pwqe6ReportArtifact): string { return artifact.artifact_type === "synthesis_audit" ? artifact.reader_markdown : artifact.report_markdown; }
+function markdown(artifact: ReportArtifact | SynthesisAudit | Pwqe6ReportArtifact | Pwrp71ReportArtifact): string { return artifact.artifact_type === "synthesis_audit" ? artifact.reader_markdown : artifact.report_markdown; }
 
 async function generateOne(reportType: ReportType, generationInput: JsonObject, prepared: PreparedReportInputs, outputDirectory: string, workspaceRoot: string, boundary: CodexProcessBoundary, bundle?: SynthesisBundle): Promise<GeneratedCanonicalArtifact> {
   const loaded = await loadReportPrompt(reportType, workspaceRoot);
@@ -70,7 +71,20 @@ export async function runReportCli(input: RunCliInput): Promise<{ readonly repor
     const pdfPath = path.resolve(outputDirectory, `${base}.pdf`);
     await writeFile(canonicalPath, `${canonicalJson(item.artifact)}\n`, "utf8");
     await writeFile(markdownPath, `${markdown(item.artifact)}\n`, "utf8");
-    const pdf = await renderAndVerifyCanonicalPdf({ reportType: item.reportType, artifact: item.artifact, packets: prepared.packets, workspaceRoot });
+    const pwrp71 = item.artifact.artifact_type === "pwrp71_report";
+    const acceptedLayers = Object.fromEntries(generated
+      .filter((candidate) => candidate.reportType !== "SYNTHESIS" && candidate.artifact.artifact_type === "pwrp71_report")
+      .map((candidate) => [candidate.reportType, candidate.artifact.draft as JsonObject]));
+    const pdf = await renderAndVerifyCanonicalPdf({
+      reportType: item.reportType,
+      artifact: item.artifact,
+      packets: prepared.packets,
+      routerPacket: prepared.routerPacket,
+      acceptedLayers,
+      snapshotId: prepared.snapshot.snapshotId,
+      contractVersion: pwrp71 ? "v7.1" : prepared.contractVersion,
+      workspaceRoot,
+    });
     await writeFile(pdfPath, pdf.bytes);
     preparedPdfs.push({ reportType: item.reportType, filename: pdf.filename, bytesBase64: pdf.bytes.toString("base64"), sha256: pdf.sha256, sourceMarkdownSha256: pdf.sourceMarkdownSha256, pageCount: pdf.pageCount, pngPageCount: pdf.pngPageCount });
     manifestReports.push({ reportType: item.reportType, canonical: path.basename(canonicalPath), markdown: path.basename(markdownPath), pdf: path.basename(pdfPath), canonicalDigest: item.artifact.artifact_type === "synthesis_audit" ? (item.artifact.digests as JsonObject).audit_sha256 : (item.artifact.digests as JsonObject).artifact_sha256, pdfSha256: pdf.sha256, pageCount: pdf.pageCount, verifiedPngPages: pdf.pngPageCount });

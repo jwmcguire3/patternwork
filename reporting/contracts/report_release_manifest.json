@@ -1,0 +1,25 @@
+{
+  "report_release": "PWRP-7.1.0-candidate.1",
+  "kind": "content_binding_not_approval",
+  "content_binding": "a2650aa1ab3ce9c9fe624f8539ed9260e6a5bae24f8cb713fc2932ad3fcce3f7",
+  "files": {
+    "contracts/ADDED_CHANNELS.md": "181010878a5955f3912498054e3520a9c192ebc72014d0277c978851d2dbfbde",
+    "contracts/CONSTRUCT_GUIDE.md": "cf6ebd44c4ee22e5f1c7025ccf246885db3e873841a3dc226548311f3b7c9f03",
+    "contracts/EVIDENCE_COVERAGE.md": "ebbc4b659e8dda005842ad248732f5aae3269d370739937e1e1c3d51e66c7947",
+    "contracts/EVIDENCE_PACKET_INTERFACE.md": "9c38599c5f0773f24a68f59a844f7e141f4abaea544891536b902827987b8ec7",
+    "contracts/report_policy.json": "071745736a4e2283cee911366704f65033af376ec27b68636576ce69acd11d63",
+    "implementation/patternwork_reports/__init__.py": "2507d2d17c55c393c902d1ddc5a0a63adcc8162b7623a1fe5447b82f89e7ea8e",
+    "implementation/patternwork_reports/pipeline.py": "0f04985ebd820b395bb719d4ca93abe83b6437986d133b95e219f0f183e13126",
+    "implementation/report_cli.py": "46d9152ee3b7cbd90508f285ca9b3a7994f43ff28749b4552fd306dce0465fca",
+    "prompts/00_SHARED_REPORT_PROMPT_v7.md": "1df01aa9fa1ca8d95be8302bccc149a90ebb1dfb26ac48afc022da75d17ca6a2",
+    "prompts/01_MAPPING_REPORT_PROMPT.md": "1e55f0beedced3b44aa81a5997ff621294eded75bafdcdacf9d57e0fb7184b20",
+    "prompts/02_IFS_REPORT_PROMPT.md": "2b73933a51df3e895696f2d0df664d06ee7352213963fb935e6215859518e828",
+    "prompts/03_STATE_REPORT_PROMPT.md": "a2a79c385e7a74e981ff2f800ab31f31f0ca422bb711104d4d8434bc63ed5da4",
+    "prompts/04_ATTACHMENT_REPORT_PROMPT.md": "6836d90e8c499e5904054f13b1d60eec9b6b80ba95000d07b895822b5ffe40de",
+    "prompts/05_SYNTHESIS_REPORT_PROMPT.md": "3788561fec22bf87dc053a47009946c681c4e409ce566f2218e70e78d9fccf9e",
+    "prompts/06_REVIEWER_PROMPT.md": "ec90a036dbdc2789f50d793024904980de876e9d73fa6deebc93e43e065f2fc3",
+    "prompts/07_REPAIR_REPORT_PROMPT.md": "a657e069955447bcd0aad709535d8de8d6e03e7d767b4e31740b0832d9390a02",
+    "schemas/report_draft.schema.json": "14e880841aab064593b777b9d113376a30338968e4b0375a38955b174e55b4ba",
+    "schemas/report_review.schema.json": "cfbb62aea8cc00ab3b1858f0ccdcb0b8dd46066ad1a52b64f9140156edc90194"
+  }
+}

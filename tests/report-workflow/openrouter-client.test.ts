@@ -32,6 +32,7 @@ test("OpenRouter request enforces strict schema and ZDR/no-collection routing an
   } });
   const result = await client.generate(request);
   assert.equal(result.ok, true);
+  if (result.ok) assert.equal(result.finishReason, "stop");
   assert.equal(body?.max_completion_tokens, request.maxOutputTokens);
   assert.equal("max_tokens" in (body ?? {}), false);
   assert.deepEqual(body?.reasoning, { effort: request.reasoningEffort });
@@ -40,6 +41,15 @@ test("OpenRouter request enforces strict schema and ZDR/no-collection routing an
   assert.equal(result.usage.generationId, "gen-real-1");
   assert.equal(result.usage.reasoningTokens, 2);
   assert.equal(result.usage.costMicros, 1_200);
+});
+
+test("retains provider finish reason so report contracts can reject truncated structured output", async () => {
+  const client = new OpenRouterClient({ apiKey: "test", fetch: async () => response('{"ok":true}', {
+    choices: [{ message: { content: '{"ok":true}' }, finish_reason: "length" }],
+  }) });
+  const result = await client.generate(request);
+  assert.equal(result.ok, true);
+  if (result.ok) assert.equal(result.finishReason, "length");
 });
 
 for (const [status, kind] of [[429, "rate_limited"], [503, "server_error"]] as const) {

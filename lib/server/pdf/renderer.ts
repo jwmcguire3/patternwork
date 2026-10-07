@@ -12,6 +12,12 @@ import { validateCanonicalArtifact } from "../reports/validation.ts";
 import { validatePwqe6ReportDraft, validatePwqe6ArtifactLineage } from "../reports/pwqe6-validation.ts";
 import { loadPwqe5SourcePackage } from "../reports/pwqe6-source.ts";
 import type { Pwqe6ReportArtifact } from "../reports/types.ts";
+import type { Pwrp71ReportArtifact } from "../reports/pwrp71-validation.ts";
+import { validatePwrp71ReportDraft } from "../reports/pwrp71-validation.ts";
+import { loadPwqe51SourcePackage } from "../../question-engine/pwqe51-source.ts";
+import { loadPwrp71SourcePackage } from "../reports/pwrp71-source.ts";
+import { preparePwrp71Request } from "../reports/pwrp71-adapter.ts";
+import { sha256Canonical } from "../../report-contracts/delivery-validator.ts";
 import { sha256 } from "../security/index.ts";
 import type { PdfExternalVerification, PdfLayoutMetrics, PdfVerificationBoundary, VerifiedPdf } from "./types.ts";
 
@@ -183,18 +189,45 @@ export class PopplerPdfVerificationBoundary implements PdfVerificationBoundary {
 
 export interface RenderCanonicalPdfInput {
   readonly reportType: ReportType;
-  readonly artifact: ReportArtifact | SynthesisAudit | Pwqe6ReportArtifact;
+  readonly artifact: ReportArtifact | SynthesisAudit | Pwqe6ReportArtifact | Pwrp71ReportArtifact;
   readonly packets?: readonly ReportEvidencePacketV3_1[];
   readonly routerPacket?: JsonObject;
+  readonly acceptedLayers?: Readonly<Record<string, JsonObject>>;
   readonly bundle?: SynthesisBundle;
   readonly snapshotId?: string;
-  readonly contractVersion?: "v3.1" | "v6";
+  readonly contractVersion?: "v3.1" | "v6" | "v7.1";
   readonly workspaceRoot?: string;
   readonly verification?: PdfVerificationBoundary;
 }
 
 export async function renderAndVerifyCanonicalPdf(input: RenderCanonicalPdfInput): Promise<VerifiedPdf> {
-  if (input.contractVersion === "v6") {
+  if (input.contractVersion === "v7.1") {
+    const packet = input.routerPacket;
+    const artifact = input.artifact;
+    if (!packet || !input.snapshotId || artifact.artifact_type !== "pwrp71_report") throw new Error("PWRP 7.1 PDF rendering requires a validated packet, snapshot, and PWRP 7.1 artifact.");
+    const [questionSource, reportSource] = await Promise.all([
+      loadPwqe51SourcePackage(input.workspaceRoot),
+      loadPwrp71SourcePackage(input.workspaceRoot),
+    ]);
+    const prepared = preparePwrp71Request({ packet, reportType: input.reportType, questionSource, reportSource, acceptedLayers: input.acceptedLayers });
+    const validation = validatePwrp71ReportDraft({ value: artifact.draft, reportType: input.reportType, snapshotId: input.snapshotId, packet, source: reportSource });
+    const reconstructed = validation.ok ? validation.value : undefined;
+    const artifactDigest = (artifact.digests as JsonObject).artifact_sha256;
+    const artifactWithoutDigests = Object.fromEntries(Object.entries(artifact).filter(([key]) => key !== "digests"));
+    if (!prepared.ok || !validation.ok || !reconstructed
+      || reconstructed.report_id !== artifact.report_id
+      || reconstructed.source_manifest_sha256 !== artifact.source_manifest_sha256
+      || reconstructed.report_markdown !== artifact.report_markdown
+      || reconstructed.digests.artifact_sha256 !== artifactDigest
+      || artifactDigest !== sha256Canonical(artifactWithoutDigests)
+    ) {
+      // `validatePwrp71ReportDraft` reconstructs the canonical release artifact.
+      // Packet adapter validation is also required here so a source-valid report
+      // cannot be rendered from a modified observation envelope.
+      if (!prepared.ok) throw new Error(`PWRP 7.1 packet is not renderable: ${JSON.stringify(prepared.issues)}`);
+      throw new Error(`PWRP 7.1 artifact is not validator-clean: ${JSON.stringify(validation.ok ? [{ code: "artifact_digest", path: "$.digests", message: "Artifact digest or reconstructed fields do not match." }] : validation.issues)}`);
+    }
+  } else if (input.contractVersion === "v6") {
     const packet = input.routerPacket;
     if (!packet || !input.snapshotId || input.artifact.artifact_type !== "pwqe6_report") throw new Error("PWQE6 PDF rendering requires a validated packet, snapshot, and PWQE6 artifact.");
     const source = await loadPwqe5SourcePackage(input.workspaceRoot);

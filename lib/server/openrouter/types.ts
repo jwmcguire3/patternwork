@@ -37,13 +37,14 @@ export type OpenRouterFailureKind =
   | "client_error";
 
 export type OpenRouterGenerationResult =
-  | { readonly ok: true; readonly output: JsonObject; readonly usage: OpenRouterUsage }
+  | { readonly ok: true; readonly output: JsonObject; readonly usage: OpenRouterUsage; readonly finishReason?: string }
   | {
       readonly ok: false;
       readonly kind: "invalid_json" | "refusal";
       readonly message: string;
       readonly usage: OpenRouterUsage;
       readonly rawContent?: string;
+      readonly finishReason?: string;
     };
 
 export interface OpenRouterGenerationRequest {

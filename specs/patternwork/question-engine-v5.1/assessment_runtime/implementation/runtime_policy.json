@@ -1,0 +1,1437 @@
+{
+  "runtime_release": "PW-ROUTER-1.1.0-candidate.1",
+  "question_release": "PWQE-5.1.0-candidate.1",
+  "policy_role": "Binding/audit index; base predicates in targets.py/candidates.py; coverage predicates in coverage.py with canonical coverage_rules.json.",
+  "source_precedence": "Immutable question/option source; the coverage extension is specified in architecture/coverage_rules.json and the outer coverage/ROUTING_CHANGES.md. Historical baseline stays in reference/.",
+  "target_rules": [
+    {
+      "target_id": "access_before_change",
+      "authored_candidates": [
+        "D11"
+      ],
+      "opens_from_items": [
+        "D07"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "after_stop",
+      "authored_candidates": [
+        "D59"
+      ],
+      "opens_from_items": [
+        "D04"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "attachment_meaning",
+      "authored_candidates": [
+        "M18"
+      ],
+      "opens_from_items": [
+        "M17"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "attention",
+      "authored_candidates": [
+        "D29"
+      ],
+      "opens_from_items": [
+        "M10"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "availability_history",
+      "authored_candidates": [
+        "D44"
+      ],
+      "opens_from_items": [
+        "M18",
+        "D43",
+        "D45"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "care_scope",
+      "authored_candidates": [
+        "REPLAY:M20",
+        "REPLAY:M22",
+        "D56"
+      ],
+      "opens_from_items": [
+        "D21",
+        "D27",
+        "D38",
+        "D39"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "contact_function",
+      "authored_candidates": [
+        "D43"
+      ],
+      "opens_from_items": [
+        "M17",
+        "M18"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "contrast_context",
+      "authored_candidates": [
+        "REPLAY",
+        "D56",
+        "D58"
+      ],
+      "opens_from_items": [
+        "M16",
+        "M28",
+        "M30",
+        "D05",
+        "D06",
+        "D14",
+        "D16",
+        "D22",
+        "D23",
+        "D25",
+        "D28",
+        "D37",
+        "D42",
+        "D44",
+        "D45",
+        "D48",
+        "D51",
+        "D53",
+        "D58",
+        "D64"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "contrast_goal",
+      "authored_candidates": [
+        "D57"
+      ],
+      "opens_from_items": [
+        "D56"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "cost",
+      "authored_candidates": [
+        "D06"
+      ],
+      "opens_from_items": [
+        "M06",
+        "D10"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "disclosure_prediction",
+      "authored_candidates": [
+        "D48"
+      ],
+      "opens_from_items": [
+        "D47",
+        "D53"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "distance_function",
+      "authored_candidates": [
+        "D46"
+      ],
+      "opens_from_items": [
+        "D62"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "energy",
+      "authored_candidates": [
+        "D32"
+      ],
+      "opens_from_items": [
+        "M10"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "expressed_pace",
+      "authored_candidates": [
+        "D53"
+      ],
+      "opens_from_items": [
+        "D52"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "feeling_access",
+      "authored_candidates": [
+        "D23"
+      ],
+      "opens_from_items": [
+        "D25"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "function",
+      "authored_candidates": [
+        "D02",
+        "D03",
+        "D16"
+      ],
+      "opens_from_items": [
+        "M02",
+        "M04",
+        "M08",
+        "M11",
+        "M12",
+        "D01",
+        "D24",
+        "D26",
+        "D28",
+        "D54",
+        "D55",
+        "D57",
+        "D61",
+        "D63",
+        "D64"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "goal_change",
+      "authored_candidates": [
+        "D09"
+      ],
+      "opens_from_items": [
+        "D07",
+        "D08"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "help_function",
+      "authored_candidates": [
+        "M21"
+      ],
+      "opens_from_items": [
+        "M20"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "hidden_want",
+      "authored_candidates": [
+        "D17",
+        "D20"
+      ],
+      "opens_from_items": [
+        "M20",
+        "D02"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "known_distance",
+      "authored_candidates": [
+        "D42"
+      ],
+      "opens_from_items": [
+        "M18",
+        "M19",
+        "D44"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "loss_want",
+      "authored_candidates": [
+        "D25"
+      ],
+      "opens_from_items": [
+        "D24"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "money_context",
+      "authored_candidates": [
+        "D64"
+      ],
+      "opens_from_items": [
+        "D63"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "need_exposure",
+      "authored_candidates": [
+        "D21",
+        "D18",
+        "D27"
+      ],
+      "opens_from_items": [
+        "M20",
+        "M21",
+        "M22",
+        "D17",
+        "D18"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "next_effect",
+      "authored_candidates": [
+        "D10"
+      ],
+      "opens_from_items": [
+        "D07",
+        "D09"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "next_move",
+      "authored_candidates": [
+        "D07"
+      ],
+      "opens_from_items": [
+        "M11",
+        "M12",
+        "D55",
+        "D59",
+        "D61"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "noticed_order",
+      "authored_candidates": [
+        "D33"
+      ],
+      "opens_from_items": [
+        "M10",
+        "D29",
+        "D32",
+        "D41"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "ordinary_contrast",
+      "authored_candidates": [
+        "D40",
+        "REPLAY:M01"
+      ],
+      "opens_from_items": [
+        "M01",
+        "M29",
+        "D40",
+        "D60"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "polarization_first",
+      "authored_candidates": [
+        "D13"
+      ],
+      "opens_from_items": [
+        "M27",
+        "D12"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "polarization_relation",
+      "authored_candidates": [
+        "D12"
+      ],
+      "opens_from_items": [
+        "M26",
+        "M27"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "polarization_second",
+      "authored_candidates": [
+        "D14"
+      ],
+      "opens_from_items": [
+        "M27",
+        "D12",
+        "D13"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "practical_context",
+      "authored_candidates": [
+        "D16"
+      ],
+      "opens_from_items": [
+        "M03",
+        "M04",
+        "M08",
+        "M09",
+        "M15",
+        "M16",
+        "M21",
+        "M25",
+        "D02",
+        "D03",
+        "D19",
+        "D34",
+        "D46",
+        "D48",
+        "D49",
+        "D54",
+        "D60",
+        "D61",
+        "D62"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "praise_experience",
+      "authored_candidates": [
+        "D28"
+      ],
+      "opens_from_items": [
+        "M07"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "predicted_response",
+      "authored_candidates": [
+        "D19"
+      ],
+      "opens_from_items": [
+        "M21",
+        "D17",
+        "D18",
+        "D21",
+        "D27"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "prediction",
+      "authored_candidates": [
+        "D03"
+      ],
+      "opens_from_items": [
+        "M08",
+        "D02"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "quiet_or_access",
+      "authored_candidates": [
+        "D34"
+      ],
+      "opens_from_items": [
+        "M11",
+        "D09",
+        "D11",
+        "D30",
+        "D55"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "reassurance_duration",
+      "authored_candidates": [
+        "D45"
+      ],
+      "opens_from_items": [
+        "M19",
+        "D43"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "recovery_duration",
+      "authored_candidates": [
+        "D37"
+      ],
+      "opens_from_items": [
+        "M14",
+        "D35",
+        "D36"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "recovery_marker",
+      "authored_candidates": [
+        "D35"
+      ],
+      "opens_from_items": [
+        "M12",
+        "M13",
+        "D29",
+        "D30",
+        "D32",
+        "D34"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "recovery_sequence",
+      "authored_candidates": [
+        "D36"
+      ],
+      "opens_from_items": [
+        "M14",
+        "D33",
+        "D35"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "recurrence",
+      "authored_candidates": [
+        "REPLAY",
+        "D05"
+      ],
+      "opens_from_items": [
+        "M02",
+        "M03",
+        "D04",
+        "D05"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "repair_aim",
+      "authored_candidates": [
+        "D49"
+      ],
+      "opens_from_items": [
+        "M23"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "repair_feature",
+      "authored_candidates": [
+        "D50"
+      ],
+      "opens_from_items": [
+        "M24",
+        "D49"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "rest_access",
+      "authored_candidates": [
+        "D60"
+      ],
+      "opens_from_items": [
+        "M01",
+        "M25",
+        "D59"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "return_after_repair",
+      "authored_candidates": [
+        "D51"
+      ],
+      "opens_from_items": [
+        "M24",
+        "D46",
+        "D50"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "self_pressure",
+      "authored_candidates": [
+        "D15"
+      ],
+      "opens_from_items": [
+        "M05",
+        "M06",
+        "D22"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "sequence_relation",
+      "authored_candidates": [
+        "D08"
+      ],
+      "opens_from_items": [
+        "D07"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "social_feature",
+      "authored_candidates": [
+        "D38",
+        "D39"
+      ],
+      "opens_from_items": [
+        "M13",
+        "M22"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "stand_down",
+      "authored_candidates": [
+        "D04"
+      ],
+      "opens_from_items": [
+        "M02",
+        "M03",
+        "M25",
+        "D15",
+        "D60"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "timing",
+      "authored_candidates": [
+        "D01"
+      ],
+      "opens_from_items": [
+        "M02"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "uncertainty_meaning",
+      "authored_candidates": [
+        "M16"
+      ],
+      "opens_from_items": [
+        "M15"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "urge_action_difference",
+      "authored_candidates": [
+        "D31"
+      ],
+      "opens_from_items": [
+        "D31"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "vulnerable_meaning",
+      "authored_candidates": [
+        "D18",
+        "D20",
+        "D22"
+      ],
+      "opens_from_items": [
+        "M05",
+        "M09",
+        "D03",
+        "D15",
+        "D20",
+        "D26"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "words",
+      "authored_candidates": [
+        "D30"
+      ],
+      "opens_from_items": [
+        "M10",
+        "D11"
+      ],
+      "executable_opening": "TargetLifecycleEngine._opens",
+      "executable_resolution": "TargetLifecycleEngine._close",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "target_id": "coverage_self_stance",
+      "authored_candidates": [
+        "D65"
+      ],
+      "opens_from_items": [
+        "M05",
+        "M06",
+        "M28",
+        "M30",
+        "D20",
+        "D23",
+        "D74",
+        "D12"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_awareness_choice",
+      "authored_candidates": [
+        "D66"
+      ],
+      "opens_from_items": [
+        "D65"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_internal_admission_barrier",
+      "authored_candidates": [
+        "D67"
+      ],
+      "opens_from_items": [
+        "D20"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_internal_return",
+      "authored_candidates": [
+        "D68"
+      ],
+      "opens_from_items": [
+        "D67"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_response_internal_effect",
+      "authored_candidates": [
+        "D69"
+      ],
+      "opens_from_items": [
+        "D20",
+        "D23",
+        "D18",
+        "D17"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_self_belief_force",
+      "authored_candidates": [
+        "D70"
+      ],
+      "opens_from_items": [
+        "D22"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_self_belief_update",
+      "authored_candidates": [
+        "D71"
+      ],
+      "opens_from_items": [
+        "D70"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_held_back_material",
+      "authored_candidates": [
+        "D72"
+      ],
+      "opens_from_items": [],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_held_back_reason",
+      "authored_candidates": [
+        "D73"
+      ],
+      "opens_from_items": [
+        "D72"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_private_permission",
+      "authored_candidates": [
+        "D74"
+      ],
+      "opens_from_items": [
+        "D73"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_two_wants_access",
+      "authored_candidates": [
+        "D75"
+      ],
+      "opens_from_items": [
+        "D12"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_shared_concern",
+      "authored_candidates": [
+        "D76"
+      ],
+      "opens_from_items": [
+        "D13",
+        "D14"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_pattern_continuity",
+      "authored_candidates": [
+        "D77"
+      ],
+      "opens_from_items": [],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_response_return",
+      "authored_candidates": [
+        "D78"
+      ],
+      "opens_from_items": [
+        "D08",
+        "D10"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_return_context",
+      "authored_candidates": [
+        "D79"
+      ],
+      "opens_from_items": [
+        "D78"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_remaining_capacity",
+      "authored_candidates": [
+        "D80"
+      ],
+      "opens_from_items": [
+        "M10",
+        "M11",
+        "M12",
+        "D29",
+        "D30",
+        "D34"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_outward_inward",
+      "authored_candidates": [
+        "D81"
+      ],
+      "opens_from_items": [
+        "M12",
+        "D34",
+        "D30",
+        "M24"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_onset_shape",
+      "authored_candidates": [
+        "D82"
+      ],
+      "opens_from_items": [
+        "M10",
+        "D33",
+        "D32"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_residual_difficulty",
+      "authored_candidates": [
+        "D83"
+      ],
+      "opens_from_items": [
+        "M12",
+        "D35"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_easing_time_estimate",
+      "authored_candidates": [
+        "D84"
+      ],
+      "opens_from_items": [
+        "M10",
+        "M14",
+        "D35"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_function_ease_order",
+      "authored_candidates": [
+        "D85"
+      ],
+      "opens_from_items": [
+        "M12",
+        "M14",
+        "D35",
+        "D36"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_recovery_conditions",
+      "authored_candidates": [
+        "D86"
+      ],
+      "opens_from_items": [
+        "M14",
+        "D35"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_company_effect",
+      "authored_candidates": [
+        "D87"
+      ],
+      "opens_from_items": [
+        "M13"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_company_aftereffect",
+      "authored_candidates": [
+        "D88"
+      ],
+      "opens_from_items": [
+        "D87"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_relational_self_expectation",
+      "authored_candidates": [
+        "D89"
+      ],
+      "opens_from_items": [
+        "M18"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_relational_expected_response",
+      "authored_candidates": [
+        "D90"
+      ],
+      "opens_from_items": [
+        "D43",
+        "M18"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_help_response",
+      "authored_candidates": [
+        "D91"
+      ],
+      "opens_from_items": [
+        "M20",
+        "M21"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_need_after_response",
+      "authored_candidates": [
+        "D92"
+      ],
+      "opens_from_items": [
+        "D91"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_pace_fit",
+      "authored_candidates": [
+        "D93"
+      ],
+      "opens_from_items": [
+        "D53"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_pace_conditions",
+      "authored_candidates": [
+        "D94"
+      ],
+      "opens_from_items": [
+        "D93"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_interest_aftereffect",
+      "authored_candidates": [
+        "D95"
+      ],
+      "opens_from_items": [
+        "D53"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_repair_unfinished",
+      "authored_candidates": [
+        "D96"
+      ],
+      "opens_from_items": [
+        "M24",
+        "D50"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_exploration_support",
+      "authored_candidates": [
+        "D97"
+      ],
+      "opens_from_items": [],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_exploration_effect",
+      "authored_candidates": [
+        "D98"
+      ],
+      "opens_from_items": [
+        "D97"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_sequence_typicality",
+      "authored_candidates": [
+        "D99"
+      ],
+      "opens_from_items": [
+        "D08",
+        "D78"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_meaning_after_easing",
+      "authored_candidates": [
+        "D100"
+      ],
+      "opens_from_items": [
+        "M14",
+        "D35"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_internal_access",
+      "authored_candidates": [
+        "D20"
+      ],
+      "opens_from_items": [
+        "D18",
+        "D21",
+        "D48"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_feeling_tolerance",
+      "authored_candidates": [
+        "D23"
+      ],
+      "opens_from_items": [
+        "D65",
+        "D66"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    },
+    {
+      "target_id": "coverage_self_conclusion",
+      "authored_candidates": [
+        "D22"
+      ],
+      "opens_from_items": [
+        "M05",
+        "M06"
+      ],
+      "executable_opening": "coverage.build_coverage_targets",
+      "executable_resolution": "coverage._close",
+      "maximum_attempts": 1,
+      "explicitly_requested_maximum_attempts": 1
+    }
+  ],
+  "bindings": {
+    "same_topic_is_not_same_event": true,
+    "replay_requires_explicit_distinctness": true,
+    "one_replay_per_source_occurrence": true,
+    "no_replay_trees": true,
+    "all_actualness_derived_from_canonical_response": true
+  },
+  "factual_guards": [
+    "bothersome_comment",
+    "need_became_known",
+    "noticed_feeling_without_acting"
+  ],
+  "corrections": {
+    "storage": "append_only_journal_with_supersession",
+    "recompute": "bounded_full_replay_and_dependency_aware_invalidation",
+    "dependency_aspects": [
+      "content",
+      "status_basis",
+      "option:canonical_option_id",
+      "context_fact"
+    ],
+    "post_finish": "new_revision_no_automatic_reopening_or_delivery",
+    "interpretation_disagreement": "withdraw_relevant_derived_support_keep_literal_evidence"
+  },
+  "budgets": {
+    "max_administrations": 56,
+    "max_mapping_administrations": 32,
+    "max_decisions": 72,
+    "skip_counts_as_administration": true,
+    "mixed_response_decisions": 3,
+    "partial_order_decisions": "selected_count+1",
+    "automatic_scope_texture_allowance": 3,
+    "shorten": "suppress_tier_5_and_6_non_short_block_candidates"
+  },
+  "priority_clarifications": {
+    "replay_requirement_gain": 2,
+    "visible_need_discriminator_requirement_gain": 2,
+    "meaning": "authored requirement counts, not statistical information gain"
+  },
+  "report": {
+    "packet_format": "patternwork-router-evidence-v1",
+    "schema": "schemas/router_packet.schema.json",
+    "final_interpretation_authority": "writer_and_semantic_review",
+    "requires_honoring_interpretation_disputes": true,
+    "no_required_motive_selection_for_writer_inference": true
+  },
+  "trust": {
+    "answers_allow": [
+      "selected",
+      "status",
+      "mode",
+      "basis"
+    ],
+    "prohibit_client_targets_and_evidence": true,
+    "state_envelope": "HMAC-SHA256_signed_not_encrypted",
+    "snapshot_source_binding": "canonical_question_target_gate_and_runtime_source_hash",
+    "local_unsigned_snapshot": "explicit_local_test_only_never_production_load"
+  },
+  "coverage_extension": {
+    "additional_templates": 36,
+    "additional_descriptive_targets": 36,
+    "existing_item_reachability_targets": 3,
+    "automatic_theory_classification": false,
+    "default_budgets_changed": false
+  }
+}

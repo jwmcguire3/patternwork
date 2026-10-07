@@ -1,6 +1,5 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { assertPwqe6ReportActivationReady } from "./pwqe6-readiness.ts";
 import { prisma } from "../../prisma.ts";
 import { cookieKeyringFromEnv, encryptionKeyringFromEnv } from "../security/index.ts";
 
@@ -19,7 +18,7 @@ export function reportGenerationReadiness(result: ReportPreflightResult): Report
   return { ok: generationChecks.every((check) => check.ok), checks: generationChecks };
 }
 
-export async function runReportPreflight(workspaceRoot?: string, databaseCheck: () => Promise<void> = async () => {
+export async function runReportPreflight(_workspaceRoot?: string, databaseCheck: () => Promise<void> = async () => {
   await prisma.patternworkV31AssessmentSnapshot.count({ take: 1 });
   await prisma.patternworkV31ReportWorkflowAttempt.count({ take: 1 });
 }): Promise<ReportPreflightResult> {
@@ -28,12 +27,6 @@ export async function runReportPreflight(workspaceRoot?: string, databaseCheck: 
   for (const name of required) checks.push({ name, ok: Boolean(process.env[name]?.trim()), message: process.env[name]?.trim() ? "configured" : "missing" });
   const cap = Number(process.env.OPENROUTER_MAX_COST_PER_ASSESSMENT_USD);
   checks.push({ name: "OPENROUTER_MAX_COST_PER_ASSESSMENT_USD", ok: Number.isFinite(cap) && cap > 0, message: Number.isFinite(cap) && cap > 0 ? "valid" : "must be a positive number" });
-  try {
-    const activation = await assertPwqe6ReportActivationReady({ workspaceRoot });
-    checks.push({ name: "PWQE5-source-and-reviewed-activation", ok: true, message: `source ${activation.sourceManifestSha256}; qualification ${activation.qualificationManifestSha256}` });
-  } catch (error) {
-    checks.push({ name: "PWQE5-source-and-reviewed-activation", ok: false, message: error instanceof Error ? error.message : String(error) });
-  }
   for (const [name, check] of [["encryption-keyring", encryptionKeyringFromEnv], ["assessment-cookie-keyring", cookieKeyringFromEnv]] as const) {
     try { check(); checks.push({ name, ok: true, message: "valid" }); }
     catch { checks.push({ name, ok: false, message: "missing or invalid" }); }

@@ -3,7 +3,7 @@ import { sha256Canonical } from "../../report-contracts/delivery-validator.ts";
 import { prisma } from "../../prisma.ts";
 import { decryptJson, encryptBytes, encryptJson, encryptionKeyringFromEnv, sha256, type EncryptionKeyring } from "../security/index.ts";
 import { OpenRouterClient } from "../openrouter/client.ts";
-import { activateReviewedPwqe5QualificationManifest, totalUsage } from "../openrouter/policy.ts";
+import { totalUsage } from "../openrouter/policy.ts";
 import type { OpenRouterUsage } from "../openrouter/types.ts";
 import type {
   DecryptedAssessmentSnapshot,
@@ -193,11 +193,20 @@ function reportTypesForPass(pass: 1 | 2): readonly ReportType[] {
   return pass === 1 ? ["MAP"] : ["IFS", "PV", "ATT", "SYNTHESIS"];
 }
 
-function runKey(input: PassReportWorkflowInput, reportType: ReportType): string {
-  return `pw31-run-${sha256Canonical({ snapshotId: input.snapshotId, completedPass: input.completedPass, reportType, promptRelease: "6.0", reportContract: "patternwork-report-v6-design" })}`;
+function runKey(input: PassReportWorkflowInput, reportType: ReportType, prepared: PreparedReportInputs): string {
+  const isPwrp71 = prepared.contractVersion === "v7.1";
+  return `pw31-run-${sha256Canonical({ snapshotId: input.snapshotId, completedPass: input.completedPass, reportType, promptRelease: isPwrp71 ? "7.1" : "6.0", reportContract: isPwrp71 ? "PWRP-7.1.0-candidate.1" : "patternwork-report-v6-design" })}`;
 }
 
 function inputDigest(reportType: ReportType, prepared: PreparedReportInputs): string {
+  if (prepared.contractVersion === "v7.1") return sha256Canonical({
+    snapshot: prepared.snapshot,
+    questionSourceManifestSha256: prepared.sourceManifestSha256,
+    reportSourceManifestSha256: prepared.reportSourceManifestSha256,
+    qualificationManifestSha256: prepared.qualificationManifestSha256,
+    reportType,
+    packet: prepared.routerPacket,
+  });
   if (prepared.contractVersion === "v6") return sha256Canonical({ snapshot: prepared.snapshot, sourceManifestSha256: prepared.sourceManifestSha256, qualificationManifestSha256: prepared.qualificationManifestSha256, reportType, packet: prepared.routerPacket });
   if (reportType === "MAP") return sha256Canonical(prepared.packets);
   if (reportType === "SYNTHESIS") return sha256Canonical(prepared.snapshot);
@@ -229,9 +238,9 @@ export class PrismaReportWorkflowPersistence implements ReportWorkflowPersistenc
           assessmentSnapshotId: prepared.snapshot.databaseId,
           reportWorkflowAttemptId: input.attemptId,
           reportType,
-          idempotencyKey: runKey(input, reportType),
+          idempotencyKey: runKey(input, reportType, prepared),
           status: "RUNNING",
-          promptRelease: "6.0",
+          promptRelease: prepared.contractVersion === "v7.1" ? "7.1" : "6.0",
           inputSha256: inputDigest(reportType, prepared),
           startedAt: timestamp,
         },
@@ -365,10 +374,6 @@ export function setReportWorkflowDependenciesForTests(dependencies: ReportWorkfl
 
 export function getReportWorkflowDependencies(): ReportWorkflowDependencies {
   if (testDependencies) return testDependencies;
-  const activation = activateReviewedPwqe5QualificationManifest(
-    process.env.OPENROUTER_QUALIFICATION_MANIFEST_JSON,
-    process.env.OPENROUTER_QUALIFICATION_MANIFEST_SHA256,
-  );
   const rawCap = process.env.OPENROUTER_MAX_COST_PER_ASSESSMENT_USD;
   const capUsd = rawCap === undefined ? Number.NaN : Number(rawCap);
   if (!Number.isFinite(capUsd) || capUsd <= 0) throw new Error("OPENROUTER_MAX_COST_PER_ASSESSMENT_USD must be configured as a positive number before live report generation.");
@@ -377,7 +382,6 @@ export function getReportWorkflowDependencies(): ReportWorkflowDependencies {
     persistence: new PrismaReportWorkflowPersistence(),
     provider: new OpenRouterClient(),
     costCapMicros: Math.floor(capUsd * 1_000_000),
-    modelPolicy: activation.policy,
     preflight: async () => {
       const result = reportGenerationReadiness(await runReportPreflight());
       if (!result.ok) throw new Error(`preflight_configuration_failed:${result.checks.filter((check) => !check.ok).map((check) => `${check.name}=${check.message}`).join("; ")}`);

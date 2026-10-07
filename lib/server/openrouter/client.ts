@@ -217,19 +217,20 @@ export class OpenRouterClient implements OpenRouterTransport {
     const message = asObject(choice?.message);
     const refusal = message?.refusal;
     const finishReason = choice?.finish_reason;
+    const finishMetadata = typeof finishReason === "string" ? { finishReason } : {};
     if ((typeof refusal === "string" && refusal.length > 0) || finishReason === "content_filter") {
-      return { ok: false, kind: "refusal", message: typeof refusal === "string" ? refusal : "The provider refused the generation.", usage };
+      return { ok: false, kind: "refusal", message: typeof refusal === "string" ? refusal : "The provider refused the generation.", usage, ...finishMetadata };
     }
     const content = message?.content;
     if (typeof content !== "string") {
-      return { ok: false, kind: "invalid_json", message: "OpenRouter response contained no string JSON content.", usage };
+      return { ok: false, kind: "invalid_json", message: "OpenRouter response contained no string JSON content.", usage, ...finishMetadata };
     }
     try {
       const output = JSON.parse(content) as unknown;
-      if (!asObject(output)) return { ok: false, kind: "invalid_json", message: "Structured output was not a JSON object.", usage, rawContent: content };
-      return { ok: true, output: output as JsonObject, usage };
+      if (!asObject(output)) return { ok: false, kind: "invalid_json", message: "Structured output was not a JSON object.", usage, rawContent: content, ...finishMetadata };
+      return { ok: true, output: output as JsonObject, usage, ...finishMetadata };
     } catch {
-      return { ok: false, kind: "invalid_json", message: "Structured output was invalid JSON.", usage, rawContent: content };
+      return { ok: false, kind: "invalid_json", message: "Structured output was invalid JSON.", usage, rawContent: content, ...finishMetadata };
     }
   }
 }

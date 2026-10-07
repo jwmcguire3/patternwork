@@ -1,0 +1,128 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "review_contract": {
+      "const": "PWRP-REVIEW-7.0.0-candidate.1"
+    },
+    "report_release": {
+      "const": "PWRP-7.1.0-candidate.1"
+    },
+    "reviewed_draft_sha256": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reviewed_evidence_sha256": {
+      "type": "string",
+      "minLength": 1
+    },
+    "verdict": {
+      "enum": [
+        "accept",
+        "revise",
+        "invalid_input"
+      ]
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "category": {
+            "enum": [
+              "source_integrity",
+              "overreach",
+              "material_omission",
+              "cardinality_distortion",
+              "theory_conflation",
+              "scope_or_chronology",
+              "identity_conflict",
+              "voice",
+              "privacy",
+              "unrepresented_claim"
+            ]
+          },
+          "claim_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "section_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "name_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "relationship_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "requested_change": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "claim_ids",
+          "section_ids",
+          "name_ids",
+          "relationship_ids",
+          "evidence_ids",
+          "reason",
+          "requested_change"
+        ]
+      }
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "review_contract",
+    "report_release",
+    "reviewed_draft_sha256",
+    "reviewed_evidence_sha256",
+    "verdict",
+    "issues",
+    "summary"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Patternwork semantic review v7"
+}

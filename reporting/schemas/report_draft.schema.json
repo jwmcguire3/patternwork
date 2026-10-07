@@ -1,0 +1,456 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "report_release": {
+      "const": "PWRP-7.1.0-candidate.1"
+    },
+    "release_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "snapshot_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence_sha256": {
+      "type": "string",
+      "minLength": 1
+    },
+    "report_type": {
+      "enum": [
+        "MAP",
+        "IFS",
+        "PV",
+        "ATT",
+        "SYNTHESIS"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title_claim_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "content_status": {
+      "enum": [
+        "complete",
+        "insufficient_evidence"
+      ]
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "heading": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "claim_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "id",
+          "heading",
+          "text",
+          "claim_ids"
+        ]
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "reported",
+              "supported_interpretation",
+              "open_question",
+              "not_assessed"
+            ]
+          },
+          "constructs": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "manager",
+                "firefighter",
+                "protective_function",
+                "exile",
+                "vulnerable_part",
+                "vulnerable_theme",
+                "internal_exclusion",
+                "organizing_belief",
+                "burden",
+                "self_led_capacity",
+                "unblending",
+                "polarization",
+                "part_relationship",
+                "handoff",
+                "loop",
+                "state_pattern",
+                "state_transition",
+                "state_dependent_cognition",
+                "recovery",
+                "co_regulation",
+                "attachment_anxiety",
+                "attachment_avoidance",
+                "secure_functioning",
+                "working_expectation",
+                "relational_pace",
+                "repair",
+                "context_contrast",
+                "recurrence",
+                "capacity",
+                "practical_explanation",
+                "description",
+                "scope_limit"
+              ]
+            },
+            "uniqueItems": true
+          },
+          "scope": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "level": {
+                "enum": [
+                  "occurrence",
+                  "reported_tendency",
+                  "recurring_within_context",
+                  "across_sampled_contexts",
+                  "not_assessed"
+                ]
+              },
+              "occurrence_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              },
+              "person_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              },
+              "description": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "level",
+              "occurrence_ids",
+              "person_ids",
+              "description"
+            ]
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "counterevidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "sequence_edge_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "depends_on_claim_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "support_basis": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "direct_report",
+                "stated_aim",
+                "remembered_expectation",
+                "reported_effect",
+                "inferred_function",
+                "model_formulation",
+                "actual_sequence",
+                "context_comparison",
+                "reported_typicality",
+                "scope_limit"
+              ]
+            },
+            "uniqueItems": true
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 1
+          },
+          "remaining_uncertainty": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "id",
+          "text",
+          "kind",
+          "constructs",
+          "scope",
+          "evidence_ids",
+          "counterevidence_ids",
+          "sequence_edge_ids",
+          "depends_on_claim_ids",
+          "support_basis",
+          "rationale",
+          "remaining_uncertainty"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "reported",
+                    "supported_interpretation"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "evidence_ids": {
+                  "minItems": 1
+                },
+                "scope": {
+                  "properties": {
+                    "occurrence_ids": {
+                      "minItems": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "name_registry": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "entity_kind": {
+            "enum": [
+              "ifs_part",
+              "state_pattern",
+              "relational_pattern",
+              "descriptive_pattern"
+            ]
+          },
+          "role": {
+            "enum": [
+              "manager",
+              "firefighter",
+              "exile",
+              "protective_part",
+              "context_dependent",
+              "vulnerable_part",
+              "descriptive_pattern"
+            ]
+          },
+          "author_generated": {
+            "type": "boolean"
+          },
+          "supporting_claim_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "name_id",
+          "name",
+          "entity_kind",
+          "role",
+          "author_generated",
+          "supporting_claim_ids"
+        ]
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "from_name_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "to_name_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "relation": {
+            "enum": [
+              "protects",
+              "polarized_with",
+              "reinforces",
+              "takes_over_from",
+              "shares_protective_target_with",
+              "contrasts_with"
+            ]
+          },
+          "claim_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "id",
+          "from_name_id",
+          "to_name_id",
+          "relation",
+          "claim_ids"
+        ]
+      }
+    },
+    "reflection_questions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "report_release",
+    "release_id",
+    "snapshot_id",
+    "evidence_sha256",
+    "report_type",
+    "title",
+    "title_claim_ids",
+    "content_status",
+    "sections",
+    "claims",
+    "name_registry",
+    "relationships",
+    "reflection_questions"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Patternwork report draft v7 — no psychological cardinality quota",
+  "$defs": {
+    "construct": {
+      "enum": [
+        "manager",
+        "firefighter",
+        "protective_function",
+        "exile",
+        "vulnerable_part",
+        "vulnerable_theme",
+        "internal_exclusion",
+        "organizing_belief",
+        "burden",
+        "self_led_capacity",
+        "unblending",
+        "polarization",
+        "part_relationship",
+        "handoff",
+        "loop",
+        "state_pattern",
+        "state_transition",
+        "state_dependent_cognition",
+        "recovery",
+        "co_regulation",
+        "attachment_anxiety",
+        "attachment_avoidance",
+        "secure_functioning",
+        "working_expectation",
+        "relational_pace",
+        "repair",
+        "context_contrast",
+        "recurrence",
+        "capacity",
+        "practical_explanation",
+        "description",
+        "scope_limit"
+      ]
+    }
+  }
+}

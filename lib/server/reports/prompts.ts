@@ -3,6 +3,7 @@ import path from "node:path";
 import type { JsonObject, ReportType, ValidationIssue } from "../../question-engine/types.ts";
 import { loadPatternworkSchemas } from "../../report-contracts/schema-loader.ts";
 import { loadPwqe5SourcePackage, type Pwqe5SourcePackage } from "./pwqe6-source.ts";
+import { loadPwrp71SourcePackage, type Pwrp71SourcePackage } from "./pwrp71-source.ts";
 import { containsAccountIdentifier } from "./privacy-patterns.ts";
 
 const PROMPT_DIRECTORY = "specs/patternwork/report-prompts-v4.1";
@@ -32,6 +33,27 @@ export interface LoadedReportPrompt {
   readonly system: string;
   readonly schema: JsonObject;
   readonly schemaName: string;
+}
+
+export async function loadPwrp71ReportPrompt(
+  reportType: ReportType,
+  workspaceRoot = process.cwd(),
+): Promise<LoadedReportPrompt & { readonly source: Pwrp71SourcePackage }> {
+  const source = await loadPwrp71SourcePackage(workspaceRoot);
+  const specificKey = reportType === "MAP" ? "mapping"
+    : reportType === "IFS" ? "ifs"
+      : reportType === "PV" ? "state"
+        : reportType === "ATT" ? "attachment" : "synthesis";
+  return {
+    source,
+    system: [
+      "You are the Patternwork PWRP 7.1 report writer. Return only the requested JSON object.",
+      source.prompts.shared,
+      source.prompts[specificKey],
+    ].join("\n\n"),
+    schema: source.schemas.reportDraft as JsonObject,
+    schemaName: `patternwork_${reportType.toLowerCase()}_pwrp_7_1_candidate`,
+  };
 }
 
 export async function loadPwqe6ReportPrompt(reportType: ReportType, workspaceRoot = process.cwd()): Promise<LoadedReportPrompt & { readonly source: Pwqe5SourcePackage }> {

@@ -33,6 +33,7 @@ async function requireGenerated(
   spentMicros: number,
   synthesisBundle?: ReturnType<typeof buildValidatedSynthesisBundle>,
 ): Promise<GeneratedCanonicalArtifact> {
+  if (!dependencies.modelPolicy) throw new Error("The offline legacy report pipeline requires an explicitly activated report model policy.");
   const outcome = await generateCanonicalReport({
     reportType,
     input,

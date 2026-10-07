@@ -10,6 +10,7 @@ import type { totalUsage } from "../openrouter/policy.ts";
 import type { ActivatedReportModelPolicy } from "../openrouter/policy.ts";
 import type { ReportDeliveryBoundary } from "../email/types.ts";
 import type { PdfVerificationBoundary } from "../pdf/types.ts";
+import type { Pwrp71ReportArtifact } from "./pwrp71-validation.ts";
 
 export interface PassReportWorkflowInput {
   readonly assessmentSessionId: string;
@@ -48,8 +49,9 @@ export interface PreparedReportInputs {
   readonly snapshot: Omit<DecryptedAssessmentSnapshot, "canonicalSnapshot" | "persistedPackets">;
   readonly packets: readonly ReportEvidencePacketV3_1[];
   readonly routerPacket?: JsonObject;
-  readonly contractVersion?: "v3.1" | "v6";
+  readonly contractVersion?: "v3.1" | "v6" | "v7.1";
   readonly sourceManifestSha256?: string;
+  readonly reportSourceManifestSha256?: string;
   readonly qualificationManifestSha256?: string;
   readonly modelPolicy?: ActivatedReportModelPolicy;
 }
@@ -63,7 +65,7 @@ export type AggregatedOpenRouterUsage = ReturnType<typeof totalUsage>;
 
 export interface GeneratedCanonicalArtifact {
   readonly reportType: ReportType;
-  readonly artifact: ReportArtifact | SynthesisAudit | Pwqe6ReportArtifact;
+  readonly artifact: ReportArtifact | SynthesisAudit | Pwqe6ReportArtifact | Pwrp71ReportArtifact;
   readonly usage: AggregatedOpenRouterUsage;
 }
 
@@ -132,7 +134,7 @@ export interface ReportWorkflowDependencies {
   readonly persistence: ReportWorkflowPersistence;
   readonly workspaceRoot?: string;
   readonly costCapMicros?: number;
-  readonly modelPolicy: ActivatedReportModelPolicy;
+  readonly modelPolicy?: ActivatedReportModelPolicy;
   readonly pdfVerification?: PdfVerificationBoundary;
   readonly delivery?: ReportDeliveryBoundary;
   readonly preflight?: () => Promise<void>;
