@@ -171,14 +171,26 @@ function normalize(input: Pwqe51RouterInput, source: Pwqe51SourcePackage) {
   });
   const byId = new Map(all.map((r) => [r.responseId, r]));
   const superseded = new Set<string>();
+  const chronologicalIndex = new Map(all.map((row, index) => [row.responseId, index]));
   for (const row of all) if (row.supersedesResponseId) {
     const old = byId.get(row.supersedesResponseId);
     if (!old || old.questionId !== row.questionId || old.occurrenceId !== row.occurrenceId || old.stepId !== row.stepId) throw new Error("A correction must supersede the same item, episode and step.");
+    if (chronologicalIndex.get(old.responseId)! >= chronologicalIndex.get(row.responseId)!) throw new Error("Corrections must supersede an earlier response.");
     superseded.add(old.responseId);
   }
+  // A correction replaces the observation at its original position in the
+  // episode timeline. Appending it to the end would falsely invalidate every
+  // intervening dependent question simply because its parent was superseded.
+  const originalPosition = (row: Normalized): number => {
+    let original = row;
+    while (original.supersedesResponseId) original = byId.get(original.supersedesResponseId)!;
+    return chronologicalIndex.get(original.responseId)!;
+  };
+  const currentInEpisodeOrder = all.filter((row) => !superseded.has(row.responseId))
+    .sort((left, right) => originalPosition(left) - originalPosition(right));
   const active: Normalized[] = [];
   const invalidated: { responseId: string; reason: string }[] = [];
-  for (const row of all.filter((r) => !superseded.has(r.responseId))) {
+  for (const row of currentInEpisodeOrder) {
     const q = questions.get(row.questionId)!;
     const earlier = active.filter((r) => r.occurrenceId === row.occurrenceId);
     const missingParent = q.eligibility.requires_answered.find((id) => !earlier.some((r) => r.questionId === id && answered(r)));
