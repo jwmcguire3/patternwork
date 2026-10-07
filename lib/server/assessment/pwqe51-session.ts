@@ -16,6 +16,9 @@ export interface Pwqe51CurrentInteraction {
   readonly stepId: string;
   readonly variantId?: string;
   readonly targetIds?: readonly string[];
+  readonly replayOfOccurrenceId?: string;
+  readonly replayTargetId?: string;
+  readonly comparisonIds?: readonly [string, string];
 }
 
 export interface Pwqe51ComparisonDecision {
@@ -67,6 +70,8 @@ export interface Pwqe51RenderedInteraction {
   readonly context: string;
   readonly episodeFamily: string;
   readonly stepId: string;
+  readonly replayConfirmationRequired?: boolean;
+  readonly replaySourceLabel?: string;
   readonly rootBasisRequired: boolean;
   readonly basisOptions: readonly ("actual_recalled" | "reported_typicality")[];
   readonly selection: Readonly<Record<string, unknown>>;
@@ -126,6 +131,8 @@ function currentFor(route: Pwqe51RouterResult, prior: Pwqe51CurrentInteraction |
     occurrenceId: candidate.occurrenceId,
     stepId: candidate.stepId,
     ...(targetIds.length ? { targetIds } : {}),
+    ...(candidate.replayOfOccurrenceId ? { replayOfOccurrenceId: candidate.replayOfOccurrenceId, replayTargetId: candidate.replayTargetId } : {}),
+    ...(candidate.comparisonIds ? { comparisonIds: candidate.comparisonIds } : {}),
   };
 }
 
@@ -390,6 +397,7 @@ export function renderPwqe51Interaction(state: Pwqe51SessionState, source: Pwqe5
     context: rendered.contextLabel,
     episodeFamily: question.episode_family,
     stepId: current.stepId,
+    ...(current.replayOfOccurrenceId ? { replayConfirmationRequired: true, replaySourceLabel: publicEpisodeLabel(state, current.replayOfOccurrenceId, "comparison") } : {}),
     rootBasisRequired,
     basisOptions: rootBasisRequired ? ["actual_recalled", "reported_typicality"] : [],
     selection,
