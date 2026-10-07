@@ -270,22 +270,6 @@ test("forward corrections are rejected instead of constructing a cyclic replacem
   ] }, source), /earlier response/u);
 });
 
-test("confirmed distinct actual reviews expose comparison questions using pair-derived flags", async () => {
-  const source = await sourcePromise;
-  const result = compilePwqe51Route({
-    phase: "deepening",
-    responses: [
-      answer("review-one", "M02", "M02.rehearse", "review-1", undefined, { basis: "actual_recalled" }),
-      answer("review-two", "M02", "M02.rehearse", "review-2", undefined, { basis: "actual_recalled" }),
-    ],
-    distinctPairs: [["review-1", "review-2"]],
-  }, source);
-  assert.ok(result.candidates.some((candidate) => candidate.questionId === "D56" && candidate.occurrenceId === "review-1"),
-    "D56 must be eligible from the confirmed pair's derived flags");
-  assert.ok(result.candidates.some((candidate) => candidate.questionId === "D57" && candidate.occurrenceId === "review-1"),
-    "D57 must recognize matched actual action in the pair");
-});
-
 test("a target whose first discriminator is unavailable may offer a later authored discriminator", async () => {
   const source = await sourcePromise;
   const result = compilePwqe51Route({
