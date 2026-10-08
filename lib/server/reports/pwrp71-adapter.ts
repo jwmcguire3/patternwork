@@ -216,20 +216,56 @@ function validatePacket(packet: JsonObject, source: Pwqe51SourcePackage, issues:
     }
   }
   const targetIds = new Set(source.routingTargets.targets.map((target) => target.id).filter((id): id is string => typeof id === "string"));
-  const comparisonIds = new Set((rows(packet.context_comparisons) ?? []).map((comparison) => comparison.id).filter((id): id is string => typeof id === "string"));
+  // comparison_ids in a target are *occurrence IDs*, not IDs of entries in
+  // context_comparisons (which has no id field in the pinned router schema).
+  // An independent comparison requires a source-confirmed distinct pair.
+  const confirmedPairs = new Set<string>();
+  for (const episode of episodes) {
+    if (typeof episode.id !== "string" || episode.basis !== "actual_recalled") continue;
+    for (const otherId of Array.isArray(episode.distinct_from) ? episode.distinct_from : []) {
+      const other = typeof otherId === "string" ? episodeIndex.get(otherId) : undefined;
+      if (other?.basis !== "actual_recalled" || otherId === episode.id) continue;
+      confirmedPairs.add([episode.id, otherId].sort().join("\u0000"));
+    }
+  }
+  // For an explicitly recorded 'same' or 'cannot tell' pair there is no
+  // independently confirmed contrast, regardless of matching actions.
+  for (const relation of rows(packet.context_comparisons) ?? []) {
+    if (relation.basis === "respondent_confirmed_distinctness"
+      && typeof relation.occurrence_id === "string"
+      && Array.isArray(relation.distinct_from)) {
+      for (const otherId of relation.distinct_from) if (typeof otherId === "string") {
+        const pair = [relation.occurrence_id, otherId].sort().join("\u0000");
+        if (confirmedPairs.has(pair)) continue;
+        issues.push(issue("comparison_lineage", "$.packet.context_comparisons", "A declared distinctness comparison must match current actual episode lineage."));
+      }
+    }
+  }
   const targetInstances = new Set<string>();
   for (const [index, target] of targets.entries()) {
     const refs = [...(Array.isArray(target.source_ids) ? target.source_ids : []), ...(Array.isArray(target.resolution_ids) ? target.resolution_ids : [])];
     const path = `$.packet.target_resolutions[${index}]`;
+    const pair = Array.isArray(target.comparison_ids) ? target.comparison_ids : [];
+    const hasPair = pair.length === 2 && pair.every((id) => typeof id === "string" && episodeIndex.get(id)?.basis === "actual_recalled")
+      && pair[0] !== pair[1] && pair.includes(target.occurrence_id)
+      && confirmedPairs.has([...pair].sort().join("\u0000"));
+    const invalidComparisons = pair.length > 0 && !hasPair;
+    const permittedOccurrences = hasPair ? new Set(pair) : new Set([target.occurrence_id]);
     const invalidObservation = refs.some((id) => {
       const observation = typeof id === "string" ? observationIndex.get(id) : undefined;
-      return !observation || observation.occurrence_id !== target.occurrence_id;
+      return !observation || !permittedOccurrences.has(observation.occurrence_id);
     });
-    const invalidComparisons = (Array.isArray(target.comparison_ids) ? target.comparison_ids : []).some((id) => typeof id !== "string" || !comparisonIds.has(id));
+    // An open evidence target can point at a *prospective* step before any
+    // substantive answer exists at that step. Only observed/resolved targets
+    // are required to refer to an existing observation-backed step.
+    const isProspective = ["open", "unresolved", "unavailable", "declined", "abandoned_low_value"].includes(String(target.state))
+      && (!Array.isArray(target.resolution_ids) || target.resolution_ids.length === 0);
+    const targetStepExists = stepByOccurrenceAndName.has(stepKey(target.occurrence_id, target.step_id));
     if (typeof target.id !== "string" || !target.id || targetInstances.has(target.id)
       || typeof target.target_id !== "string" || !targetIds.has(target.target_id)
       || typeof target.occurrence_id !== "string" || !episodeIds.has(target.occurrence_id)
-      || !stepByOccurrenceAndName.has(stepKey(target.occurrence_id, target.step_id))
+      || (typeof target.step_id !== "string" || !target.step_id)
+      || (!targetStepExists && !isProspective)
       || invalidObservation || invalidComparisons) {
       issues.push(issue("target_lineage", path, "Target resolution identity, definition, step, occurrence, comparisons, or source observations are not bound to current packet evidence."));
     } else targetInstances.add(target.id);
