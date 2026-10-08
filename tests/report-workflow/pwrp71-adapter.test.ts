@@ -291,3 +291,63 @@ test("synthesis requires the exact bound layer set and validates every layer cla
   assert.equal(incomplete.ok, false);
   if (!incomplete.ok) assert.ok(incomplete.issues.some((entry) => entry.code === "accepted_layer_set"));
 });
+
+test("prospective targets need no fabricated observation step", async () => {
+  const value = await fixture();
+  const packet = structuredClone(value.packet) as Record<string, unknown>;
+  packet.target_resolutions = [{
+    id: "target-future", target_id: "recurrence", occurrence_id: "occurrence-1",
+    step_id: "recovery", state: "open", reason: "future_discriminator",
+    comparison_ids: [], source_ids: [(value.observation as Record<string, unknown>).id],
+    resolution_ids: [], attempts: 0,
+  }];
+  const result = preparePwrp71Request({ packet: resignPacket(packet), reportType: "MAP", questionSource: value.questionSource, reportSource: value.reportSource });
+  assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify(result.issues));
+});
+
+test("confirmed actual comparison allows pair-wide observations but not an unrelated occurrence", async () => {
+  const value = await fixture();
+  const packet = structuredClone(value.packet) as Record<string, unknown>;
+  const oldObs = packet.observations as Record<string, unknown>[];
+  const newObservation = {
+    ...oldObs[0], id: `O${digest(["other-response", oldObs[0]!.option_id]).slice(0, 20)}`,
+    response_id: "other-response", administration_id: "other-response",
+    occurrence_id: "occurrence-2", dependence_group: "occurrence-2",
+  };
+  packet.episodes = [...packet.episodes as unknown[], {
+    id: "occurrence-2", family: "work", context: "work", root_item_id: "M01",
+    basis: "actual_recalled", status: "actual_recalled", recall_window: "recent",
+    person_id: null, role: null, topic: null, linked_from: "occurrence-1",
+    distinct_from: ["occurrence-1"], outside_window: false,
+  }];
+  packet.observations = [...oldObs, newObservation];
+  packet.steps = [...packet.steps as unknown[], {
+    id: "other-step", occurrence_id: "occurrence-2",
+    step_id: "typicality", observation_ids: [newObservation.id],
+  }];
+  packet.administration_provenance = [...packet.administration_provenance as unknown[], {
+    id: "other-response", item_id: newObservation.item_id, variant: "base",
+    occurrence_id: "occurrence-2", phase: "deepening",
+    selection_reason: "server-issued authored question", option_order: [newObservation.option_id],
+    live_response_id: "other-response",
+  }];
+  packet.context_comparisons = [{
+    occurrence_id: "occurrence-2", distinct_from: ["occurrence-1"],
+    linked_from: "occurrence-1", basis: "respondent_confirmed_distinctness",
+  }];
+  packet.target_resolutions = [{
+    id: "target-compare", target_id: "contrast_goal", occurrence_id: "occurrence-1",
+    step_id: "comparison", state: "open", reason: "pair_context",
+    comparison_ids: ["occurrence-1", "occurrence-2"],
+    source_ids: [oldObs[0]!.id, newObservation.id], resolution_ids: [], attempts: 0,
+  }];
+  const good = preparePwrp71Request({ packet: resignPacket(packet), reportType: "MAP", questionSource: value.questionSource, reportSource: value.reportSource });
+  assert.equal(good.ok, true, good.ok ? undefined : JSON.stringify(good.issues));
+  const changed = structuredClone(packet);
+  (changed.context_comparisons as Record<string, unknown>[])[0]!.basis = "respondent_cannot_tell_distinctness";
+  (changed.context_comparisons as Record<string, unknown>[])[0]!.distinct_from = [];
+  (changed.episodes as Record<string, unknown>[])[1]!.distinct_from = [];
+  const bad = preparePwrp71Request({ packet: resignPacket(changed), reportType: "MAP", questionSource: value.questionSource, reportSource: value.reportSource });
+  assert.equal(bad.ok, false);
+  if (!bad.ok) assert.ok(bad.issues.some((issue) => issue.code === "target_lineage"));
+});

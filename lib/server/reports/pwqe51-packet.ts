@@ -157,7 +157,24 @@ export function buildPwqe51RouterPacket(input: BuildPwqe51PacketInput): Record<s
 
   const actualEpisodeIds = new Set(route.episodes.filter((episode) => episode.basis === "actual_recalled").map((episode) => episode.id));
   const comparisonPairKeys = new Set<string>();
-  const contextComparisons = (input.comparisonDecisions ?? []).map((decision) => {
+  // Comparisons selected at Mapping completion and distinct replay occasions
+  // are two legitimate sources of pair evidence. The latter is derived from
+  // trusted current router state, never from similarity of chosen responses.
+  const reportedDecisions: Pwqe51ComparisonDecision[] = [...(input.comparisonDecisions ?? [])];
+  const existingPairs = new Set(reportedDecisions.map((decision) =>
+    [decision.firstOccurrenceId, decision.secondOccurrenceId].sort().join("\u0000")));
+  for (const episode of route.episodes) {
+    for (const sourceId of episode.distinctFrom) {
+      const key = [episode.id, sourceId].sort().join("\u0000");
+      if (existingPairs.has(key)) continue;
+      if (!actualEpisodeIds.has(episode.id) || !actualEpisodeIds.has(sourceId)) {
+        throw new Error("PWQE 5.1 replay distinctness must join two current actual episodes.");
+      }
+      reportedDecisions.push({ firstOccurrenceId: sourceId, secondOccurrenceId: episode.id, relation: "different" });
+      existingPairs.add(key);
+    }
+  }
+  const contextComparisons = reportedDecisions.map((decision) => {
     if (!actualEpisodeIds.has(decision.firstOccurrenceId) || !actualEpisodeIds.has(decision.secondOccurrenceId)
       || decision.firstOccurrenceId === decision.secondOccurrenceId
       || !["different", "same", "cannot_tell"].includes(decision.relation)) {
@@ -175,7 +192,7 @@ export function buildPwqe51RouterPacket(input: BuildPwqe51PacketInput): Record<s
           : "respondent_cannot_tell_distinctness",
     };
   });
-  const comparisonByOccurrence = new Map((input.comparisonDecisions ?? []).map((decision) => [decision.secondOccurrenceId, decision]));
+  const comparisonByOccurrence = new Map(reportedDecisions.map((decision) => [decision.secondOccurrenceId, decision]));
 
   const episodes = route.episodes.map((episode) => {
     const root = episode.responseIds.map((id) => responseById.get(id)).find((response) => response?.basis === "actual_recalled" || response?.basis === "reported_typicality");
@@ -194,7 +211,7 @@ export function buildPwqe51RouterPacket(input: BuildPwqe51PacketInput): Record<s
       person_id: null,
       role: null,
       topic: null,
-      linked_from: comparison?.firstOccurrenceId ?? null,
+      linked_from: episode.linkedFrom ?? comparison?.firstOccurrenceId ?? null,
       distinct_from: [...distinctFrom],
       outside_window: false,
     };
@@ -278,7 +295,7 @@ export function buildPwqe51RouterPacket(input: BuildPwqe51PacketInput): Record<s
     parentByEpisode.set(episodeId, root);
     return root;
   };
-  for (const decision of input.comparisonDecisions ?? []) {
+  for (const decision of reportedDecisions) {
     // Only explicit distinctness supports an independent pair. A same or uncertain answer
     // remains in context_comparisons but cannot add independent occurrence support.
     if (decision.relation === "different") continue;
