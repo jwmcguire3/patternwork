@@ -1,0 +1,279 @@
+{
+  "schemaVersion": "PWQE51-FICTIONAL-HISTORIES-V2-MANIFEST",
+  "sourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb",
+  "sourceRelease": "PWQE-5.1.0-candidate.1",
+  "status": "authored_structure_valid_not_route_qualified",
+  "counts": {
+    "profiles": 25,
+    "mappingResponses": 750,
+    "syntheticMappingResponses": 698,
+    "preservedAuthoredResponses": 206,
+    "deepeningResponses": 154,
+    "withheldForbiddenSourceAnswers": 3
+  },
+  "profiles": [
+    {
+      "id": "P01",
+      "file": "P01.json",
+      "mapping": 30,
+      "synthetic": 28,
+      "authored": 6,
+      "deepening": 4,
+      "distinctness": 1,
+      "withheld": 0
+    },
+    {
+      "id": "P02",
+      "file": "P02.json",
+      "mapping": 30,
+      "synthetic": 30,
+      "authored": 8,
+      "deepening": 8,
+      "distinctness": 0,
+      "withheld": 0
+    },
+    {
+      "id": "P03",
+      "file": "P03.json",
+      "mapping": 30,
+      "synthetic": 27,
+      "authored": 6,
+      "deepening": 3,
+      "distinctness": 1,
+      "withheld": 0
+    },
+    {
+      "id": "P04",
+      "file": "P04.json",
+      "mapping": 30,
+      "synthetic": 25,
+      "authored": 7,
+      "deepening": 2,
+      "distinctness": 1,
+      "withheld": 0
+    },
+    {
+      "id": "P05",
+      "file": "P05.json",
+      "mapping": 30,
+      "synthetic": 25,
+      "authored": 8,
+      "deepening": 3,
+      "distinctness": 0,
+      "withheld": 0
+    },
+    {
+      "id": "P06",
+      "file": "P06.json",
+      "mapping": 30,
+      "synthetic": 28,
+      "authored": 6,
+      "deepening": 4,
+      "distinctness": 1,
+      "withheld": 0
+    },
+    {
+      "id": "P07",
+      "file": "P07.json",
+      "mapping": 30,
+      "synthetic": 22,
+      "authored": 8,
+      "deepening": 0,
+      "distinctness": 6,
+      "withheld": 0
+    },
+    {
+      "id": "P08",
+      "file": "P08.json",
+      "mapping": 30,
+      "synthetic": 28,
+      "authored": 7,
+      "deepening": 5,
+      "distinctness": 1,
+      "withheld": 0
+    },
+    {
+      "id": "P09",
+      "file": "P09.json",
+      "mapping": 30,
+      "synthetic": 30,
+      "authored": 11,
+      "deepening": 11,
+      "distinctness": 1,
+      "withheld": 0
+    },
+    {
+      "id": "C01",
+      "file": "C01.json",
+      "mapping": 30,
+      "synthetic": 28,
+      "authored": 14,
+      "deepening": 12,
+      "distinctness": 0,
+      "withheld": 0
+    },
+    {
+      "id": "C02",
+      "file": "C02.json",
+      "mapping": 30,
+      "synthetic": 28,
+      "authored": 13,
+      "deepening": 11,
+      "distinctness": 0,
+      "withheld": 2
+    },
+    {
+      "id": "C03",
+      "file": "C03.json",
+      "mapping": 30,
+      "synthetic": 30,
+      "authored": 5,
+      "deepening": 5,
+      "distinctness": 0,
+      "withheld": 0
+    },
+    {
+      "id": "C04",
+      "file": "C04.json",
+      "mapping": 30,
+      "synthetic": 30,
+      "authored": 6,
+      "deepening": 6,
+      "distinctness": 0,
+      "withheld": 0
+    },
+    {
+      "id": "C05",
+      "file": "C05.json",
+      "mapping": 30,
+      "synthetic": 27,
+      "authored": 9,
+      "deepening": 6,
+      "distinctness": 0,
+      "withheld": 0
+    },
+    {
+      "id": "C06",
+      "file": "C06.json",
+      "mapping": 30,
+      "synthetic": 28,
+      "authored": 9,
+      "deepening": 7,
+      "distinctness": 0,
+      "withheld": 0
+    },
+    {
+      "id": "C07",
+      "file": "C07.json",
+      "mapping": 30,
+      "synthetic": 28,
+      "authored": 11,
+      "deepening": 9,
+      "distinctness": 1,
+      "withheld": 0
+    },
+    {
+      "id": "C08",
+      "file": "C08.json",
+      "mapping": 30,
+      "synthetic": 30,
+      "authored": 11,
+      "deepening": 11,
+      "distinctness": 0,
+      "withheld": 0
+    },
+    {
+      "id": "C09",
+      "file": "C09.json",
+      "mapping": 30,
+      "synthetic": 30,
+      "authored": 10,
+      "deepening": 10,
+      "distinctness": 0,
+      "withheld": 1
+    },
+    {
+      "id": "C10",
+      "file": "C10.json",
+      "mapping": 30,
+      "synthetic": 25,
+      "authored": 21,
+      "deepening": 16,
+      "distinctness": 0,
+      "withheld": 0
+    },
+    {
+      "id": "C11",
+      "file": "C11.json",
+      "mapping": 30,
+      "synthetic": 25,
+      "authored": 8,
+      "deepening": 3,
+      "distinctness": 0,
+      "withheld": 0
+    },
+    {
+      "id": "C12",
+      "file": "C12.json",
+      "mapping": 30,
+      "synthetic": 27,
+      "authored": 9,
+      "deepening": 6,
+      "distinctness": 1,
+      "withheld": 0
+    },
+    {
+      "id": "C13",
+      "file": "C13.json",
+      "mapping": 30,
+      "synthetic": 30,
+      "authored": 5,
+      "deepening": 5,
+      "distinctness": 0,
+      "withheld": 0
+    },
+    {
+      "id": "C14",
+      "file": "C14.json",
+      "mapping": 30,
+      "synthetic": 29,
+      "authored": 4,
+      "deepening": 3,
+      "distinctness": 0,
+      "withheld": 0
+    },
+    {
+      "id": "C15",
+      "file": "C15.json",
+      "mapping": 30,
+      "synthetic": 30,
+      "authored": 2,
+      "deepening": 2,
+      "distinctness": 0,
+      "withheld": 0
+    },
+    {
+      "id": "C16",
+      "file": "C16.json",
+      "mapping": 30,
+      "synthetic": 30,
+      "authored": 2,
+      "deepening": 2,
+      "distinctness": 0,
+      "withheld": 0
+    }
+  ],
+  "validation": {
+    "knownAuthoredQuestions": true,
+    "knownSourceOptionsAndVariants": true,
+    "responseSelectionMode": true,
+    "attachedParentOrdering": true,
+    "topicPermissionSurface": true,
+    "distinctReplayLineage": true,
+    "sourceForbiddenQuestionExclusion": true,
+    "within56AdministrationLimit": true,
+    "actualServerCandidateReplays": false,
+    "liveAuthentication": false
+  },
+  "caveat": "Original fictional episodes and selected options are retained. Synthetic Mapping facts and referent roles are newly invented structural context and do not independently support psychological claims."
+}
