@@ -1,0 +1,587 @@
+{
+  "administration_provenance": [
+    {
+      "id": "A0001",
+      "item_id": "M01",
+      "live_response_id": "R00001",
+      "occurrence_id": "EP0001",
+      "option_order": [
+        "M01.drained",
+        "M01.rest",
+        "M01.restless",
+        "M01.own_pace",
+        "M01.tasks"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0002",
+      "item_id": "M02",
+      "live_response_id": "R00002",
+      "occurrence_id": "EP0002",
+      "option_order": [
+        "M02.recheck",
+        "M02.rehearse",
+        "M02.bounded",
+        "M02.none",
+        "M02.avoid",
+        "M02.feedback"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0003",
+      "item_id": "M04",
+      "live_response_id": "R00003",
+      "occurrence_id": "EP0003",
+      "option_order": [
+        "M04.tell",
+        "M04.delay",
+        "M04.check",
+        "M04.explain",
+        "M04.continue",
+        "M04.fix"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0004",
+      "item_id": "M07",
+      "live_response_id": "R00004",
+      "occurrence_id": "EP0004",
+      "option_order": [
+        "M07.flaw",
+        "M07.joke",
+        "M07.move_on",
+        "M07.ask",
+        "M07.accept",
+        "M07.credit"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0005",
+      "item_id": "M08",
+      "live_response_id": "R00005",
+      "occurrence_id": "EP0005",
+      "option_order": [
+        "M08.limit",
+        "M08.delay",
+        "M08.reduce",
+        "M08.yes",
+        "M08.no",
+        "M08.explain"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0006",
+      "item_id": "M10",
+      "live_response_id": "R00006",
+      "occurrence_id": "EP0006",
+      "option_order": [
+        "M10.attention",
+        "M10.late",
+        "M10.tension",
+        "M10.slowing",
+        "M10.words",
+        "M10.urgent"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0007",
+      "item_id": "M15",
+      "live_response_id": "R00007",
+      "occurrence_id": "EP0007",
+      "option_order": [
+        "M15.chase",
+        "M15.check",
+        "M15.stuck",
+        "M15.plan",
+        "M15.pause",
+        "M15.other"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0008",
+      "item_id": "M17",
+      "live_response_id": "R00008",
+      "occurrence_id": "EP0008",
+      "option_order": [
+        "M17.reread",
+        "M17.wait",
+        "M17.send",
+        "M17.check",
+        "M17.other",
+        "M17.stop"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0009",
+      "item_id": "M20",
+      "live_response_id": "R00009",
+      "occurrence_id": "EP0009",
+      "option_order": [
+        "M20.justify",
+        "M20.none",
+        "M20.wait",
+        "M20.small",
+        "M20.hint",
+        "M20.ask"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0010",
+      "item_id": "M22",
+      "live_response_id": "R00010",
+      "occurrence_id": "EP0010",
+      "option_order": [
+        "M22.mixed",
+        "M22.minimize",
+        "M22.ease",
+        "M22.manage",
+        "M22.unhelpful",
+        "M22.repay"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0011",
+      "item_id": "M23",
+      "live_response_id": "R00011",
+      "occurrence_id": "EP0011",
+      "option_order": [
+        "M23.wait",
+        "M23.none",
+        "M23.apology",
+        "M23.practical",
+        "M23.explain",
+        "M23.invite"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0012",
+      "item_id": "M25",
+      "live_response_id": "R00012",
+      "occurrence_id": "EP0012",
+      "option_order": [
+        "M25.stop",
+        "M25.deadline",
+        "M25.one_more",
+        "M25.alternate",
+        "M25.absorb",
+        "M25.exhaust"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0013",
+      "item_id": "M26",
+      "live_response_id": "R00013",
+      "occurrence_id": "EP0013",
+      "option_order": [
+        "M26.speak",
+        "M26.finish",
+        "M26.rest",
+        "M26.contact",
+        "M26.sequential",
+        "M26.help"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0014",
+      "item_id": "M24",
+      "live_response_id": "R00014",
+      "occurrence_id": "EP0014",
+      "option_order": [
+        "M24.outward",
+        "M24.missed",
+        "M24.helped",
+        "M24.space",
+        "M24.details",
+        "M24.change"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0015",
+      "item_id": "D97",
+      "live_response_id": "R00015",
+      "occurrence_id": "EP0015",
+      "option_order": [
+        "D97.approval",
+        "D97.encourage",
+        "D97.private",
+        "D97.think",
+        "D97.share",
+        "D97.none"
+      ],
+      "phase": "deepening",
+      "selection_reason": "response_discriminator",
+      "variant": "base"
+    },
+    {
+      "id": "A0016",
+      "item_id": "D98",
+      "live_response_id": "R00016",
+      "occurrence_id": "EP0015",
+      "option_order": [
+        "D98.encouraged",
+        "D98.disagree",
+        "D98.same",
+        "D98.practical",
+        "D98.permission",
+        "D98.no_response"
+      ],
+      "phase": "deepening",
+      "selection_reason": "response_discriminator",
+      "variant": "base"
+    }
+  ],
+  "assessment_scope": {
+    "completion_reason": "no_eligible_material_target",
+    "evidence_basis": "retrospective_self_report_not_verified_behavior",
+    "interpretation_authority": "report_writer_with_semantic_review",
+    "phase": "finished",
+    "readiness": {
+      "actual_occurrence_ids": [
+        "EP0015"
+      ],
+      "administrations": 16,
+      "applicable_pending_items": [],
+      "closed_coverage": {
+        "M03": "parent_unavailable",
+        "M05": "parent_unavailable",
+        "M06": "parent_context_unavailable",
+        "M09": "parent_unavailable",
+        "M11": "parent_unavailable",
+        "M12": "parent_context_unavailable",
+        "M13": "parent_context_unavailable",
+        "M14": "parent_context_unavailable",
+        "M16": "parent_unavailable",
+        "M18": "parent_unavailable",
+        "M19": "parent_unavailable",
+        "M21": "parent_unavailable",
+        "M27": "parent_unavailable",
+        "M28": "no_comparable_actual_occurrence",
+        "M29": "parent_context_unavailable",
+        "M30": "parent_context_unavailable"
+      },
+      "controls": 4,
+      "decisions": 16,
+      "interpretive_quota": null,
+      "mapping_administrations": 14,
+      "mapping_coverage_complete": true,
+      "normal_mapping_ready": true,
+      "offered_mapping_items": [
+        "M01",
+        "M02",
+        "M04",
+        "M07",
+        "M08",
+        "M10",
+        "M15",
+        "M17",
+        "M20",
+        "M22",
+        "M23",
+        "M24",
+        "M25",
+        "M26"
+      ],
+      "report_readiness": "scoped_evidence_available",
+      "sampled_contexts": [
+        "exploration"
+      ],
+      "unresolved_bindings": 0,
+      "usable_actual_occurrences": 1
+    },
+    "recall_window": "recent_weeks",
+    "report_language": "no_preference"
+  },
+  "context_comparisons": [],
+  "corrections": [],
+  "counterexamples": [],
+  "episodes": [
+    {
+      "basis": "actual_recalled",
+      "context": "exploration",
+      "distinct_from": [],
+      "family": "exploration",
+      "id": "EP0015",
+      "linked_from": null,
+      "outside_window": false,
+      "person_id": "P3",
+      "recall_window": "recent_weeks",
+      "role": "friend",
+      "root_item_id": "D97",
+      "status": "actual",
+      "topic": null
+    }
+  ],
+  "format": "patternwork-router-evidence-v1",
+  "interpretation_disputes": [],
+  "invalidated_response_ids": [],
+  "missingness": [
+    {
+      "administration_id": "A0001",
+      "item_id": "M01",
+      "occurrence_id": "EP0001",
+      "response_id": "R00001",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0002",
+      "item_id": "M02",
+      "occurrence_id": "EP0002",
+      "response_id": "R00002",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0003",
+      "item_id": "M04",
+      "occurrence_id": "EP0003",
+      "response_id": "R00003",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0004",
+      "item_id": "M07",
+      "occurrence_id": "EP0004",
+      "response_id": "R00004",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0005",
+      "item_id": "M08",
+      "occurrence_id": "EP0005",
+      "response_id": "R00005",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0006",
+      "item_id": "M10",
+      "occurrence_id": "EP0006",
+      "response_id": "R00006",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0007",
+      "item_id": "M15",
+      "occurrence_id": "EP0007",
+      "response_id": "R00007",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0008",
+      "item_id": "M17",
+      "occurrence_id": "EP0008",
+      "response_id": "R00008",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0009",
+      "item_id": "M20",
+      "occurrence_id": "EP0009",
+      "response_id": "R00009",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0010",
+      "item_id": "M22",
+      "occurrence_id": "EP0010",
+      "response_id": "R00010",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0011",
+      "item_id": "M23",
+      "occurrence_id": "EP0011",
+      "response_id": "R00011",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0012",
+      "item_id": "M25",
+      "occurrence_id": "EP0012",
+      "response_id": "R00012",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0013",
+      "item_id": "M26",
+      "occurrence_id": "EP0013",
+      "response_id": "R00013",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0014",
+      "item_id": "M24",
+      "occurrence_id": "EP0014",
+      "response_id": "R00014",
+      "status": "no_event"
+    }
+  ],
+  "observations": [
+    {
+      "administration_id": "A0015",
+      "basis": "actual_recalled",
+      "capture": "exploration_support",
+      "dependence_group": "EP0015",
+      "displayed_text": "I waited for their approval before going ahead.",
+      "id": "O2a94ff62af75e73a07ca",
+      "item_id": "D97",
+      "mode": "single",
+      "occurrence_id": "EP0015",
+      "option_id": "D97.approval",
+      "person_id": "P3",
+      "reported_value": "approval",
+      "response_id": "R00015",
+      "selection_reason": "response_discriminator",
+      "signals": [
+        "exploration_support:approval"
+      ],
+      "source_version": "5.1.0-candidate.1",
+      "step_id": "first",
+      "text": "I waited for their approval before going ahead.",
+      "variant": "base"
+    },
+    {
+      "administration_id": "A0016",
+      "basis": "actual_recalled",
+      "capture": "exploration_effect",
+      "dependence_group": "EP0015",
+      "displayed_text": "I treated it as permission to go ahead.",
+      "id": "O7e6813292ae88c83639d",
+      "item_id": "D98",
+      "mode": "single",
+      "occurrence_id": "EP0015",
+      "option_id": "D98.permission",
+      "person_id": "P3",
+      "reported_value": "permission",
+      "response_id": "R00016",
+      "selection_reason": "response_discriminator",
+      "signals": [
+        "exploration_effect:permission"
+      ],
+      "source_version": "5.1.0-candidate.1",
+      "step_id": "first",
+      "text": "I treated it as permission to go ahead.",
+      "variant": "base"
+    }
+  ],
+  "open_questions": [],
+  "referent_scopes": [
+    {
+      "person_id": "P3",
+      "role": "friend"
+    }
+  ],
+  "release_id": "PWQE-5.1.0-candidate.1",
+  "reported_context_controls": [],
+  "secure_capacity_examples": [],
+  "sequence_edges": [],
+  "snapshot_id": "SNec694c783db41a84a2a0",
+  "source_binding": {
+    "question_release": "PWQE-5.1.0-candidate.1",
+    "runtime_version": "PW-ROUTER-1.1.0-candidate.1",
+    "source_sha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832"
+  },
+  "steps": [
+    {
+      "id": "S8df9eab129822d20c529",
+      "observation_ids": [
+        "O2a94ff62af75e73a07ca",
+        "O7e6813292ae88c83639d"
+      ],
+      "occurrence_id": "EP0015",
+      "step_id": "first"
+    }
+  ],
+  "structural_evidence_summaries": [],
+  "superseded_response_ids": [],
+  "supported_alternatives": [],
+  "target_resolutions": [
+    {
+      "attempts": 1,
+      "comparison_ids": [],
+      "id": "T05521924207d67271be6",
+      "occurrence_id": "EP0015",
+      "reason": "coverage_description_recorded_not_theory_classification",
+      "resolution_ids": [
+        "O2a94ff62af75e73a07ca"
+      ],
+      "source_ids": [
+        "O2a94ff62af75e73a07ca"
+      ],
+      "state": "resolved_descriptively",
+      "step_id": "first",
+      "target_id": "coverage_exploration_support"
+    },
+    {
+      "attempts": 1,
+      "comparison_ids": [],
+      "id": "T9c7957f1467d620add0b",
+      "occurrence_id": "EP0015",
+      "reason": "coverage_description_recorded_not_theory_classification",
+      "resolution_ids": [
+        "O7e6813292ae88c83639d"
+      ],
+      "source_ids": [
+        "O2a94ff62af75e73a07ca"
+      ],
+      "state": "resolved_descriptively",
+      "step_id": "first",
+      "target_id": "coverage_exploration_effect"
+    },
+    {
+      "attempts": 0,
+      "comparison_ids": [],
+      "id": "Tcec679300fbe4306f7d2",
+      "occurrence_id": "new:exploration",
+      "reason": "explicit_entry_answered",
+      "resolution_ids": [],
+      "source_ids": [],
+      "state": "resolved_descriptively",
+      "step_id": "first",
+      "target_id": "entry:exploration"
+    }
+  ],
+  "unresolved_bindings": [],
+  "packet_id": "PKec694c783db41a84a2a0",
+  "content_sha256": "bc75d8c67064bdb66d6c5ac7f0c138dee151b787611cf804216af1ec22bab7d4"
+}

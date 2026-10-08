@@ -1,0 +1,110 @@
+{
+  "id": "P07",
+  "title": "A useful map without a problem inventory",
+  "fictional": true,
+  "source_kind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+  "config": {
+    "people": {
+      "P1": "partner",
+      "P2": "supervisor",
+      "P3": "friend"
+    },
+    "referents": {
+      "evaluator": "P2",
+      "boundary_person": "P2",
+      "close_person": "P1",
+      "support_person": "P3",
+      "repair_person": "P1",
+      "conflict_person": "P1"
+    },
+    "topics": [
+      "body_detail"
+    ],
+    "unavailable_contexts": [],
+    "focus_topics": [],
+    "focus_occurrences": [],
+    "details": [],
+    "report_language": "no_preference",
+    "recall_window": "recent_weeks",
+    "entry_context": null,
+    "total_limit": 56,
+    "mapping_limit": 32,
+    "decision_limit": 72,
+    "option_seed": "patternwork-reference"
+  },
+  "answers": {
+    "M02": [
+      {
+        "selected": [
+          "M02.bounded"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "M03": [
+      {
+        "selected": [
+          "M03.requirements"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "M04": [
+      {
+        "selected": [
+          "M04.fix"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "M05": [
+      {
+        "selected": [
+          "M05.learn"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "M06": [
+      {
+        "selected": [
+          "M06.clear"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "M08": [
+      {
+        "selected": [
+          "M08.limit"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "M09": [
+      {
+        "selected": [
+          "M09.accept"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "M01": [
+      {
+        "selected": [
+          "M01.rest"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ]
+  },
+  "focus_roots": []
+}

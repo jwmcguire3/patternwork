@@ -1,0 +1,1312 @@
+{
+  "administration_provenance": [
+    {
+      "id": "A0001",
+      "item_id": "M01",
+      "live_response_id": "R00001",
+      "occurrence_id": "EP0001",
+      "option_order": [
+        "M01.drained",
+        "M01.rest",
+        "M01.restless",
+        "M01.own_pace",
+        "M01.tasks"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0002",
+      "item_id": "M02",
+      "live_response_id": "R00002",
+      "occurrence_id": "EP0002",
+      "option_order": [
+        "M02.recheck",
+        "M02.rehearse",
+        "M02.bounded",
+        "M02.none",
+        "M02.avoid",
+        "M02.feedback"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0003",
+      "item_id": "M04",
+      "live_response_id": "R00003",
+      "occurrence_id": "EP0003",
+      "option_order": [
+        "M04.tell",
+        "M04.delay",
+        "M04.check",
+        "M04.explain",
+        "M04.continue",
+        "M04.fix"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0004",
+      "item_id": "M07",
+      "live_response_id": "R00004",
+      "occurrence_id": "EP0004",
+      "option_order": [
+        "M07.flaw",
+        "M07.joke",
+        "M07.move_on",
+        "M07.ask",
+        "M07.accept",
+        "M07.credit"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0005",
+      "item_id": "M08",
+      "live_response_id": "R00005",
+      "occurrence_id": "EP0005",
+      "option_order": [
+        "M08.limit",
+        "M08.delay",
+        "M08.reduce",
+        "M08.yes",
+        "M08.no",
+        "M08.explain"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0006",
+      "item_id": "M10",
+      "live_response_id": "R00006",
+      "occurrence_id": "EP0006",
+      "option_order": [
+        "M10.attention",
+        "M10.late",
+        "M10.tension",
+        "M10.slowing",
+        "M10.words",
+        "M10.urgent"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0007",
+      "item_id": "M15",
+      "live_response_id": "R00007",
+      "occurrence_id": "EP0007",
+      "option_order": [
+        "M15.chase",
+        "M15.check",
+        "M15.stuck",
+        "M15.plan",
+        "M15.pause",
+        "M15.other"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0008",
+      "item_id": "M17",
+      "live_response_id": "R00008",
+      "occurrence_id": "EP0008",
+      "option_order": [
+        "M17.reread",
+        "M17.wait",
+        "M17.send",
+        "M17.check",
+        "M17.other",
+        "M17.stop"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0009",
+      "item_id": "M20",
+      "live_response_id": "R00009",
+      "occurrence_id": "EP0009",
+      "option_order": [
+        "M20.justify",
+        "M20.none",
+        "M20.wait",
+        "M20.small",
+        "M20.hint",
+        "M20.ask"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0010",
+      "item_id": "M22",
+      "live_response_id": "R00010",
+      "occurrence_id": "EP0010",
+      "option_order": [
+        "M22.mixed",
+        "M22.minimize",
+        "M22.ease",
+        "M22.manage",
+        "M22.unhelpful",
+        "M22.repay"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0011",
+      "item_id": "M23",
+      "live_response_id": "R00011",
+      "occurrence_id": "EP0011",
+      "option_order": [
+        "M23.wait",
+        "M23.none",
+        "M23.apology",
+        "M23.practical",
+        "M23.explain",
+        "M23.invite"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0012",
+      "item_id": "M25",
+      "live_response_id": "R00012",
+      "occurrence_id": "EP0012",
+      "option_order": [
+        "M25.stop",
+        "M25.deadline",
+        "M25.one_more",
+        "M25.alternate",
+        "M25.absorb",
+        "M25.exhaust"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0013",
+      "item_id": "M26",
+      "live_response_id": "R00013",
+      "occurrence_id": "EP0013",
+      "option_order": [
+        "M26.speak",
+        "M26.finish",
+        "M26.rest",
+        "M26.contact",
+        "M26.sequential",
+        "M26.help"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0014",
+      "item_id": "M24",
+      "live_response_id": "R00014",
+      "occurrence_id": "EP0014",
+      "option_order": [
+        "M24.outward",
+        "M24.missed",
+        "M24.helped",
+        "M24.space",
+        "M24.details",
+        "M24.change"
+      ],
+      "phase": "mapping",
+      "selection_reason": "common_coverage",
+      "variant": "base"
+    },
+    {
+      "id": "A0015",
+      "item_id": "D61",
+      "live_response_id": "R00015",
+      "occurrence_id": "EP0015",
+      "option_order": [
+        "D61.leave",
+        "D61.explain",
+        "D61.settle",
+        "D61.break",
+        "D61.quiet",
+        "D61.sharp"
+      ],
+      "phase": "deepening",
+      "selection_reason": "response_discriminator",
+      "variant": "base"
+    },
+    {
+      "id": "A0016",
+      "item_id": "D02",
+      "live_response_id": "R00016",
+      "occurrence_id": "EP0015",
+      "option_order": [
+        "D02.contact",
+        "D02.none",
+        "D02.practical",
+        "D02.prevent",
+        "D02.visible",
+        "D02.feel"
+      ],
+      "phase": "deepening",
+      "selection_reason": "response_discriminator",
+      "variant": "base"
+    },
+    {
+      "id": "A0017",
+      "item_id": "D16",
+      "live_response_id": "R00017",
+      "occurrence_id": "EP0015",
+      "option_order": [
+        "D16.unreliable",
+        "D16.unclear",
+        "D16.load",
+        "D16.low",
+        "D16.unsafe",
+        "D16.consequence"
+      ],
+      "phase": "deepening",
+      "selection_reason": "response_discriminator",
+      "variant": "base"
+    },
+    {
+      "id": "A0018",
+      "item_id": "D07",
+      "live_response_id": "R00018",
+      "occurrence_id": "EP0015",
+      "option_order": [
+        "D07.help",
+        "D07.quiet",
+        "D07.more",
+        "D07.nothing",
+        "D07.absorb",
+        "D07.changed",
+        "D07.leave"
+      ],
+      "phase": "deepening",
+      "selection_reason": "response_discriminator",
+      "variant": "base"
+    },
+    {
+      "id": "A0019",
+      "item_id": "D08",
+      "live_response_id": "R00019",
+      "occurrence_id": "EP0015",
+      "option_order": [
+        "D08.after_failed",
+        "D08.after",
+        "D08.different",
+        "D08.alternate",
+        "D08.overlap",
+        "D08.uncertain"
+      ],
+      "phase": "deepening",
+      "selection_reason": "response_discriminator",
+      "variant": "base"
+    },
+    {
+      "id": "A0020",
+      "item_id": "D10",
+      "live_response_id": "R00020",
+      "occurrence_id": "EP0015",
+      "option_order": [
+        "D10.same",
+        "D10.relief",
+        "D10.control",
+        "D10.away",
+        "D10.worse",
+        "D10.end"
+      ],
+      "phase": "deepening",
+      "selection_reason": "response_discriminator",
+      "variant": "base"
+    },
+    {
+      "id": "A0021",
+      "item_id": "D11",
+      "live_response_id": "R00021",
+      "occurrence_id": "EP0015",
+      "option_order": [
+        "D11.choice",
+        "D11.urgent",
+        "D11.words",
+        "D11.stuck",
+        "D11.unclear"
+      ],
+      "phase": "deepening",
+      "selection_reason": "response_discriminator",
+      "variant": "base"
+    },
+    {
+      "id": "A0022",
+      "item_id": "D03",
+      "live_response_id": "R00022",
+      "occurrence_id": "EP0015",
+      "option_order": [
+        "D03.connection",
+        "D03.real",
+        "D03.none",
+        "D03.judged",
+        "D03.wrong",
+        "D03.pressure",
+        "D03.upset"
+      ],
+      "phase": "deepening",
+      "selection_reason": "response_discriminator",
+      "variant": "base"
+    },
+    {
+      "id": "A0023",
+      "item_id": "D09",
+      "live_response_id": "R00023",
+      "occurrence_id": "EP0015",
+      "option_order": [
+        "D09.none",
+        "D09.relief",
+        "D09.practical",
+        "D09.same",
+        "D09.time",
+        "D09.end"
+      ],
+      "phase": "deepening",
+      "selection_reason": "response_discriminator",
+      "variant": "base"
+    },
+    {
+      "id": "A0024",
+      "item_id": "D18",
+      "live_response_id": "R00024",
+      "occurrence_id": "EP0015",
+      "option_order": [
+        "D18.anger",
+        "D18.uncertain",
+        "D18.none",
+        "D18.want",
+        "D18.hurt",
+        "D18.need"
+      ],
+      "phase": "deepening",
+      "selection_reason": "response_discriminator",
+      "variant": "base"
+    },
+    {
+      "id": "A0025",
+      "item_id": "D78",
+      "live_response_id": "R00025",
+      "occurrence_id": "EP0015",
+      "option_order": [
+        "D78.returned",
+        "D78.ended",
+        "D78.no",
+        "D78.unclear",
+        "D78.urge"
+      ],
+      "phase": "deepening",
+      "selection_reason": "scope_or_texture",
+      "variant": "base"
+    },
+    {
+      "id": "A0026",
+      "item_id": "D99",
+      "live_response_id": "R00026",
+      "occurrence_id": "EP0015",
+      "option_order": [
+        "D99.similar",
+        "D99.context",
+        "D99.once",
+        "D99.varies",
+        "D99.unclear"
+      ],
+      "phase": "deepening",
+      "selection_reason": "scope_or_texture",
+      "variant": "base"
+    },
+    {
+      "id": "A0027",
+      "item_id": "D06",
+      "live_response_id": "R00027",
+      "occurrence_id": "EP0015",
+      "option_order": [
+        "D06.none",
+        "D06.practical",
+        "D06.contact",
+        "D06.self",
+        "D06.energy",
+        "D06.unclear"
+      ],
+      "phase": "deepening",
+      "selection_reason": "scope_or_texture",
+      "variant": "base"
+    }
+  ],
+  "assessment_scope": {
+    "completion_reason": "no_eligible_material_target",
+    "evidence_basis": "retrospective_self_report_not_verified_behavior",
+    "interpretation_authority": "report_writer_with_semantic_review",
+    "phase": "finished",
+    "readiness": {
+      "actual_occurrence_ids": [
+        "EP0015"
+      ],
+      "administrations": 27,
+      "applicable_pending_items": [
+        "M28",
+        "M29",
+        "M30"
+      ],
+      "closed_coverage": {
+        "M03": "parent_unavailable",
+        "M05": "parent_unavailable",
+        "M06": "parent_context_unavailable",
+        "M09": "parent_unavailable",
+        "M11": "parent_unavailable",
+        "M12": "parent_context_unavailable",
+        "M13": "parent_context_unavailable",
+        "M14": "parent_context_unavailable",
+        "M16": "parent_unavailable",
+        "M18": "parent_unavailable",
+        "M19": "parent_unavailable",
+        "M21": "parent_unavailable",
+        "M27": "parent_unavailable"
+      },
+      "controls": 4,
+      "decisions": 27,
+      "interpretive_quota": null,
+      "mapping_administrations": 14,
+      "mapping_coverage_complete": false,
+      "normal_mapping_ready": false,
+      "offered_mapping_items": [
+        "M01",
+        "M02",
+        "M04",
+        "M07",
+        "M08",
+        "M10",
+        "M15",
+        "M17",
+        "M20",
+        "M22",
+        "M23",
+        "M24",
+        "M25",
+        "M26"
+      ],
+      "report_readiness": "scoped_evidence_available",
+      "sampled_contexts": [
+        "conflict"
+      ],
+      "unresolved_bindings": 0,
+      "usable_actual_occurrences": 1
+    },
+    "recall_window": "recent_weeks",
+    "report_language": "no_preference"
+  },
+  "context_comparisons": [],
+  "corrections": [],
+  "counterexamples": [],
+  "episodes": [
+    {
+      "basis": "actual_recalled",
+      "context": "conflict",
+      "distinct_from": [],
+      "family": "conflict",
+      "id": "EP0015",
+      "linked_from": null,
+      "outside_window": false,
+      "person_id": "P1",
+      "recall_window": "recent_weeks",
+      "role": "partner",
+      "root_item_id": "D61",
+      "status": "actual",
+      "topic": null
+    }
+  ],
+  "format": "patternwork-router-evidence-v1",
+  "interpretation_disputes": [],
+  "invalidated_response_ids": [],
+  "missingness": [
+    {
+      "administration_id": "A0001",
+      "item_id": "M01",
+      "occurrence_id": "EP0001",
+      "response_id": "R00001",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0002",
+      "item_id": "M02",
+      "occurrence_id": "EP0002",
+      "response_id": "R00002",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0003",
+      "item_id": "M04",
+      "occurrence_id": "EP0003",
+      "response_id": "R00003",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0004",
+      "item_id": "M07",
+      "occurrence_id": "EP0004",
+      "response_id": "R00004",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0005",
+      "item_id": "M08",
+      "occurrence_id": "EP0005",
+      "response_id": "R00005",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0006",
+      "item_id": "M10",
+      "occurrence_id": "EP0006",
+      "response_id": "R00006",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0007",
+      "item_id": "M15",
+      "occurrence_id": "EP0007",
+      "response_id": "R00007",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0008",
+      "item_id": "M17",
+      "occurrence_id": "EP0008",
+      "response_id": "R00008",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0009",
+      "item_id": "M20",
+      "occurrence_id": "EP0009",
+      "response_id": "R00009",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0010",
+      "item_id": "M22",
+      "occurrence_id": "EP0010",
+      "response_id": "R00010",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0011",
+      "item_id": "M23",
+      "occurrence_id": "EP0011",
+      "response_id": "R00011",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0012",
+      "item_id": "M25",
+      "occurrence_id": "EP0012",
+      "response_id": "R00012",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0013",
+      "item_id": "M26",
+      "occurrence_id": "EP0013",
+      "response_id": "R00013",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0014",
+      "item_id": "M24",
+      "occurrence_id": "EP0014",
+      "response_id": "R00014",
+      "status": "no_event"
+    },
+    {
+      "administration_id": "A0017",
+      "item_id": "D16",
+      "occurrence_id": "EP0015",
+      "response_id": "R00017",
+      "status": "not_sure"
+    },
+    {
+      "administration_id": "A0024",
+      "item_id": "D18",
+      "occurrence_id": "EP0015",
+      "response_id": "R00024",
+      "status": "not_sure"
+    },
+    {
+      "administration_id": "A0027",
+      "item_id": "D06",
+      "occurrence_id": "EP0015",
+      "response_id": "R00027",
+      "status": "not_sure"
+    }
+  ],
+  "observations": [
+    {
+      "administration_id": "A0026",
+      "basis": "reported_typicality",
+      "capture": "sequence_typicality",
+      "dependence_group": "EP0015",
+      "displayed_text": "This was the only occasion like this I can recall.",
+      "id": "O18bceca1d34bf612ce29",
+      "item_id": "D99",
+      "mode": "single",
+      "occurrence_id": "EP0015",
+      "option_id": "D99.once",
+      "person_id": "P1",
+      "reported_value": "once",
+      "response_id": "R00026",
+      "selection_reason": "scope_or_texture",
+      "signals": [
+        "sequence_typicality:once"
+      ],
+      "source_version": "5.1.0-candidate.1",
+      "step_id": "first",
+      "text": "This was the only occasion like this I can recall.",
+      "variant": "base"
+    },
+    {
+      "administration_id": "A0016",
+      "basis": "actual_recalled",
+      "capture": "aim",
+      "dependence_group": "EP0015",
+      "displayed_text": "What might happen next.",
+      "id": "O3425b61ee973115bf87f",
+      "item_id": "D02",
+      "mode": "single",
+      "occurrence_id": "EP0015",
+      "option_id": "D02.prevent",
+      "person_id": "P1",
+      "reported_value": "prevent",
+      "response_id": "R00016",
+      "selection_reason": "response_discriminator",
+      "signals": [
+        "prevention_aim"
+      ],
+      "source_version": "5.0.0-design.1",
+      "step_id": "first",
+      "text": "What might happen next.",
+      "variant": "base"
+    },
+    {
+      "administration_id": "A0015",
+      "basis": "actual_recalled",
+      "capture": "first_action",
+      "dependence_group": "EP0015",
+      "displayed_text": "I kept explaining my point.",
+      "id": "O3c1b9e76d85bc398e2da",
+      "item_id": "D61",
+      "mode": "single",
+      "occurrence_id": "EP0015",
+      "option_id": "D61.explain",
+      "person_id": "P1",
+      "reported_value": "explain",
+      "response_id": "R00015",
+      "selection_reason": "response_discriminator",
+      "signals": [
+        "explaining"
+      ],
+      "source_version": "5.0.0-design.1",
+      "step_id": "first",
+      "text": "I kept explaining my point.",
+      "variant": "base"
+    },
+    {
+      "administration_id": "A0020",
+      "basis": "actual_recalled",
+      "capture": "next_effect",
+      "dependence_group": "EP0015",
+      "displayed_text": "The feeling became easier to bear.",
+      "id": "O6843820ae04899685d26",
+      "item_id": "D10",
+      "mode": "single",
+      "occurrence_id": "EP0015",
+      "option_id": "D10.relief",
+      "person_id": "P1",
+      "reported_value": "relief",
+      "response_id": "R00020",
+      "selection_reason": "response_discriminator",
+      "signals": [
+        "relief_effect"
+      ],
+      "source_version": "5.0.0-design.1",
+      "step_id": "next",
+      "text": "The feeling became easier to bear.",
+      "variant": "base"
+    },
+    {
+      "administration_id": "A0025",
+      "basis": "actual_recalled",
+      "capture": "response_return",
+      "dependence_group": "EP0015",
+      "displayed_text": "I did not return to it.",
+      "id": "Oc34563e28f2040097fd3",
+      "item_id": "D78",
+      "mode": "single",
+      "occurrence_id": "EP0015",
+      "option_id": "D78.no",
+      "person_id": "P1",
+      "reported_value": "no",
+      "response_id": "R00025",
+      "selection_reason": "scope_or_texture",
+      "signals": [
+        "response_return:no"
+      ],
+      "source_version": "5.1.0-candidate.1",
+      "step_id": "return",
+      "text": "I did not return to it.",
+      "variant": "base"
+    },
+    {
+      "administration_id": "A0019",
+      "basis": "actual_recalled",
+      "capture": "sequence_relation",
+      "dependence_group": "EP0015",
+      "displayed_text": "The second began after the first was not helping.",
+      "id": "Oc926774f0d5b0de150b6",
+      "item_id": "D08",
+      "mode": "single",
+      "occurrence_id": "EP0015",
+      "option_id": "D08.after_failed",
+      "person_id": "P1",
+      "reported_value": "after_failed",
+      "response_id": "R00019",
+      "selection_reason": "response_discriminator",
+      "signals": [
+        "failed_then_next"
+      ],
+      "source_version": "5.0.0-design.1",
+      "step_id": "edge",
+      "text": "The second began after the first was not helping.",
+      "variant": "base"
+    },
+    {
+      "administration_id": "A0022",
+      "basis": "remembered_expectation",
+      "capture": "prediction",
+      "dependence_group": "EP0015",
+      "displayed_text": "Losing contact or not knowing where I stood.",
+      "id": "Od1c5e6f4e83867070008",
+      "item_id": "D03",
+      "mode": "single",
+      "occurrence_id": "EP0015",
+      "option_id": "D03.connection",
+      "person_id": "P1",
+      "reported_value": "connection",
+      "response_id": "R00022",
+      "selection_reason": "response_discriminator",
+      "signals": [
+        "relational_threat"
+      ],
+      "source_version": "5.0.0-design.1",
+      "step_id": "first",
+      "text": "Losing contact or not knowing where I stood.",
+      "variant": "base"
+    },
+    {
+      "administration_id": "A0023",
+      "basis": "actual_recalled",
+      "capture": "next_aim",
+      "dependence_group": "EP0015",
+      "displayed_text": "For the feeling to ease right then.",
+      "id": "Oe745546d6c49d95716a2",
+      "item_id": "D09",
+      "mode": "single",
+      "occurrence_id": "EP0015",
+      "option_id": "D09.relief",
+      "person_id": "P1",
+      "reported_value": "relief",
+      "response_id": "R00023",
+      "selection_reason": "response_discriminator",
+      "signals": [
+        "relief_aim"
+      ],
+      "source_version": "5.0.0-design.1",
+      "step_id": "next",
+      "text": "For the feeling to ease right then.",
+      "variant": "base"
+    },
+    {
+      "administration_id": "A0018",
+      "basis": "actual_recalled",
+      "capture": "next_action",
+      "dependence_group": "EP0015",
+      "displayed_text": "I left or ended the exchange.",
+      "id": "Oe8cf0968a7ab48cf5582",
+      "item_id": "D07",
+      "mode": "single",
+      "occurrence_id": "EP0015",
+      "option_id": "D07.leave",
+      "person_id": "P1",
+      "reported_value": "leave",
+      "response_id": "R00018",
+      "selection_reason": "response_discriminator",
+      "signals": [
+        "exit_action"
+      ],
+      "source_version": "5.0.0-design.1",
+      "step_id": "next",
+      "text": "I left or ended the exchange.",
+      "variant": "base"
+    },
+    {
+      "administration_id": "A0021",
+      "basis": "actual_recalled",
+      "capture": "capacity_before_next",
+      "dependence_group": "EP0015",
+      "displayed_text": "I could act, but getting relief felt urgent.",
+      "id": "Ofe12ea3c7dc1b6102fde",
+      "item_id": "D11",
+      "mode": "single",
+      "occurrence_id": "EP0015",
+      "option_id": "D11.urgent",
+      "person_id": "P1",
+      "reported_value": "urgent",
+      "response_id": "R00021",
+      "selection_reason": "response_discriminator",
+      "signals": [
+        "urgent_relief"
+      ],
+      "source_version": "5.0.0-design.1",
+      "step_id": "next",
+      "text": "I could act, but getting relief felt urgent.",
+      "variant": "base"
+    }
+  ],
+  "open_questions": [
+    {
+      "reason": "discriminator_not_sure",
+      "state": "unresolved",
+      "target_id": "cost",
+      "target_instance": "T54ce324f42f45cc7ccf1"
+    },
+    {
+      "reason": "discriminator_not_sure",
+      "state": "unresolved",
+      "target_id": "practical_context",
+      "target_instance": "Td1c7059e42909b3bfe09"
+    },
+    {
+      "reason": "discriminator_not_sure",
+      "state": "unresolved",
+      "target_id": "vulnerable_meaning",
+      "target_instance": "Tfd72972c25bb8f90a3b6"
+    }
+  ],
+  "referent_scopes": [
+    {
+      "person_id": "P1",
+      "role": "partner"
+    }
+  ],
+  "release_id": "PWQE-5.1.0-candidate.1",
+  "reported_context_controls": [],
+  "secure_capacity_examples": [],
+  "sequence_edges": [
+    {
+      "evidence_ids": [
+        "Oc926774f0d5b0de150b6"
+      ],
+      "first_not_helping": true,
+      "from_step": "first",
+      "id": "G2b4eb6d98f3a26f59132",
+      "meaning": "reported_temporal_relation_not_causality",
+      "occurrence_id": "EP0015",
+      "relation": "before",
+      "to_step": "next"
+    }
+  ],
+  "snapshot_id": "SNb567ac6144a22c6e8578",
+  "source_binding": {
+    "question_release": "PWQE-5.1.0-candidate.1",
+    "runtime_version": "PW-ROUTER-1.1.0-candidate.1",
+    "source_sha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832"
+  },
+  "steps": [
+    {
+      "id": "S57ce20b2ed63d18e9df2",
+      "observation_ids": [
+        "Oc926774f0d5b0de150b6"
+      ],
+      "occurrence_id": "EP0015",
+      "step_id": "edge"
+    },
+    {
+      "id": "S8df9eab129822d20c529",
+      "observation_ids": [
+        "O18bceca1d34bf612ce29",
+        "O3425b61ee973115bf87f",
+        "O3c1b9e76d85bc398e2da",
+        "Od1c5e6f4e83867070008"
+      ],
+      "occurrence_id": "EP0015",
+      "step_id": "first"
+    },
+    {
+      "id": "Sbca16191691821a7eead",
+      "observation_ids": [
+        "O6843820ae04899685d26",
+        "Oe745546d6c49d95716a2",
+        "Oe8cf0968a7ab48cf5582",
+        "Ofe12ea3c7dc1b6102fde"
+      ],
+      "occurrence_id": "EP0015",
+      "step_id": "next"
+    },
+    {
+      "id": "S5356896b9cfd2fbc8dc3",
+      "observation_ids": [
+        "Oc34563e28f2040097fd3"
+      ],
+      "occurrence_id": "EP0015",
+      "step_id": "return"
+    }
+  ],
+  "structural_evidence_summaries": [
+    {
+      "code": "preventive_function_support",
+      "counterevidence_ids": [],
+      "evidence_ids": [
+        "O3425b61ee973115bf87f",
+        "O3c1b9e76d85bc398e2da",
+        "Od1c5e6f4e83867070008"
+      ],
+      "id": "F25b23d59289127c0c6d9",
+      "missing": [
+        "recurrence",
+        "developmental_origin"
+      ],
+      "occurrence_ids": [
+        "EP0015"
+      ],
+      "scope": "occurrence",
+      "status": "structural_support_requires_report_semantic_review",
+      "step_ids": [
+        "first"
+      ]
+    },
+    {
+      "code": "reactive_relief_function_support",
+      "counterevidence_ids": [],
+      "evidence_ids": [
+        "Oe745546d6c49d95716a2",
+        "Oe8cf0968a7ab48cf5582",
+        "Ofe12ea3c7dc1b6102fde"
+      ],
+      "id": "F347368ff312f2fc544c7",
+      "missing": [
+        "developmental_origin"
+      ],
+      "occurrence_ids": [
+        "EP0015"
+      ],
+      "scope": "occurrence",
+      "status": "structural_support_requires_report_semantic_review",
+      "step_ids": [
+        "next"
+      ]
+    },
+    {
+      "code": "relief_effect_reported",
+      "counterevidence_ids": [],
+      "evidence_ids": [
+        "O6843820ae04899685d26",
+        "Oe8cf0968a7ab48cf5582"
+      ],
+      "id": "F663e8c6e56079b431377",
+      "missing": [],
+      "occurrence_ids": [
+        "EP0015"
+      ],
+      "scope": "occurrence",
+      "status": "reported_structure",
+      "step_ids": [
+        "next"
+      ]
+    },
+    {
+      "code": "preventive_to_relief_handoff_support",
+      "counterevidence_ids": [],
+      "evidence_ids": [
+        "O3425b61ee973115bf87f",
+        "O3c1b9e76d85bc398e2da",
+        "Oc926774f0d5b0de150b6",
+        "Od1c5e6f4e83867070008",
+        "Oe745546d6c49d95716a2",
+        "Oe8cf0968a7ab48cf5582",
+        "Ofe12ea3c7dc1b6102fde"
+      ],
+      "id": "F9e3ec67b889982617102",
+      "missing": [
+        "broader_recurrence"
+      ],
+      "occurrence_ids": [
+        "EP0015"
+      ],
+      "scope": "occurrence",
+      "status": "structural_support_requires_report_semantic_review",
+      "step_ids": [
+        "edge",
+        "first",
+        "next"
+      ]
+    },
+    {
+      "code": "relief_seeking_aim_reported",
+      "counterevidence_ids": [],
+      "evidence_ids": [
+        "Oe745546d6c49d95716a2",
+        "Oe8cf0968a7ab48cf5582"
+      ],
+      "id": "Fd18de9c5096a040aa855",
+      "missing": [],
+      "occurrence_ids": [
+        "EP0015"
+      ],
+      "scope": "occurrence",
+      "status": "reported_structure",
+      "step_ids": [
+        "next"
+      ]
+    }
+  ],
+  "superseded_response_ids": [],
+  "supported_alternatives": [
+    "Tf4d99d55aff045ba9990",
+    "Tf51f2e6dcf7276cf5315"
+  ],
+  "target_resolutions": [
+    {
+      "attempts": 1,
+      "comparison_ids": [],
+      "id": "T167590bd0899fd9d8d8b",
+      "occurrence_id": "EP0015",
+      "reason": "discriminator_answered_descriptively",
+      "resolution_ids": [
+        "Oe8cf0968a7ab48cf5582"
+      ],
+      "source_ids": [
+        "O3c1b9e76d85bc398e2da"
+      ],
+      "state": "resolved_descriptively",
+      "step_id": "first",
+      "target_id": "next_move"
+    },
+    {
+      "attempts": 1,
+      "comparison_ids": [],
+      "id": "T37d6562d1634eb6978b8",
+      "occurrence_id": "EP0015",
+      "reason": "discriminator_answered_descriptively",
+      "resolution_ids": [
+        "O6843820ae04899685d26"
+      ],
+      "source_ids": [
+        "Oe745546d6c49d95716a2",
+        "Oe8cf0968a7ab48cf5582"
+      ],
+      "state": "resolved_descriptively",
+      "step_id": "next",
+      "target_id": "next_effect"
+    },
+    {
+      "attempts": 1,
+      "comparison_ids": [],
+      "id": "T54ce324f42f45cc7ccf1",
+      "occurrence_id": "EP0015",
+      "reason": "discriminator_not_sure",
+      "resolution_ids": [],
+      "source_ids": [
+        "O6843820ae04899685d26"
+      ],
+      "state": "unresolved",
+      "step_id": "next",
+      "target_id": "cost"
+    },
+    {
+      "attempts": 1,
+      "comparison_ids": [],
+      "id": "T6e16ca39afaa07d45058",
+      "occurrence_id": "EP0015",
+      "reason": "discriminator_answered_descriptively",
+      "resolution_ids": [
+        "Od1c5e6f4e83867070008"
+      ],
+      "source_ids": [
+        "O3425b61ee973115bf87f"
+      ],
+      "state": "resolved_descriptively",
+      "step_id": "first",
+      "target_id": "prediction"
+    },
+    {
+      "attempts": 1,
+      "comparison_ids": [],
+      "id": "T7a129b658ea6b0c6e7b4",
+      "occurrence_id": "EP0015",
+      "reason": "discriminator_answered_descriptively",
+      "resolution_ids": [
+        "Ofe12ea3c7dc1b6102fde"
+      ],
+      "source_ids": [
+        "Oe8cf0968a7ab48cf5582"
+      ],
+      "state": "resolved_descriptively",
+      "step_id": "next",
+      "target_id": "access_before_change"
+    },
+    {
+      "attempts": 1,
+      "comparison_ids": [],
+      "id": "Tac9a26ea613140d75e14",
+      "occurrence_id": "EP0015",
+      "reason": "explicit_discriminating_evidence_recorded_not_a_final_report_claim",
+      "resolution_ids": [
+        "O3425b61ee973115bf87f"
+      ],
+      "source_ids": [
+        "O3c1b9e76d85bc398e2da"
+      ],
+      "state": "supports_interpretation",
+      "step_id": "first",
+      "target_id": "function"
+    },
+    {
+      "attempts": 0,
+      "comparison_ids": [],
+      "id": "Tc329a5a93c6debf27a46",
+      "occurrence_id": "new:conflict",
+      "reason": "explicit_entry_answered",
+      "resolution_ids": [],
+      "source_ids": [],
+      "state": "resolved_descriptively",
+      "step_id": "first",
+      "target_id": "entry:conflict"
+    },
+    {
+      "attempts": 1,
+      "comparison_ids": [],
+      "id": "Td1c7059e42909b3bfe09",
+      "occurrence_id": "EP0015",
+      "reason": "discriminator_not_sure",
+      "resolution_ids": [],
+      "source_ids": [
+        "O3425b61ee973115bf87f",
+        "O3c1b9e76d85bc398e2da",
+        "Od1c5e6f4e83867070008"
+      ],
+      "state": "unresolved",
+      "step_id": "first",
+      "target_id": "practical_context"
+    },
+    {
+      "attempts": 1,
+      "comparison_ids": [],
+      "id": "Teae9ea817ff7ad110285",
+      "occurrence_id": "EP0015",
+      "reason": "discriminator_answered_descriptively",
+      "resolution_ids": [
+        "Oc926774f0d5b0de150b6"
+      ],
+      "source_ids": [
+        "Oe8cf0968a7ab48cf5582"
+      ],
+      "state": "resolved_descriptively",
+      "step_id": "next",
+      "target_id": "sequence_relation"
+    },
+    {
+      "attempts": 1,
+      "comparison_ids": [],
+      "id": "Teda9b132456f679bb970",
+      "occurrence_id": "EP0015",
+      "reason": "explicit_discriminating_evidence_recorded_not_a_final_report_claim",
+      "resolution_ids": [
+        "Oe745546d6c49d95716a2"
+      ],
+      "source_ids": [
+        "Oc926774f0d5b0de150b6",
+        "Oe8cf0968a7ab48cf5582"
+      ],
+      "state": "supports_interpretation",
+      "step_id": "next",
+      "target_id": "goal_change"
+    },
+    {
+      "attempts": 1,
+      "comparison_ids": [],
+      "id": "Tf4d99d55aff045ba9990",
+      "occurrence_id": "EP0015",
+      "reason": "coverage_ordinary_or_competing_account",
+      "resolution_ids": [
+        "O18bceca1d34bf612ce29"
+      ],
+      "source_ids": [
+        "Oc34563e28f2040097fd3",
+        "Oc926774f0d5b0de150b6",
+        "Oe8cf0968a7ab48cf5582"
+      ],
+      "state": "supports_alternative",
+      "step_id": "first",
+      "target_id": "coverage_sequence_typicality"
+    },
+    {
+      "attempts": 1,
+      "comparison_ids": [],
+      "id": "Tf51f2e6dcf7276cf5315",
+      "occurrence_id": "EP0015",
+      "reason": "coverage_ordinary_or_competing_account",
+      "resolution_ids": [
+        "Oc34563e28f2040097fd3"
+      ],
+      "source_ids": [
+        "O6843820ae04899685d26",
+        "Oc926774f0d5b0de150b6",
+        "Oe8cf0968a7ab48cf5582"
+      ],
+      "state": "supports_alternative",
+      "step_id": "return",
+      "target_id": "coverage_response_return"
+    },
+    {
+      "attempts": 1,
+      "comparison_ids": [],
+      "id": "Tfd72972c25bb8f90a3b6",
+      "occurrence_id": "EP0015",
+      "reason": "discriminator_not_sure",
+      "resolution_ids": [],
+      "source_ids": [
+        "Od1c5e6f4e83867070008"
+      ],
+      "state": "unresolved",
+      "step_id": "first",
+      "target_id": "vulnerable_meaning"
+    }
+  ],
+  "unresolved_bindings": [],
+  "packet_id": "PKb567ac6144a22c6e8578",
+  "content_sha256": "08c87f05422944193bea48361623fcc1091244b0d9a454b4a90a88f1366f85e5"
+}

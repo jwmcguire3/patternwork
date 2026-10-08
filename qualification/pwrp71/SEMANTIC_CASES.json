@@ -1,0 +1,258 @@
+{
+  "report_release": "PWRP-7.1.0-candidate.1",
+  "question_release": "PWQE-5.1.0-candidate.1",
+  "source_binding": {
+    "question_release": "PWQE-5.1.0-candidate.1",
+    "runtime_version": "PW-ROUTER-1.1.0-candidate.1",
+    "source_sha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832"
+  },
+  "cases": [
+    {
+      "id": "CQ01",
+      "name": "internal_exclusion_vs_privacy",
+      "plan_ids": [
+        "C01",
+        "C02"
+      ],
+      "relevant_items": [
+        "D20",
+        "D65",
+        "D66",
+        "D67",
+        "D68",
+        "D69",
+        "D91",
+        "D92"
+      ],
+      "supported_distinction": "Separate outwardly minimized need from the room the person gives that need privately. Preserve the actual response and remaining need.",
+      "guard_against": "No automatic exile from a small request; do not dismiss converging internal-exclusion evidence merely because no trauma history exists.",
+      "grade_exact_names_or_counts": false,
+      "status": "authored_acceptance_criteria_not_provider_results"
+    },
+    {
+      "id": "CQ02",
+      "name": "positive_experience_can_be_kept_out",
+      "plan_ids": [
+        "C03",
+        "C04"
+      ],
+      "relevant_items": [
+        "D72",
+        "D73",
+        "D74"
+      ],
+      "supported_distinction": "Distinguish pride made wrong internally from an ambition kept private but allowed inside.",
+      "guard_against": "Do not presume either an exiled child or that only painful feelings can be internally disallowed.",
+      "grade_exact_names_or_counts": false,
+      "status": "authored_acceptance_criteria_not_provider_results"
+    },
+    {
+      "id": "CQ03",
+      "name": "awareness_is_not_choice",
+      "plan_ids": [
+        "C01",
+        "C02",
+        "C06"
+      ],
+      "relevant_items": [
+        "D65",
+        "D66",
+        "D75"
+      ],
+      "supported_distinction": "Describe stance, presence of competing wishes and actual room for choice separately.",
+      "guard_against": "Do not equate curiosity, calm, hindsight or detachment with Self leadership.",
+      "grade_exact_names_or_counts": false,
+      "status": "authored_acceptance_criteria_not_provider_results"
+    },
+    {
+      "id": "CQ04",
+      "name": "current_rule_not_origin",
+      "plan_ids": [
+        "C05"
+      ],
+      "relevant_items": [
+        "D22",
+        "D70",
+        "D71"
+      ],
+      "supported_distinction": "A local self-conclusion can feel compelling and resist new information.",
+      "guard_against": "No childhood acquisition, immutable character or diagnosis; a thought can also be noticed and rejected.",
+      "grade_exact_names_or_counts": false,
+      "status": "authored_acceptance_criteria_not_provider_results"
+    },
+    {
+      "id": "CQ05",
+      "name": "concerns_need_not_share_entity",
+      "plan_ids": [
+        "C06"
+      ],
+      "relevant_items": [
+        "D13",
+        "D14",
+        "D75",
+        "D76"
+      ],
+      "supported_distinction": "Different concerns can become clearer without being the same protective target.",
+      "guard_against": "Do not force a shared exile or a measured count of parts.",
+      "grade_exact_names_or_counts": false,
+      "status": "authored_acceptance_criteria_not_provider_results"
+    },
+    {
+      "id": "CQ06",
+      "name": "continuity_beyond_form",
+      "plan_ids": [
+        "C07"
+      ],
+      "relevant_items": [
+        "D56",
+        "D57",
+        "D77"
+      ],
+      "supported_distinction": "Retain actual distinctness and reported continuity beyond an outward match.",
+      "guard_against": "Same behavior alone is not same part or same role.",
+      "grade_exact_names_or_counts": false,
+      "status": "authored_acceptance_criteria_not_provider_results"
+    },
+    {
+      "id": "CQ07",
+      "name": "return_vs_ending",
+      "plan_ids": [
+        "C08",
+        "C09"
+      ],
+      "relevant_items": [
+        "D07",
+        "D08",
+        "D09",
+        "D10",
+        "D78",
+        "D79",
+        "D99"
+      ],
+      "supported_distinction": "An actual later return can be described; urge/no-return/order-unknown cannot be written as the same loop.",
+      "guard_against": "D99 is a reported generalization, not another independently sampled event; adjacency is not unique causation.",
+      "grade_exact_names_or_counts": false,
+      "status": "authored_acceptance_criteria_not_provider_results"
+    },
+    {
+      "id": "CQ08",
+      "name": "functioning_before_ease",
+      "plan_ids": [
+        "C10"
+      ],
+      "relevant_items": [
+        "M12",
+        "M14",
+        "D80",
+        "D81",
+        "D83",
+        "D84",
+        "D85"
+      ],
+      "supported_distinction": "Retained task function and continued strain are both preserved. First-easing interval is only an estimate.",
+      "guard_against": "No exact duration, vagal measurement, unseen daily baseline or automatically completed recovery.",
+      "grade_exact_names_or_counts": false,
+      "status": "authored_acceptance_criteria_not_provider_results"
+    },
+    {
+      "id": "CQ09",
+      "name": "recovery_conditions_and_meaning",
+      "plan_ids": [
+        "C10"
+      ],
+      "relevant_items": [
+        "M13",
+        "M14",
+        "D86",
+        "D100"
+      ],
+      "supported_distinction": "Changed surroundings and less urgent meaning belong to the actual later recovery attempt.",
+      "guard_against": "Do not attach later effects to the first action or declare the initial concern false.",
+      "grade_exact_names_or_counts": false,
+      "status": "authored_acceptance_criteria_not_provider_results"
+    },
+    {
+      "id": "CQ10",
+      "name": "company_and_aftermath",
+      "plan_ids": [
+        "C11"
+      ],
+      "relevant_items": [
+        "M13",
+        "D87",
+        "D88"
+      ],
+      "supported_distinction": "Company’s internal effect is separate from practical help and subsequent persistence.",
+      "guard_against": "No universal co-regulation prescription or measured physiological coupling.",
+      "grade_exact_names_or_counts": false,
+      "status": "authored_acceptance_criteria_not_provider_results"
+    },
+    {
+      "id": "CQ11",
+      "name": "wanted_vs_expected",
+      "plan_ids": [
+        "C12"
+      ],
+      "relevant_items": [
+        "D43",
+        "D89",
+        "D90"
+      ],
+      "supported_distinction": "Wanting reassurance can coexist with expecting concern to be dismissed and pressure to hide need.",
+      "guard_against": "Predictions are the respondent’s remembered expectations, not the other person’s actual intention or behavior.",
+      "grade_exact_names_or_counts": false,
+      "status": "authored_acceptance_criteria_not_provider_results"
+    },
+    {
+      "id": "CQ12",
+      "name": "pace_fit_and_exposure",
+      "plan_ids": [
+        "C13"
+      ],
+      "relevant_items": [
+        "D52",
+        "D53",
+        "D93",
+        "D94",
+        "D95"
+      ],
+      "supported_distinction": "Private importance, actual expression, wanted pace and subsequent exposure are distinct channels.",
+      "guard_against": "No assumed ideal lifetime pace, clinical attachment classification or selective-bonding subtype.",
+      "grade_exact_names_or_counts": false,
+      "status": "authored_acceptance_criteria_not_provider_results"
+    },
+    {
+      "id": "CQ13",
+      "name": "unfinished_repair",
+      "plan_ids": [
+        "C14"
+      ],
+      "relevant_items": [
+        "M24",
+        "D50",
+        "D51",
+        "D96"
+      ],
+      "supported_distinction": "Concern about consistency is not automatically inability to accept an apology.",
+      "guard_against": "Do not prescribe forgiveness or attribute motive to the other person.",
+      "grade_exact_names_or_counts": false,
+      "status": "authored_acceptance_criteria_not_provider_results"
+    },
+    {
+      "id": "CQ14",
+      "name": "support_vs_permission",
+      "plan_ids": [
+        "C15",
+        "C16"
+      ],
+      "relevant_items": [
+        "D97",
+        "D98"
+      ],
+      "supported_distinction": "Encouragement that leaves the decision with the person differs from waiting for permission.",
+      "guard_against": "No broad secure/insecure identity or false avoidance from privacy.",
+      "grade_exact_names_or_counts": false,
+      "status": "authored_acceptance_criteria_not_provider_results"
+    }
+  ]
+}

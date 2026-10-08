@@ -1,0 +1,323 @@
+{
+  "sourceArchiveSha256": "c99ab2c374f901757c3210190aaf2fe2c5227cb2c6f2f442cdb3309576c9a1c3",
+  "coverageCandidates": [
+    {
+      "status": "candidate_archive_not_canonical_answer_history",
+      "routerParity": "pending",
+      "role": "candidate_packet_archive",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/verification/coverage_replays/C01_packet.json",
+      "id": "C01",
+      "file": "coverage_candidates/C01_packet.json",
+      "sha256": "a6bf0856d77a7b5f9db9ac5cdc3342962a3847e66e3fcf5c0c9cf6d0ba537227"
+    },
+    {
+      "status": "candidate_archive_not_canonical_answer_history",
+      "routerParity": "pending",
+      "role": "candidate_packet_archive",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/verification/coverage_replays/C02_packet.json",
+      "id": "C02",
+      "file": "coverage_candidates/C02_packet.json",
+      "sha256": "71eb8c3d324a1147f79b3cb49ce308233ab6518eabb6c9690011466e96c624fd"
+    },
+    {
+      "status": "candidate_archive_not_canonical_answer_history",
+      "routerParity": "pending",
+      "role": "candidate_packet_archive",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/verification/coverage_replays/C03_packet.json",
+      "id": "C03",
+      "file": "coverage_candidates/C03_packet.json",
+      "sha256": "e1b192987e842f550ac730df0ab9edc7a139e02c62644751a8f018442a8f6e68"
+    },
+    {
+      "status": "candidate_archive_not_canonical_answer_history",
+      "routerParity": "pending",
+      "role": "candidate_packet_archive",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/verification/coverage_replays/C04_packet.json",
+      "id": "C04",
+      "file": "coverage_candidates/C04_packet.json",
+      "sha256": "a15e0830efb3b81a535e67f6754122d9f64ea798496c3cf296ed9b7acae5e523"
+    },
+    {
+      "status": "candidate_archive_not_canonical_answer_history",
+      "routerParity": "pending",
+      "role": "candidate_packet_archive",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/verification/coverage_replays/C05_packet.json",
+      "id": "C05",
+      "file": "coverage_candidates/C05_packet.json",
+      "sha256": "e5d74cb6c58f099aed12da9d5379c9b3872d1af56a9f4a8cf3afa2c05769eba3"
+    },
+    {
+      "status": "candidate_archive_not_canonical_answer_history",
+      "routerParity": "pending",
+      "role": "candidate_packet_archive",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/verification/coverage_replays/C06_packet.json",
+      "id": "C06",
+      "file": "coverage_candidates/C06_packet.json",
+      "sha256": "7bb31d6201a7719725d48004fdaeb66288b9c6d838a927adc37a9fc153a790ed"
+    },
+    {
+      "status": "candidate_archive_not_canonical_answer_history",
+      "routerParity": "pending",
+      "role": "candidate_packet_archive",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/verification/coverage_replays/C07_packet.json",
+      "id": "C07",
+      "file": "coverage_candidates/C07_packet.json",
+      "sha256": "d3101ba3460796c4eff15f44175e8891c97d5d9ea0645dfcdcfe6f22a39099b9"
+    },
+    {
+      "status": "candidate_archive_not_canonical_answer_history",
+      "routerParity": "pending",
+      "role": "candidate_packet_archive",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/verification/coverage_replays/C08_packet.json",
+      "id": "C08",
+      "file": "coverage_candidates/C08_packet.json",
+      "sha256": "e124b0fdd41247a02a8ed70206c015eb4f65facb7b3ba292f93771d9a5a79c28"
+    },
+    {
+      "status": "candidate_archive_not_canonical_answer_history",
+      "routerParity": "pending",
+      "role": "candidate_packet_archive",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/verification/coverage_replays/C09_packet.json",
+      "id": "C09",
+      "file": "coverage_candidates/C09_packet.json",
+      "sha256": "92773cf5a13654b6ae504159e2efcd6813144a4d347b8cad9755d1cce8d5ae1c"
+    },
+    {
+      "status": "candidate_archive_not_canonical_answer_history",
+      "routerParity": "pending",
+      "role": "candidate_packet_archive",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/verification/coverage_replays/C10_packet.json",
+      "id": "C10",
+      "file": "coverage_candidates/C10_packet.json",
+      "sha256": "d4267081cd5e0b08f3751e31701a9a83173686ee493ad738ad68eec5fdda1e77"
+    },
+    {
+      "status": "candidate_archive_not_canonical_answer_history",
+      "routerParity": "pending",
+      "role": "candidate_packet_archive",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/verification/coverage_replays/C11_packet.json",
+      "id": "C11",
+      "file": "coverage_candidates/C11_packet.json",
+      "sha256": "3f6c581e92395440fa7cb3b71bcd38d2cf1fc31b4895e7d89564a570290aae24"
+    },
+    {
+      "status": "candidate_archive_not_canonical_answer_history",
+      "routerParity": "pending",
+      "role": "candidate_packet_archive",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/verification/coverage_replays/C12_packet.json",
+      "id": "C12",
+      "file": "coverage_candidates/C12_packet.json",
+      "sha256": "70c36a1e2a11ce7803d97d1670e6092152a1e76d1943e5784c671eb11c151556"
+    },
+    {
+      "status": "candidate_archive_not_canonical_answer_history",
+      "routerParity": "pending",
+      "role": "candidate_packet_archive",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/verification/coverage_replays/C13_packet.json",
+      "id": "C13",
+      "file": "coverage_candidates/C13_packet.json",
+      "sha256": "d68eb7b3cf318cf7b7a08f90396e87694a0a56874584a1e156a9206fc7aaf9ca"
+    },
+    {
+      "status": "candidate_archive_not_canonical_answer_history",
+      "routerParity": "pending",
+      "role": "candidate_packet_archive",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/verification/coverage_replays/C14_packet.json",
+      "id": "C14",
+      "file": "coverage_candidates/C14_packet.json",
+      "sha256": "e89777ed1d9722b2aae7f97a18f9c595f62392fb2e90cfe8d8ea4f81c9405923"
+    },
+    {
+      "status": "candidate_archive_not_canonical_answer_history",
+      "routerParity": "pending",
+      "role": "candidate_packet_archive",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/verification/coverage_replays/C15_packet.json",
+      "id": "C15",
+      "file": "coverage_candidates/C15_packet.json",
+      "sha256": "c12099d58746ef7871fb01544f52d0cd3cbf8ee5d410efb0f79b36639755c2c7"
+    },
+    {
+      "status": "candidate_archive_not_canonical_answer_history",
+      "routerParity": "pending",
+      "role": "candidate_packet_archive",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/verification/coverage_replays/C16_packet.json",
+      "id": "C16",
+      "file": "coverage_candidates/C16_packet.json",
+      "sha256": "eec8710897c4e6c3cf8fc335392dbfe2bbeedd212e90e4109787af2bbda22580"
+    }
+  ],
+  "profileFixtures": [
+    {
+      "id": "P01",
+      "title": "A preventive role with a real stopping point",
+      "role": "authored_plan",
+      "sha256": "a866fe9e010cfae36904f840f56025f089f5fc245bc6cb5f57429343bd76b461",
+      "file": "profiles/P01_plan.json",
+      "sourceKind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/reference/Patternwork_Router_2026-10-06/verification/router/current_replays/P01_plan.json"
+    },
+    {
+      "id": "P01",
+      "title": "A preventive role with a real stopping point",
+      "role": "authored_history_state",
+      "sha256": "d5a1157845ea7509011b275c92d35aabbc513c319ec0a877e4667b33e970e95e",
+      "file": "profiles/P01_LOCAL_UNSIGNED_state.json",
+      "sourceKind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/reference/Patternwork_Router_2026-10-06/verification/router/current_replays/P01_LOCAL_UNSIGNED_state.json"
+    },
+    {
+      "id": "P02",
+      "title": "A manager-to-firefighter handoff in one disagreement",
+      "role": "authored_plan",
+      "sha256": "41ef966d9603a19de2a8d61213fe0048188c5f5393fc9de0cdbcff55b7afabf2",
+      "file": "profiles/P02_plan.json",
+      "sourceKind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/reference/Patternwork_Router_2026-10-06/verification/router/current_replays/P02_plan.json"
+    },
+    {
+      "id": "P02",
+      "title": "A manager-to-firefighter handoff in one disagreement",
+      "role": "authored_history_state",
+      "sha256": "661f73ff2064f2630598e6b7e14400b4f85438111d10cbe63400807f007d3cf2",
+      "file": "profiles/P02_LOCAL_UNSIGNED_state.json",
+      "sourceKind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/reference/Patternwork_Router_2026-10-06/verification/router/current_replays/P02_LOCAL_UNSIGNED_state.json"
+    },
+    {
+      "id": "P03",
+      "title": "Uncertainty, not all distance",
+      "role": "authored_plan",
+      "sha256": "91705deba20b0eeeceddde5c92567542014b58f189e41266c40e643f429b240e",
+      "file": "profiles/P03_plan.json",
+      "sourceKind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/reference/Patternwork_Router_2026-10-06/verification/router/current_replays/P03_plan.json"
+    },
+    {
+      "id": "P03",
+      "title": "Uncertainty, not all distance",
+      "role": "authored_history_state",
+      "sha256": "da59accecc1213349c0e6d0d183441daf2ada27aad8e6dca2b866672e9c7c0a8",
+      "file": "profiles/P03_LOCAL_UNSIGNED_state.json",
+      "sourceKind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/reference/Patternwork_Router_2026-10-06/verification/router/current_replays/P03_LOCAL_UNSIGNED_state.json"
+    },
+    {
+      "id": "P04",
+      "title": "A contact pattern that does not support attachment anxiety",
+      "role": "authored_plan",
+      "sha256": "440801a2224dee5a6c3c61af3ebd05af184778e6245f970f42845869650ec85f",
+      "file": "profiles/P04_plan.json",
+      "sourceKind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/reference/Patternwork_Router_2026-10-06/verification/router/current_replays/P04_plan.json"
+    },
+    {
+      "id": "P04",
+      "title": "A contact pattern that does not support attachment anxiety",
+      "role": "authored_history_state",
+      "sha256": "3bced798f217e6f0098760ee480af44ce4431e165313f625ceddb2daa00d7c82",
+      "file": "profiles/P04_LOCAL_UNSIGNED_state.json",
+      "sourceKind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/reference/Patternwork_Router_2026-10-06/verification/router/current_replays/P04_LOCAL_UNSIGNED_state.json"
+    },
+    {
+      "id": "P05",
+      "title": "Loss of words is not the same as deciding to withdraw",
+      "role": "authored_plan",
+      "sha256": "729824193bc7f789959ab9f2a077250622bf120143058b44fa5faa9d6b06b0c3",
+      "file": "profiles/P05_plan.json",
+      "sourceKind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/reference/Patternwork_Router_2026-10-06/verification/router/current_replays/P05_plan.json"
+    },
+    {
+      "id": "P05",
+      "title": "Loss of words is not the same as deciding to withdraw",
+      "role": "authored_history_state",
+      "sha256": "63fcd8cdc2fc0332fcac07bbb573006e52b5a81f32dce837f7f995d820ae3c5e",
+      "file": "profiles/P05_LOCAL_UNSIGNED_state.json",
+      "sourceKind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/reference/Patternwork_Router_2026-10-06/verification/router/current_replays/P05_LOCAL_UNSIGNED_state.json"
+    },
+    {
+      "id": "P06",
+      "title": "Different preventive jobs in different settings",
+      "role": "authored_plan",
+      "sha256": "46540270f48b46fa1050888826764ad5df259125c409feb2cdbddd346796589f",
+      "file": "profiles/P06_plan.json",
+      "sourceKind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/reference/Patternwork_Router_2026-10-06/verification/router/current_replays/P06_plan.json"
+    },
+    {
+      "id": "P06",
+      "title": "Different preventive jobs in different settings",
+      "role": "authored_history_state",
+      "sha256": "4c73a611e98b510889c19cc7b1b92712e05d438794cf0437f2121dd59a78da71",
+      "file": "profiles/P06_LOCAL_UNSIGNED_state.json",
+      "sourceKind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/reference/Patternwork_Router_2026-10-06/verification/router/current_replays/P06_LOCAL_UNSIGNED_state.json"
+    },
+    {
+      "id": "P07",
+      "title": "A useful map without a problem inventory",
+      "role": "authored_plan",
+      "sha256": "eb26248427a5aa202877255f19f7bd81599f5101482f575ced44e43a3f248da1",
+      "file": "profiles/P07_plan.json",
+      "sourceKind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/reference/Patternwork_Router_2026-10-06/verification/router/current_replays/P07_plan.json"
+    },
+    {
+      "id": "P07",
+      "title": "A useful map without a problem inventory",
+      "role": "authored_history_state",
+      "sha256": "30836da96b52b82d1cceb90527b66826e3fcd78d8c326d824fec6771e285b2df",
+      "file": "profiles/P07_LOCAL_UNSIGNED_state.json",
+      "sourceKind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/reference/Patternwork_Router_2026-10-06/verification/router/current_replays/P07_LOCAL_UNSIGNED_state.json"
+    },
+    {
+      "id": "P08",
+      "title": "The need is present, but its visibility gets managed",
+      "role": "authored_plan",
+      "sha256": "53dc4117b8bae5b81f0ba65a52ef58c0177c70bef5e1d6f4286321bfa676f852",
+      "file": "profiles/P08_plan.json",
+      "sourceKind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/reference/Patternwork_Router_2026-10-06/verification/router/current_replays/P08_plan.json"
+    },
+    {
+      "id": "P08",
+      "title": "The need is present, but its visibility gets managed",
+      "role": "authored_history_state",
+      "sha256": "33e4c2de1954886d5f2911ab06fe356892b9eba242a47df8df6edb87e992623c",
+      "file": "profiles/P08_LOCAL_UNSIGNED_state.json",
+      "sourceKind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/reference/Patternwork_Router_2026-10-06/verification/router/current_replays/P08_LOCAL_UNSIGNED_state.json"
+    },
+    {
+      "id": "P09",
+      "title": "Function inferred without pretending the person stated the motive",
+      "role": "authored_plan",
+      "sha256": "26c2eac86fe9dba3fa9d8773de32e8c95ed8013d3ea21d21b9cb888601e3e6d6",
+      "file": "profiles/P09_plan.json",
+      "sourceKind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/reference/Patternwork_Router_2026-10-06/verification/router/current_replays/P09_plan.json"
+    },
+    {
+      "id": "P09",
+      "title": "Function inferred without pretending the person stated the motive",
+      "role": "authored_history_state",
+      "sha256": "b594e257db7f0d7ecd728520d779463447abef85658c53933f2a1c33aaf46dbf",
+      "file": "profiles/P09_LOCAL_UNSIGNED_state.json",
+      "sourceKind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+      "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/reference/Patternwork_Router_2026-10-06/verification/router/current_replays/P09_LOCAL_UNSIGNED_state.json"
+    }
+  ],
+  "manifestVersion": "pwrp71-fixtures-1",
+  "semanticCasesBytesSha256": "fec1752b4a4892da77fcadbf78688b23fd77e010b845ae6ddcd4523c0547569d",
+  "sourceArchive": "Patternwork_Coverage_Expansion_2026-10-07.zip",
+  "semanticCasesFile": "SEMANTIC_CASES.json",
+  "authoredWorkedPaths": {
+    "file": "authored_worked_paths.json",
+    "sha256": "7a3422b052aa524429c3da8e608c06fa3ef6c323cc4f8728fbb09ca42e8dbf93",
+    "archivePath": "Patternwork_Coverage_Expansion_2026-10-07/assessment_runtime/examples/worked_paths.json",
+    "sourceKind": "nine_authored_fictional_branch_segments_not_observed_product_outcomes"
+  }
+}

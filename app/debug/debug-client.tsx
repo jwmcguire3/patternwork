@@ -41,6 +41,8 @@ type ReportResult = {
   title: string;
   reportMarkdown: string;
   draft: Record<string, unknown>;
+  reviewerReceipts: { verdict?: string; summary?: string }[];
+  sourcePins: { questionSourceManifestSha256: string; reportSourceManifestSha256: string; packetSha256: string; routingQualificationSha256: string };
   usage: { model: string; costMicros: number; totalTokens: number; attempts: number };
 };
 
@@ -49,6 +51,8 @@ type ActiveRun = RecentRun & {
   totalCostUsd: number;
   updatedAt: string;
 };
+
+type ProfileAvailability = { id: string; title: string; eligible: boolean; status: string; reason?: string };
 
 async function responseJson<T>(response: Response): Promise<T> {
   const body = await response.json() as T & { error?: string };
@@ -70,6 +74,7 @@ export default function DebugClient() {
   const [connected, setConnected] = useState(false);
   const [overview, setOverview] = useState<Overview | null>(null);
   const [runs, setRuns] = useState<RecentRun[]>([]);
+  const [profiles, setProfiles] = useState<ProfileAvailability[]>([]);
   const [activeRun, setActiveRun] = useState<ActiveRun | null>(null);
   const [profileId, setProfileId] = useState("P01");
   const [mode, setMode] = useState("all");
@@ -93,9 +98,14 @@ export default function DebugClient() {
   }, [api]);
 
   const loadRecentRuns = useCallback(async () => {
-    const result = await api<{ runs: RecentRun[] }>("/api/debug/reports");
+    const result = await api<{ runs: RecentRun[]; profiles: ProfileAvailability[] }>("/api/debug/reports");
     setRuns(result.runs);
-  }, [api]);
+    setProfiles(result.profiles);
+    if (!result.profiles.some((profile) => profile.id === profileId && profile.eligible)) {
+      const firstEligible = result.profiles.find((profile) => profile.eligible);
+      if (firstEligible) setProfileId(firstEligible.id);
+    }
+  }, [api, profileId]);
 
   const loadRun = useCallback(async (runId: string) => {
     const result = await api<ActiveRun>(`/api/debug/reports/${encodeURIComponent(runId)}`);
@@ -115,8 +125,11 @@ export default function DebugClient() {
     try {
       const result = await api<Overview>("/api/debug/overview");
       setOverview(result);
-      const recent = await api<{ runs: RecentRun[] }>("/api/debug/reports");
+      const recent = await api<{ runs: RecentRun[]; profiles: ProfileAvailability[] }>("/api/debug/reports");
       setRuns(recent.runs);
+      setProfiles(recent.profiles);
+      const firstEligible = recent.profiles.find((profile) => profile.eligible);
+      if (firstEligible) setProfileId(firstEligible.id);
       setConnected(true);
       setLastCheckedAt(new Date().toISOString());
     } catch (caught) {
@@ -218,21 +231,26 @@ export default function DebugClient() {
             <p className={styles.kicker}>Fictional profile runner</p>
             <h2>Run report drafts</h2>
             <p>Choose one of the authored fictional profiles. Each run stays separate from assessment sessions and follows the selected report sequence.</p>
+            <p className={styles.privacyNote}>Provider runs are enabled only for profiles whose exact packet is passed in final PWQE 5.1 routing qualification evidence. Pending profiles remain visible and cannot be run.</p>
             <form onSubmit={startRun} className={styles.runForm}>
               <label>Profile
                 <select value={profileId} onChange={(event) => setProfileId(event.target.value)}>
-                  {Array.from({ length: 9 }, (_, index) => `P${String(index + 1).padStart(2, "0")}`).map((id) => <option key={id} value={id}>{id}</option>)}
+                  {profiles.map((profile) => <option key={profile.id} value={profile.id} disabled={!profile.eligible}>{profile.id} · {profile.title}{profile.eligible ? "" : " · routing pending"}</option>)}
                 </select>
               </label>
               <label>Report set
                 <select value={mode} onChange={(event) => setMode(event.target.value)}>
                   <option value="mapping">Mapping report</option>
-                  <option value="deepening">Deepening reports + synthesis</option>
-                  <option value="all">All five reports</option>
+                  <option value="ifs">IFS deepening report</option>
+                  <option value="pv">PV deepening report</option>
+                  <option value="att">ATT deepening report</option>
+                  <option value="deepening">All three deepening reports</option>
+                  <option value="all">All five reports, including synthesis</option>
                 </select>
               </label>
-              <button className={styles.primary} type="submit" disabled={busy || !overview?.openRouter.apiKeyConfigured}>{busy ? "Starting…" : "Start report run"}</button>
+              <button className={styles.primary} type="submit" disabled={busy || !overview?.openRouter.apiKeyConfigured || !profiles.some((profile) => profile.id === profileId && profile.eligible)}>{busy ? "Starting…" : "Start report run"}</button>
             </form>
+            {!profiles.some((profile) => profile.eligible) && <p className={styles.error}>No profile is eligible yet. Complete final PWQE 5.1 routing qualification for the exact candidate packets.</p>}
             {!overview?.openRouter.apiKeyConfigured && <p className={styles.error}>Set OPENROUTER_API_KEY to run provider drafts.</p>}
           </section>
 
@@ -246,6 +264,8 @@ export default function DebugClient() {
               {!!activeRun.result?.length && <div className={styles.results}>
                 {activeRun.result.map((report) => <article className={styles.report} key={report.reportType}>
                   <div className={styles.reportHeading}><h3>{report.title || report.reportType}</h3><span>{report.reportType} · {report.usage.attempts} call(s) · {money(report.usage.costMicros)}</span></div>
+                  <p className={styles.privacyNote}>PWRP 7.1 reviewed draft · {report.reviewerReceipts.length} reviewer receipt(s) · packet {report.sourcePins.packetSha256.slice(0, 12)} · routing evidence {report.sourcePins.routingQualificationSha256.slice(0, 12)}</p>
+                  {report.reviewerReceipts.map((receipt, index) => <p className={styles.privacyNote} key={`${report.reportType}-review-${index}`}>Review {receipt.verdict ?? "recorded"}: {receipt.summary ?? "Receipt is bound to this accepted draft."}</p>)}
                   <div className={styles.markdown}><ReactMarkdown remarkPlugins={[remarkGfm]}>{report.reportMarkdown}</ReactMarkdown></div>
                 </article>)}
               </div>}

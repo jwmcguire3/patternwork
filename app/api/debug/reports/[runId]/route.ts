@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../../lib/prisma.ts";
 import { authorizeDebugRequest, debugAuthorizationResponse } from "../../../../../lib/server/debug/auth.ts";
+import { isDebugReportResult } from "../../../../../lib/server/debug/report-runner.ts";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,7 @@ export async function GET(request: Request, context: { readonly params: Promise<
       reasoningEffort: run.reasoningEffort,
       totalCostMicros: run.totalCostMicros.toString(),
       totalCostUsd: Number(run.totalCostMicros) / 1_000_000,
-      result: run.resultJson,
+      result: Array.isArray(run.resultJson) ? run.resultJson.filter(isDebugReportResult) : [],
       failureCode: run.failureCode,
       heartbeatAt: run.heartbeatAt,
       createdAt: run.createdAt,

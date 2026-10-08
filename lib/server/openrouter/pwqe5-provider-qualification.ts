@@ -16,6 +16,7 @@ import {
 import { buildPwqe5QualificationFixtureSet, type Pwqe5ProviderQualificationFixture, type Pwqe5ProviderQualificationFixtureSet } from "./pwqe5-qualification-fixtures.ts";
 import type { OpenRouterGenerationRequest, OpenRouterTransport, OpenRouterUsage } from "./types.ts";
 import { OpenRouterTransportError } from "./types.ts";
+import { projectOpenRouterStrictSchemaObject } from "./schema-projection.ts";
 import { buildGenerationPrompt, buildRepairPrompt, loadPwqe6ReportPrompt } from "../reports/prompts.ts";
 import { renderPwqe6ReportDraftMarkdown, validatePwqe6ReportDraftValue } from "../reports/pwqe6-validation.ts";
 import type { Pwqe5SourcePackage as Pwqe6ReportSourcePackage } from "../reports/pwqe6-source.ts";
@@ -153,29 +154,6 @@ function hasExactKeys(value: Record<string, unknown>, keys: readonly string[]): 
 function asJsonObject(value: unknown): JsonObject {
   if (!object(value)) throw new Error("PWQE5 qualification expected a JSON object.");
   return value as JsonObject;
-}
-
-const UNSUPPORTED_STRICT_SCHEMA_KEYS = new Set(["$schema", "$id", "title", "description", "allOf", "if", "then", "else", "uniqueItems"]);
-
-function openRouterStrictSchemaMap(value: unknown): unknown {
-  if (!object(value)) return value;
-  return Object.fromEntries(Object.entries(value).map(([key, schema]) => [key, openRouterStrictSchema(schema)]));
-}
-
-function openRouterStrictSchema(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(openRouterStrictSchema);
-  if (!object(value)) return value;
-  return Object.fromEntries(Object.entries(value)
-    .filter(([key]) => !UNSUPPORTED_STRICT_SCHEMA_KEYS.has(key))
-    .map(([key, child]) => [key,
-      key === "properties" || key === "$defs" || key === "definitions"
-        ? openRouterStrictSchemaMap(child)
-        : key === "items" || key === "additionalProperties" || key === "not" || key === "contains"
-          ? openRouterStrictSchema(child)
-          : key === "anyOf" || key === "oneOf" || key === "prefixItems"
-            ? Array.isArray(child) ? child.map(openRouterStrictSchema) : child
-            : child,
-    ]));
 }
 
 function runKey(reportType: ReportType, candidate: QualifiedModelTier["name"], profileId: string): string {
@@ -529,7 +507,7 @@ export async function runPwqe5ProviderQualification(options: RunPwqe5Qualificati
     if (manifest.selections[reportType]) continue;
     let selected = false;
     const promptPackage = await loadPwqe6ReportPrompt(reportType, options.workspaceRoot);
-    const providerSchema = openRouterStrictSchema(promptPackage.schema) as JsonObject;
+    const providerSchema = projectOpenRouterStrictSchemaObject(promptPackage.schema as JsonObject);
     for (const candidate of candidates) {
       const records: Pwqe5QualificationRunRecord[] = [];
       let candidateFailed = false;

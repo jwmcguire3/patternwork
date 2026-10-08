@@ -1,0 +1,133 @@
+{
+  "id": "P09",
+  "title": "Function inferred without pretending the person stated the motive",
+  "fictional": true,
+  "source_kind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+  "config": {
+    "people": {
+      "P1": "partner",
+      "P2": "supervisor",
+      "P3": "friend"
+    },
+    "referents": {
+      "evaluator": "P2",
+      "boundary_person": "P2",
+      "close_person": "P1",
+      "support_person": "P3",
+      "repair_person": "P1",
+      "conflict_person": "P1"
+    },
+    "topics": [
+      "body_detail"
+    ],
+    "unavailable_contexts": [],
+    "focus_topics": [
+      "conflict"
+    ],
+    "focus_occurrences": [],
+    "details": [
+      "recurrence"
+    ],
+    "report_language": "no_preference",
+    "recall_window": "recent_weeks",
+    "entry_context": null,
+    "total_limit": 56,
+    "mapping_limit": 32,
+    "decision_limit": 72,
+    "option_seed": "patternwork-reference"
+  },
+  "answers": {
+    "D61": [
+      {
+        "selected": [
+          "D61.explain"
+        ],
+        "status": "answered",
+        "mode": "single"
+      },
+      {
+        "selected": [
+          "D61.explain"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "D07": [
+      {
+        "selected": [
+          "D07.leave"
+        ],
+        "status": "answered",
+        "mode": "single"
+      },
+      {
+        "selected": [
+          "D07.leave"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "D08": [
+      {
+        "selected": [
+          "D08.after_failed"
+        ],
+        "status": "answered",
+        "mode": "single"
+      },
+      {
+        "selected": [
+          "D08.after_failed"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "D11": [
+      {
+        "selected": [
+          "D11.urgent"
+        ],
+        "status": "answered",
+        "mode": "single"
+      },
+      {
+        "selected": [
+          "D11.urgent"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "D09": [
+      {
+        "selected": [
+          "D09.none"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "D10": [
+      {
+        "selected": [
+          "D10.relief"
+        ],
+        "status": "answered",
+        "mode": "single"
+      },
+      {
+        "selected": [
+          "D10.relief"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ]
+  },
+  "focus_roots": [
+    "D61"
+  ]
+}
