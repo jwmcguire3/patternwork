@@ -454,6 +454,23 @@ function sequenceEdges(active: readonly Normalized[], observations: readonly Pwq
       if (relation) edges.push({ id: `edge:${response.responseId}:${selected}`, occurrenceId: response.occurrenceId, fromStep: "first", toStep: "next", relation, responseId: response.responseId, observationIds: [`${response.responseId}:${selected}`], meaning: "reported_temporal_relation_not_causality" });
     }
   }
+  for (const response of active.filter((r) => r.questionId === "D36" && answered(r) && r.selectedOptionIds.length > 1)) {
+    const relation = response.mode === "ordered" ? "before" : response.mode === "simultaneous" ? "simultaneous" : "order_unknown";
+    for (let index = 0; index < response.selectedOptionIds.length - 1; index += 1) {
+      const fromOption = response.selectedOptionIds[index]!;
+      const toOption = response.selectedOptionIds[index + 1]!;
+      edges.push({
+        id: `recovery:${response.responseId}:${fromOption}:${toOption}`,
+        occurrenceId: response.occurrenceId,
+        fromStep: `${response.stepId}/${fromOption}`,
+        toStep: `${response.stepId}/${toOption}`,
+        relation,
+        responseId: response.responseId,
+        observationIds: [`${response.responseId}:${fromOption}`, `${response.responseId}:${toOption}`],
+        meaning: "reported_recovery_order",
+      });
+    }
+  }
   for (const response of active.filter((r) => r.questionId === "D78" && answered(r) && r.selectedOptionIds.includes("D78.returned"))) {
     const same = observations.filter((o) => o.occurrenceId === response.occurrenceId);
     const order = same.filter((o) => ["D08.after_failed", "D08.after", "D08.alternate"].includes(o.optionId));

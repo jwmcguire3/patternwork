@@ -133,6 +133,27 @@ test("D78 return requires the same actual episode's next action and qualifying s
   ] }, source), /Root answers require an explicit/u);
 });
 
+test("ordered D36 recovery details emit explicit adjacent sequence edges", async () => {
+  const source = await sourcePromise;
+  const result = compilePwqe51Route({ phase: "deepening", responses: [
+    answer("root", "M02", "M02.rehearse", "recovery-order", undefined, { basis: "actual_recalled" }),
+    {
+      responseId: "recovery-order",
+      questionId: "D36",
+      occurrenceId: "recovery-order",
+      stepId: "recovery",
+      selectedOptionIds: ["D36.input", "D36.words", "D36.think"],
+      status: "answered",
+      mode: "ordered",
+    },
+  ] }, source);
+
+  assert.deepEqual(result.sequenceEdges.map(({ fromStep, toStep, relation, meaning }) => ({ fromStep, toStep, relation, meaning })), [
+    { fromStep: "recovery/D36.input", toStep: "recovery/D36.words", relation: "before", meaning: "reported_recovery_order" },
+    { fromStep: "recovery/D36.words", toStep: "recovery/D36.think", relation: "before", meaning: "reported_recovery_order" },
+  ]);
+});
+
 test("D07 is offered at next only when an actual first-step action qualifies", async () => {
   const source = await sourcePromise;
   const qualifies = compilePwqe51Route({ phase: "deepening", optedInTopics: ["conflict"], responses: [
@@ -266,8 +287,18 @@ test("forward corrections are rejected instead of constructing a cyclic replacem
   const source = await sourcePromise;
   assert.throws(() => compilePwqe51Route({ responses: [
     answer("invalid", "M02", "M02.recheck", "review", undefined, { basis: "actual_recalled", supersedesResponseId: "future" }),
-    answer("future", "M02", "M02.rehearse", "review", undefined, { basis: "actual_recalled" }),
-  ] }, source), /earlier response/u);
+    // The referenced later M02 row is attached to this already established
+    // episode, so it must inherit the root basis instead of supplying one.
+    answer("future", "M02", "M02.rehearse", "review"),
+  ] }, source), /Corrections must supersede an earlier response/u);
+});
+
+test("attached responses cannot supply their own episode basis", async () => {
+  const source = await sourcePromise;
+  assert.throws(() => compilePwqe51Route({ responses: [
+    answer("root", "M02", "M02.rehearse", "review", undefined, { basis: "actual_recalled" }),
+    answer("attached", "M03", "M03.exposure", "review", undefined, { basis: "reported_typicality" }),
+  ] }, source), /Attached items inherit episode basis; client basis is not accepted/u);
 });
 
 test("a target whose first discriminator is unavailable may offer a later authored discriminator", async () => {
