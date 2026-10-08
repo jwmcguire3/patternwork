@@ -1,28 +1,23 @@
-# PWQE 5.1 reference coverage limitations
+# PWQE 5.1 reference coverage and qualification
 
-The Python replay is an independent implementation for the behaviors it actually models. The parity report does not treat it as authoritative where its action or candidate surface is incomplete.
+The parity audit keeps cross-engine comparisons separate from source-bound contract qualification. It reports an incomplete strict result whenever an applicable surface has no independent reference behavior; an empty mismatch list alone is not a parity pass.
 
-## Entry-point items
+## D41 / `body_detail`
 
-The production source keeps `entry_points` separate from its 92 target definitions. The TypeScript router exposes each selected entry point as a direct candidate. In particular, source item D41 is the `body_detail` entry point, and the controls contract says the optional detailed-body chip controls D41.
+The immutable controls source authorizes D41 through `config.topics`. Python `targets.py::_entry_targets` currently enumerates `config.focus_topics`, so the Python reference does not independently reproduce this authored permission path. The package itself is unchanged.
 
-The Python candidate compiler's `_entry_targets` enumerates `config.focus_topics`; it does not generate the direct D41 candidate from `config.topics`. The TypeScript parity adapter maps the fixture's selected topics into topic opt-ins, so it can expose D41 where the Python candidate list does not. Those Python/TypeScript candidate and choice rows are counted as unsupported reference coverage, not as equality, a Python-authoritative failure, or an approved parity exception. A Python direct-entry route fixture/contract is needed before that behavior can be compared independently.
+`REFERENCE_EXTENSIONS.json` is a separately authored, source-manifest-bound contract fixture. Its seven cases qualify topic authorization, rejection without an actual episode, admission and priority for a bound actual episode, ordering behind a tier-three comparison, answer retention, skip missingness, and correction supersession. The tests label this as contract-based qualification, not Python/TypeScript parity.
 
-In the current 25-plan replay, this is the first uncomparable route choice in every plan (D41 / `entry:body_detail`, at the plan-specific ordinal in `ROUTE_SELECTION_DISCREPANCY_LEDGER.json`). The audit stops counting decisions as a shared trajectory there. It still records later rows as conditional diagnostics.
+The original 25 fixtures remain intact. A second collector run removes `body_detail` from both topic and focus permissions and applies only the three documented M10 option adapters required by the immutable authored bank. This opt-out cohort replays all 25 plans and records 591 selection snapshots. It has no D41 candidate rows, no shared-prefix candidate/choice mismatches, and no shared post-response target-transition mismatches. The 11 entry-point pseudo-target rows recur exactly within the existing exception list; all other projection differences are zero.
 
-At the same time, Python emits `entry:<id>` as a target-resolution pseudo-row while the TypeScript source models entry points as candidates and has no equivalent target-state row. The eleven original pseudo-target rows are listed in `EXCEPTIONS.json`. This exception applies only to those target-state representation rows; it does not exempt candidate or question-selection comparisons.
+## Selection and state coverage
 
-## Other unsupported surfaces
+The original 25-plan replay compares 610 ask decisions on shared route prefixes. Candidate identity, eligibility, target, priority, selected question/occurrence, and accepted-response target transitions have no shared-prefix mismatch. The current route outcomes also include focused tests for distinct/same/unknown binding results, skip/no-event closure, `mapping_ready` ordering, decision and administration budgets, correction dependency invalidation, and candidate rejection causes.
 
-- The Python replay selector can choose `REPLAY`; `compilePwqe51Route` has no equivalent action. The audit reports replay candidate rows and chosen replay actions separately.
-- In P01 and C07, after the D41 route gap, Python later selects M03 from a `replay_attached` child target while TypeScript selects D57 from `contrast_goal`. This is a conditional downstream difference, not a shared-prefix mismatch; independent parity requires equivalent replay-attached behavior or a source-backed contract expectation for that route.
-- Python emits explicit `bind` and `mapping_ready` actions. TypeScript represents occurrence binding as candidate metadata and phase selection, so these control actions do not map one-for-one.
-- Python exposes candidate rejection reasons that `compilePwqe51Route` does not return.
-- Post-response target states are compared on accepted-response prefixes. Collector control rows and transitions without an accepted response are reported as unsupported.
-- After a selected question/occurrence divergence, later Python-prefix comparisons are conditional diagnostics. They are not counted as shared-route parity evidence.
+The TypeScript compile selector does not implement Python's `REPLAY` operator. In the opt-out cohort, the first unsupported selected action remains at P01 ordinal 20, P09 ordinal 23, and C07 ordinal 20. The original replay includes 17 Python and 89 TypeScript REPLAY rejection rows; they are reported as unsupported coverage, excluded from equality comparisons, and never counted as parity evidence. Python `bind` and `mapping_ready` are also not one-to-one TypeScript actions. Post-target snapshots without an accepted response prefix remain unsupported.
 
-Each compared ask row now retains the two implementations' eligible candidates, target IDs, priorities, focus and tie-break fields, selected candidate order, open target states and accepted-response target transitions. This makes the selected route and the evidence available to the selector inspectable. Python rejection-reason parity remains unsupported because the TypeScript compile API does not return rejected candidate diagnostics.
+The 11 entries in `EXCEPTIONS.json` apply only to exact target-state pseudo-row keys whose IDs are present in the immutable `entry_points` ontology and absent from its target ontology. The audit verifies their complete exact scope in both the original and opt-out cohorts. They do not excuse candidate, route-choice, or non-entry target differences.
 
-The TypeScript router promotes D08's sequence relation candidate to tier 1, matching the short episode-order clarification specified by routing priority §5 and implemented in the Python candidate compiler. This priority is a candidate-selection rule; it does not rewrite the source target's authored priority or any recorded answer.
+## Current strict status
 
-The normal audit command reports these limits and diagnostics. `npm run pwqe51:parity:strict` exits nonzero on unexplained contract-relevant mismatches and also refuses a full-parity status while applicable independent reference coverage remains missing.
+The strict run reports zero unexplained differences and zero shared-prefix route or target-transition mismatches. It exits nonzero with `incomplete_unsupported_coverage`, because Python/TypeScript behavior is still not independently comparable for the REPLAY selector, bind and `mapping_ready` controls, Python entry-point candidates, and the listed post-target/control rows. `full_applicable_parity_established` therefore remains false. The strict gate must stay non-passing until those relevant reference surfaces are implemented or independently qualified with explicit reviewable contracts.

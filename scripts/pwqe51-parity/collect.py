@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import sys
+import copy
 from collections import defaultdict
 from dataclasses import asdict
 from pathlib import Path
@@ -15,14 +17,24 @@ from patternwork_router.model import Config, ContractError  # noqa: E402
 from patternwork_router.source import Source  # noqa: E402
 
 
-def replay_fixture(plan: dict[str, Any], source: Source) -> tuple[AssessmentEngine, list[dict[str, Any]]]:
+def replay_fixture(plan: dict[str, Any], source: Source, entry_point_adapters: list[dict[str, Any]]) -> tuple[AssessmentEngine, list[dict[str, Any]], dict[str, Any], list[str]]:
     """Run the independent reference engine without inferring distinctness.
 
     Answer queues supply response inputs only. A queued later answer can be
     used after a binding screen only when the fixture separately authors the
     source episode and confirmed-different relation.
     """
-    engine = AssessmentEngine(Config(**plan.get("config", {})), source)
+    effective_config = copy.deepcopy(plan.get("config", {}))
+    applied_extensions: list[str] = []
+    for adapter in entry_point_adapters:
+        field = adapter["permission_field"]
+        permitted = effective_config.get(field, [])
+        if adapter["permission_value"] in permitted:
+            destination = effective_config.setdefault(adapter["reference_field"], [])
+            if adapter["entry_point"] not in destination:
+                destination.append(adapter["entry_point"])
+            applied_extensions.append(adapter["id"])
+    engine = AssessmentEngine(Config(**effective_config), source)
     answers = plan["answers"]
     if any(not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows) for rows in answers.values()):
         raise ContractError("Replay answers must be per-item lists of canonical answer objects.")
@@ -41,9 +53,21 @@ def replay_fixture(plan: dict[str, Any], source: Source) -> tuple[AssessmentEngi
             raise ContractError("A distinctness binding requires an independent fixture justification.")
         binding_by_answer[key] = declaration
 
+    correction_by_answer: dict[tuple[str, int], dict[str, Any]] = {}
+    for declaration in plan.get("corrections", []):
+        if not isinstance(declaration, dict):
+            raise ContractError("Correction declarations must be objects.")
+        key = (declaration.get("item_id"), declaration.get("answer_index"))
+        if not isinstance(key[0], str) or type(key[1]) is not int or key in correction_by_answer:
+            raise ContractError("Correction declarations require unique item_id/answer_index keys.")
+        if not isinstance(declaration.get("replacement"), dict):
+            raise ContractError("A correction declaration requires a canonical replacement response.")
+        correction_by_answer[key] = declaration
+
     counts: dict[str, int] = defaultdict(int)
     administered: dict[tuple[str, int], str] = {}
     used_bindings: set[tuple[str, int]] = set()
+    used_corrections: set[tuple[str, int]] = set()
     log: list[dict[str, Any]] = []
     for _ in range(240):
         phase_before = engine.history.phase
@@ -104,9 +128,23 @@ def replay_fixture(plan: dict[str, Any], source: Source) -> tuple[AssessmentEngi
             if authored:
                 entry["fixture_answer_index"] = answer_index
             entry["submitted_response"] = payload
-            entry["receipt"] = engine.answer(form["administration_id"], payload, expected_revision=engine.revision, request_id=f"answer-{engine.revision}")
+            try:
+                entry["receipt"] = engine.answer(form["administration_id"], payload, expected_revision=engine.revision, request_id=f"answer-{engine.revision}")
+            except Exception as exc:
+                raise ContractError(f"Fixture {plan.get('id')} item {item_id} answer {answer_index} was rejected: {exc}") from exc
             if authored:
                 administered[(item_id, answer_index)] = form["occurrence_id"]
+                correction_key = (item_id, answer_index)
+                declaration = correction_by_answer.get(correction_key)
+                if declaration is not None:
+                    replacement = declaration["replacement"]
+                    entry["correction"] = {
+                        "submitted_response": replacement,
+                        "receipt": engine.correct(form["administration_id"], replacement,
+                                                  expected_revision=engine.revision,
+                                                  request_id=f"correct-{engine.revision}"),
+                    }
+                    used_corrections.add(correction_key)
             if item_id in plan.get("focus_roots", []) and engine.state.episodes[form["occurrence_id"]].status == "actual":
                 engine.control("focus_occurrence", occurrence_id=form["occurrence_id"], expected_revision=engine.revision, request_id=f"focus-{engine.revision}")
         elif form["action"] == "bind":
@@ -147,8 +185,11 @@ def replay_fixture(plan: dict[str, Any], source: Source) -> tuple[AssessmentEngi
             unused = set(binding_by_answer) - used_bindings
             if unused:
                 raise ContractError(f"Fixture contains unused episode bindings: {sorted(unused)}")
+            unused_corrections = set(correction_by_answer) - used_corrections
+            if unused_corrections:
+                raise ContractError(f"Fixture contains unused corrections: {sorted(unused_corrections)}")
             log.append(entry)
-            return engine, log
+            return engine, log, effective_config, applied_extensions
         else:
             raise ContractError(f"Unexpected noninteractive replay state: {form['action']}")
         engine.packet()
@@ -168,6 +209,34 @@ def replay_fixture(plan: dict[str, Any], source: Source) -> tuple[AssessmentEngi
 
 def main() -> None:
     source = Source()
+    script_root = Path(__file__).resolve().parent
+    extension_path = script_root / "REFERENCE_EXTENSIONS.json"
+    extensions = json.loads(extension_path.read_text(encoding="utf-8"))
+    no_body_adaptation_path = script_root / "NO_BODY_DETAIL_ADAPTATIONS.json"
+    no_body_adaptations = json.loads(no_body_adaptation_path.read_text(encoding="utf-8"))
+    manifest_path = source.root / "SOURCE_MANIFEST.json"
+    manifest_bytes = manifest_path.read_bytes()
+    manifest = json.loads(manifest_bytes)
+    normalized_hashes = {str(path).replace("\\", "/"): value for path, value in source.hashes.items()}
+    if normalized_hashes != manifest.get("files"):
+        raise ContractError("The loaded immutable source files do not match the pinned source manifest.")
+    if (extensions.get("format") != "pwqe51-independent-reference-extension-v1"
+            or extensions.get("source_binding") != manifest.get("source_binding")
+            or extensions.get("source_manifest_sha256") != hashlib.sha256(manifest_bytes).hexdigest()
+            or source.binding.get("question_release") != manifest.get("source_binding", {}).get("question_release")
+            or source.binding.get("runtime_version") != manifest.get("source_binding", {}).get("runtime_version")):
+        raise ContractError("The independent reference extension is not bound to the loaded immutable PWQE source.")
+    if (no_body_adaptations.get("format") != "pwqe51-no-body-detail-cohort-adaptations-v1"
+            or no_body_adaptations.get("source_binding") != manifest.get("source_binding")
+            or no_body_adaptations.get("source_manifest_sha256") != hashlib.sha256(manifest_bytes).hexdigest()):
+        raise ContractError("The independent no-body-detail cohort adapters are not bound to the loaded immutable PWQE source.")
+    adapters = extensions.get("entry_point_adapters", [])
+    for adapter in adapters:
+        entry = source.entries.get(adapter.get("entry_point"))
+        if not entry or entry.get("first_item") != adapter.get("first_item"):
+            raise ContractError(f"Reference extension {adapter.get('id')} no longer matches the immutable entry-point source.")
+        if adapter.get("permission_field") != "topics" or adapter.get("permission_value") != adapter.get("entry_point"):
+            raise ContractError(f"Reference extension {adapter.get('id')} has an unsupported permission mapping.")
     legacy = json.loads((ROOT / "specs/patternwork/question-engine-v5/examples/worked_paths.json").read_text(encoding="utf-8"))
     coverage = json.loads((ROOT / "specs/patternwork/question-engine-v5.1/qualification/coverage/FICTIONAL_PLANS.json").read_text(encoding="utf-8"))
     plans = []
@@ -211,10 +280,42 @@ def main() -> None:
         plans.append({"id": pid, "config": asdict(config), "answers": dict(answers), "episode_bindings": episode_bindings,
                       "focus_roots": ["D61"] if pid in {"P02", "P06", "P09"} else []})
     plans += coverage["plans"]
+    no_body_detail = "--without-body-detail" in sys.argv
+    applied_no_body_adaptations: list[str] = []
+    if no_body_detail:
+        plans = copy.deepcopy(plans)
+        for plan in plans:
+            config = plan.setdefault("config", {})
+            config["topics"] = [topic for topic in config.get("topics", []) if topic != "body_detail"]
+            config["focus_topics"] = [topic for topic in config.get("focus_topics", []) if topic != "body_detail"]
+        plans_by_id = {plan["id"]: plan for plan in plans}
+        for adaptation in no_body_adaptations.get("adaptations", []):
+            plan = plans_by_id.get(adaptation.get("plan_id"))
+            answer_index = adaptation.get("answer_index")
+            queue = plan.get("answers", {}).get(adaptation.get("item_id"), []) if plan else []
+            if (not isinstance(answer_index, int) or answer_index < 0 or answer_index >= len(queue)
+                    or queue[answer_index].get("selected") != [adaptation.get("from_option")]):
+                raise ContractError(f"No-body-detail adapter {adaptation.get('id')} does not match its independent original fixture response.")
+            alternate = source.variants.get(adaptation.get("variant_id"))
+            alternate_ids = {option["id"] for option in alternate.get("options", [])} if alternate else set()
+            if not alternate or alternate.get("replaces") != adaptation.get("item_id"):
+                raise ContractError(f"No-body-detail adapter {adaptation.get('id')} names an unauthored M10 alternate.")
+            if adaptation.get("to_option"):
+                if adaptation.get("to_option") not in alternate_ids:
+                    raise ContractError(f"No-body-detail adapter {adaptation.get('id')} maps to an option not rendered by its alternate.")
+                queue[answer_index]["selected"] = [adaptation["to_option"]]
+            else:
+                if adaptation.get("status") not in {"not_sure", "skip", "no_event", "not_applicable"}:
+                    raise ContractError(f"No-body-detail adapter {adaptation.get('id')} must retain an authored missingness state.")
+                queue[answer_index]["selected"] = []
+                queue[answer_index]["status"] = adaptation["status"]
+                queue[answer_index].pop("mode", None)
+            applied_no_body_adaptations.append(adaptation["id"])
+    qualification_cases = [] if no_body_detail else copy.deepcopy(extensions.get("qualification_cases", []))
     output = []
-    for plan in plans:
+    for plan in plans + qualification_cases:
         try:
-            engine, log = replay_fixture(plan, source)
+            engine, log, effective_config, applied_extensions = replay_fixture(plan, source, adapters)
             asked = [e["form"]["item_id"] for e in log if e["form"]["action"] == "ask"]
             packet = engine.packet()
             target_by_internal_id = {target["id"]: target for target in packet["target_resolutions"]}
@@ -259,6 +360,11 @@ def main() -> None:
                         "missing_discriminator": target.get("missing_discriminator", []),
                     } for target in trace.get("open_targets", [])],
                     "rejected_count": len(trace.get("rejected", [])),
+                    "rejected": [{
+                        "item_id": rejected.get("item_id"),
+                        "target_id": target_ref(rejected.get("target", "")),
+                        "reason": rejected.get("reason"),
+                    } for rejected in trace.get("rejected", [])],
                     "burden": trace.get("burden"),
                 }
 
@@ -319,6 +425,24 @@ def main() -> None:
                         response["comparisonIds"] = list(administration.comparison_ids)
                     canonical_responses.append(response)
                     prefix_responses.append(response)
+                    correction = event.get("correction")
+                    if correction:
+                        corrected_payload = correction["submitted_response"]
+                        corrected_response = {
+                            **response,
+                            "responseId": correction["receipt"]["response_id"],
+                            "selectedOptionIds": corrected_payload.get("selected", []),
+                            "status": corrected_payload.get("status", "answered"),
+                            "mode": corrected_payload.get("mode", "single"),
+                            "supersedesResponseId": response["responseId"],
+                        }
+                        corrected_basis = corrected_payload.get("basis")
+                        if corrected_basis in {"actual_recalled", "reported_typicality"}:
+                            corrected_response["basis"] = corrected_basis
+                        else:
+                            corrected_response.pop("basis", None)
+                        canonical_responses.append(corrected_response)
+                        prefix_responses[-1] = corrected_response
                     if form["item_id"] in plan.get("focus_roots", []) and payload.get("status", "answered") == "answered":
                         focus_occurrences.append(form["occurrence_id"])
                         prefix_focus_occurrences.add(form["occurrence_id"])
@@ -379,6 +503,8 @@ def main() -> None:
                         traced.append(item)
             output.append({
                 "id": plan["id"], "ok": True, "asked_items": asked,
+                "scope": "reference_extension" if "expected" in plan else "fixture_cohort",
+                "expected": plan.get("expected"),
                 "trace_candidate_items": traced,
                 "decisions": engine.history.decisions,
                 "target_states": {t.id: t.state for t in engine.state.targets.values()},
@@ -396,12 +522,22 @@ def main() -> None:
                 "episodes": packet["episodes"], "observations": packet["observations"],
                 "targets": packet["target_resolutions"], "missingness": packet["missingness"],
                 "steps": packet["steps"], "sequence_edges": packet["sequence_edges"],
-                "config": plan.get("config", {}), "focus_roots": plan.get("focus_roots", []),
+                "config": effective_config, "reference_extensions_applied": applied_extensions,
+                "focus_roots": plan.get("focus_roots", []),
                 "python_source_binding": source.binding,
             })
         except Exception as exc:  # Keep failures visible per fixture; continue the audit.
             output.append({"id": plan["id"], "ok": False, "error": f"{type(exc).__name__}: {exc}"})
-    print(json.dumps({"plans": output, "legacy_profile_ids": [p["id"] for p in legacy["profiles"]], "coverage_ids": [p["id"] for p in coverage["plans"]]}))
+    print(json.dumps({"cohort": "without_body_detail_opt_in" if no_body_detail else "original_fixtures_plus_reference_extensions",
+                      "source_manifest_binding": manifest["source_binding"],
+                      "source_manifest_sha256": hashlib.sha256(manifest_bytes).hexdigest(),
+                      "python_runtime_binding": source.binding,
+                      "plans": output,
+                      "config_policy": {"body_detail_topic_removed": no_body_detail, "authored_m10_variant": "M10.observable" if no_body_detail else "base",
+                                        "applied_independent_adaptations": applied_no_body_adaptations,
+                                        "original_fixture_answers_mutated": False},
+                      "legacy_profile_ids": [p["id"] for p in legacy["profiles"]],
+                      "coverage_ids": [p["id"] for p in coverage["plans"]]}))
 
 
 if __name__ == "__main__":

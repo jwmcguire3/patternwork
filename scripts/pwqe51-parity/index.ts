@@ -4,19 +4,30 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { compilePwqe51Route, type Pwqe51CanonicalResponse, type Pwqe51RouterInput } from "../../lib/server/assessment/pwqe51-router.ts";
 import { loadPwqe51SourcePackage } from "../../lib/question-engine/pwqe51-source.ts";
+import { isReplayOperatorItem } from "./classification.ts";
 
 async function main(): Promise<void> {
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, "../..");
 const json = async (file: string) => JSON.parse(await readFile(path.join(root, file), "utf8"));
-const py = spawnSync(process.env.PYTHON ?? "python", ["-B", path.join(here, "collect.py")], { cwd: root, encoding: "utf8", maxBuffer: 64 * 1024 * 1024, env: { ...process.env, PYTHONDONTWRITEBYTECODE: "1" } });
-if (py.status !== 0) throw new Error(`Python replay collector failed (${py.status}): ${(py.stderr || py.stdout).slice(-3000)}`);
-const independent = JSON.parse(py.stdout) as { plans: any[]; legacy_profile_ids: string[]; coverage_ids: string[] };
-const [worked, coverage, source, parityExceptions] = await Promise.all([
+const runCollector = (args: readonly string[] = []) => {
+  const result = spawnSync(process.env.PYTHON ?? "python", ["-B", path.join(here, "collect.py"), ...args], {
+    cwd: root, encoding: "utf8", maxBuffer: 64 * 1024 * 1024,
+    env: { ...process.env, PYTHONDONTWRITEBYTECODE: "1" },
+  });
+  if (result.status !== 0) throw new Error(`Python replay collector (${args.join(" ") || "original cohort"}) failed (${result.status}): ${(result.stderr || result.stdout).slice(-3000)}`);
+  return JSON.parse(result.stdout) as { plans: any[]; legacy_profile_ids: string[]; coverage_ids: string[]; config_policy?: any };
+};
+const independent = runCollector();
+// Keep the published 25-plan corpus intact. This second run is an independently
+// collected cohort with only the C04 body_detail permission removed.
+const withoutBodyDetail = runCollector(["--without-body-detail"]);
+const [worked, coverage, source, parityExceptions, referenceExtensions] = await Promise.all([
   json("specs/patternwork/question-engine-v5/examples/worked_paths.json"),
   json("specs/patternwork/question-engine-v5.1/qualification/coverage/FICTIONAL_PLANS.json"),
   loadPwqe51SourcePackage(root),
   json("scripts/pwqe51-parity/EXCEPTIONS.json"),
+  json("scripts/pwqe51-parity/REFERENCE_EXTENSIONS.json"),
 ]);
 const entryPointIds = new Set(source.routingTargets.entry_points.map((entry: any) => String(entry.id)));
 const exceptionByKey = new Map<string, string>();
@@ -58,9 +69,10 @@ function routeReplay(replay: any, selectionStep?: any, postResponse = false): Re
   const phase = selectionStep?.phase === "mapping" ? "mapping" : "deepening";
   const input: Pwqe51RouterInput = {
     phase, responses, comparisonIdsByResponseId,
-    // PW Python focus_topics name authored entry points; TS models those as
-    // explicit topic opt-ins alongside its ordinary topic preferences.
+    // Both fields authorize an entry in the Python source. Keep focus_topics
+    // separately as focus; topics alone is permission, not extra priority.
     optedInTopics: [...new Set([...(config.topics ?? []), ...(config.focus_topics ?? [])])], details: config.details ?? [],
+    focusTopics: [...new Set<string>((config.focus_topics ?? []) as string[])],
     occurrenceBindings: (postResponse ? selectionStep?.post_occurrence_bindings : selectionStep?.pre_occurrence_bindings) ?? {},
     focusOccurrences, contextFacts,
     requestedTargetIds: selectionStep?.pre_requested_target_ids ?? [],
@@ -172,6 +184,13 @@ function compareSelectionSteps(replay: any): any {
   let firstChoiceDivergence: any = null;
   let pythonMappingReady = 0;
   let pythonRejectionReasonSteps = 0;
+  let pythonRejectedRowsWithoutTypeScriptReason = 0;
+  let typeScriptRejectedRowsWithoutPythonReason = 0;
+  let comparableRejectedRows = 0;
+  let rejectionReasonMismatches = 0;
+  let pythonReplayRejectionRowsUnsupported = 0;
+  let typeScriptReplayRejectionRowsUnsupported = 0;
+  const rejectionReasonMismatchRecords: any[] = [];
   let replayCandidateRows = 0;
   const unsupportedReplayCandidateKeys = new Set<string>();
   let postTargetTransitionSteps = 0;
@@ -230,7 +249,6 @@ function compareSelectionSteps(replay: any): any {
     replayCandidateRows += pythonCandidates.filter((candidate: any) => candidate.replay).length;
     const actionable = step.form_action === "ask";
     if (step.form_action === "mapping_ready") pythonMappingReady++;
-    if ((decision.rejected_count ?? 0) > 0) pythonRejectionReasonSteps++;
     if (!actionable) {
       if (step.form_action === "bind") {
         pythonBindingControlSteps++;
@@ -312,12 +330,50 @@ function compareSelectionSteps(replay: any): any {
       typescript_completion_reason: mappingReadyRoute?.completionReason ?? null,
       typescript_candidate_items: mappingReadyRoute ? [...new Set(mappingReadyRoute.candidates.map((candidate) => candidate.questionId))].sort() : [],
       python_rejected_count: decision.rejected_count ?? 0,
-      typescript_rejection_reasons: "not_exposed_by_compilePwqe51Route",
+      typescript_rejection_reasons: "available on the TypeScript route result; rejected rows are compared for matching non-entry identities",
       };
     }
 
     const route = routeReplay(replay, step);
     comparedAsks++;
+    // The Python trace also records target-level closure explanations with no
+    // item identity. Those describe an outcome, not a rejected candidate, and
+    // are kept outside candidate-reason parity.
+    const pythonRejected = (decision.rejected ?? []).filter((row: any) => typeof row.item_id === "string").map((row: any) => ({
+      item: row.item_id, target_id: row.target_id ?? null, reason: row.reason ?? null,
+    }));
+    const typeScriptRejected = route.rejectedCandidates.map((row) => ({
+      item: row.questionId, target_id: row.targetIds[0] ?? null, reason: row.reason,
+    }));
+    const rejectionKey = (row: any) => `${row.item}|${row.target_id ?? ""}`;
+    const pythonReplayRejections = pythonRejected.filter((row: any) => isReplayOperatorItem(row.item));
+    const typeScriptReplayRejections = typeScriptRejected.filter((row: any) => isReplayOperatorItem(row.item));
+    pythonReplayRejectionRowsUnsupported += pythonReplayRejections.length;
+    typeScriptReplayRejectionRowsUnsupported += typeScriptReplayRejections.length;
+    const pythonComparableRejected = pythonRejected.filter((row: any) => !isReplayOperatorItem(row.item));
+    const typeScriptComparableRejected = typeScriptRejected.filter((row: any) => !isReplayOperatorItem(row.item));
+    const pythonRejectedByKey = new Map<string, any>(pythonComparableRejected.map((row: any): [string, any] => [rejectionKey(row), row]));
+    const typeScriptRejectedByKey = new Map<string, any>(typeScriptComparableRejected.map((row: any): [string, any] => [rejectionKey(row), row]));
+    const independentEntryCandidate = (row: any) => typeof row.target_id === "string" && row.target_id.startsWith("entry:");
+    const pythonUnmatchedRejected = pythonComparableRejected.filter((row: any) => !typeScriptRejectedByKey.has(rejectionKey(row)) && !independentEntryCandidate(row));
+    const unsupportedReplayRejections = { python: pythonReplayRejections, typescript: typeScriptReplayRejections };
+    const typeScriptUnmatchedRejected = typeScriptRejected.filter((row: any) => !pythonRejectedByKey.has(rejectionKey(row))
+      && !independentEntryCandidate(row) && !isReplayOperatorItem(row.item));
+    pythonRejectedRowsWithoutTypeScriptReason += pythonUnmatchedRejected.length;
+    typeScriptRejectedRowsWithoutPythonReason += typeScriptUnmatchedRejected.length;
+    const sharedRejectedKeys = [...pythonRejectedByKey.keys()].filter((key) => typeScriptRejectedByKey.has(key));
+    comparableRejectedRows += sharedRejectedKeys.length;
+    for (const key of sharedRejectedKeys) {
+      const pythonRow = pythonRejectedByKey.get(key)!;
+      const typeScriptRow = typeScriptRejectedByKey.get(key)!;
+      const knownEquivalentReason = pythonRow.reason === "comparison_requires_two_actual_episodes"
+        && typeScriptRow.reason === "missing_derived_flag:two_distinct_actual_episodes";
+      if (pythonRow.reason !== typeScriptRow.reason && !knownEquivalentReason) {
+        rejectionReasonMismatches++;
+        rejectionReasonMismatchRecords.push({ ordinal: step.ordinal, key, python: pythonRow.reason, typescript: typeScriptRow.reason });
+      }
+    }
+    if (pythonRejected.length && sharedRejectedKeys.length === 0) pythonRejectionReasonSteps++;
     const transition = comparePostTargetStates(replay, step, route);
     if (transition.status === "missing_collector_field") missingPostTargetTransitionSteps++;
     else if (transition.status === "unsupported_without_accepted_response_prefix") unsupportedPostTargetTransitionSteps++;
@@ -453,7 +509,7 @@ function compareSelectionSteps(replay: any): any {
         python: decision.reason ?? null,
         typescript: "priority, focused target, context saturation, distinct evidence requirements, decision burden, context recency, target age, stable IDs",
         deterministic_order: "candidate arrays retain emitted order; candidate_order is one-based; no implicit tie is declared equivalent",
-        eligibility_comparison: "returned eligible candidate identities/targets are compared; TypeScript does not expose rejected-candidate reasons",
+      eligibility_comparison: "eligible candidate identities/targets and comparable candidate rejection identities/reasons are compared; entry pseudo-target rejections lack a Python direct-entry representation",
       },
       python_open_targets: (decision.open_targets ?? []).map((target: any) => ({
         id: target.id, target: target.target, occurrence_id: target.occurrence_id ?? null,
@@ -476,6 +532,16 @@ function compareSelectionSteps(replay: any): any {
       candidate_priority_mismatches: priorityMismatches.slice(0, 5),
       unsupported_python_entry_point_candidates: unsupportedEntryPointTargetIds.get(chosenTsGroupKey) ?? [],
       unsupported_python_entry_point_choice: unsupportedEntryPointChoice,
+      candidate_rejections: {
+        python: pythonRejected,
+        typescript: typeScriptRejected,
+        comparable_shared_rows: sharedRejectedKeys.length,
+        python_unmatched_non_entry_rows: pythonUnmatchedRejected,
+        typescript_unmatched_non_entry_rows: typeScriptUnmatchedRejected,
+        replay_operator_rejections_not_comparable: unsupportedReplayRejections,
+        reason_mismatches: rejectionReasonMismatchRecords.filter((row) => row.ordinal === step.ordinal),
+        entry_point_rejections_without_reference_equivalent: typeScriptRejected.filter(independentEntryCandidate),
+      },
       post_response_target_state: {
         comparable: transition.status === "post-response target-state snapshot comparison; Python entry pseudo-targets excluded",
         mismatched: Boolean(transition.mismatched),
@@ -604,7 +670,14 @@ function compareSelectionSteps(replay: any): any {
     python_mapping_ready_steps_not_comparable: pythonMappingReady,
     mapping_ready_coverage: mappingReadyCoverage,
     python_steps_with_rejections_but_no_reason_parity: pythonRejectionReasonSteps,
-    typescript_rejection_reason_coverage: "unavailable; compilePwqe51Route returns candidates but no rejected-candidate diagnostics",
+    comparable_candidate_rejection_rows: comparableRejectedRows,
+    python_rejection_rows_without_typescript_reason: pythonRejectedRowsWithoutTypeScriptReason,
+    typescript_rejection_rows_without_python_reason: typeScriptRejectedRowsWithoutPythonReason,
+    python_replay_rejection_rows_unsupported: pythonReplayRejectionRowsUnsupported,
+    typescript_replay_rejection_rows_unsupported: typeScriptReplayRejectionRowsUnsupported,
+    candidate_rejection_reason_mismatches: rejectionReasonMismatches,
+    candidate_rejection_reason_mismatch_examples: rejectionReasonMismatchRecords.slice(0, 12),
+    typescript_rejection_reason_coverage: "compared for shared non-entry candidate rejection identities; independent entry-point rejection rows are separately qualified against the C04 contract",
     first_divergence: firstDivergence,
     first_choice_divergence: firstChoiceDivergence,
     first_candidate_target_mismatch: firstCandidateTargetMismatch,
@@ -690,6 +763,55 @@ function compareProjection(python: any, ts: ReturnType<typeof compilePwqe51Route
   };
 }
 
+function stableAuditJson(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(stableAuditJson).join(",")}]`;
+  if (value && typeof value === "object") {
+    const row = value as Record<string, unknown>;
+    return `{${Object.keys(row).sort().map((key) => `${JSON.stringify(key)}:${stableAuditJson(row[key])}`).join(",")}}`;
+  }
+  return JSON.stringify(value) ?? "undefined";
+}
+
+const requiredD41Cases = new Set([
+  "d41-no-permission", "d41-permission-needs-actual-episode", "d41-bound-candidate-and-tier",
+  "d41-does-not-outrank-a-tier-three-comparison", "d41-answer-is-retained-and-not-reoffered",
+  "d41-skip-remains-distinct-from-an-answer", "d41-correction-replaces-the-prior-answer",
+]);
+const d41CaseIds = new Set<string>((referenceExtensions.cases ?? []).map((item: any) => item.id));
+const d41ExtensionPinned = referenceExtensions.format === "pwqe51-independent-reference-extension-v1"
+  && stableAuditJson(referenceExtensions.source_binding) === stableAuditJson(source.manifest.source_binding)
+  && referenceExtensions.source_manifest_sha256 === source.sourceManifestSha256
+  && [...requiredD41Cases].every((id) => d41CaseIds.has(id))
+  && d41CaseIds.size === (referenceExtensions.cases ?? []).length;
+const d41ExtensionCases = (referenceExtensions.cases ?? []).map((fixture: any) => {
+  try {
+    const route = compilePwqe51Route(fixture.input as Pwqe51RouterInput, source);
+    const actual: Record<string, unknown> = {
+      d41_candidate: route.candidates.some((candidate) => candidate.questionId === "D41"),
+      d41_rejection_reason: route.rejectedCandidates.find((candidate) => candidate.questionId === "D41")?.reason,
+      active_d41_response_ids: route.observations.filter((observation) => observation.itemId === "D41").map((observation) => observation.responseId),
+      active_d41_option_ids: route.observations.filter((observation) => observation.itemId === "D41").map((observation) => observation.optionId),
+      missingness: route.missingness.map((row) => ({ responseId: row.responseId, status: row.status })),
+      superseded_response_ids: route.supersededResponseIds,
+      next_question_id: route.next?.questionId,
+      next_priority: route.next?.priority,
+      d41_priority: route.candidates.find((candidate) => candidate.questionId === "D41")?.priority,
+    };
+    const candidate = route.candidates.find((item) => item.questionId === "D41");
+    if (candidate) actual.candidate = {
+      questionId: candidate.questionId, occurrenceId: candidate.occurrenceId, targetIds: candidate.targetIds,
+      priority: candidate.priority, stage: candidate.stage,
+    };
+    const mismatches = Object.entries(fixture.expected ?? {}).flatMap(([key, expected]) =>
+      stableAuditJson(actual[key]) === stableAuditJson(expected) ? [] : [{ field: key, expected, actual: actual[key] ?? null }]);
+    return { id: fixture.id, passed: d41ExtensionPinned && mismatches.length === 0, mismatches };
+  } catch (error) {
+    return { id: fixture.id, passed: false, mismatches: [{ field: "execution", expected: "successful contract case", actual: String(error) }] };
+  }
+});
+const d41ExtensionPassed = d41ExtensionPinned && requiredD41Cases.size === d41CaseIds.size
+  && d41ExtensionCases.length === requiredD41Cases.size && d41ExtensionCases.every((row: any) => row.passed);
+
 const report: any[] = [];
 for (const profile of worked.profiles) {
   const pyPlan = pyById.get(profile.id);
@@ -744,6 +866,68 @@ for (const plan of coverage.plans) {
     report.push({ id: plan.id, kind: "C", error: String(error), python_replay_ok: pyPlan?.ok ?? false });
   }
 }
+
+const noBodyDetailById = new Map(withoutBodyDetail.plans.map((plan) => [plan.id, plan]));
+const noBodyDetailReports = [...worked.profiles.map((profile: any) => profile.id), ...coverage.plans.map((plan: any) => plan.id)].map((id) => {
+  const replay = noBodyDetailById.get(id);
+  if (!replay?.ok) return { id, replay_ok: false, error: replay?.error ?? "plan missing from separate no-body-detail collection" };
+  try {
+    const selection = compareSelectionSteps(replay);
+    const projection = compareProjection(replay, routeReplay(replay));
+    const decisions = selection.route_selection_decisions ?? [];
+    const divergenceDecision = decisions.find((decision: any) => decision.ordinal === selection.first_trajectory_divergence_ordinal);
+    return {
+      id, replay_ok: true, selection_snapshots: selection.compared_ask_steps,
+      first_divergence: selection.first_trajectory_divergence_ordinal === null ? null : {
+        ordinal: selection.first_trajectory_divergence_ordinal, reason: selection.first_trajectory_divergence_reason,
+      },
+      first_divergence_decision: divergenceDecision ? {
+        route_comparison_status: divergenceDecision.route_comparison_status,
+        python: divergenceDecision.python, typescript: divergenceDecision.typescript,
+        python_candidate_ids: (divergenceDecision.python_candidates ?? []).map((candidate: any) => candidate.item),
+        typescript_candidate_ids: (divergenceDecision.typescript_candidates ?? []).map((candidate: any) => candidate.item),
+      } : null,
+      shared_route_selection_mismatches: selection.shared_route_selection_mismatch_steps,
+      shared_route_selection_mismatch_ordinals: selection.shared_route_selection_mismatch_ordinals,
+      shared_route_target_transition_mismatches: selection.shared_route_post_target_transition_mismatch_steps,
+      replay_operator_rows_unsupported: selection.unsupported_python_replay_candidate_rows,
+      binding_controls_not_comparable: selection.python_binding_control_steps_not_comparable,
+      mapping_ready_rows_not_comparable: selection.python_mapping_ready_steps_not_comparable,
+      d41_candidate_rows: decisions.reduce((sum: number, decision: any) => sum
+        + (decision.python_candidates?.filter((candidate: any) => candidate.item === "D41").length ?? 0)
+        + (decision.typescript_candidates?.filter((candidate: any) => candidate.item === "D41").length ?? 0), 0),
+      projection_mismatch_count: projection.projection_mismatch_count,
+      target_state_mismatches: projection.target_state_mismatches,
+      non_target_projection_mismatch_count: projection.projection_mismatch_count - projection.target_state_mismatches.length,
+    };
+  } catch (error) { return { id, replay_ok: false, error: String(error) }; }
+});
+const noBodyDetailSummary = {
+  cohort: "separately collected original 25 plans with body_detail removed from topics and focus_topics",
+  original_corpus_preserved: true,
+  input_adaptation_manifest: withoutBodyDetail.config_policy ?? null,
+  required_plans: 25,
+  plans: noBodyDetailReports,
+  replayed_plans: noBodyDetailReports.filter((row: any) => row.replay_ok).length,
+  selection_snapshots: noBodyDetailReports.reduce((sum: number, row: any) => sum + (row.selection_snapshots ?? 0), 0),
+  shared_route_selection_mismatches: noBodyDetailReports.reduce((sum: number, row: any) => sum + (row.shared_route_selection_mismatches ?? 0), 0),
+  shared_route_target_transition_mismatches: noBodyDetailReports.reduce((sum: number, row: any) => sum + (row.shared_route_target_transition_mismatches ?? 0), 0),
+  plans_with_no_d41_candidate_rows: noBodyDetailReports.filter((row: any) => row.replay_ok && row.d41_candidate_rows === 0).length,
+  plans_with_first_divergence: noBodyDetailReports.filter((row: any) => row.first_divergence).length,
+  first_divergences: noBodyDetailReports.flatMap((row: any) => row.first_divergence ? [{ plan: row.id, ...row.first_divergence }] : []),
+  d41_opt_out_behavior_verified: noBodyDetailReports.length === 25
+    && noBodyDetailReports.every((row: any) => row.replay_ok && row.d41_candidate_rows === 0),
+};
+const noBodyDetailAppliedExceptionKeys = new Set<string>(noBodyDetailReports.flatMap((row: any) => (row.target_state_mismatches ?? [])
+  .map((mismatch: any) => `${row.id}|${mismatch.key}`)
+  .filter((key: string) => exceptionByKey.has(key))));
+const noBodyDetailUnexplainedTargetStateKeys = noBodyDetailReports.flatMap((row: any) => (row.target_state_mismatches ?? [])
+  .map((mismatch: any) => `${row.id}|${mismatch.key}`)
+  .filter((key: string) => !exceptionByKey.has(key)));
+const noBodyDetailStaleExceptionKeys = [...exceptionByKey.keys()].filter((key) => !noBodyDetailAppliedExceptionKeys.has(key));
+const noBodyDetailExceptionScopeMatches = noBodyDetailUnexplainedTargetStateKeys.length === 0
+  && noBodyDetailStaleExceptionKeys.length === 0
+  && noBodyDetailAppliedExceptionKeys.size === exceptionByKey.size;
 
 const pythonFailures = independent.plans.filter((p) => !p.ok).map((p) => ({ id: p.id, error: p.error }));
 const p = report.filter((r) => r.kind === "P");
@@ -813,6 +997,8 @@ const coverageCounts = {
   sequence_edge_projection_mismatches: report.reduce((n, r) => n + (r.projection?.sequence_edges_missing_from_typescript.length ?? 0) + (r.projection?.sequence_edges_extra_in_typescript.length ?? 0), 0),
   target_state_mismatches: report.reduce((n, r) => n + (r.projection?.target_state_mismatches.length ?? 0), 0),
   approved_target_state_exceptions: appliedExceptionKeys.size,
+  approved_representation_exception_keys: exceptionByKey.size,
+  expected_approved_representation_exception_keys: 11,
   unexplained_target_state_mismatches: mismatches.filter((mismatch: any) => mismatch.mismatch === "target_state_mismatch" && !mismatch.approved_exception_id).length,
   stale_parity_exception_keys: staleExceptionKeys.length,
   selection_steps_compared: report.reduce((n, r) => n + (r.selection_comparison?.compared_ask_steps ?? 0), 0),
@@ -850,6 +1036,28 @@ const coverageCounts = {
   post_target_typescript_removed_targets_unsupported: report.reduce((n, r) => n + (r.selection_comparison?.post_target_typescript_removed_targets_unsupported ?? 0), 0),
   python_mapping_ready_steps_not_comparable: report.reduce((n, r) => n + (r.selection_comparison?.python_mapping_ready_steps_not_comparable ?? 0), 0),
   python_rejection_reason_steps_without_typescript_parity: report.reduce((n, r) => n + (r.selection_comparison?.python_steps_with_rejections_but_no_reason_parity ?? 0), 0),
+  comparable_candidate_rejection_rows: report.reduce((n, r) => n + (r.selection_comparison?.comparable_candidate_rejection_rows ?? 0), 0),
+  python_rejection_rows_without_typescript_reason: report.reduce((n, r) => n + (r.selection_comparison?.python_rejection_rows_without_typescript_reason ?? 0), 0),
+  typescript_rejection_rows_without_python_reason: report.reduce((n, r) => n + (r.selection_comparison?.typescript_rejection_rows_without_python_reason ?? 0), 0),
+  python_replay_rejection_rows_unsupported: report.reduce((n, r) => n + (r.selection_comparison?.python_replay_rejection_rows_unsupported ?? 0), 0),
+  typescript_replay_rejection_rows_unsupported: report.reduce((n, r) => n + (r.selection_comparison?.typescript_replay_rejection_rows_unsupported ?? 0), 0),
+  candidate_rejection_reason_mismatches: report.reduce((n, r) => n + (r.selection_comparison?.candidate_rejection_reason_mismatches ?? 0), 0),
+  d41_independent_contract_cases_required: requiredD41Cases.size,
+  d41_independent_contract_cases_run: d41ExtensionCases.length,
+  d41_independent_contract_cases_passed: d41ExtensionCases.filter((row: any) => row.passed).length,
+  d41_independent_contract_qualification_complete: d41ExtensionPassed,
+  no_body_detail_required_plans: 25,
+  no_body_detail_replayed_plans: noBodyDetailSummary.replayed_plans,
+  no_body_detail_route_snapshots: noBodyDetailSummary.selection_snapshots,
+  no_body_detail_d41_opt_out_verified: noBodyDetailSummary.d41_opt_out_behavior_verified,
+  no_body_detail_shared_route_selection_mismatches: noBodyDetailSummary.shared_route_selection_mismatches,
+  no_body_detail_shared_target_transition_mismatches: noBodyDetailSummary.shared_route_target_transition_mismatches,
+  no_body_detail_exception_scope_matches: noBodyDetailExceptionScopeMatches,
+  no_body_detail_approved_representation_exceptions: noBodyDetailAppliedExceptionKeys.size,
+  no_body_detail_unexplained_target_state_mismatches: noBodyDetailUnexplainedTargetStateKeys.length,
+  no_body_detail_stale_representation_exception_keys: noBodyDetailStaleExceptionKeys.length,
+  no_body_detail_projection_mismatches: noBodyDetailSummary.plans.reduce((n: number, row: any) => n + (row.non_target_projection_mismatch_count ?? 0), 0)
+    + noBodyDetailUnexplainedTargetStateKeys.length,
   projection_mismatches: report.reduce((n, r) => n + (r.projection?.projection_mismatch_count ?? 0), 0),
   mismatch_records: mismatches.length,
   TypeScript_routes_completed: report.filter((r) => !r.error).length,
@@ -872,7 +1080,6 @@ for (const mismatch of mismatches) {
 }
 for (const failure of pythonFailures) unexplainedDifferenceKeys.add(`python_failure:${failure.id}`);
 for (const key of staleExceptionKeys) unexplainedDifferenceKeys.add(`stale_exception:${key}`);
-const unexplainedDifferenceCount = unexplainedDifferenceKeys.size;
 const unsupportedComparisonCount = coverageCounts.unsupported_python_replay_candidate_rows
   + coverageCounts.shared_route_unsupported_python_entry_point_candidate_rows
   + coverageCounts.unsupported_python_entry_point_choice_steps
@@ -880,7 +1087,13 @@ const unsupportedComparisonCount = coverageCounts.unsupported_python_replay_cand
   + coverageCounts.unsupported_finish_steps
   + coverageCounts.python_binding_control_steps_not_comparable
   + coverageCounts.python_mapping_ready_steps_not_comparable
-  + coverageCounts.python_rejection_reason_steps_without_typescript_parity
+  + coverageCounts.python_rejection_rows_without_typescript_reason
+  + coverageCounts.typescript_rejection_rows_without_python_reason
+  + coverageCounts.python_replay_rejection_rows_unsupported
+  + coverageCounts.typescript_replay_rejection_rows_unsupported
+  + noBodyDetailReports.reduce((sum: number, row: any) => sum
+    + (row.replay_operator_rows_unsupported ?? 0) + (row.binding_controls_not_comparable ?? 0)
+    + (row.mapping_ready_rows_not_comparable ?? 0), 0)
   + coverageCounts.post_target_transition_steps_missing_collector_data
   + coverageCounts.post_target_transition_steps_unsupported
   + coverageCounts.post_target_entry_point_rows_unsupported
@@ -894,21 +1107,45 @@ const unsupportedCoverageReasons = [
   ["other_finish_rows_after_divergence_or_outside_policy", coverageCounts.unsupported_finish_steps],
   ["python_binding_control_steps", coverageCounts.python_binding_control_steps_not_comparable],
   ["python_mapping_ready_steps", coverageCounts.python_mapping_ready_steps_not_comparable],
-  ["python_candidate_rejection_reasons", coverageCounts.python_rejection_reason_steps_without_typescript_parity],
+  ["unmatched_candidate_rejection_rows", coverageCounts.python_rejection_rows_without_typescript_reason + coverageCounts.typescript_rejection_rows_without_python_reason],
+  ["python_REPLAY_rejection_rows_without_comparable_selector", coverageCounts.python_replay_rejection_rows_unsupported],
+  ["typescript_REPLAY_rejection_rows_without_comparable_selector", coverageCounts.typescript_replay_rejection_rows_unsupported],
+  ["separate_no_body_detail_cohort_replay_or_control_gaps", noBodyDetailReports.reduce((sum: number, row: any) => sum
+    + (row.replay_operator_rows_unsupported ?? 0) + (row.binding_controls_not_comparable ?? 0) + (row.mapping_ready_rows_not_comparable ?? 0), 0)],
   ["post_target_rows_without_accepted_response_transition", coverageCounts.post_target_transition_steps_unsupported],
   ["post_target_entry_point_pseudo_rows", coverageCounts.post_target_entry_point_rows_unsupported],
 ].filter(([, count]) => Number(count) > 0).map(([surface, count]) => ({ surface, count }));
-const strictStatus = unexplainedDifferenceCount > 0
+const structuralMismatchCount = coverageCounts.observation_projection_mismatches + coverageCounts.missingness_projection_mismatches
+  + coverageCounts.step_projection_mismatches + coverageCounts.episode_projection_mismatches
+  + coverageCounts.distinctness_projection_mismatches + coverageCounts.sequence_edge_projection_mismatches
+  + coverageCounts.no_body_detail_projection_mismatches;
+for (const row of d41ExtensionCases as any[]) if (!row.passed) unexplainedDifferenceKeys.add(`d41_contract_case:${row.id}`);
+if (!d41ExtensionPinned || !d41ExtensionPassed) unexplainedDifferenceKeys.add("d41_contract_extension_binding_or_required_cases_incomplete");
+if (coverageCounts.approved_representation_exception_keys !== 11 || coverageCounts.stale_parity_exception_keys !== 0) unexplainedDifferenceKeys.add("entry_point_representation_exception_scope_changed");
+if (!noBodyDetailSummary.d41_opt_out_behavior_verified || noBodyDetailSummary.replayed_plans !== 25) unexplainedDifferenceKeys.add("no_body_detail_cohort_incomplete_or_d41_opt_out_failed");
+if (!noBodyDetailExceptionScopeMatches) unexplainedDifferenceKeys.add("no_body_detail_entry_point_exception_scope_changed");
+for (const row of noBodyDetailReports as any[]) {
+  if (!row.replay_ok) unexplainedDifferenceKeys.add(`no_body_detail_route_error:${row.id}`);
+  if ((row.non_target_projection_mismatch_count ?? 0) > 0) unexplainedDifferenceKeys.add(`no_body_detail_projection:${row.id}`);
+  for (const ordinal of row.selection_comparison?.shared_route_selection_mismatch_ordinals ?? []) unexplainedDifferenceKeys.add(`no_body_detail_selection:${row.id}:${ordinal}`);
+}
+for (const key of noBodyDetailUnexplainedTargetStateKeys) unexplainedDifferenceKeys.add(`no_body_detail_target_state:${key}`);
+for (const row of report) for (const mismatch of row.selection_comparison?.candidate_rejection_reason_mismatch_examples ?? []) {
+  unexplainedDifferenceKeys.add(`rejection_reason:${row.id}:${mismatch.ordinal}:${mismatch.key}`);
+}
+for (const row of noBodyDetailReports as any[]) for (const ordinal of row.shared_route_selection_mismatch_ordinals ?? []) {
+  unexplainedDifferenceKeys.add(`no_body_detail_selection:${row.id}:${ordinal}`);
+}
+const strictStatus = unexplainedDifferenceKeys.size > 0
   ? "blocked_by_unexplained_differences"
   : unsupportedComparisonCount > 0
     ? "incomplete_unsupported_coverage"
     : "pass_on_full_declared_comparison_surface";
-const structuralMismatchCount = coverageCounts.observation_projection_mismatches + coverageCounts.missingness_projection_mismatches
-  + coverageCounts.step_projection_mismatches + coverageCounts.episode_projection_mismatches
-  + coverageCounts.distinctness_projection_mismatches + coverageCounts.sequence_edge_projection_mismatches;
+const unexplainedDifferenceCount = unexplainedDifferenceKeys.size;
+const structuralMismatchCountFinal = structuralMismatchCount;
 const outcome = {
   replay_and_projection_executed_successfully: independent.plans.every((plan) => plan.ok) && coverageCounts.TypeScript_routes_completed === 25,
-  structural_observations_matched: structuralMismatchCount === 0,
+  structural_observations_matched: structuralMismatchCountFinal === 0,
   target_semantics_matched_on_comparable_targets: coverageCounts.unexplained_target_state_mismatches === 0,
   route_selection_behavior_matched_on_shared_route_prefix: coverageCounts.shared_route_candidate_presence_mismatch_steps === 0
     && coverageCounts.shared_route_candidate_eligibility_mismatch_steps === 0
@@ -916,6 +1153,8 @@ const outcome = {
     && coverageCounts.shared_route_candidate_priority_mismatch_steps === 0
     && coverageCounts.shared_route_choice_mismatch_steps === 0
     && coverageCounts.shared_route_post_target_transition_mismatch_steps === 0
+    && noBodyDetailSummary.shared_route_selection_mismatches === 0
+    && noBodyDetailSummary.shared_route_target_transition_mismatches === 0
     && coverageCounts.occurrence_binding_mismatch_steps === 0,
   full_applicable_parity_established: strictStatus === "pass_on_full_declared_comparison_surface",
 };
@@ -930,6 +1169,15 @@ console.log(JSON.stringify({
   strict_unsupported_comparison_count_note: "This additive total counts unsupported comparison surfaces, not unique rows; the category counts below are the reviewable breakdown and may overlap.",
   strict_unsupported_coverage_reasons: unsupportedCoverageReasons,
   outcome,
+  d41_independent_contract_qualification: {
+    source_binding_verified: d41ExtensionPinned,
+    coverage_status: d41ExtensionPassed ? "passed" : "failed_or_incomplete",
+    required_behaviors: ["topic authorization", "actual-episode candidate admission", "tier/priority ordering", "answered response retention", "skip/missingness", "correction supersession"],
+    required_cases: [...requiredD41Cases].sort(),
+    cases: d41ExtensionCases,
+    classification: "independent contract-based qualification; not Python/TypeScript cross-engine parity",
+  },
+  no_body_detail_cohort: noBodyDetailSummary,
   approved_target_state_exception_ids: [...new Set(mismatches.flatMap((mismatch: any) => mismatch.approved_exception_id ? [mismatch.approved_exception_id] : []))],
   coverage_counts: coverageCounts, python_failures: pythonFailures, mismatches, plans: report,
 }, null, 2));

@@ -36,6 +36,8 @@ export interface Pwqe51RouterInput {
   readonly comparisonIdsByResponseId?: Readonly<Record<string, readonly [string, string]>>;
   readonly requestedTargetIds?: readonly string[];
   readonly focusOccurrences?: readonly string[];
+  /** Explicitly focused entry topics are distinct from permission-only topic opt-ins. */
+  readonly focusTopics?: readonly string[];
   readonly details?: readonly string[];
   /** Server-owned contextual facts; browser responses cannot submit derived flags. */
   readonly contextFacts?: readonly Pwqe51FlagContextFact[];
@@ -105,6 +107,13 @@ export interface Pwqe51RouteCandidate {
   readonly stage: "mapping" | "deepening";
   readonly linkedFrom?: string;
 }
+export interface Pwqe51CandidateRejection {
+  readonly questionId: string;
+  readonly occurrenceId: string | null;
+  readonly stepId: string;
+  readonly targetIds: readonly string[];
+  readonly reason: string;
+}
 export interface Pwqe51RouterResult {
   readonly sourceRelease: string;
   readonly phase: "mapping" | "deepening" | "finished";
@@ -114,6 +123,7 @@ export interface Pwqe51RouterResult {
   readonly steps: readonly Pwqe51Step[];
   readonly targets: readonly Pwqe51TargetResolution[];
   readonly candidates: readonly Pwqe51RouteCandidate[];
+  readonly rejectedCandidates: readonly Pwqe51CandidateRejection[];
   readonly next: Pwqe51RouteCandidate | null;
   readonly sequenceEdges: readonly Pwqe51SequenceEdge[];
   readonly missingness: readonly { readonly responseId: string; readonly questionId: string; readonly occurrenceId: string; readonly status: Pwqe51ResponseStatus }[];
@@ -121,6 +131,7 @@ export interface Pwqe51RouterResult {
   readonly invalidatedResponses: readonly { readonly responseId: string; readonly reason: string }[];
   readonly administrationCount: number;
   readonly decisionCount: number;
+  readonly scopeTextureAdministrationCount: number;
 }
 
 type Normalized = Omit<Pwqe51CanonicalResponse, "basis"> & { readonly stepId: string; readonly selectedOptionIds: readonly string[]; readonly status: Pwqe51ResponseStatus; readonly mode: Pwqe51SelectionMode; readonly basis: Pwqe51Basis };
@@ -582,23 +593,35 @@ function sequenceEdges(active: readonly Normalized[], observations: readonly Pwq
   return edges;
 }
 
-function candidateAllowed(q: Pwqe51Question, episodeId: string, active: readonly Normalized[], source: Pwqe51SourcePackage, opted: Set<string>, derivedFlags: ReturnType<typeof derivePwqe51Flags>, comparisonIds?: readonly [string, string], targetStep?: string): boolean {
+function candidateRejectionReason(q: Pwqe51Question, episodeId: string, active: readonly Normalized[], source: Pwqe51SourcePackage, opted: Set<string>, derivedFlags: ReturnType<typeof derivePwqe51Flags>, comparisonIds?: readonly [string, string], targetStep?: string): string | null {
   const own = active.filter((r) => r.occurrenceId === episodeId);
-  if (own.some((r) => r.questionId === q.id && r.stepId === q.step_binding)) return false;
-  if (q.eligibility.topic_opt_in && !opted.has(q.eligibility.topic_opt_in)) return false;
-  if (q.eligibility.requires_answered.some((id) => !own.some((r) => r.questionId === id && answered(r)))) return false;
+  if (own.some((r) => r.questionId === q.id && r.stepId === q.step_binding)) return "already_administered";
+  if (q.eligibility.topic_opt_in && !opted.has(q.eligibility.topic_opt_in)) return "topic_declined";
+  // Fixed-family questions that need an answered parent still belong to their
+  // own episode family. Check that target/episode binding before reporting a
+  // same-episode parent gap, matching the reference's candidate rejection
+  // contract (for example, D22 cannot deepen a help episode as a mistake).
+  const rootQuestionId = own[0]?.questionId;
+  const rootQuestion = source.questionBank.items.find((item) => item.id === rootQuestionId);
+  if (rootQuestion && !["bound", "comparison"].includes(q.episode_family)
+      && rootQuestion.episode_family !== q.episode_family) return "requires_its_own_actual_episode_not_same_topic";
+  const missingParent = q.eligibility.requires_answered.find((id) => !own.some((r) => r.questionId === id && answered(r)));
+  if (missingParent) return `missing_required_answer:${missingParent}`;
   const gate = obj(source.itemGates.gates[q.id]);
   const parents = own.flatMap((r) => r.selectedOptionIds);
   const specific = obj(q.eligibility.specific);
-  if (strings(gate.required_parent_options ?? specific.required_parent_options).some((x) => !parents.includes(x))) return false;
-  if (strings(gate.exclude_parent_options ?? specific.exclude_parent_options).some((x) => parents.includes(x))) return false;
-  if (q.eligibility.actual_episode_required && !own.some((r) => r.basis === "actual_recalled")) return false;
+  const missingParentOption = strings(gate.required_parent_options ?? specific.required_parent_options).find((x) => !parents.includes(x));
+  if (missingParentOption) return `missing_required_parent_option:${missingParentOption}`;
+  const excludedParentOption = strings(gate.exclude_parent_options ?? specific.exclude_parent_options).find((x) => parents.includes(x));
+  if (excludedParentOption) return `excluded_by_parent_option:${excludedParentOption}`;
+  if (q.eligibility.actual_episode_required && !own.some((r) => r.basis === "actual_recalled")) return "bound_template_requires_actual_episode";
   // A later move's effect or goal is not interpretable until D08 establishes
   // whether it followed the first response or belongs to a separate event.
   // Keep this same-occurrence dependency aligned with the D09-D11 runtime rule.
   if (["D09", "D10", "D11"].includes(q.id)) {
     const relation = own.find((r) => r.questionId === "D08" && answered(r));
-    if (!relation || relation.selectedOptionIds.includes("D08.different")) return false;
+    if (!relation) return "establish_same_occurrence_relation_first";
+    if (relation.selectedOptionIds.includes("D08.different")) return "different_occurrences_require_rebinding";
   }
   const requiredFlags = strings(gate.required_flags ?? specific.required_flags);
   // These sequence questions are administered at a future step, while their
@@ -611,8 +634,9 @@ function candidateAllowed(q: Pwqe51Question, episodeId: string, active: readonly
   const evidenceStep = q.id === "D07" ? "first" : q.id === "D08" ? "next" : selectedStep ?? q.step_binding;
   const flags = new Set(derivedFlags.flagsByEpisodeStep[pwqe51EpisodeStepKey(episodeId, evidenceStep)] ?? []);
   if (comparisonIds) for (const flag of derivedFlags.comparisonFlagsByPair[pwqe51ComparisonPairKey(comparisonIds[0], comparisonIds[1])] ?? []) flags.add(flag);
-  if (requiredFlags.some((required) => !flags.has(required))) return false;
-  return true;
+  const missingFlag = requiredFlags.find((required) => !flags.has(required));
+  if (missingFlag) return `missing_derived_flag:${missingFlag}`;
+  return null;
 }
 
 function candidateStep(questionId: string, authoredBinding: string, targetStep?: string, newEpisode = false): string {
@@ -623,7 +647,7 @@ function candidateStep(questionId: string, authoredBinding: string, targetStep?:
   return authoredBinding;
 }
 
-function makeCandidates(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, active: readonly Normalized[], targets: readonly Pwqe51TargetResolution[], episodes: readonly Pwqe51Episode[], observations: readonly Pwqe51Observation[], derivedFlags: ReturnType<typeof derivePwqe51Flags>) {
+function makeCandidates(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, active: readonly Normalized[], targets: readonly Pwqe51TargetResolution[], episodes: readonly Pwqe51Episode[], observations: readonly Pwqe51Observation[], derivedFlags: ReturnType<typeof derivePwqe51Flags>, rejected: Pwqe51CandidateRejection[]) {
   const phase = input.phase ?? "mapping";
   const candidates: Pwqe51RouteCandidate[] = [];
   if (phase === "mapping") {
@@ -652,7 +676,13 @@ function makeCandidates(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, a
         // not apply post-answer eligibility to this first administration.
         // Parent-bound items still require their normal answer, topic, option,
         // basis, and derived-flag guards.
-        if (parents.length > 0 && !candidateAllowed(q, boundEpisode, active, source, topics, derivedFlags, undefined, "first")) continue;
+        if (parents.length > 0) {
+          const reason = candidateRejectionReason(q, boundEpisode, active, source, topics, derivedFlags, undefined, "first");
+          if (reason) {
+            rejected.push({ questionId: q.id, occurrenceId: boundEpisode, stepId, targetIds: [`coverage:${q.id}`], reason });
+            continue;
+          }
+        }
         candidates.push({ questionId: q.id, occurrenceId: boundEpisode, stepId, targetIds: [`coverage:${q.id}`], priority: parents.length ? 1 : 2, stage: "mapping" });
       } else if (!parents.length) {
         candidates.push({ questionId: q.id, occurrenceId: null, bindingKey, bindingRequest: "new_actual_occurrence", stepId, targetIds: [`coverage:${q.id}`], priority: 2, stage: "mapping" });
@@ -664,9 +694,16 @@ function makeCandidates(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, a
       // silently strands valid follow-ups when the first one is unavailable.
       // REPLAY is intentionally excluded until explicit second-occurrence
       // confirmation has an end-to-end trusted session/API implementation.
-      for (const itemId of target.candidateItems.filter((id) => !id.startsWith("REPLAY"))) {
+      for (const itemId of target.candidateItems) {
+        if (itemId.startsWith("REPLAY")) {
+          rejected.push({ questionId: itemId, occurrenceId: target.occurrenceId, stepId: target.stepId, targetIds: [target.id], reason: "replay_operator_not_supported" });
+          continue;
+        }
         const q = source.questionBank.items.find((item) => item.id === itemId);
-        if (!q) continue;
+        if (!q) {
+          rejected.push({ questionId: itemId, occurrenceId: target.occurrenceId, stepId: target.stepId, targetIds: [target.id], reason: "unknown_item" });
+          continue;
+        }
         // The sequence relation is a short identity/order clarification. The
         // active routing contract places it in tier 1 so later effect questions
         // cannot outrank the answer needed to interpret the preceding move.
@@ -681,17 +718,28 @@ function makeCandidates(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, a
             stepId: candidateStep(q.id, q.step_binding, target.stepId, !occurrenceId), targetIds: [target.id], priority: candidatePriority, stage: "deepening" });
           continue;
         }
-        if (!candidateAllowed(q, target.occurrenceId, active, source, new Set(input.optedInTopics ?? []), derivedFlags, target.comparisonIds, target.stepId)) continue;
+        const reason = candidateRejectionReason(q, target.occurrenceId, active, source, new Set(input.optedInTopics ?? []), derivedFlags, target.comparisonIds, target.stepId);
+        if (reason) {
+          rejected.push({ questionId: q.id, occurrenceId: target.occurrenceId, stepId: candidateStep(q.id, q.step_binding, target.stepId), targetIds: [target.id], reason });
+          continue;
+        }
         candidates.push({ questionId: q.id, occurrenceId: target.occurrenceId, stepId: candidateStep(q.id, q.step_binding, target.stepId), targetIds: [target.id], priority: candidatePriority, stage: "deepening" });
       }
     }
     for (const entry of source.routingTargets.entry_points) {
-      if (!(input.optedInTopics ?? []).includes(String(entry.id))) continue;
-    const itemId = String(entry.first_item);
-    const q = source.questionBank.items.find((item) => item.id === itemId);
-    if (!q) continue;
-    const bindingKey = `entry:${entry.id}`;
-    const bound = input.occurrenceBindings?.[bindingKey];
+      const itemId = String(entry.first_item);
+      if (!(input.optedInTopics ?? []).includes(String(entry.id))) {
+        rejected.push({ questionId: itemId, occurrenceId: null, stepId: "first", targetIds: [`entry:${entry.id}`], reason: "topic_not_opted_in" });
+        continue;
+      }
+      const q = source.questionBank.items.find((item) => item.id === itemId);
+      if (!q) continue;
+      // The active priority contract places bodily detail in tier 6. An explicit
+      // C04 permission makes D41 eligible and focused within that tier; it does
+      // not promote optional texture above unanswered higher-value discriminators.
+      const entryPriority = q.id === "D41" ? 6 : 4;
+      const bindingKey = `entry:${entry.id}`;
+      const bound = input.occurrenceBindings?.[bindingKey];
       const focused = new Set(input.focusOccurrences ?? []);
       const eligibleEpisodes = episodes.filter((episode) => episode.actual
         && (q.episode_family === "bound" || q.episode_family === episode.family))
@@ -702,14 +750,17 @@ function makeCandidates(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, a
     const occurrenceId = bound ?? (q.episode_family === "bound" ? eligibleEpisodes[0]?.id : parentEpisode);
     if (active.some((response) => response.questionId === itemId && response.targetIds?.includes(`entry:${entry.id}`))) continue;
     if (occurrenceId) {
-        // An entry root establishes its own episode basis. Its server-bound
-        // occurrence is necessarily unanswered at first, so actual-basis and
-        // response-derived flag guards cannot be evaluated until the response
-        // is recorded. The explicit topic opt-in above remains mandatory.
-        const unansweredRoot = q.eligibility.requires_answered.length === 0
-          && !active.some((response) => response.occurrenceId === occurrenceId);
-        if (unansweredRoot || candidateAllowed(q, occurrenceId, active, source, new Set(input.optedInTopics ?? []), derivedFlags, undefined, "first")) candidates.push({ questionId: itemId, occurrenceId, stepId: "first", targetIds: [`entry:${entry.id}`], priority: 4, stage: "deepening" });
-      } else if (!q.eligibility.requires_answered.length && q.episode_family !== "bound") candidates.push({ questionId: itemId, occurrenceId: null, bindingKey, bindingRequest: "new_actual_occurrence", stepId: "first", targetIds: [`entry:${entry.id}`], priority: 4, stage: "deepening" });
+      // An entry root establishes its own episode basis. Its server-bound
+      // occurrence is necessarily unanswered at first, so actual-basis and
+      // response-derived flag guards cannot be evaluated until the response
+      // is recorded. The explicit topic opt-in above remains mandatory.
+      const unansweredRoot = q.eligibility.requires_answered.length === 0
+        && !active.some((response) => response.occurrenceId === occurrenceId);
+        const reason = unansweredRoot ? null : candidateRejectionReason(q, occurrenceId, active, source, new Set(input.optedInTopics ?? []), derivedFlags, undefined, "first");
+        if (reason) rejected.push({ questionId: itemId, occurrenceId, stepId: "first", targetIds: [`entry:${entry.id}`], reason });
+        else candidates.push({ questionId: itemId, occurrenceId, stepId: "first", targetIds: [`entry:${entry.id}`], priority: entryPriority, stage: "deepening" });
+      } else if (!q.eligibility.requires_answered.length && q.episode_family !== "bound") candidates.push({ questionId: itemId, occurrenceId: null, bindingKey, bindingRequest: "new_actual_occurrence", stepId: "first", targetIds: [`entry:${entry.id}`], priority: entryPriority, stage: "deepening" });
+      else rejected.push({ questionId: itemId, occurrenceId: null, stepId: "first", targetIds: [`entry:${entry.id}`], reason: "requires_existing_actual_episode" });
     }
   }
   const contextLast = new Map<string, number>();
@@ -847,19 +898,66 @@ export function compilePwqe51Route(input: Pwqe51RouterInput, source: Pwqe51Sourc
   const totalLimit = Math.min(input.totalLimit ?? 56, 56);
   const mappingLimit = Math.min(input.mappingLimit ?? 32, 32);
   const decisionLimit = Math.min(input.decisionLimit ?? 72, 72);
-  const decisionCount = normalized.all.length + (input.controls?.length ?? 0);
+  const decisionCost = (response: Normalized): number => {
+    if (!answered(response) || response.selectedOptionIds.length === 0) return 1;
+    const question = normalized.questions.get(response.questionId)!;
+    if (obj(question.selection).mode === "partial_order") return response.selectedOptionIds.length + 1;
+    return response.mode === "single" ? 1 : 3;
+  };
+  // A presentation reserves one substantive decision. Extra multi-choice or
+  // ordered selections consume only their authored additional cost. Corrections
+  // and stop/shorten controls remain available without increasing this budget.
+  const decisionCount = normalized.all.filter((response) => !response.supersedesResponseId)
+    .reduce((sum, response) => sum + decisionCost(response), 0);
   const mappingAdministrationCount = new Set(normalized.all.filter((r) => source.questionBank.items.find((q) => q.id === r.questionId)?.stage === "mapping").map((r) => `${r.questionId}\u0000${r.occurrenceId}\u0000${r.stepId}`)).size;
+  const targetPriority = (targetId: string): number | undefined => {
+    const resolved = targets.find((target) => target.id === targetId);
+    if (resolved) return resolved.priority;
+    if (targetId === "entry:body_detail") return 6;
+    if (targetId.startsWith("entry:")) return 4;
+    const baseId = targetId.split(":", 1)[0];
+    const definition = source.routingTargets.targets.find((target) => target.id === baseId);
+    if (definition) return Number(definition.default_priority ?? 4);
+    const coverage = source.coverageRules.rules.find((rule) => rule.id === baseId);
+    return coverage ? Number(coverage.priority ?? 4) : undefined;
+  };
+  const textureAdministrations = new Set<string>();
+  for (const response of normalized.all.filter((row) => !row.supersedesResponseId)) {
+    const question = normalized.questions.get(response.questionId);
+    if (question?.stage !== "deepening") continue;
+    const responseTargets = response.targetIds ?? [];
+    const priority = response.questionId === "D08" ? 1 : Math.max(-1, ...responseTargets.map(targetPriority).filter((value): value is number => typeof value === "number"));
+    if (priority >= 5) textureAdministrations.add(`${response.questionId}\u0000${response.occurrenceId}\u0000${response.stepId}`);
+  }
+  const scopeTextureAdministrationCount = textureAdministrations.size;
   let phase: Pwqe51RouterResult["phase"] = input.phase ?? "mapping";
   let completionReason: string | undefined;
   if (input.controls?.includes("end")) { phase = "finished"; completionReason = "user_end"; }
   else if (administrationCount >= totalLimit || decisionCount >= decisionLimit || (phase === "mapping" && mappingAdministrationCount >= mappingLimit)) {
     phase = "finished"; completionReason = "administration_or_decision_limit";
   }
-  const candidates = phase === "finished" ? [] : makeCandidates(input, source, active, targets, episodes, observations, derivedFlags).filter((c) => c.stage === phase);
+  const rejectedCandidates: Pwqe51CandidateRejection[] = [];
+  let candidates = phase === "finished" ? [] : makeCandidates(input, source, active, targets, episodes, observations, derivedFlags, rejectedCandidates).filter((c) => c.stage === phase);
+  const requestedTargetIds = new Set(input.requestedTargetIds ?? []);
+  const focusedEpisodes = new Set(input.focusOccurrences ?? []);
+  const focusedTopics = new Set(input.focusTopics ?? []);
+  const selectedCandidateIsFocused = (candidate: Pwqe51RouteCandidate) =>
+    Boolean((candidate.occurrenceId && focusedEpisodes.has(candidate.occurrenceId))
+      || (candidate.linkedFrom && focusedEpisodes.has(candidate.linkedFrom))
+      || candidate.targetIds.some((id) => requestedTargetIds.has(id)
+        || (id.startsWith("entry:") && focusedTopics.has(id.slice("entry:".length)))));
+  if (phase === "deepening" && scopeTextureAdministrationCount >= 3 && !(input.details?.length)
+      && candidates[0]?.priority !== undefined && candidates[0].priority >= 5 && !selectedCandidateIsFocused(candidates[0])) {
+    phase = "finished";
+    completionReason = "remaining_targets_only_low_incremental_value";
+    candidates = [];
+  }
   if (input.controls?.includes("shorten")) candidates.splice(0, candidates.length, ...candidates.filter((c) => c.priority < 5));
   const next = candidates[0] ?? null;
   if (!next && phase !== "finished") { const completed = phase; phase = "finished"; completionReason = completed === "mapping" ? "mapping_coverage_complete" : "no_eligible_material_target"; }
-  return { sourceRelease: source.questionBank.release, phase, ...(completionReason ? { completionReason } : {}), observations, episodes, steps, targets, candidates, next, sequenceEdges: sequence, missingness, supersededResponseIds: normalized.superseded, invalidatedResponses: normalized.invalidated, administrationCount, decisionCount };
+  rejectedCandidates.sort((left, right) => left.questionId.localeCompare(right.questionId) || (left.occurrenceId ?? "").localeCompare(right.occurrenceId ?? "")
+    || left.stepId.localeCompare(right.stepId) || left.targetIds.join("|").localeCompare(right.targetIds.join("|")) || left.reason.localeCompare(right.reason));
+  return { sourceRelease: source.questionBank.release, phase, ...(completionReason ? { completionReason } : {}), observations, episodes, steps, targets, candidates, rejectedCandidates, next, sequenceEdges: sequence, missingness, supersededResponseIds: normalized.superseded, invalidatedResponses: normalized.invalidated, administrationCount, decisionCount, scopeTextureAdministrationCount };
 }
 
 export async function routePwqe51Assessment(input: Pwqe51RouterInput, workspaceRoot?: string): Promise<Pwqe51RouterResult> {

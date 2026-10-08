@@ -1,0 +1,104 @@
+{
+  "format": "pwqe51-independent-reference-extension-v1",
+  "source_binding": {
+    "question_release": "PWQE-5.1.0-candidate.1",
+    "runtime_version": "PW-ROUTER-1.1.0-candidate.1",
+    "source_sha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832"
+  },
+  "source_manifest_sha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+  "known_reference_gap": {
+    "path": "specs/patternwork/question-engine-v5.1/assessment_runtime/implementation/patternwork_router/targets.py",
+    "symbol": "TargetLifecycleEngine._entry_targets",
+    "observed": "Direct entry targets enumerate config.focus_topics although C04 body-detail permission is stored in config.topics.",
+    "extension": "The cases below are a separately authored, source-bound contract oracle for C04 body_detail -> D41. They do not patch the immutable package or take Python/TypeScript output as expected data."
+  },
+  "priority_basis": {
+    "contract": "architecture/03_ROUTING_AND_STOPPING.md §5, tier 6: additional texture with a clear report use includes bodily detail; respondent-selected focus is a tie-break within a tier.",
+    "expected_tier": 6,
+    "note": "The immutable Python and TypeScript entry-point builders both previously used generic tier 4. That shared behavior is not the oracle for D41 priority."
+  },
+  "cases": [
+    {
+      "id": "d41-no-permission",
+      "input": {
+        "phase": "deepening",
+        "optedInTopics": [],
+        "responses": [{ "responseId": "root", "questionId": "M01", "occurrenceId": "actual-a", "selectedOptionIds": ["M01.rest"], "basis": "actual_recalled" }]
+      },
+      "expected": { "d41_candidate": false, "d41_rejection_reason": "topic_not_opted_in" }
+    },
+    {
+      "id": "d41-permission-needs-actual-episode",
+      "input": {
+        "phase": "deepening",
+        "optedInTopics": ["body_detail"],
+        "responses": [{ "responseId": "root", "questionId": "M01", "occurrenceId": "typical-a", "selectedOptionIds": ["M01.rest"], "basis": "reported_typicality" }]
+      },
+      "expected": { "d41_candidate": false, "d41_rejection_reason": "requires_existing_actual_episode" }
+    },
+    {
+      "id": "d41-bound-candidate-and-tier",
+      "input": {
+        "phase": "deepening",
+        "optedInTopics": ["body_detail"],
+        "responses": [{ "responseId": "root", "questionId": "M01", "occurrenceId": "actual-a", "selectedOptionIds": ["M01.rest"], "basis": "actual_recalled" }]
+      },
+      "expected": {
+        "d41_candidate": true,
+        "candidate": { "questionId": "D41", "occurrenceId": "actual-a", "targetIds": ["entry:body_detail"], "priority": 6, "stage": "deepening" }
+      }
+    },
+    {
+      "id": "d41-does-not-outrank-a-tier-three-comparison",
+      "input": {
+        "phase": "deepening",
+        "optedInTopics": ["body_detail"],
+        "distinctPairs": [["review-a", "review-b"]],
+        "responses": [
+          { "responseId": "review-root-a", "questionId": "M02", "occurrenceId": "review-a", "selectedOptionIds": ["M02.rehearse"], "basis": "actual_recalled" },
+          { "responseId": "review-aim-a", "questionId": "M03", "occurrenceId": "review-a", "selectedOptionIds": ["M03.exposure"] },
+          { "responseId": "review-root-b", "questionId": "M02", "occurrenceId": "review-b", "selectedOptionIds": ["M02.rehearse"], "basis": "actual_recalled" },
+          { "responseId": "review-aim-b", "questionId": "M03", "occurrenceId": "review-b", "selectedOptionIds": ["M03.exposure"] }
+        ]
+      },
+      "expected": { "next_question_id": "D57", "d41_priority": 6, "next_priority": 3 }
+    },
+    {
+      "id": "d41-answer-is-retained-and-not-reoffered",
+      "input": {
+        "phase": "deepening",
+        "optedInTopics": ["body_detail"],
+        "responses": [
+          { "responseId": "root", "questionId": "M01", "occurrenceId": "actual-a", "selectedOptionIds": ["M01.rest"], "basis": "actual_recalled" },
+          { "responseId": "d41-answer", "questionId": "D41", "occurrenceId": "actual-a", "targetIds": ["entry:body_detail"], "selectedOptionIds": ["D41.chest"] }
+        ]
+      },
+      "expected": { "d41_candidate": false, "active_d41_response_ids": ["d41-answer"], "active_d41_option_ids": ["D41.chest"] }
+    },
+    {
+      "id": "d41-skip-remains-distinct-from-an-answer",
+      "input": {
+        "phase": "deepening",
+        "optedInTopics": ["body_detail"],
+        "responses": [
+          { "responseId": "root", "questionId": "M01", "occurrenceId": "actual-a", "selectedOptionIds": ["M01.rest"], "basis": "actual_recalled" },
+          { "responseId": "d41-skip", "questionId": "D41", "occurrenceId": "actual-a", "targetIds": ["entry:body_detail"], "status": "skip", "selectedOptionIds": [] }
+        ]
+      },
+      "expected": { "d41_candidate": false, "active_d41_response_ids": [], "missingness": [{ "responseId": "d41-skip", "status": "skip" }] }
+    },
+    {
+      "id": "d41-correction-replaces-the-prior-answer",
+      "input": {
+        "phase": "deepening",
+        "optedInTopics": ["body_detail"],
+        "responses": [
+          { "responseId": "root", "questionId": "M01", "occurrenceId": "actual-a", "selectedOptionIds": ["M01.rest"], "basis": "actual_recalled" },
+          { "responseId": "d41-original", "questionId": "D41", "occurrenceId": "actual-a", "targetIds": ["entry:body_detail"], "selectedOptionIds": ["D41.chest"] },
+          { "responseId": "d41-correction", "questionId": "D41", "occurrenceId": "actual-a", "targetIds": ["entry:body_detail"], "selectedOptionIds": ["D41.throat"], "supersedesResponseId": "d41-original" }
+        ]
+      },
+      "expected": { "d41_candidate": false, "superseded_response_ids": ["d41-original"], "active_d41_response_ids": ["d41-correction"], "active_d41_option_ids": ["D41.throat"] }
+    }
+  ]
+}

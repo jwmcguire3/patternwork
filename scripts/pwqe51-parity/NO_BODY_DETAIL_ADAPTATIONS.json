@@ -1,0 +1,42 @@
+{
+  "format": "pwqe51-no-body-detail-cohort-adaptations-v1",
+  "source_binding": {
+    "question_release": "PWQE-5.1.0-candidate.1",
+    "runtime_version": "PW-ROUTER-1.1.0-candidate.1",
+    "source_sha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832"
+  },
+  "source_manifest_sha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+  "purpose": "The independent no-body-detail cohort changes C04 topic permission. Under the authored controls contract, that selects the M10.observable variant, so original base-option IDs cannot be replayed as if they were still displayed.",
+  "adaptations": [
+    {
+      "id": "P05-M10-words-observable-alias",
+      "plan_id": "P05",
+      "item_id": "M10",
+      "answer_index": 0,
+      "from_option": "M10.words",
+      "to_option": "M10.observable.words",
+      "variant_id": "M10.observable",
+      "basis": "The authored alternate retains the same communication-access response in slightly reworded text."
+    },
+    {
+      "id": "C10-M10-words-observable-alias",
+      "plan_id": "C10",
+      "item_id": "M10",
+      "answer_index": 0,
+      "from_option": "M10.words",
+      "to_option": "M10.observable.words",
+      "variant_id": "M10.observable",
+      "basis": "The authored alternate retains the same communication-access response in slightly reworded text."
+    },
+    {
+      "id": "C11-M10-urgency-not-represented",
+      "plan_id": "C11",
+      "item_id": "M10",
+      "answer_index": 0,
+      "from_option": "M10.urgent",
+      "status": "not_sure",
+      "variant_id": "M10.observable",
+      "basis": "The alternate has no urgency response. Retain uncertainty instead of assigning an unprovided behavior such as task switching."
+    }
+  ]
+}
