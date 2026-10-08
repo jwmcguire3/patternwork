@@ -247,3 +247,40 @@ test("C10 reference-plan answers open and route the recovery conditions target",
   assert.equal(target?.state, "open");
   assert.ok(result.candidates.some((candidate) => candidate.questionId === "D86" && candidate.stepId === "recovery"));
 });
+
+test("a corrected root retains eligible dependent evidence at its original timeline position", async () => {
+  const source = await sourcePromise;
+  const result = compilePwqe51Route({ responses: [
+    answer("original", "M02", "M02.rehearse", "review", undefined, { basis: "actual_recalled" }),
+    answer("dependent", "M03", "M03.exposure", "review"),
+    answer("corrected", "M02", "M02.recheck", "review", undefined, { supersedesResponseId: "original", basis: "actual_recalled" }),
+  ] }, source);
+  assert.deepEqual(result.supersededResponseIds, ["original"]);
+  assert.equal(result.observations.some((o) => o.responseId === "original"), false);
+  assert.equal(result.observations.some((o) => o.responseId === "corrected"), true);
+  assert.equal(result.observations.some((o) => o.responseId === "dependent"), true);
+  assert.equal(result.invalidatedResponses.some((r) => r.responseId === "dependent"), false);
+});
+
+test("forward corrections are rejected instead of constructing a cyclic replacement chain", async () => {
+  const source = await sourcePromise;
+  assert.throws(() => compilePwqe51Route({ responses: [
+    answer("invalid", "M02", "M02.recheck", "review", undefined, { basis: "actual_recalled", supersedesResponseId: "future" }),
+    answer("future", "M02", "M02.rehearse", "review", undefined, { basis: "actual_recalled" }),
+  ] }, source), /earlier response/u);
+});
+
+test("a target whose first discriminator is unavailable may offer a later authored discriminator", async () => {
+  const source = await sourcePromise;
+  const result = compilePwqe51Route({
+    phase: "deepening",
+    details: ["recurrence"],
+    responses: [
+      answer("review", "M02", "M02.rehearse", "review-1", undefined, { basis: "actual_recalled" }),
+    ],
+  }, source);
+  const recurrence = result.targets.find((target) => target.targetId === "recurrence" && target.occurrenceId === "review-1");
+  assert.ok(recurrence, "recurrence should open on the supported evaluation action");
+  assert.ok(result.candidates.some((candidate) => candidate.questionId === "D05" && candidate.occurrenceId === "review-1"),
+    "D05 remains eligible when the REPLAY operator is not yet production-wired");
+});

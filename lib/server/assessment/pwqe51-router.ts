@@ -171,14 +171,26 @@ function normalize(input: Pwqe51RouterInput, source: Pwqe51SourcePackage) {
   });
   const byId = new Map(all.map((r) => [r.responseId, r]));
   const superseded = new Set<string>();
+  const chronologicalIndex = new Map(all.map((row, index) => [row.responseId, index]));
   for (const row of all) if (row.supersedesResponseId) {
     const old = byId.get(row.supersedesResponseId);
     if (!old || old.questionId !== row.questionId || old.occurrenceId !== row.occurrenceId || old.stepId !== row.stepId) throw new Error("A correction must supersede the same item, episode and step.");
+    if (chronologicalIndex.get(old.responseId)! >= chronologicalIndex.get(row.responseId)!) throw new Error("Corrections must supersede an earlier response.");
     superseded.add(old.responseId);
   }
+  // A correction replaces the observation at its original position in the
+  // episode timeline. Appending it to the end would falsely invalidate every
+  // intervening dependent question simply because its parent was superseded.
+  const originalPosition = (row: Normalized): number => {
+    let original = row;
+    while (original.supersedesResponseId) original = byId.get(original.supersedesResponseId)!;
+    return chronologicalIndex.get(original.responseId)!;
+  };
+  const currentInEpisodeOrder = all.filter((row) => !superseded.has(row.responseId))
+    .sort((left, right) => originalPosition(left) - originalPosition(right));
   const active: Normalized[] = [];
   const invalidated: { responseId: string; reason: string }[] = [];
-  for (const row of all.filter((r) => !superseded.has(r.responseId))) {
+  for (const row of currentInEpisodeOrder) {
     const q = questions.get(row.questionId)!;
     const earlier = active.filter((r) => r.occurrenceId === row.occurrenceId);
     const missingParent = q.eligibility.requires_answered.find((id) => !earlier.some((r) => r.questionId === id && answered(r)));
@@ -369,7 +381,7 @@ function coverageTargets(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, 
     }
     for (const episode of episodes) {
       if (!episode.actual) continue;
-      const comparisonPairs: (readonly string[] | undefined)[] = scope === "comparison" ? (input.distinctPairs ?? []).filter((p) => p.includes(episode.id)) : [undefined];
+      const comparisonPairs: (readonly string[] | undefined)[] = scope === "comparison" ? (input.distinctPairs ?? []).filter((p) => p[0] === episode.id) : [undefined];
       for (const comparisonIds of comparisonPairs) {
         const stepId = scope;
         const id = keyFor(ruleId, episode.id, stepId, comparisonIds);
@@ -452,7 +464,7 @@ function sequenceEdges(active: readonly Normalized[], observations: readonly Pwq
   return edges;
 }
 
-function candidateAllowed(q: Pwqe51Question, episodeId: string, active: readonly Normalized[], source: Pwqe51SourcePackage, opted: Set<string>, flagsByEpisodeStep: ReturnType<typeof derivePwqe51Flags>["flagsByEpisodeStep"]): boolean {
+function candidateAllowed(q: Pwqe51Question, episodeId: string, active: readonly Normalized[], source: Pwqe51SourcePackage, opted: Set<string>, derivedFlags: ReturnType<typeof derivePwqe51Flags>, comparisonIds?: readonly [string, string]): boolean {
   const own = active.filter((r) => r.occurrenceId === episodeId);
   if (own.some((r) => r.questionId === q.id && r.stepId === q.step_binding)) return false;
   if (q.eligibility.topic_opt_in && !opted.has(q.eligibility.topic_opt_in)) return false;
@@ -470,7 +482,8 @@ function candidateAllowed(q: Pwqe51Question, episodeId: string, active: readonly
   // step binding: D07 follows a qualifying first move; D08 follows an actual
   // next move. Other items remain bound to their own step's flags.
   const evidenceStep = q.id === "D07" ? "first" : q.id === "D08" ? "next" : q.step_binding;
-  const flags = new Set(flagsByEpisodeStep[pwqe51EpisodeStepKey(episodeId, evidenceStep)] ?? []);
+  const flags = new Set(derivedFlags.flagsByEpisodeStep[pwqe51EpisodeStepKey(episodeId, evidenceStep)] ?? []);
+  if (comparisonIds) for (const flag of derivedFlags.comparisonFlagsByPair[pwqe51ComparisonPairKey(comparisonIds[0], comparisonIds[1])] ?? []) flags.add(flag);
   if (requiredFlags.some((required) => !flags.has(required))) return false;
   return true;
 }
@@ -503,7 +516,7 @@ function makeCandidates(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, a
         // not apply post-answer eligibility to this first administration.
         // Parent-bound items still require their normal answer, topic, option,
         // basis, and derived-flag guards.
-        if (parents.length > 0 && !candidateAllowed(q, boundEpisode, active, source, topics, derivedFlags.flagsByEpisodeStep)) continue;
+        if (parents.length > 0 && !candidateAllowed(q, boundEpisode, active, source, topics, derivedFlags)) continue;
         candidates.push({ questionId: q.id, occurrenceId: boundEpisode, stepId: q.step_binding, targetIds: [`coverage:${q.id}`], priority: parents.length ? 1 : 2, stage: "mapping" });
       } else if (!parents.length) {
         candidates.push({ questionId: q.id, occurrenceId: null, bindingKey, bindingRequest: "new_actual_occurrence", stepId: q.step_binding, targetIds: [`coverage:${q.id}`], priority: 2, stage: "mapping" });
@@ -511,9 +524,15 @@ function makeCandidates(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, a
     }
   } else {
     for (const target of targets.filter((t) => t.state === "open")) {
-      const q = source.questionBank.items.find((item) => item.id === target.candidateItems[0]);
-      if (!q || !candidateAllowed(q, target.occurrenceId, active, source, new Set(input.optedInTopics ?? []), derivedFlags.flagsByEpisodeStep)) continue;
-      candidates.push({ questionId: q.id, occurrenceId: target.occurrenceId, stepId: q.step_binding, targetIds: [target.id], priority: target.priority, stage: "deepening" });
+      // A target may have several discriminators. Trying only candidateItems[0]
+      // silently strands valid follow-ups when the first one is unavailable.
+      // REPLAY is intentionally excluded until explicit second-occurrence
+      // confirmation has an end-to-end trusted session/API implementation.
+      for (const itemId of target.candidateItems.filter((id) => !id.startsWith("REPLAY"))) {
+        const q = source.questionBank.items.find((item) => item.id === itemId);
+        if (!q || !candidateAllowed(q, target.occurrenceId, active, source, new Set(input.optedInTopics ?? []), derivedFlags, target.comparisonIds)) continue;
+        candidates.push({ questionId: q.id, occurrenceId: target.occurrenceId, stepId: q.step_binding, targetIds: [target.id], priority: target.priority, stage: "deepening" });
+      }
     }
     for (const entry of source.routingTargets.entry_points) {
       if (!(input.optedInTopics ?? []).includes(String(entry.id))) continue;
@@ -530,7 +549,7 @@ function makeCandidates(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, a
         // is recorded. The explicit topic opt-in above remains mandatory.
         const unansweredRoot = q.eligibility.requires_answered.length === 0
           && !active.some((response) => response.occurrenceId === occurrenceId);
-        if (unansweredRoot || candidateAllowed(q, occurrenceId, active, source, new Set(input.optedInTopics ?? []), derivedFlags.flagsByEpisodeStep)) candidates.push({ questionId: itemId, occurrenceId, stepId: "first", targetIds: [`entry:${entry.id}`], priority: 4, stage: "deepening" });
+        if (unansweredRoot || candidateAllowed(q, occurrenceId, active, source, new Set(input.optedInTopics ?? []), derivedFlags)) candidates.push({ questionId: itemId, occurrenceId, stepId: "first", targetIds: [`entry:${entry.id}`], priority: 4, stage: "deepening" });
       } else if (!q.eligibility.requires_answered.length) candidates.push({ questionId: itemId, occurrenceId: null, bindingKey, bindingRequest: "new_actual_occurrence", stepId: "first", targetIds: [`entry:${entry.id}`], priority: 4, stage: "deepening" });
     }
   }
