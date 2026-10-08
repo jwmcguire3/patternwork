@@ -28,6 +28,16 @@ test("a server-bound Mapping root is offered before its answer establishes episo
   assert.equal(result.next?.stage, "mapping");
 });
 
+test("mapping tie-breaks use the recalled episode context for attached questions", async () => {
+  const source = await sourcePromise;
+  const result = compilePwqe51Route({ responses: [
+    answer("overload-root", "M10", "M10.urgent", "overload-episode", undefined, { basis: "actual_recalled" }),
+    answer("overload-action", "M11", "M11.push", "overload-episode"),
+  ] }, source);
+  assert.equal(result.next?.questionId, "M12");
+  assert.equal(result.candidates.find((candidate) => candidate.questionId === "M13")?.stepId, "later");
+});
+
 test("opted-in Deepening roots are offered before basis exists, then enforce actual-basis and topic gates", async () => {
   const source = await sourcePromise;
   const cases = [
@@ -69,6 +79,33 @@ test("opted-in Deepening roots are offered before basis exists, then enforce act
     }, source);
     assert.ok(!typical.candidates.some((candidate) => candidate.questionId === item.childId));
   }
+});
+
+test("an answered topic entry root is not reoffered in the same actual occurrence", async () => {
+  const source = await sourcePromise;
+  const result = compilePwqe51Route({ phase: "deepening", optedInTopics: ["conflict"], responses: [
+    answer("conflict-root", "D61", "D61.explain", "conflict-episode", undefined, {
+      basis: "actual_recalled", targetIds: ["entry:conflict"],
+    }),
+  ] }, source);
+  assert.ok(!result.candidates.some((candidate) => candidate.questionId === "D61" && candidate.targetIds.includes("entry:conflict")));
+});
+
+test("an opted-in entry point keeps focus ahead of a same-tier ordinary follow-up", async () => {
+  const source = await sourcePromise;
+  const result = compilePwqe51Route({
+    phase: "deepening",
+    optedInTopics: ["disclosure"],
+    occurrenceBindings: { "entry:disclosure": "disclosure-episode" },
+    responses: [
+      answer("help-root", "M20", "M20.small", "help-episode", undefined, { basis: "actual_recalled" }),
+      answer("help-context", "M21", "M21.burden", "help-episode"),
+    ],
+  }, source);
+  const disclosureIndex = result.candidates.findIndex((candidate) => candidate.questionId === "D47");
+  const helpIndex = result.candidates.findIndex((candidate) => candidate.questionId === "D21");
+  assert.ok(disclosureIndex >= 0 && helpIndex >= 0);
+  assert.ok(disclosureIndex < helpIndex);
 });
 
 test("actual coverage rules open only from their literal same-episode anchors", async () => {
@@ -180,7 +217,9 @@ test("D08 is offered at edge only after an actual same-episode D07 next action",
     answer("root-b", "D61", "D61.explain", "A2", "first", { basis: "actual_recalled" }),
     answer("next-a", "D07", "D07.leave", "A2", "next"),
   ] }, source);
-  assert.ok(actualPath.candidates.some((candidate) => candidate.questionId === "D08" && candidate.occurrenceId === "A2" && candidate.stepId === "edge"));
+  const relation = actualPath.candidates.find((candidate) => candidate.questionId === "D08" && candidate.occurrenceId === "A2" && candidate.stepId === "edge");
+  assert.equal(relation?.priority, 1, "the relation that establishes episode order is a tier-1 clarification");
+  assert.equal(actualPath.next?.questionId, "D08");
   assert.ok(!actualPath.candidates.some((candidate) => candidate.questionId === "D08" && candidate.occurrenceId === "A1"));
 
   const noNextAction = compilePwqe51Route({ phase: "deepening", responses: [
@@ -194,6 +233,60 @@ test("D08 is offered at edge only after an actual same-episode D07 next action",
     answer("typical-next", "D07", "D07.leave", "T1", "next"),
   ] }, source);
   assert.ok(!typicalPath.candidates.some((candidate) => candidate.questionId === "D08"));
+});
+
+test("D09-D11 wait until D08 establishes that the next move belongs to the same episode", async () => {
+  const source = await sourcePromise;
+  const prefix = [
+    answer("root", "D61", "D61.explain", "A1", "first", { basis: "actual_recalled" }),
+    answer("next", "D07", "D07.leave", "A1", "next"),
+  ];
+  const beforeRelation = compilePwqe51Route({ phase: "deepening", responses: prefix }, source);
+  assert.ok(beforeRelation.candidates.some((candidate) => candidate.questionId === "D08"));
+  assert.ok(!beforeRelation.candidates.some((candidate) => ["D09", "D10", "D11"].includes(candidate.questionId)));
+
+  const differentEpisode = compilePwqe51Route({ phase: "deepening", responses: [
+    ...prefix, answer("relation", "D08", "D08.different", "A1", "edge"),
+  ] }, source);
+  assert.ok(!differentEpisode.candidates.some((candidate) => ["D09", "D10", "D11"].includes(candidate.questionId)));
+
+  const sameEpisode = compilePwqe51Route({ phase: "deepening", responses: [
+    ...prefix, answer("relation", "D08", "D08.after", "A1", "edge"),
+  ] }, source);
+  assert.ok(sameEpisode.candidates.some((candidate) => candidate.questionId === "D10"));
+});
+
+test("equal-tier routing prioritizes the authored evidence requirement before stable item ID", async () => {
+  const source = await sourcePromise;
+  const prefix = [
+    answer("request", "M20", "M20.small", "A1", "first", { basis: "actual_recalled" }),
+    answer("response", "M21", "M21.unclear", "A1", "first"),
+  ];
+  const evidencePriority = compilePwqe51Route({ phase: "deepening", responses: prefix }, source);
+  assert.ok(evidencePriority.candidates.some((candidate) => candidate.questionId === "D91"));
+  assert.ok(evidencePriority.candidates.some((candidate) => candidate.questionId === "D17"));
+  assert.equal(evidencePriority.next?.questionId, "D21");
+
+  const stableTie = compilePwqe51Route({ phase: "deepening", responses: [
+    ...prefix, answer("need", "D21", "D21.none", "A1", "first"),
+  ] }, source);
+  assert.ok(stableTie.candidates.some((candidate) => candidate.questionId === "D91"));
+  assert.equal(stableTie.next?.questionId, "D17");
+});
+
+test("respondent focus follows a linked candidate opened by the focused episode", async () => {
+  const source = await sourcePromise;
+  const result = compilePwqe51Route({ phase: "deepening", focusOccurrences: ["EP1"],
+    episodeLinks: [{ occurrenceId: "EP2", linkedFrom: "EP1" }],
+    occurrenceBindings: { "target:known_distance:EP1:first:D42": "EP2" },
+    responses: [
+      answer("root", "M17", "M17.check", "EP1", "first", { basis: "actual_recalled" }),
+      answer("context", "M18", "M18.upset", "EP1", "first"),
+      answer("want", "D43", "D43.information", "EP1", "first"),
+    ],
+  }, source);
+  assert.ok(result.candidates.some((candidate) => candidate.questionId === "D42" && candidate.linkedFrom === "EP1"));
+  assert.equal(result.next?.questionId, "D42");
 });
 
 test("the same item may be administered again at a distinct authored step", async () => {
@@ -267,6 +360,109 @@ test("C10 reference-plan answers open and route the recovery conditions target",
   const target = result.targets.find((candidate) => candidate.targetId === "coverage_recovery_conditions");
   assert.equal(target?.state, "open");
   assert.ok(result.candidates.some((candidate) => candidate.questionId === "D86" && candidate.stepId === "recovery"));
+});
+
+test("selected-step D34 eligibility uses the target's first-step actual low-response flag", async () => {
+  const source = await sourcePromise;
+  const result = compilePwqe51Route({ phase: "deepening", responses: [
+    answer("overload-root", "M10", "M10.words", "overload-episode", undefined, { basis: "actual_recalled" }),
+    answer("low-response", "M11", "M11.stop", "overload-episode", "first"),
+  ] }, source);
+  const target = result.targets.find((candidate) => candidate.targetId === "quiet_or_access" && candidate.occurrenceId === "overload-episode");
+  assert.equal(target?.state, "open");
+  assert.ok(result.candidates.some((candidate) => candidate.questionId === "D34"
+    && candidate.occurrenceId === "overload-episode" && candidate.stepId === "first"));
+});
+
+test("selected-step D23 eligibility uses the coverage target's first-step feeling flag", async () => {
+  const source = await sourcePromise;
+  const result = compilePwqe51Route({ phase: "deepening", responses: [
+    answer("self-expression-root", "D72", "D72.interest", "self-expression-episode", undefined, { basis: "actual_recalled" }),
+    answer("self-stance", "D65", "D65.curious", "self-expression-episode", "self_response"),
+    answer("awareness-choice", "D66", "D66.choice", "self-expression-episode", "first"),
+  ] }, source);
+  const target = result.targets.find((candidate) => candidate.targetId === "coverage_feeling_tolerance"
+    && candidate.occurrenceId === "self-expression-episode");
+  assert.equal(target?.state, "open");
+  assert.ok(result.candidates.some((candidate) => candidate.questionId === "D23"
+    && candidate.occurrenceId === "self-expression-episode" && candidate.stepId === "first"));
+});
+
+test("base target closure uses its target-specific discriminator set", async () => {
+  const source = await sourcePromise;
+  const functionResult = compilePwqe51Route({ phase: "deepening", responses: [
+    answer("function-root", "M02", "M02.rehearse", "function-episode", undefined, { basis: "actual_recalled" }),
+    answer("function-aim", "M03", "M03.exposure", "function-episode"),
+  ] }, source);
+  const functionTarget = functionResult.targets.find((target) => target.targetId === "function" && target.occurrenceId === "function-episode");
+  assert.equal(functionTarget?.state, "supports_interpretation");
+  assert.deepEqual(functionTarget?.resolutionObservationIds, ["function-aim:M03.exposure"]);
+
+  const contactResult = compilePwqe51Route({ phase: "deepening", responses: [
+    answer("contact-root", "M02", "M02.rehearse", "contact-episode", undefined, { basis: "actual_recalled" }),
+    answer("contact-action", "M17", "M17.send", "contact-episode"),
+    answer("contact-context", "M18", "M18.info", "contact-episode"),
+  ] }, source);
+  const contactTarget = contactResult.targets.find((target) => target.targetId === "contact_function" && target.occurrenceId === "contact-episode");
+  assert.equal(contactTarget?.state, "supports_alternative");
+  assert.deepEqual(contactTarget?.resolutionObservationIds, ["contact-context:M18.info"]);
+});
+
+test("recurrence closes only when matching action evidence spans confirmed distinct actual episodes", async () => {
+  const source = await sourcePromise;
+  const responses = [
+    answer("repeat-a-root", "M02", "M02.rehearse", "repeat-a", undefined, { basis: "actual_recalled" }),
+    answer("repeat-a-aim", "M03", "M03.exposure", "repeat-a"),
+    answer("repeat-b-root", "M02", "M02.rehearse", "repeat-b", undefined, { basis: "actual_recalled" }),
+    answer("repeat-b-aim", "M03", "M03.exposure", "repeat-b"),
+  ];
+  const withDistinctness = compilePwqe51Route({ phase: "deepening", responses, distinctPairs: [["repeat-a", "repeat-b"]] }, source);
+  assert.equal(withDistinctness.targets.find((target) => target.targetId === "recurrence" && target.occurrenceId === "repeat-a")?.state, "resolved_descriptively");
+  const withoutDistinctness = compilePwqe51Route({ phase: "deepening", responses }, source);
+  assert.equal(withoutDistinctness.targets.find((target) => target.targetId === "recurrence" && target.occurrenceId === "repeat-a")?.state, "open");
+});
+
+test("comparison targets retain pair identity and close from their own administered answers", async () => {
+  const source = await sourcePromise;
+  const pair = ["comparison-a", "comparison-b"] as const;
+  const comparisonTargetId = "contrast_context:comparison-a:comparison:comparison-a:comparison-b";
+  const result = compilePwqe51Route({ phase: "deepening", distinctPairs: [pair], responses: [
+    answer("comparison-root-a", "M02", "M02.rehearse", pair[0], undefined, { basis: "actual_recalled" }),
+    answer("comparison-root-b", "M02", "M02.rehearse", pair[1], undefined, { basis: "actual_recalled" }),
+    answer("comparison-context", "D56", "D56.same", pair[0], "comparison", { targetIds: [comparisonTargetId] }),
+  ], comparisonIdsByResponseId: { "comparison-context": pair } }, source);
+  const context = result.targets.find((target) => target.targetId === "contrast_context" && target.stepId === "comparison");
+  assert.deepEqual(context?.comparisonIds, pair);
+  assert.equal(context?.state, "resolved_descriptively");
+  assert.ok(result.targets.some((target) => target.targetId === "contrast_goal" && target.stepId === "comparison" && target.comparisonIds?.join("|") === pair.join("|")));
+});
+
+test("target-bound missingness and linked actual episodes preserve their distinct closure paths", async () => {
+  const source = await sourcePromise;
+  const functionMissing = compilePwqe51Route({ phase: "deepening", responses: [
+    answer("missing-root", "M02", "M02.rehearse", "missing-episode", undefined, { basis: "actual_recalled" }),
+    { responseId: "missing-function", questionId: "D02", occurrenceId: "missing-episode", stepId: "first", status: "no_event", targetIds: ["function:missing-episode:first"] },
+  ] }, source);
+  assert.equal(functionMissing.targets.find((target) => target.targetId === "function" && target.occurrenceId === "missing-episode")?.state, "unavailable");
+
+  const linked = compilePwqe51Route({ phase: "deepening", episodeLinks: [{ occurrenceId: "known-child", linkedFrom: "known-parent" }], responses: [
+    answer("known-parent-root", "M02", "M02.rehearse", "known-parent", undefined, { basis: "actual_recalled" }),
+    answer("known-parent-contact", "M17", "M17.send", "known-parent"),
+    answer("known-parent-context", "M18", "M18.matter", "known-parent"),
+    answer("known-child-discriminator", "D42", "D42.practical", "known-child", undefined, { basis: "actual_recalled" }),
+  ] }, source);
+  assert.equal(linked.targets.find((target) => target.targetId === "known_distance" && target.occurrenceId === "known-parent")?.state, "resolved_descriptively");
+});
+
+test("vulnerable meaning remains attached to its authored selected step", async () => {
+  const source = await sourcePromise;
+  const result = compilePwqe51Route({ phase: "deepening", responses: [
+    answer("vulnerable-root", "M02", "M02.rehearse", "vulnerable-episode", undefined, { basis: "actual_recalled" }),
+    answer("vulnerable-meaning", "D20", "D20.need", "vulnerable-episode"),
+  ] }, source);
+  const target = result.targets.find((item) => item.targetId === "vulnerable_meaning" && item.occurrenceId === "vulnerable-episode");
+  assert.equal(target?.stepId, "selected");
+  assert.equal(target?.state, "resolved_descriptively");
 });
 
 test("a corrected root retains eligible dependent evidence at its original timeline position", async () => {

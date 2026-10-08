@@ -17,6 +17,8 @@ export interface Pwqe51CanonicalResponse {
   readonly mode?: Pwqe51SelectionMode;
   /** Root-only recall basis. Child items inherit the episode basis. */
   readonly basis?: "actual_recalled" | "reported_typicality";
+  /** Server-owned presentation lineage; never accepted from a client answer. */
+  readonly targetIds?: readonly string[];
   readonly supersedesResponseId?: string;
 }
 
@@ -28,6 +30,8 @@ export interface Pwqe51RouterInput {
   readonly occurrenceBindings?: Readonly<Record<string, string>>;
   /** Explicit, respondent-confirmed distinctness. Never inferred from IDs. */
   readonly distinctPairs?: readonly (readonly [string, string])[];
+  /** Server-owned parent links for target-directed questions about a new episode. */
+  readonly episodeLinks?: readonly { readonly occurrenceId: string; readonly linkedFrom: string }[];
   /** Server-owned comparison pair keyed by response ID for D56/D57 comparison answers. */
   readonly comparisonIdsByResponseId?: Readonly<Record<string, readonly [string, string]>>;
   readonly requestedTargetIds?: readonly string[];
@@ -58,6 +62,7 @@ export interface Pwqe51Episode extends Pwqe51CoverageEpisode {
   readonly context: string;
   readonly basis: "actual_recalled" | "reported_typicality";
   readonly responseIds: readonly string[];
+  readonly linkedFrom?: string;
 }
 export interface Pwqe51Step {
   readonly id: string;
@@ -98,6 +103,7 @@ export interface Pwqe51RouteCandidate {
   readonly targetIds: readonly string[];
   readonly priority: number;
   readonly stage: "mapping" | "deepening";
+  readonly linkedFrom?: string;
 }
 export interface Pwqe51RouterResult {
   readonly sourceRelease: string;
@@ -231,14 +237,33 @@ function samePair(a: readonly string[] | undefined, b: readonly string[]) { retu
 
 const NEXT_TARGETS = new Set(["access_before_change", "sequence_relation", "goal_change", "next_effect"]);
 const RECOVERY_TARGETS = new Set(["recovery_duration", "recovery_marker", "recovery_sequence"]);
-const SELF_TARGETS = new Set(["self_pressure", "vulnerable_meaning"]);
+const SELF_TARGETS = new Set(["self_pressure"]);
 const RELATIONAL_OPTIONS = new Set(["M18.upset", "M18.matter", "M18.depend", "M19.ease", "M19.inspect", "D43.okay", "D43.notice", "D45.return", "D45.words", "D45.disbelieve"]);
 const PRACTICAL_OPTIONS = new Set(["M03.requirements", "M03.no_aim", "M09.practical", "M09.status", "M16.practical", "M16.loss", "M18.info", "M19.information", "M21.practical", "M25.deadline", "D02.practical", "D03.real", "D16.consequence", "D16.unsafe", "D16.load", "D21.practical", "D43.information", "D46.own", "D46.control", "D48.privacy", "D48.timing", "D64.short", "D64.information"]);
 const PREVENTIVE_OPTIONS = new Set(["M03.exposure", "D02.prevent", "D15.prevent", "D15.before", "D49.worse"]);
 const UNKNOWN_OPTIONS = new Set(["D05.cannot", "D06.unclear", "D11.unclear", "D16.unclear", "D19.none", "D25.unclear", "D29.unclear", "D33.uncertain", "D43.automatic", "D49.unclear", "D57.unclear", "D58.unclear"]);
 const ORDINARY_ACTIONS = new Set(["M02.bounded", "M02.none", "M04.fix", "M04.tell", "M04.continue", "M07.accept", "M08.limit", "M08.no", "M08.reduce", "M11.reduce", "M15.pause", "M15.other", "M17.other", "M17.wait", "M20.ask", "M23.apology", "M23.practical", "M25.stop", "M25.deadline", "D62.ask", "D62.later", "D62.mix"]);
+const BEHAVIOR_GROUPS: readonly (readonly [string, ReadonlySet<string>])[] = [
+  ["rehearsing", new Set(["M02.rehearse", "D54.rehearse"])],
+  ["checking_again", new Set(["M02.recheck", "M04.check"])],
+  ["checking_for_update", new Set(["M15.check", "M17.check"])],
+  ["explaining", new Set(["M04.explain", "D55.explain", "D61.explain"])],
+  ["ending_exchange", new Set(["D07.leave", "D55.end", "D61.leave"])],
+  ["speaking_less", new Set(["D55.quiet", "D61.quiet"])],
+  ["absorbing_activity", new Set(["M11.absorb", "M13.absorb", "M25.absorb", "D07.absorb", "D24.absorb", "D26.absorb"])],
+  ["less_input", new Set(["M11.quiet", "M13.quiet"])],
+  ["request_minimizing", new Set(["M20.small"])],
+  ["downplaying_disclosure", new Set(["D47.light"])],
+  ["sending_again", new Set(["M17.send"])],
+];
+const matchedBehavior = (left: ReadonlySet<string>, right: ReadonlySet<string>): string | undefined => {
+  const same = [...left].filter((option) => right.has(option)).sort()[0];
+  if (same) return same;
+  return BEHAVIOR_GROUPS.find(([, members]) => [...left].some((option) => members.has(option)) && [...right].some((option) => members.has(option)))?.[0];
+};
+const ACTION_CAPTURES = new Set(["first_action", "next_action", "later_action", "during_action", "self_response"]);
 
-function baseTargetOpens(targetId: string, ep: string, step: string, observations: readonly Pwqe51Observation[], focus: ReadonlySet<string>, details: ReadonlySet<string>, flags: ReadonlySet<string>, allOptions: ReadonlySet<string>, signals: ReadonlySet<string>): boolean {
+function baseTargetOpens(targetId: string, ep: string, step: string, observations: readonly Pwqe51Observation[], focus: ReadonlySet<string>, details: ReadonlySet<string>, flags: ReadonlySet<string>, allOptions: ReadonlySet<string>, signals: ReadonlySet<string>, hasDistinctEpisode: boolean): boolean {
   const has = (...ids: string[]) => ids.some((id) => allOptions.has(id));
   const action = observations.some((o) => o.occurrenceId === ep && o.stepId === step && ["first_action", "next_action", "later_action", "during_action", "self_response"].includes(o.capture ?? "") && !["M02.none", "M13.nothing", "M23.none", "D07.nothing", "D07.changed", "D54.none", "D63.none"].includes(o.optionId));
   const focused = focus.has(ep);
@@ -253,7 +278,7 @@ function baseTargetOpens(targetId: string, ep: string, step: string, observation
   if (targetId === "known_distance") return has("M18.upset", "M18.matter", "M19.ease", "M19.inspect", "D44.variable", "D44.strained");
   if (targetId === "reassurance_duration") return has("M19.ease", "D43.okay");
   if (targetId === "care_scope") return focused || details.has("recurrence") || details.has("contrast");
-  if (targetId === "contrast_context") return focused || details.has("contrast");
+  if (targetId === "contrast_context") return focused || details.has("contrast") || hasDistinctEpisode;
   if (targetId === "contrast_goal") return true;
   if (targetId === "cost") return focused || details.has("texture");
   if (targetId === "disclosure_prediction") return has("D47.piece", "D47.light", "D47.wait", "D47.change", "D47.none");
@@ -298,11 +323,14 @@ function buildBaseTargets(input: Pwqe51RouterInput, source: Pwqe51SourcePackage,
   const definitions = source.routingTargets.targets.filter((t) => !coverageIds.has(String(t.id)));
   const focused = new Set(input.focusOccurrences ?? []);
   const details = new Set(input.details ?? []);
+  const hasLineage = active.some((response) => response.targetIds !== undefined);
+  const links = new Map((input.episodeLinks ?? []).map((link) => [link.occurrenceId, link.linkedFrom]));
   for (const episode of episodes.filter((e) => e.actual)) {
     const own = observations.filter((o) => o.occurrenceId === episode.id);
     const optionIds = new Set(own.map((o) => o.optionId));
     const signals = new Set(own.flatMap((o) => o.candidateSignals));
     const ids = new Set([...own.map((o) => o.itemId)]);
+    const hasDistinctEpisode = (input.distinctPairs ?? []).some((pair) => pair.includes(episode.id));
     for (const def of definitions) {
       const targetId = String(def.id);
       const origins = own.filter((o) => strings(def.opens_from_items).includes(o.itemId));
@@ -319,16 +347,28 @@ function buildBaseTargets(input: Pwqe51RouterInput, source: Pwqe51SourcePackage,
         const requested = (input.requestedTargetIds ?? []).includes(id);
         if (!origins.length && !requested) continue;
         const flags = new Set(derivedFlags.flagsByEpisodeStep[pwqe51EpisodeStepKey(episode.id, stepId)] ?? []);
-        if (!requested && !baseTargetOpens(targetId, episode.id, stepId, observations, focused, details, flags, optionIds, signals)) continue;
+        if (!requested && !baseTargetOpens(targetId, episode.id, stepId, observations, focused, details, flags, optionIds, signals, hasDistinctEpisode)) continue;
         const candidateItems = strings(def.candidate_items);
-        let relevantItems = candidateItems.filter((item) => !item.startsWith("REPLAY")).filter((item) => ids.has(item));
+        const linkedEpisodeIds = ["known_distance", "reassurance_duration", "ordinary_contrast", "recurrence", "social_feature"].includes(targetId)
+          ? episodes.filter((child) => child.actual && links.get(child.id) === episode.id).map((child) => child.id) : [];
+        const relevantEpisodeIds = new Set([episode.id, ...linkedEpisodeIds]);
+        const evidenceItemIds = new Set(observations.filter((observation) => relevantEpisodeIds.has(observation.occurrenceId)).map((observation) => observation.itemId));
+        let relevantItems = candidateItems.filter((item) => !item.startsWith("REPLAY")).filter((item) => evidenceItemIds.has(item));
         if (targetId === "function") relevantItems = ["M03", "D02", "D15", "D49"].filter((item) => ids.has(item));
         if (targetId === "prediction" && ids.has("M09")) relevantItems = ["M09"];
         if (targetId === "contact_function" && optionIds.has("M18.info")) relevantItems = ["M18"];
         if (targetId === "need_exposure" && optionIds.has("D17.none")) relevantItems = ["D17"];
         if (targetId === "hidden_want") relevantItems = ["D17", "D20"].filter((item) => ids.has(item));
         if (targetId === "practical_context" && [...optionIds].some((x) => ["M09.practical", "M09.status", "M16.practical", "M16.loss", "M21.practical", "D64.short", "D64.adjust", "D64.information"].includes(x))) relevantItems = ["M09", "M16", "M21", "D64"].filter((item) => ids.has(item));
-        const answers = own.filter((o) => relevantItems.includes(o.itemId) && (!["function", "stand_down", "prediction", "cost", "timing"].includes(targetId) || o.stepId === stepId));
+        const evidenceResponses = active.filter((response) => relevantItems.includes(response.questionId) && relevantEpisodeIds.has(response.occurrenceId)
+          && (!["function", "stand_down", "prediction", "cost", "timing"].includes(targetId) || response.stepId === stepId));
+        const fallbackAttempts = active.filter((response) => candidateItems.includes(response.questionId) && relevantEpisodeIds.has(response.occurrenceId)
+          && (response.stepId === stepId || !["function", "stand_down", "prediction", "cost", "timing"].includes(targetId)));
+        const associatedAttempts = hasLineage ? active.filter((response) => response.targetIds?.includes(id)) : fallbackAttempts;
+        const responseIds = new Set(evidenceResponses.filter(answered).map((response) => response.responseId));
+        const answers = observations.filter((observation) => responseIds.has(observation.responseId)
+          && relevantItems.includes(observation.itemId)
+          && (!["function", "stand_down", "prediction", "cost", "timing"].includes(targetId) || observation.stepId === stepId));
         let state: Pwqe51TargetState = "open";
         let reason = "authored_evidence_gap";
         let resolutionIds = answers.map((o) => o.id);
@@ -346,14 +386,75 @@ function buildBaseTargets(input: Pwqe51RouterInput, source: Pwqe51SourcePackage,
           else if (hasPreventive || hasRelief) { state = "supports_interpretation"; reason = "explicit_discriminating_evidence_recorded_not_a_final_report_claim"; }
           else { state = "resolved_descriptively"; reason = "discriminator_answered_descriptively"; }
         }
-        const attempts = active.filter((r) => candidateItems.includes(r.questionId) && r.occurrenceId === episode.id && r.stepId === stepId).length;
+        const attempts = associatedAttempts.length;
         const max = requested ? Number(def.explicitly_requested_maximum_attempts ?? 1) : Number(def.maximum_attempts ?? 1);
         if (state === "open" && attempts >= max) { state = "unresolved"; reason = "attempt_limit"; }
         if (state === "open" && Number(def.default_priority) === 6 && !requested && !focused.has(episode.id) && details.size === 0) { state = "abandoned_low_value"; reason = "texture_not_requested"; }
-        const missing = [...active].reverse().find((r) => candidateItems.includes(r.questionId) && r.occurrenceId === episode.id && r.stepId === stepId && r.status !== "answered");
+        const missing = [...associatedAttempts].reverse().find((response) => response.status !== "answered");
         if (state === "open" && missing) { state = missing.status === "skip" ? "declined" : missing.status === "no_event" || missing.status === "not_applicable" ? "unavailable" : "unresolved"; reason = `discriminator_${missing.status}`; }
+        if (targetId === "recurrence" && state === "open") {
+          const rootActions = new Set(own.filter((observation) => observation.stepId === "first" && ACTION_CAPTURES.has(observation.capture ?? "")
+            && !["M02.none", "M13.nothing", "M23.none", "D07.nothing", "D07.changed", "D54.none", "D63.none"].includes(observation.optionId)).map((observation) => observation.optionId));
+          const matchedPair = (input.distinctPairs ?? []).find(([left, right]) => {
+            if (left !== episode.id && right !== episode.id) return false;
+            const otherId = left === episode.id ? right : left;
+            const otherActions = new Set(observations.filter((observation) => observation.occurrenceId === otherId && observation.stepId === "first"
+              && ACTION_CAPTURES.has(observation.capture ?? "") && !["M02.none", "M13.nothing", "M23.none", "D07.nothing", "D07.changed", "D54.none", "D63.none"].includes(observation.optionId)).map((observation) => observation.optionId));
+            return Boolean(matchedBehavior(rootActions, otherActions));
+          });
+          if (matchedPair) {
+            const otherId = matchedPair[0] === episode.id ? matchedPair[1] : matchedPair[0];
+            state = "resolved_descriptively";
+            reason = "same_reported_action_in_confirmed_distinct_occurrences_function_scope_separate";
+            resolutionIds = observations.filter((observation) => [episode.id, otherId].includes(observation.occurrenceId) && observation.stepId === "first"
+              && ACTION_CAPTURES.has(observation.capture ?? "")).map((observation) => observation.id);
+          }
+        }
+        const closedBinding = input.closedBindings?.[id];
+        if (closedBinding) {
+          state = closedBinding === "skip" ? "declined" : closedBinding === "unknown" ? "unresolved" : closedBinding === "same" ? "resolved_descriptively" : "unavailable";
+          reason = `occurrence_binding_${closedBinding}`;
+          resolutionIds = [];
+        }
+        if (input.rejectedTargetIds?.includes(id)) { state = "unresolved"; reason = "respondent_rejected_interpretation"; }
         output.push({ id, targetId, occurrenceId: episode.id, stepId, state, reason, sourceObservationIds: [...new Set(origins.map((o) => o.id))], resolutionObservationIds: resolutionIds, candidateItems: state === "open" ? candidateItems : [], priority: Number(def.default_priority ?? 4) });
       }
+    }
+  }
+  return output;
+}
+
+function buildComparisonTargets(input: Pwqe51RouterInput, active: readonly Normalized[], observations: readonly Pwqe51Observation[], episodes: readonly Pwqe51Episode[]): Pwqe51TargetResolution[] {
+  const output: Pwqe51TargetResolution[] = [];
+  const actual = new Set(episodes.filter((episode) => episode.actual).map((episode) => episode.id));
+  const hasLineage = active.some((response) => response.targetIds !== undefined);
+  const actionIds = (episodeId: string) => observations.filter((observation) => observation.occurrenceId === episodeId && observation.stepId === "first"
+    && ACTION_CAPTURES.has(observation.capture ?? "") && !["M02.none", "M13.nothing", "M23.none", "D07.nothing", "D07.changed", "D54.none", "D63.none"].includes(observation.optionId));
+  for (const pair of input.distinctPairs ?? []) {
+    const [first, second] = pair;
+    if (!actual.has(first) || !actual.has(second) || first === second) continue;
+    const firstActions = actionIds(first);
+    const secondActions = actionIds(second);
+    if (!firstActions.length && !secondActions.length) continue;
+    const matched = Boolean(matchedBehavior(new Set(firstActions.map((o) => o.optionId)), new Set(secondActions.map((o) => o.optionId))));
+    const comparisons: readonly { targetId: string; itemId: string; priority: number; required: boolean }[] = [
+      { targetId: "contrast_context", itemId: "D56", priority: 5, required: true },
+      { targetId: "contrast_goal", itemId: "D57", priority: 3, required: matched },
+    ];
+    for (const comparison of comparisons) {
+      if (!comparison.required) continue;
+      const id = keyFor(comparison.targetId, first, "comparison", pair);
+      const fallback = active.filter((response) => response.questionId === comparison.itemId && response.occurrenceId === first
+        && samePair(input.comparisonIdsByResponseId?.[response.responseId], pair));
+      const attempts = hasLineage ? active.filter((response) => response.targetIds?.includes(id)) : fallback;
+      const last = attempts.at(-1);
+      const resolutionIds = last && answered(last) ? observations.filter((observation) => observation.responseId === last.responseId).map((o) => o.id) : [];
+      const state: Pwqe51TargetState = !last ? "open" : answered(last) ? "resolved_descriptively"
+        : last.status === "skip" ? "declined" : last.status === "no_event" || last.status === "not_applicable" ? "unavailable" : "unresolved";
+      output.push({ id, targetId: comparison.targetId, occurrenceId: first, stepId: "comparison", comparisonIds: pair,
+        state, reason: !last ? "authored_evidence_gap" : answered(last) ? "comparison_recorded" : `comparison_${last.status}`,
+        sourceObservationIds: [...new Set([...firstActions, ...secondActions].map((o) => o.id))].sort(),
+        resolutionObservationIds: resolutionIds, candidateItems: state === "open" ? [comparison.itemId] : [], priority: comparison.priority });
     }
   }
   return output;
@@ -481,7 +582,7 @@ function sequenceEdges(active: readonly Normalized[], observations: readonly Pwq
   return edges;
 }
 
-function candidateAllowed(q: Pwqe51Question, episodeId: string, active: readonly Normalized[], source: Pwqe51SourcePackage, opted: Set<string>, derivedFlags: ReturnType<typeof derivePwqe51Flags>, comparisonIds?: readonly [string, string]): boolean {
+function candidateAllowed(q: Pwqe51Question, episodeId: string, active: readonly Normalized[], source: Pwqe51SourcePackage, opted: Set<string>, derivedFlags: ReturnType<typeof derivePwqe51Flags>, comparisonIds?: readonly [string, string], targetStep?: string): boolean {
   const own = active.filter((r) => r.occurrenceId === episodeId);
   if (own.some((r) => r.questionId === q.id && r.stepId === q.step_binding)) return false;
   if (q.eligibility.topic_opt_in && !opted.has(q.eligibility.topic_opt_in)) return false;
@@ -492,17 +593,34 @@ function candidateAllowed(q: Pwqe51Question, episodeId: string, active: readonly
   if (strings(gate.required_parent_options ?? specific.required_parent_options).some((x) => !parents.includes(x))) return false;
   if (strings(gate.exclude_parent_options ?? specific.exclude_parent_options).some((x) => parents.includes(x))) return false;
   if (q.eligibility.actual_episode_required && !own.some((r) => r.basis === "actual_recalled")) return false;
+  // A later move's effect or goal is not interpretable until D08 establishes
+  // whether it followed the first response or belongs to a separate event.
+  // Keep this same-occurrence dependency aligned with the D09-D11 runtime rule.
+  if (["D09", "D10", "D11"].includes(q.id)) {
+    const relation = own.find((r) => r.questionId === "D08" && answered(r));
+    if (!relation || relation.selectedOptionIds.includes("D08.different")) return false;
+  }
   const requiredFlags = strings(gate.required_flags ?? specific.required_flags);
   // These sequence questions are administered at a future step, while their
   // eligibility is established by an earlier step. Check the authored flag
   // at its evidence step without moving the administration off its authored
   // step binding: D07 follows a qualifying first move; D08 follows an actual
   // next move. Other items remain bound to their own step's flags.
-  const evidenceStep = q.id === "D07" ? "first" : q.id === "D08" ? "next" : q.step_binding;
+  const selectedStep = q.step_binding === "selected" && targetStep && !["comparison", "trigger_comparison"].includes(targetStep)
+    ? targetStep : undefined;
+  const evidenceStep = q.id === "D07" ? "first" : q.id === "D08" ? "next" : selectedStep ?? q.step_binding;
   const flags = new Set(derivedFlags.flagsByEpisodeStep[pwqe51EpisodeStepKey(episodeId, evidenceStep)] ?? []);
   if (comparisonIds) for (const flag of derivedFlags.comparisonFlagsByPair[pwqe51ComparisonPairKey(comparisonIds[0], comparisonIds[1])] ?? []) flags.add(flag);
   if (requiredFlags.some((required) => !flags.has(required))) return false;
   return true;
+}
+
+function candidateStep(questionId: string, authoredBinding: string, targetStep?: string, newEpisode = false): string {
+  if (newEpisode) return "first";
+  if (["M05", "M06", "D15", "D22"].includes(questionId)) return "self_response";
+  if (["D07", "D09", "D10", "D11"].includes(questionId)) return "next";
+  if (authoredBinding === "selected") return targetStep && !["comparison", "trigger_comparison"].includes(targetStep) ? targetStep : "first";
+  return authoredBinding;
 }
 
 function makeCandidates(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, active: readonly Normalized[], targets: readonly Pwqe51TargetResolution[], episodes: readonly Pwqe51Episode[], observations: readonly Pwqe51Observation[], derivedFlags: ReturnType<typeof derivePwqe51Flags>) {
@@ -527,16 +645,17 @@ function makeCandidates(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, a
       const bindingKey = `coverage:${q.id}`;
       const parentEpisode = parentRows.at(-1)?.occurrenceId;
       const boundEpisode = parentEpisode ?? input.occurrenceBindings?.[bindingKey];
+      const stepId = candidateStep(q.id, q.step_binding);
       if (boundEpisode) {
         // A root Mapping item creates its actual/typicality episode. Before it
         // is answered there cannot yet be response-derived basis/flags, so do
         // not apply post-answer eligibility to this first administration.
         // Parent-bound items still require their normal answer, topic, option,
         // basis, and derived-flag guards.
-        if (parents.length > 0 && !candidateAllowed(q, boundEpisode, active, source, topics, derivedFlags)) continue;
-        candidates.push({ questionId: q.id, occurrenceId: boundEpisode, stepId: q.step_binding, targetIds: [`coverage:${q.id}`], priority: parents.length ? 1 : 2, stage: "mapping" });
+        if (parents.length > 0 && !candidateAllowed(q, boundEpisode, active, source, topics, derivedFlags, undefined, "first")) continue;
+        candidates.push({ questionId: q.id, occurrenceId: boundEpisode, stepId, targetIds: [`coverage:${q.id}`], priority: parents.length ? 1 : 2, stage: "mapping" });
       } else if (!parents.length) {
-        candidates.push({ questionId: q.id, occurrenceId: null, bindingKey, bindingRequest: "new_actual_occurrence", stepId: q.step_binding, targetIds: [`coverage:${q.id}`], priority: 2, stage: "mapping" });
+        candidates.push({ questionId: q.id, occurrenceId: null, bindingKey, bindingRequest: "new_actual_occurrence", stepId, targetIds: [`coverage:${q.id}`], priority: 2, stage: "mapping" });
       }
     }
   } else {
@@ -547,46 +666,115 @@ function makeCandidates(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, a
       // confirmation has an end-to-end trusted session/API implementation.
       for (const itemId of target.candidateItems.filter((id) => !id.startsWith("REPLAY"))) {
         const q = source.questionBank.items.find((item) => item.id === itemId);
-        if (!q || !candidateAllowed(q, target.occurrenceId, active, source, new Set(input.optedInTopics ?? []), derivedFlags, target.comparisonIds)) continue;
-        candidates.push({ questionId: q.id, occurrenceId: target.occurrenceId, stepId: q.step_binding, targetIds: [target.id], priority: target.priority, stage: "deepening" });
+        if (!q) continue;
+        // The sequence relation is a short identity/order clarification. The
+        // active routing contract places it in tier 1 so later effect questions
+        // cannot outrank the answer needed to interpret the preceding move.
+        const candidatePriority = itemId === "D08" ? 1 : target.priority;
+        const targetEpisode = episodes.find((episode) => episode.id === target.occurrenceId);
+        const linkedRoot = !target.comparisonIds && !["bound", "comparison"].includes(q.episode_family) && q.eligibility.requires_answered.length === 0
+          && Boolean(targetEpisode && targetEpisode.family !== q.episode_family);
+        if (linkedRoot) {
+          const bindingKey = `target:${target.id}:${itemId}`;
+          const occurrenceId = input.occurrenceBindings?.[bindingKey];
+          candidates.push({ questionId: q.id, occurrenceId: occurrenceId ?? null, ...(occurrenceId ? {} : { bindingKey, bindingRequest: "new_actual_occurrence" as const }), linkedFrom: target.occurrenceId,
+            stepId: candidateStep(q.id, q.step_binding, target.stepId, !occurrenceId), targetIds: [target.id], priority: candidatePriority, stage: "deepening" });
+          continue;
+        }
+        if (!candidateAllowed(q, target.occurrenceId, active, source, new Set(input.optedInTopics ?? []), derivedFlags, target.comparisonIds, target.stepId)) continue;
+        candidates.push({ questionId: q.id, occurrenceId: target.occurrenceId, stepId: candidateStep(q.id, q.step_binding, target.stepId), targetIds: [target.id], priority: candidatePriority, stage: "deepening" });
       }
     }
     for (const entry of source.routingTargets.entry_points) {
       if (!(input.optedInTopics ?? []).includes(String(entry.id))) continue;
-      const itemId = String(entry.first_item);
-      const q = source.questionBank.items.find((item) => item.id === itemId);
-      if (!q) continue;
-      const bindingKey = `entry:${entry.id}`;
-      const bound = input.occurrenceBindings?.[bindingKey];
-      const occurrenceId = bound ?? (q.eligibility.requires_answered.length ? active.find((r) => answered(r))?.occurrenceId : undefined);
-      if (occurrenceId) {
+    const itemId = String(entry.first_item);
+    const q = source.questionBank.items.find((item) => item.id === itemId);
+    if (!q) continue;
+    const bindingKey = `entry:${entry.id}`;
+    const bound = input.occurrenceBindings?.[bindingKey];
+      const focused = new Set(input.focusOccurrences ?? []);
+      const eligibleEpisodes = episodes.filter((episode) => episode.actual
+        && (q.episode_family === "bound" || q.episode_family === episode.family))
+        .sort((left, right) => Number(focused.has(right.id)) - Number(focused.has(left.id)) || left.id.localeCompare(right.id));
+    const parentEpisode = q.eligibility.requires_answered.length
+      ? [...active].reverse().find((response) => answered(response) && q.eligibility.requires_answered.includes(response.questionId))?.occurrenceId
+      : undefined;
+    const occurrenceId = bound ?? (q.episode_family === "bound" ? eligibleEpisodes[0]?.id : parentEpisode);
+    if (active.some((response) => response.questionId === itemId && response.targetIds?.includes(`entry:${entry.id}`))) continue;
+    if (occurrenceId) {
         // An entry root establishes its own episode basis. Its server-bound
         // occurrence is necessarily unanswered at first, so actual-basis and
         // response-derived flag guards cannot be evaluated until the response
         // is recorded. The explicit topic opt-in above remains mandatory.
         const unansweredRoot = q.eligibility.requires_answered.length === 0
           && !active.some((response) => response.occurrenceId === occurrenceId);
-        if (unansweredRoot || candidateAllowed(q, occurrenceId, active, source, new Set(input.optedInTopics ?? []), derivedFlags)) candidates.push({ questionId: itemId, occurrenceId, stepId: "first", targetIds: [`entry:${entry.id}`], priority: 4, stage: "deepening" });
-      } else if (!q.eligibility.requires_answered.length) candidates.push({ questionId: itemId, occurrenceId: null, bindingKey, bindingRequest: "new_actual_occurrence", stepId: "first", targetIds: [`entry:${entry.id}`], priority: 4, stage: "deepening" });
+        if (unansweredRoot || candidateAllowed(q, occurrenceId, active, source, new Set(input.optedInTopics ?? []), derivedFlags, undefined, "first")) candidates.push({ questionId: itemId, occurrenceId, stepId: "first", targetIds: [`entry:${entry.id}`], priority: 4, stage: "deepening" });
+      } else if (!q.eligibility.requires_answered.length && q.episode_family !== "bound") candidates.push({ questionId: itemId, occurrenceId: null, bindingKey, bindingRequest: "new_actual_occurrence", stepId: "first", targetIds: [`entry:${entry.id}`], priority: 4, stage: "deepening" });
     }
   }
   const contextLast = new Map<string, number>();
-  active.forEach((response, index) => contextLast.set(source.questionBank.items.find((q) => q.id === response.questionId)?.context ?? "", index));
+  const episodeById = new Map(episodes.map((episode) => [episode.id, episode]));
+  active.forEach((response, index) => contextLast.set(episodeById.get(response.occurrenceId)?.context
+    ?? source.questionBank.items.find((q) => q.id === response.questionId)?.context ?? "", index));
   const focused = new Set(input.focusOccurrences ?? []);
+  const optedTopics = new Set(input.optedInTopics ?? []);
+  const explicitTargetIds = new Set(input.requestedTargetIds ?? []);
   const questions = new Map(source.questionBank.items.map((q) => [q.id, q]));
+  const targetById = new Map(targets.map((target) => [target.id, target]));
+  const responsePosition = new Map(active.map((response, index) => [response.responseId, index + 1]));
+  const observationPosition = new Map(observations.map((observation) => [observation.id,
+    responsePosition.get(observation.responseId) ?? Number.MAX_SAFE_INTEGER]));
+  const recentOptionalContexts = active.flatMap((response) => {
+    const question = questions.get(response.questionId);
+    if (question?.stage !== "deepening") return [];
+    const context = episodeById.get(response.occurrenceId)?.context ?? question.context;
+    return context ? [context] : [];
+  }).slice(-4);
+  const repeatedOptionalContext = recentOptionalContexts.length === 4
+    && recentOptionalContexts.every((context) => context === recentOptionalContexts[0])
+    ? recentOptionalContexts[0] : undefined;
+  const shortBlockItems = new Set(["D08", "D09", "D10", "D11", "M03", "M05", "M06", "M09", "M11", "M12", "M18", "M19", "M21", "M27", "M29", "M30"]);
+  const isFocusedCandidate = (candidate: Pwqe51RouteCandidate) => (candidate.occurrenceId !== null && focused.has(candidate.occurrenceId))
+    || Boolean(candidate.linkedFrom && focused.has(candidate.linkedFrom))
+    || candidate.targetIds.some((targetId) => explicitTargetIds.has(targetId)
+      || [...optedTopics].some((topic) => targetId === `entry:${topic}`));
+  const candidateContext = (candidate: Pwqe51RouteCandidate) => candidate.occurrenceId
+    ? episodeById.get(candidate.occurrenceId)?.context ?? questions.get(candidate.questionId)!.context
+    : questions.get(candidate.questionId)!.context;
+  const candidateEvidenceRequirements = (candidate: Pwqe51RouteCandidate) => candidate.questionId === "D21"
+    && candidate.targetIds.some((targetId) => targetId.startsWith("need_exposure:")) ? 2 : 1;
+  const candidateDecisionBurden = (candidate: Pwqe51RouteCandidate) => candidate.questionId === "D36" ? 2 : 1;
+  const candidateOpenedOrder = (candidate: Pwqe51RouteCandidate) => Math.min(...candidate.targetIds.flatMap((targetId) =>
+    (targetById.get(targetId)?.sourceObservationIds ?? []).map((observationId) =>
+      observationPosition.get(observationId) ?? Number.MAX_SAFE_INTEGER)),
+  ...candidate.targetIds.filter((targetId) => targetId.startsWith("coverage:") || targetId.startsWith("entry:")).map(() => 0));
+  const contextSaturationPenalty = (candidate: Pwqe51RouteCandidate) => {
+    const context = candidateContext(candidate);
+    const shortBlock = candidate.priority === 1 || shortBlockItems.has(candidate.questionId);
+    return repeatedOptionalContext && context === repeatedOptionalContext && !isFocusedCandidate(candidate) && !shortBlock
+      && candidates.some((peer) => peer !== candidate && peer.priority === candidate.priority && candidateContext(peer) !== repeatedOptionalContext)
+      ? 1 : 0;
+  };
   return candidates.sort((a, b) => {
-    const aq = questions.get(a.questionId)!; const bq = questions.get(b.questionId)!;
-    const af = a.occurrenceId !== null && focused.has(a.occurrenceId); const bf = b.occurrenceId !== null && focused.has(b.occurrenceId);
-    const ar = aq.eligibility.requires_answered.length; const br = bq.eligibility.requires_answered.length;
-    const ad = aq.selection.mode === "partial_order" ? Number(aq.selection.max_select ?? 1) + 1 : aq.selection.mode === "single" ? 1 : 3;
-    const bd = bq.selection.mode === "partial_order" ? Number(bq.selection.max_select ?? 1) + 1 : bq.selection.mode === "single" ? 1 : 3;
-    return a.priority - b.priority || Number(bf) - Number(af) || br - ar || ad - bd
-      || (contextLast.get(aq.context) ?? -1) - (contextLast.get(bq.context) ?? -1)
-      || a.questionId.localeCompare(b.questionId) || (a.occurrenceId ?? "").localeCompare(b.occurrenceId ?? "") || a.stepId.localeCompare(b.stepId);
+    const af = isFocusedCandidate(a); const bf = isFocusedCandidate(b);
+    return a.priority - b.priority || Number(bf) - Number(af)
+      || contextSaturationPenalty(a) - contextSaturationPenalty(b)
+      || candidateEvidenceRequirements(b) - candidateEvidenceRequirements(a)
+      || candidateDecisionBurden(a) - candidateDecisionBurden(b)
+      || (contextLast.get(candidateContext(a)) ?? -1) - (contextLast.get(candidateContext(b)) ?? -1)
+      || candidateOpenedOrder(a) - candidateOpenedOrder(b)
+      || a.questionId.localeCompare(b.questionId) || (a.occurrenceId ?? "").localeCompare(b.occurrenceId ?? "") || a.stepId.localeCompare(b.stepId)
+      || [...a.targetIds].sort().join("|").localeCompare([...b.targetIds].sort().join("|"));
   });
 }
 
 export function compilePwqe51Route(input: Pwqe51RouterInput, source: Pwqe51SourcePackage): Pwqe51RouterResult {
+  const normalizedPairs = [...new Map((input.distinctPairs ?? []).map((pair) => {
+    if (!Array.isArray(pair) || pair.length !== 2) throw new Error("Confirmed distinctness requires exactly two episode IDs.");
+    const canonical = [...pair].sort() as [string, string];
+    return [canonical.join("\u0000"), canonical] as const;
+  })).values()].sort((left, right) => `${left[0]}\u0000${left[1]}`.localeCompare(`${right[0]}\u0000${right[1]}`));
+  input = { ...input, distinctPairs: normalizedPairs };
   const normalized = normalize(input, source);
   const active = normalized.active;
   const { observations, missingness } = responseLeaves(active, source);
@@ -598,12 +786,23 @@ export function compilePwqe51Route(input: Pwqe51RouterInput, source: Pwqe51Sourc
     // Such a response marks binding unresolved; it does not confirm or create another episode.
     void r;
   }
+  const linkedFromByOccurrence = new Map<string, string>();
+  for (const link of input.episodeLinks ?? []) {
+    if (!link.occurrenceId?.trim() || !link.linkedFrom?.trim() || link.occurrenceId === link.linkedFrom || linkedFromByOccurrence.has(link.occurrenceId)) {
+      throw new Error("Episode parent links require unique distinct server-bound occurrence IDs.");
+    }
+    linkedFromByOccurrence.set(link.occurrenceId, link.linkedFrom);
+  }
   const episodes: Pwqe51Episode[] = [...roots.entries()].map(([id, root]) => {
     const q = source.questionBank.items.find((item) => item.id === root.questionId)!;
     const basis = root.basis as "actual_recalled" | "reported_typicality";
-    return { id, family: q.episode_family, context: q.context, basis, actual: basis === "actual_recalled", distinctFrom: [...(distinct.get(id) ?? [])].sort(), responseIds: active.filter((r) => r.occurrenceId === id).map((r) => r.responseId) };
+    const linkedFrom = linkedFromByOccurrence.get(id);
+    return { id, family: q.episode_family, context: q.context, basis, actual: basis === "actual_recalled", distinctFrom: [...(distinct.get(id) ?? [])].sort(), responseIds: active.filter((r) => r.occurrenceId === id).map((r) => r.responseId), ...(linkedFrom ? { linkedFrom } : {}) };
   }).sort((a, b) => a.id.localeCompare(b.id));
   const actualEpisodeIds = new Set(episodes.filter((episode) => episode.actual).map((episode) => episode.id));
+  for (const link of input.episodeLinks ?? []) {
+    if (actualEpisodeIds.has(link.occurrenceId) && !actualEpisodeIds.has(link.linkedFrom)) throw new Error("Episode parent link requires an existing actual source episode.");
+  }
   for (const pair of input.distinctPairs ?? []) {
     if (pair.length !== 2 || pair[0] === pair[1] || !actualEpisodeIds.has(pair[0]) || !actualEpisodeIds.has(pair[1])) {
       throw new Error("Confirmed distinctness requires two different, existing actual episodes.");
@@ -642,7 +841,7 @@ export function compilePwqe51Route(input: Pwqe51RouterInput, source: Pwqe51Sourc
     currentContextFacts: input.contextFacts,
     enabledTopics: input.optedInTopics ?? [],
   });
-  const targets = [...buildBaseTargets(input, source, active, observations, episodes, derivedFlags), ...coverageTargets(input, source, active, observations, episodes, derivedFlags)].sort((a, b) => a.id.localeCompare(b.id));
+  const targets = [...buildComparisonTargets(input, active, observations, episodes), ...buildBaseTargets(input, source, active, observations, episodes, derivedFlags), ...coverageTargets(input, source, active, observations, episodes, derivedFlags)].sort((a, b) => a.id.localeCompare(b.id));
   const sequence = sequenceEdges(active, observations);
   const administrationCount = new Set(normalized.all.map((r) => `${r.questionId}\u0000${r.occurrenceId}\u0000${r.stepId}`)).size;
   const totalLimit = Math.min(input.totalLimit ?? 56, 56);

@@ -15,6 +15,7 @@
     "reports:preflight": "tsx scripts/report-preflight/index.ts",
     "reports:retry": "tsx scripts/report-retry/index.ts",
     "pwqe51:parity": "tsx scripts/pwqe51-parity/index.ts",
+    "pwqe51:parity:strict": "tsx scripts/pwqe51-parity/index.ts --strict",
     "postinstall": "prisma generate"
   },
   "dependencies": {

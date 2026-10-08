@@ -697,6 +697,17 @@
       "focus_roots": [
         "M02"
       ],
+      "episode_bindings": [
+        {
+          "item_id": "M02",
+          "answer_index": 1,
+          "source_item_id": "M02",
+          "source_answer_index": 0,
+          "outcome": "confirm",
+          "relation": "different",
+          "justification": "This plan explicitly examines continuity after two distinct reviews."
+        }
+      ],
       "answers": {
         "M02": [
           {
@@ -1336,6 +1347,18 @@
       },
       "focus_roots": [
         "M17"
+      ],
+      "episode_bindings": [
+        {
+          "item_id": "D42",
+          "answer_index": 0,
+          "source_item_id": "M17",
+          "source_answer_index": 0,
+          "outcome": "confirm",
+          "relation": "different",
+          "person_id": "P1",
+          "justification": "D42 asks about a different wait with a known reason for the same close person."
+        }
       ],
       "answers": {
         "M17": [

@@ -1,0 +1,688 @@
+{
+  "format": "pwqe51-baseline-target-discrepancy-ledger-v1",
+  "baseline_commit": "3f8cfdd6bdbfbff3ea56e8f5a73ffbb888fa724d",
+  "baseline_artifact": ".tmp/ts-parity-before.json",
+  "per_step_evidence_artifact": ".tmp/pwqe51-current.json",
+  "current_artifact": ".tmp/pwqe51-audit-final5.json",
+  "route_selection_ledger": "scripts/pwqe51-parity/ROUTE_SELECTION_DISCREPANCY_LEDGER.json",
+  "latest_audit_summary": {
+    "shared_route_selection_snapshots_compared": 610,
+    "shared_prefix_selection_mismatches": 0,
+    "first_uncomparable_route_choices": 25,
+    "conditional_route_choice_differences": 2,
+    "strict_status": "incomplete_unsupported_coverage",
+    "strict_unexplained_difference_count": 0
+  },
+  "current_result": {
+    "baseline_instances": 58,
+    "corrected": 47,
+    "approved_representation_exceptions": 11,
+    "unexplained": 0,
+    "current_target_state_mismatches": 11
+  },
+  "ordinal_note": "Ordinals are 0-based replay selection_steps. Event evidence records the first meaningful Python snapshot event for the target row: materialization/open/close or the input event that makes a comparison or recurrence decision possible.",
+  "disposition_definitions": {
+    "fixed_with_evidence": "Baseline target-key/state mismatch is absent in the current artifact and the implementation/source behavior supports the correction.",
+    "approved_representation_exception": "Exact key is reviewed and source-gated in scripts/pwqe51-parity/EXCEPTIONS.json; Python entry pseudo-target has no TS target-state counterpart because authoritative entry_points are outside the target ontology."
+  },
+  "cause_classification": {
+    "missing_binding_closure": ["missing input binding", "lifecycle/state-transition difference", "genuine implementation defect"],
+    "entry_ontology": ["target identity mismatch", "intentional contract difference"],
+    "vulnerable_step_identity": ["target identity mismatch", "genuine implementation defect"],
+    "comparison_target_builder": ["target identity mismatch", "genuine implementation defect"],
+    "missingness_lineage": ["missing input binding", "lifecycle/state-transition difference", "genuine implementation defect"],
+    "recurrence": ["missing input binding", "lifecycle/state-transition difference", "genuine implementation defect"],
+    "contrast_opening": ["missing input binding", "lifecycle/state-transition difference", "genuine implementation defect"],
+    "linked_child_resolution": ["missing input binding", "lifecycle/state-transition difference", "genuine implementation defect"]
+  },
+  "not_observed_as_primary_causes": ["replay-driver artifact", "ordering issue"],
+  "evidence_sources": {
+    "baseline": ".tmp/ts-parity-before.json (58 baseline target_state_mismatches)",
+    "per_step": ".tmp/pwqe51-current.json (Python selection_steps.post_target_changes)",
+    "current": ".tmp/pwqe51-audit-final3.json (full 25-plan audit; 11 remaining, all exact entry exception keys)",
+    "python_targets": "specs/patternwork/question-engine-v5.1/assessment_runtime/implementation/patternwork_router/targets.py",
+    "typescript_router": "lib/server/assessment/pwqe51-router.ts",
+    "authoritative_targets": "specs/patternwork/question-engine-v5.1/assessment_runtime/architecture/routing_targets.json",
+    "approved_exceptions": "scripts/pwqe51-parity/EXCEPTIONS.json"
+  },
+  "rows": [
+    {
+      "plan": "P02",
+      "target_key": "contrast_context|EP0015|first",
+      "first_divergence": {
+        "ordinal": 28,
+        "event": "bind no_event after D61"
+      },
+      "cause_class": "missing_binding_closure",
+      "evidence": "Python post_target_changes records closed/unavailable on the bind; current TS receives the prefix closedBindings and the target mismatch is gone.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "P03",
+      "target_key": "contrast_context|EP0008|first",
+      "first_divergence": {
+        "ordinal": 22,
+        "event": "bind no_event after M17"
+      },
+      "cause_class": "missing_binding_closure",
+      "evidence": "Python post_target_changes records closed/unavailable on the bind; current TS receives the prefix closedBindings and the target mismatch is gone.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "P06",
+      "target_key": "recurrence|EP0002|first",
+      "first_divergence": {
+        "ordinal": 25,
+        "event": "bind no_event after M02"
+      },
+      "cause_class": "missing_binding_closure",
+      "evidence": "Python post_target_changes records closed/unavailable on the bind; current TS receives the prefix closedBindings and the target mismatch is gone.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C01",
+      "target_key": "care_scope|EP0009|first",
+      "first_divergence": {
+        "ordinal": 28,
+        "event": "bind no_event after M22"
+      },
+      "cause_class": "missing_binding_closure",
+      "evidence": "Python post_target_changes records closed/unavailable on the bind; current TS receives the prefix closedBindings and the target mismatch is gone.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C02",
+      "target_key": "care_scope|EP0009|first",
+      "first_divergence": {
+        "ordinal": 28,
+        "event": "bind no_event after M22"
+      },
+      "cause_class": "missing_binding_closure",
+      "evidence": "Python post_target_changes records closed/unavailable on the bind; current TS receives the prefix closedBindings and the target mismatch is gone.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C02",
+      "target_key": "contrast_context|EP0009|first",
+      "first_divergence": {
+        "ordinal": 29,
+        "event": "bind no_event after M20"
+      },
+      "cause_class": "missing_binding_closure",
+      "evidence": "Python post_target_changes records closed/unavailable on the bind; current TS receives the prefix closedBindings and the target mismatch is gone.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C04",
+      "target_key": "contrast_context|EP0015|first",
+      "first_divergence": {
+        "ordinal": 21,
+        "event": "bind no_event after D72"
+      },
+      "cause_class": "missing_binding_closure",
+      "evidence": "Python post_target_changes records closed/unavailable on the bind; current TS receives the prefix closedBindings and the target mismatch is gone.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C05",
+      "target_key": "contrast_context|EP0003|first",
+      "first_divergence": {
+        "ordinal": 25,
+        "event": "bind no_event after M04"
+      },
+      "cause_class": "missing_binding_closure",
+      "evidence": "Python post_target_changes records closed/unavailable on the bind; current TS receives the prefix closedBindings and the target mismatch is gone.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C08",
+      "target_key": "recurrence|EP0015|first",
+      "first_divergence": {
+        "ordinal": 25,
+        "event": "bind no_event after D61"
+      },
+      "cause_class": "missing_binding_closure",
+      "evidence": "Python post_target_changes records closed/unavailable on the bind; current TS receives the prefix closedBindings and the target mismatch is gone.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C10",
+      "target_key": "contrast_context|EP0006|first",
+      "first_divergence": {
+        "ordinal": 32,
+        "event": "bind no_event after M10"
+      },
+      "cause_class": "missing_binding_closure",
+      "evidence": "Python post_target_changes records closed/unavailable on the bind; current TS receives the prefix closedBindings and the target mismatch is gone.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C12",
+      "target_key": "contrast_context|EP0008|first",
+      "first_divergence": {
+        "ordinal": 22,
+        "event": "bind no_event after M17"
+      },
+      "cause_class": "missing_binding_closure",
+      "evidence": "Python post_target_changes records closed/unavailable on the bind; current TS receives the prefix closedBindings and the target mismatch is gone.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C14",
+      "target_key": "contrast_context|EP0014|first",
+      "first_divergence": {
+        "ordinal": 18,
+        "event": "bind no_event after M24"
+      },
+      "cause_class": "missing_binding_closure",
+      "evidence": "Python post_target_changes records closed/unavailable on the bind; current TS receives the prefix closedBindings and the target mismatch is gone.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "P02",
+      "target_key": "entry:conflict|new:conflict|first",
+      "first_divergence": {
+        "ordinal": 15,
+        "event": "entry response D61 answered; Python pseudo-target is materialized"
+      },
+      "cause_class": "entry_ontology",
+      "evidence": "Python emits entry:<topic> target-resolution rows; authoritative routing_targets.json keeps entry_points separate from target definitions; TS represents opted-in entries as direct candidates. Exact key is listed in scripts/pwqe51-parity/EXCEPTIONS.json.",
+      "disposition": "approved_representation_exception"
+    },
+    {
+      "plan": "P06",
+      "target_key": "entry:conflict|new:conflict|first",
+      "first_divergence": {
+        "ordinal": 18,
+        "event": "entry response D61 answered; Python pseudo-target is materialized"
+      },
+      "cause_class": "entry_ontology",
+      "evidence": "Python emits entry:<topic> target-resolution rows; authoritative routing_targets.json keeps entry_points separate from target definitions; TS represents opted-in entries as direct candidates. Exact key is listed in scripts/pwqe51-parity/EXCEPTIONS.json.",
+      "disposition": "approved_representation_exception"
+    },
+    {
+      "plan": "P08",
+      "target_key": "entry:disclosure|new:disclosure|first",
+      "first_divergence": {
+        "ordinal": 18,
+        "event": "entry response D47 answered; Python pseudo-target is materialized"
+      },
+      "cause_class": "entry_ontology",
+      "evidence": "Python emits entry:<topic> target-resolution rows; authoritative routing_targets.json keeps entry_points separate from target definitions; TS represents opted-in entries as direct candidates. Exact key is listed in scripts/pwqe51-parity/EXCEPTIONS.json.",
+      "disposition": "approved_representation_exception"
+    },
+    {
+      "plan": "P09",
+      "target_key": "entry:conflict|new:conflict|first",
+      "first_divergence": {
+        "ordinal": 15,
+        "event": "entry response D61 answered; Python pseudo-target is materialized"
+      },
+      "cause_class": "entry_ontology",
+      "evidence": "Python emits entry:<topic> target-resolution rows; authoritative routing_targets.json keeps entry_points separate from target definitions; TS represents opted-in entries as direct candidates. Exact key is listed in scripts/pwqe51-parity/EXCEPTIONS.json.",
+      "disposition": "approved_representation_exception"
+    },
+    {
+      "plan": "C03",
+      "target_key": "entry:self_expression|new:self_expression|first",
+      "first_divergence": {
+        "ordinal": 15,
+        "event": "entry response D72 answered; Python pseudo-target is materialized"
+      },
+      "cause_class": "entry_ontology",
+      "evidence": "Python emits entry:<topic> target-resolution rows; authoritative routing_targets.json keeps entry_points separate from target definitions; TS represents opted-in entries as direct candidates. Exact key is listed in scripts/pwqe51-parity/EXCEPTIONS.json.",
+      "disposition": "approved_representation_exception"
+    },
+    {
+      "plan": "C04",
+      "target_key": "entry:self_expression|new:self_expression|first",
+      "first_divergence": {
+        "ordinal": 15,
+        "event": "entry response D72 answered; Python pseudo-target is materialized"
+      },
+      "cause_class": "entry_ontology",
+      "evidence": "Python emits entry:<topic> target-resolution rows; authoritative routing_targets.json keeps entry_points separate from target definitions; TS represents opted-in entries as direct candidates. Exact key is listed in scripts/pwqe51-parity/EXCEPTIONS.json.",
+      "disposition": "approved_representation_exception"
+    },
+    {
+      "plan": "C08",
+      "target_key": "entry:conflict|new:conflict|first",
+      "first_divergence": {
+        "ordinal": 15,
+        "event": "entry response D61 answered; Python pseudo-target is materialized"
+      },
+      "cause_class": "entry_ontology",
+      "evidence": "Python emits entry:<topic> target-resolution rows; authoritative routing_targets.json keeps entry_points separate from target definitions; TS represents opted-in entries as direct candidates. Exact key is listed in scripts/pwqe51-parity/EXCEPTIONS.json.",
+      "disposition": "approved_representation_exception"
+    },
+    {
+      "plan": "C09",
+      "target_key": "entry:conflict|new:conflict|first",
+      "first_divergence": {
+        "ordinal": 15,
+        "event": "entry response D61 answered; Python pseudo-target is materialized"
+      },
+      "cause_class": "entry_ontology",
+      "evidence": "Python emits entry:<topic> target-resolution rows; authoritative routing_targets.json keeps entry_points separate from target definitions; TS represents opted-in entries as direct candidates. Exact key is listed in scripts/pwqe51-parity/EXCEPTIONS.json.",
+      "disposition": "approved_representation_exception"
+    },
+    {
+      "plan": "C13",
+      "target_key": "entry:growing_closeness|new:growing_closeness|first",
+      "first_divergence": {
+        "ordinal": 15,
+        "event": "entry response D52 answered; Python pseudo-target is materialized"
+      },
+      "cause_class": "entry_ontology",
+      "evidence": "Python emits entry:<topic> target-resolution rows; authoritative routing_targets.json keeps entry_points separate from target definitions; TS represents opted-in entries as direct candidates. Exact key is listed in scripts/pwqe51-parity/EXCEPTIONS.json.",
+      "disposition": "approved_representation_exception"
+    },
+    {
+      "plan": "C15",
+      "target_key": "entry:exploration|new:exploration|first",
+      "first_divergence": {
+        "ordinal": 15,
+        "event": "entry response D97 answered; Python pseudo-target is materialized"
+      },
+      "cause_class": "entry_ontology",
+      "evidence": "Python emits entry:<topic> target-resolution rows; authoritative routing_targets.json keeps entry_points separate from target definitions; TS represents opted-in entries as direct candidates. Exact key is listed in scripts/pwqe51-parity/EXCEPTIONS.json.",
+      "disposition": "approved_representation_exception"
+    },
+    {
+      "plan": "C16",
+      "target_key": "entry:exploration|new:exploration|first",
+      "first_divergence": {
+        "ordinal": 15,
+        "event": "entry response D97 answered; Python pseudo-target is materialized"
+      },
+      "cause_class": "entry_ontology",
+      "evidence": "Python emits entry:<topic> target-resolution rows; authoritative routing_targets.json keeps entry_points separate from target definitions; TS represents opted-in entries as direct candidates. Exact key is listed in scripts/pwqe51-parity/EXCEPTIONS.json.",
+      "disposition": "approved_representation_exception"
+    },
+    {
+      "plan": "P02",
+      "target_key": "vulnerable_meaning|EP0015|first",
+      "first_divergence": {
+        "ordinal": 22,
+        "event": "D03 response opens vulnerable_meaning; later D18 not_sure closes unresolved"
+      },
+      "cause_class": "vulnerable_step_identity",
+      "evidence": "First originating D03/D20 answer opens or closes the target in the Python snapshot. Baseline TS assigned vulnerable_meaning to self_response; current SELF_TARGETS contains self_pressure only and all paired keys are aligned.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "P02",
+      "target_key": "vulnerable_meaning|EP0015|self_response",
+      "first_divergence": {
+        "ordinal": 22,
+        "event": "D03 response opens target; TS baseline used wrong self_response key"
+      },
+      "cause_class": "vulnerable_step_identity",
+      "evidence": "First originating D03/D20 answer opens or closes the target in the Python snapshot. Baseline TS assigned vulnerable_meaning to self_response; current SELF_TARGETS contains self_pressure only and all paired keys are aligned.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "P06",
+      "target_key": "vulnerable_meaning|EP0015|first",
+      "first_divergence": {
+        "ordinal": 22,
+        "event": "D03 response opens vulnerable_meaning; later D18 not_sure closes unresolved"
+      },
+      "cause_class": "vulnerable_step_identity",
+      "evidence": "First originating D03/D20 answer opens or closes the target in the Python snapshot. Baseline TS assigned vulnerable_meaning to self_response; current SELF_TARGETS contains self_pressure only and all paired keys are aligned.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "P06",
+      "target_key": "vulnerable_meaning|EP0015|self_response",
+      "first_divergence": {
+        "ordinal": 22,
+        "event": "D03 response opens target; TS baseline used wrong self_response key"
+      },
+      "cause_class": "vulnerable_step_identity",
+      "evidence": "First originating D03/D20 answer opens or closes the target in the Python snapshot. Baseline TS assigned vulnerable_meaning to self_response; current SELF_TARGETS contains self_pressure only and all paired keys are aligned.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C08",
+      "target_key": "vulnerable_meaning|EP0015|first",
+      "first_divergence": {
+        "ordinal": 22,
+        "event": "D03 response opens vulnerable_meaning; later D18 not_sure closes unresolved"
+      },
+      "cause_class": "vulnerable_step_identity",
+      "evidence": "First originating D03/D20 answer opens or closes the target in the Python snapshot. Baseline TS assigned vulnerable_meaning to self_response; current SELF_TARGETS contains self_pressure only and all paired keys are aligned.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C08",
+      "target_key": "vulnerable_meaning|EP0015|self_response",
+      "first_divergence": {
+        "ordinal": 22,
+        "event": "D03 response opens target; TS baseline used wrong self_response key"
+      },
+      "cause_class": "vulnerable_step_identity",
+      "evidence": "First originating D03/D20 answer opens or closes the target in the Python snapshot. Baseline TS assigned vulnerable_meaning to self_response; current SELF_TARGETS contains self_pressure only and all paired keys are aligned.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C09",
+      "target_key": "vulnerable_meaning|EP0015|first",
+      "first_divergence": {
+        "ordinal": 22,
+        "event": "D03 response opens vulnerable_meaning; later D18 not_sure closes unresolved"
+      },
+      "cause_class": "vulnerable_step_identity",
+      "evidence": "First originating D03/D20 answer opens or closes the target in the Python snapshot. Baseline TS assigned vulnerable_meaning to self_response; current SELF_TARGETS contains self_pressure only and all paired keys are aligned.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C09",
+      "target_key": "vulnerable_meaning|EP0015|self_response",
+      "first_divergence": {
+        "ordinal": 22,
+        "event": "D03 response opens target; TS baseline used wrong self_response key"
+      },
+      "cause_class": "vulnerable_step_identity",
+      "evidence": "First originating D03/D20 answer opens or closes the target in the Python snapshot. Baseline TS assigned vulnerable_meaning to self_response; current SELF_TARGETS contains self_pressure only and all paired keys are aligned.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C01",
+      "target_key": "vulnerable_meaning|EP0009|first",
+      "first_divergence": {
+        "ordinal": 24,
+        "event": "D20 answer resolves vulnerable_meaning at first"
+      },
+      "cause_class": "vulnerable_step_identity",
+      "evidence": "First originating D03/D20 answer opens or closes the target in the Python snapshot. Baseline TS assigned vulnerable_meaning to self_response; current SELF_TARGETS contains self_pressure only and all paired keys are aligned.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C01",
+      "target_key": "vulnerable_meaning|EP0009|self_response",
+      "first_divergence": {
+        "ordinal": 24,
+        "event": "D20 answer resolves vulnerable_meaning at first; baseline TS key used self_response"
+      },
+      "cause_class": "vulnerable_step_identity",
+      "evidence": "First originating D03/D20 answer opens or closes the target in the Python snapshot. Baseline TS assigned vulnerable_meaning to self_response; current SELF_TARGETS contains self_pressure only and all paired keys are aligned.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "P01",
+      "target_key": "contrast_context|EP0002|comparison",
+      "first_divergence": {
+        "ordinal": 20,
+        "event": "M02 response makes confirmed comparison pair actionable; D56 answered at #25"
+      },
+      "cause_class": "comparison_target_builder",
+      "evidence": "Python targets.py::_comparison_targets materializes a target for the confirmed pair; baseline TS lacked the comparison-scoped base-target builder. Current TS comparisonTargets and pair-aware key remove each mismatch.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "P01",
+      "target_key": "contrast_goal|EP0002|comparison",
+      "first_divergence": {
+        "ordinal": 20,
+        "event": "M02 response makes confirmed comparison pair actionable; D57 answered at #22"
+      },
+      "cause_class": "comparison_target_builder",
+      "evidence": "Python targets.py::_comparison_targets materializes a target for the confirmed pair; baseline TS lacked the comparison-scoped base-target builder. Current TS comparisonTargets and pair-aware key remove each mismatch.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "P03",
+      "target_key": "contrast_context|EP0008|comparison",
+      "first_divergence": {
+        "ordinal": 20,
+        "event": "D42 response makes confirmed comparison pair actionable; D56 answered at #23"
+      },
+      "cause_class": "comparison_target_builder",
+      "evidence": "Python targets.py::_comparison_targets materializes a target for the confirmed pair; baseline TS lacked the comparison-scoped base-target builder. Current TS comparisonTargets and pair-aware key remove each mismatch.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "P09",
+      "target_key": "contrast_context|EP0015|comparison",
+      "first_divergence": {
+        "ordinal": 23,
+        "event": "D61 response makes confirmed comparison pair actionable; D56 answered at #31"
+      },
+      "cause_class": "comparison_target_builder",
+      "evidence": "Python targets.py::_comparison_targets materializes a target for the confirmed pair; baseline TS lacked the comparison-scoped base-target builder. Current TS comparisonTargets and pair-aware key remove each mismatch.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "P09",
+      "target_key": "contrast_goal|EP0015|comparison",
+      "first_divergence": {
+        "ordinal": 23,
+        "event": "D61 response makes confirmed comparison pair actionable; D57 answered at #24"
+      },
+      "cause_class": "comparison_target_builder",
+      "evidence": "Python targets.py::_comparison_targets materializes a target for the confirmed pair; baseline TS lacked the comparison-scoped base-target builder. Current TS comparisonTargets and pair-aware key remove each mismatch.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C07",
+      "target_key": "contrast_context|EP0002|comparison",
+      "first_divergence": {
+        "ordinal": 20,
+        "event": "M02 response makes confirmed comparison pair actionable; D56 answered at #25"
+      },
+      "cause_class": "comparison_target_builder",
+      "evidence": "Python targets.py::_comparison_targets materializes a target for the confirmed pair; baseline TS lacked the comparison-scoped base-target builder. Current TS comparisonTargets and pair-aware key remove each mismatch.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C07",
+      "target_key": "contrast_goal|EP0002|comparison",
+      "first_divergence": {
+        "ordinal": 20,
+        "event": "M02 response makes confirmed comparison pair actionable; D57 answered at #22"
+      },
+      "cause_class": "comparison_target_builder",
+      "evidence": "Python targets.py::_comparison_targets materializes a target for the confirmed pair; baseline TS lacked the comparison-scoped base-target builder. Current TS comparisonTargets and pair-aware key remove each mismatch.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C12",
+      "target_key": "contrast_context|EP0008|comparison",
+      "first_divergence": {
+        "ordinal": 20,
+        "event": "D42 response makes confirmed comparison pair actionable; D56 answered at #23"
+      },
+      "cause_class": "comparison_target_builder",
+      "evidence": "Python targets.py::_comparison_targets materializes a target for the confirmed pair; baseline TS lacked the comparison-scoped base-target builder. Current TS comparisonTargets and pair-aware key remove each mismatch.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "P03",
+      "target_key": "reassurance_duration|EP0008|first",
+      "first_divergence": {
+        "ordinal": 24,
+        "event": "D45 no_event response closes target unavailable"
+      },
+      "cause_class": "missingness_lineage",
+      "evidence": "The Python administration snapshot associates the response with the target and closes on not_sure/no_event. Current canonical responses retain targetIds; target state now matches.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "P05",
+      "target_key": "next_move|EP0006|first",
+      "first_divergence": {
+        "ordinal": 23,
+        "event": "D07 not_sure response closes target unresolved"
+      },
+      "cause_class": "missingness_lineage",
+      "evidence": "The Python administration snapshot associates the response with the target and closes on not_sure/no_event. Current canonical responses retain targetIds; target state now matches.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "P06",
+      "target_key": "next_move|EP0015|first",
+      "first_divergence": {
+        "ordinal": 21,
+        "event": "D07 not_sure response closes target unresolved"
+      },
+      "cause_class": "missingness_lineage",
+      "evidence": "The Python administration snapshot associates the response with the target and closes on not_sure/no_event. Current canonical responses retain targetIds; target state now matches.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C10",
+      "target_key": "next_move|EP0006|first",
+      "first_divergence": {
+        "ordinal": 23,
+        "event": "D07 not_sure response closes target unresolved"
+      },
+      "cause_class": "missingness_lineage",
+      "evidence": "The Python administration snapshot associates the response with the target and closes on not_sure/no_event. Current canonical responses retain targetIds; target state now matches.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C11",
+      "target_key": "next_move|EP0006|first",
+      "first_divergence": {
+        "ordinal": 22,
+        "event": "D07 not_sure response closes target unresolved"
+      },
+      "cause_class": "missingness_lineage",
+      "evidence": "The Python administration snapshot associates the response with the target and closes on not_sure/no_event. Current canonical responses retain targetIds; target state now matches.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C11",
+      "target_key": "social_feature|EP0006|first",
+      "first_divergence": {
+        "ordinal": 21,
+        "event": "D39 no_event response closes target unavailable"
+      },
+      "cause_class": "missingness_lineage",
+      "evidence": "The Python administration snapshot associates the response with the target and closes on not_sure/no_event. Current canonical responses retain targetIds; target state now matches.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "P01",
+      "target_key": "recurrence|EP0002|first",
+      "first_divergence": {
+        "ordinal": 20,
+        "event": "M02 on later distinct episode provides matching reported action; recurrence closes"
+      },
+      "cause_class": "recurrence",
+      "evidence": "After the later explicitly distinct actual episode supplies matching reported root behavior, Python closes recurrence descriptively. Current TS applies matched_behavior only across trusted distinctPairs; no typicality is used.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "P01",
+      "target_key": "recurrence|EP0015|first",
+      "first_divergence": {
+        "ordinal": 21,
+        "event": "M03 response makes second actual root action available; recurrence closes"
+      },
+      "cause_class": "recurrence",
+      "evidence": "After the later explicitly distinct actual episode supplies matching reported root behavior, Python closes recurrence descriptively. Current TS applies matched_behavior only across trusted distinctPairs; no typicality is used.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "P09",
+      "target_key": "recurrence|EP0015|first",
+      "first_divergence": {
+        "ordinal": 23,
+        "event": "D61 response on distinct episode provides matching reported action"
+      },
+      "cause_class": "recurrence",
+      "evidence": "After the later explicitly distinct actual episode supplies matching reported root behavior, Python closes recurrence descriptively. Current TS applies matched_behavior only across trusted distinctPairs; no typicality is used.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "P09",
+      "target_key": "recurrence|EP0016|first",
+      "first_divergence": {
+        "ordinal": 23,
+        "event": "D61 response on distinct episode provides matching reported action"
+      },
+      "cause_class": "recurrence",
+      "evidence": "After the later explicitly distinct actual episode supplies matching reported root behavior, Python closes recurrence descriptively. Current TS applies matched_behavior only across trusted distinctPairs; no typicality is used.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C07",
+      "target_key": "recurrence|EP0002|first",
+      "first_divergence": {
+        "ordinal": 20,
+        "event": "M02 on later distinct episode provides matching reported action"
+      },
+      "cause_class": "recurrence",
+      "evidence": "After the later explicitly distinct actual episode supplies matching reported root behavior, Python closes recurrence descriptively. Current TS applies matched_behavior only across trusted distinctPairs; no typicality is used.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C07",
+      "target_key": "recurrence|EP0015|first",
+      "first_divergence": {
+        "ordinal": 20,
+        "event": "M02 response provides matching reported action across distinct episodes"
+      },
+      "cause_class": "recurrence",
+      "evidence": "After the later explicitly distinct actual episode supplies matching reported root behavior, Python closes recurrence descriptively. Current TS applies matched_behavior only across trusted distinctPairs; no typicality is used.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "P03",
+      "target_key": "contrast_context|EP0015|first",
+      "first_divergence": {
+        "ordinal": 20,
+        "event": "D42 actual episode response; confirmed distinct relation opens contrast_context"
+      },
+      "cause_class": "contrast_opening",
+      "evidence": "At the D42 response, Python's _opens sees a confirmed distinct actual episode and opens contrast_context for the D42 episode. Current TS baseTargetOpens receives and checks distinctPairs.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C12",
+      "target_key": "contrast_context|EP0015|first",
+      "first_divergence": {
+        "ordinal": 20,
+        "event": "D42 actual episode response; confirmed distinct relation opens contrast_context"
+      },
+      "cause_class": "contrast_opening",
+      "evidence": "At the D42 response, Python's _opens sees a confirmed distinct actual episode and opens contrast_context for the D42 episode. Current TS baseTargetOpens receives and checks distinctPairs.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "P03",
+      "target_key": "known_distance|EP0008|first",
+      "first_divergence": {
+        "ordinal": 20,
+        "event": "D42 response on linked child EP0015 resolves parent target"
+      },
+      "cause_class": "linked_child_resolution",
+      "evidence": "The target remains scoped to EP0008; the linked child's D42/D45 response is attributed to the parent only for the authored cross-episode target. Current router receives episodeLinks and applies linked child closure.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C12",
+      "target_key": "known_distance|EP0008|first",
+      "first_divergence": {
+        "ordinal": 20,
+        "event": "D42 response on linked child EP0015 resolves parent target"
+      },
+      "cause_class": "linked_child_resolution",
+      "evidence": "The target remains scoped to EP0008; the linked child's D42/D45 response is attributed to the parent only for the authored cross-episode target. Current router receives episodeLinks and applies linked child closure.",
+      "disposition": "fixed_with_evidence"
+    },
+    {
+      "plan": "C12",
+      "target_key": "reassurance_duration|EP0008|first",
+      "first_divergence": {
+        "ordinal": 24,
+        "event": "D45 response on linked child EP0016 resolves parent target"
+      },
+      "cause_class": "linked_child_resolution",
+      "evidence": "The target remains scoped to EP0008; the linked child's D42/D45 response is attributed to the parent only for the authored cross-episode target. Current router receives episodeLinks and applies linked child closure.",
+      "disposition": "fixed_with_evidence"
+    }
+  ]
+}

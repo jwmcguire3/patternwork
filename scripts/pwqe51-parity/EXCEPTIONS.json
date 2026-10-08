@@ -1,0 +1,28 @@
+{
+  "format": "pwqe51-parity-reviewed-exceptions-v1",
+  "exceptions": [
+    {
+      "id": "python-entry-point-pseudo-target-representation",
+      "mismatch": "target_state_mismatch",
+      "keys": [
+        "P02|entry:conflict|new:conflict|first",
+        "P06|entry:conflict|new:conflict|first",
+        "P08|entry:disclosure|new:disclosure|first",
+        "P09|entry:conflict|new:conflict|first",
+        "C03|entry:self_expression|new:self_expression|first",
+        "C04|entry:self_expression|new:self_expression|first",
+        "C08|entry:conflict|new:conflict|first",
+        "C09|entry:conflict|new:conflict|first",
+        "C13|entry:growing_closeness|new:growing_closeness|first",
+        "C15|entry:exploration|new:exploration|first",
+        "C16|entry:exploration|new:exploration|first"
+      ],
+      "disposition": "representation-only exception; excluded from strict target-state mismatch count when the current PWQE 5.1 source confirms the entry-point identity",
+      "basis": "The Python reference emits entry:<id> as a target-resolution pseudo-row. The authoritative routing_targets.json keeps entry_points separate from its 92 target definitions, and the TypeScript router represents these as direct opted-in candidates. There is no TypeScript target-state record to compare. This exception does not cover candidate eligibility, item selection, or any non-entry target.",
+      "evidence": [
+        "specs/patternwork/question-engine-v5.1/assessment_runtime/architecture/routing_targets.json: separate entry_points and targets arrays",
+        "lib/server/assessment/pwqe51-router.ts: makeCandidates entry-point candidate construction"
+      ]
+    }
+  ]
+}

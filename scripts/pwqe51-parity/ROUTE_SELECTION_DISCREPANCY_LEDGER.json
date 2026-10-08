@@ -1,0 +1,89 @@
+{
+  "format": "pwqe51-route-selection-discrepancy-ledger-v1",
+  "baseline_commit": "3f8cfdd6bdbfbff3ea56e8f5a73ffbb888fa724d",
+  "latest_audit_artifact": ".tmp/pwqe51-audit-final5.json",
+  "summary": {
+    "plans": 25,
+    "shared_route_selection_snapshots_compared": 610,
+    "shared_prefix_candidate_target_priority_choice_and_post_response_state_mismatches": 0,
+    "plans_with_first_uncomparable_route_choice": 25,
+    "conditional_route_choice_differences": 2,
+    "synthetic_replay_bindings": 0,
+    "strict_status": "incomplete_unsupported_coverage",
+    "strict_unexplained_difference_count": 0
+  },
+  "first_uncomparable_route_choices": {
+    "cause_class": "missing_independent_reference_entry_point_behavior",
+    "target": "entry:body_detail",
+    "typescript_item": "D41",
+    "python_behavior": "The reference enumerates focus_topics and has no direct body_detail candidate from topics.",
+    "evidence": [
+      "specs/patternwork/question-engine-v5.1/assessment_runtime/implementation/patternwork_router/targets.py::_entry_targets",
+      "specs/patternwork/question-engine-v5.1/assessment_runtime/architecture/CONTROLS_AND_RENDERING.md: optional Detailed body sensations chip controls D41",
+      ".tmp/pwqe51-audit-final5.json: plans[].selection_comparison.first_trajectory_divergence_ordinal and route_selection_decisions[]"
+    ],
+    "disposition": "Reference coverage gap, not a parity exception or a TypeScript failure. Later choices on these plans are conditional until an independent body_detail entry route exists.",
+    "by_plan": [
+      { "plan": "P01", "first_divergence_ordinal": 18 },
+      { "plan": "P02", "first_divergence_ordinal": 16 },
+      { "plan": "P03", "first_divergence_ordinal": 23 },
+      { "plan": "P04", "first_divergence_ordinal": 19 },
+      { "plan": "P05", "first_divergence_ordinal": 22 },
+      { "plan": "P06", "first_divergence_ordinal": 19 },
+      { "plan": "P07", "first_divergence_ordinal": 20 },
+      { "plan": "P08", "first_divergence_ordinal": 19 },
+      { "plan": "P09", "first_divergence_ordinal": 16 },
+      { "plan": "C01", "first_divergence_ordinal": 19 },
+      { "plan": "C02", "first_divergence_ordinal": 19 },
+      { "plan": "C03", "first_divergence_ordinal": 16 },
+      { "plan": "C04", "first_divergence_ordinal": 16 },
+      { "plan": "C05", "first_divergence_ordinal": 18 },
+      { "plan": "C06", "first_divergence_ordinal": 17 },
+      { "plan": "C07", "first_divergence_ordinal": 18 },
+      { "plan": "C08", "first_divergence_ordinal": 16 },
+      { "plan": "C09", "first_divergence_ordinal": 16 },
+      { "plan": "C10", "first_divergence_ordinal": 22 },
+      { "plan": "C11", "first_divergence_ordinal": 20 },
+      { "plan": "C12", "first_divergence_ordinal": 23 },
+      { "plan": "C13", "first_divergence_ordinal": 16 },
+      { "plan": "C14", "first_divergence_ordinal": 15 },
+      { "plan": "C15", "first_divergence_ordinal": 16 },
+      { "plan": "C16", "first_divergence_ordinal": 16 }
+    ]
+  },
+  "conditional_route_choice_differences": [
+    {
+      "plan": "P01",
+      "target_comparison": "python replay_attached:A0018:M03 versus TypeScript contrast_goal:EP0002:comparison:EP0002:EP0015",
+      "first_comparable_choice_difference_ordinal": 21,
+      "selected": { "python": "M03", "typescript": "D57" },
+      "first_uncomparable_divergence_ordinal": 18,
+      "cause_class": "downstream_after_entry_point_route_divergence; replay_attached_behavior_not_in_typescript_selector",
+      "evidence": "The comparison row is conditional_reference_prefix_after_route_divergence in the final audit; TypeScript has no equivalent replay_attached target candidate.",
+      "disposition": "Unresolved independent coverage limitation. Do not count as shared-route parity or force expected-item equality."
+    },
+    {
+      "plan": "C07",
+      "target_comparison": "python replay_attached:A0018:M03 versus TypeScript contrast_goal:EP0002:comparison:EP0002:EP0015",
+      "first_comparable_choice_difference_ordinal": 21,
+      "selected": { "python": "M03", "typescript": "D57" },
+      "first_uncomparable_divergence_ordinal": 18,
+      "cause_class": "downstream_after_entry_point_route_divergence; replay_attached_behavior_not_in_typescript_selector",
+      "evidence": "The comparison row is conditional_reference_prefix_after_route_divergence in the final audit; TypeScript has no equivalent replay_attached target candidate.",
+      "disposition": "Unresolved independent coverage limitation. Do not count as shared-route parity or force expected-item equality."
+    }
+  ],
+  "resolved_selector_correction": {
+    "plan_scope": ["P02", "P09"],
+    "target": "sequence_relation",
+    "item": "D08",
+    "cause_class": "candidate_priority_difference",
+    "evidence": [
+      "specs/patternwork/question-engine-v5.1/assessment_runtime/architecture/03_ROUTING_AND_STOPPING.md:5",
+      "specs/patternwork/question-engine-v5.1/assessment_runtime/implementation/patternwork_router/candidates.py: D08 priority promotion",
+      "lib/server/assessment/pwqe51-router.ts: D08 candidatePriority",
+      "tests/assessment/pwqe51-router.test.ts: D08 priority regression"
+    ],
+    "disposition": "Fixed in TypeScript: D08 candidate priority is tier 1 while its target source priority remains unchanged. Latest audit reports zero candidate-priority mismatch steps."
+  }
+}
