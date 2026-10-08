@@ -155,3 +155,26 @@ test("rejects observation evidence that no longer matches the canonical response
     source,
   }), /stale or mismatched source lineage|stale or has no canonical answer/);
 });
+
+test("current replay-derived distinctness survives packet construction and 7.1 adapter", async () => {
+  const source = await loadPwqe51SourcePackage();
+  const reportSource = await loadPwrp71SourcePackage();
+  const responses: Pwqe51CanonicalResponse[] = [
+    { responseId: "first-review", questionId: "M02", occurrenceId: "review-one", stepId: "first", selectedOptionIds: ["M02.rehearse"], status: "answered", mode: "single", basis: "actual_recalled" },
+    { responseId: "second-review", questionId: "M02", occurrenceId: "review-two", stepId: "first", selectedOptionIds: ["M02.rehearse"], status: "answered", mode: "single", basis: "actual_recalled", replayOfOccurrenceId: "review-one" },
+  ];
+  const routerResult = compilePwqe51Route({
+    responses, phase: "deepening", distinctPairs: [["review-one", "review-two"]],
+    episodeLinks: [{ occurrenceId: "review-two", linkedFrom: "review-one" }],
+  }, source);
+  const packet = buildPwqe51RouterPacket({
+    snapshotId: "replayed-comparison", responses, routerResult, pass: 2, controls: [], source,
+  });
+  const episodes = packet.episodes as Array<{ id: string; linked_from: string | null; distinct_from: string[] }>;
+  assert.equal(episodes.find((row) => row.id === "review-two")?.linked_from, "review-one");
+  const comparisons = packet.context_comparisons as Array<{ occurrence_id: string; basis: string; distinct_from: string[] }>;
+  assert.ok(comparisons.some((row) => row.occurrence_id === "review-two"
+    && row.basis === "respondent_confirmed_distinctness" && row.distinct_from.includes("review-one")));
+  const result = preparePwrp71Request({ packet: packet as never, reportType: "MAP", questionSource: source, reportSource });
+  assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify(result.issues));
+});
