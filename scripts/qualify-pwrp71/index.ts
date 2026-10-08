@@ -14,6 +14,7 @@ const USAGE = `PWRP 7.1 qualification tooling
 Usage:
   npm run reports:qualify:pwrp71 -- offline --fixture-set legacy-v1 --profiles P01,P02 --reports MAP,IFS --cost-cap-micros 500000
   npm run reports:qualify:pwrp71 -- offline --fixture-set route-replays-v3 --profiles P01,P02 --reports ALL --cost-cap-micros 500000
+  npm run reports:qualify:pwrp71 -- offline --fixture-set route-replays-v4 --profiles P01,P02 --reports ALL --cost-cap-micros 500000
   npm run reports:qualify:pwrp71 -- live --diagnostic-only --fixture-set route-replays-v3 --profiles P01,P02 --reports ALL --cost-cap-micros 500000 --routing-evidence route-qualification.json
   npm run reports:qualify:pwrp71 -- resume <run-id> --diagnostic-only
   npm run reports:qualify:pwrp71 -- status <run-id>
@@ -23,7 +24,7 @@ Usage:
   npm run reports:qualify:pwrp71 -- manifest <run-id> --approval approval.json --semantic-evidence semantic-review.json --output reviewed-manifest.json
 
 Use --reports DEEPENING for IFS, PV, and ATT, or --reports ALL for all five layers.
-Fixture selection defaults to legacy-v1. route-replays-v3 must be selected explicitly and never falls back to legacy fixtures.
+Fixture selection defaults to legacy-v1. route-replays-v3 and route-replays-v4 must be selected explicitly and never fall back to another fixture set.
 The live command is fixture-only and diagnostic. It requires --diagnostic-only, an explicit positive cost cap, and matching final PWQE 5.1 routing evidence. It never delivers reports.
 
 Approval requires a completed live qualification over P01-P09 and C01-C16, all five reports, current semantic-case evidence, and all explicit human checklist items. The manifest command only writes a reviewed manifest after those checks pass.`;
@@ -98,9 +99,9 @@ function reportTypes(args: ParsedArgs, defaultAll = false): ReportType[] {
   return [...values] as ReportType[];
 }
 
-function fixtureSet(args: ParsedArgs): "legacy-v1" | "route-replays-v3" {
+function fixtureSet(args: ParsedArgs): "legacy-v1" | "route-replays-v3" | "route-replays-v4" {
   const selected = flag(args, "--fixture-set") ?? "legacy-v1";
-  if (selected !== "legacy-v1" && selected !== "route-replays-v3") throw new Error("--fixture-set must be legacy-v1 or route-replays-v3.");
+  if (selected !== "legacy-v1" && selected !== "route-replays-v3" && selected !== "route-replays-v4") throw new Error("--fixture-set must be legacy-v1, route-replays-v3, or route-replays-v4.");
   return selected;
 }
 

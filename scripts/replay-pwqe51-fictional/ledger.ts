@@ -9,6 +9,12 @@ interface RouteProfileIndex {
   readonly semanticResultSha256: string;
   readonly mapping: "complete" | "partial";
   readonly deepening: "complete" | "partial" | "not_applicable";
+  readonly newSyntheticDeepeningAnswers: number;
+  readonly syntheticRespondentControls: number;
+  readonly semanticCore: "complete" | "incomplete" | "unavailable";
+  readonly semanticDistinctionStatus: string;
+  readonly syntheticMappingScaffoldAnswersAdministered: number;
+  readonly sourceContractMismatchCount: number;
   readonly originalAnswers: { readonly issuedAndAccepted: number; readonly unreached: number; readonly intentionallyForbidden: number };
   readonly replayConfirmed: boolean;
   readonly mappingPacketAccepted: boolean;
@@ -27,6 +33,7 @@ interface RouteArtifact {
   readonly profileId: string;
   readonly replay: {
     readonly completeness: { readonly mapping: string; readonly deepening: string; readonly sessionPhase: string };
+    readonly syntheticRespondentControls: readonly Readonly<Record<string, unknown>>[];
     readonly submittedSourceToRuntimeResponses: readonly {
       readonly sourceResponseId: string;
       readonly runtimeResponseId: string;
@@ -78,7 +85,7 @@ interface MatrixRun {
   readonly results: readonly MatrixResult[];
 }
 
-const DEFAULT_REPLAY_DIRECTORY = path.resolve(process.cwd(), "qualification", "pwrp71", "route_replays_v3");
+const DEFAULT_REPLAY_DIRECTORY = path.resolve(process.cwd(), "qualification", "pwrp71", "route_replays_v4");
 const PROFILE_IDS = [...Array.from({ length: 9 }, (_, index) => `P${String(index + 1).padStart(2, "0")}`), ...Array.from({ length: 16 }, (_, index) => `C${String(index + 1).padStart(2, "0")}`)];
 const REPORT_TYPES = ["MAP", "IFS", "PV", "ATT", "SYNTHESIS"] as const;
 
@@ -87,7 +94,7 @@ function parseArgs(argv: readonly string[]): { readonly replayDirectory: string;
   for (let index = 0; index < argv.length; index += 1) {
     const name = argv[index];
     if (name === "--help" || name === "-h") {
-      process.stdout.write("Usage: npm run pwqe51:replay:ledger -- --run qualification/pwrp71/route_replays_v3/offline-run/<run-id>/run.json [--replay-dir qualification/pwrp71/route_replays_v3]\n");
+      process.stdout.write("Usage: npm run pwqe51:replay:ledger -- --run qualification/pwrp71/route_replays_v4/offline-run/<run-id>/run.json [--replay-dir qualification/pwrp71/route_replays_v4]\n");
       process.exit(0);
     }
     if (name !== "--run" && name !== "--replay-dir") throw new Error(`Unknown argument: ${name}`);
@@ -136,16 +143,16 @@ async function main(): Promise<void> {
   const manifest = JSON.parse(manifestText) as RouteManifest;
   const matrix = JSON.parse(await readFile(runFile, "utf8")) as MatrixRun;
   const manifestSha256 = normalizedTextSha256(manifestText);
-  if (manifest.schemaVersion !== "PWQE51-ROUTE-REPLAY-V3-MANIFEST"
-    || matrix.fixtureSet !== "route-replays-v3"
+  if (manifest.schemaVersion !== "PWQE51-ROUTE-REPLAY-V4-MANIFEST"
+    || matrix.fixtureSet !== "route-replays-v4"
     || matrix.sourcePins.fixtureManifestSha256 !== manifestSha256
     || matrix.sourcePins.fixtureSourceSha256 !== manifest.inputs.v2ManifestSha256
     || matrix.sourcePins.fixtureSourceCommit !== manifest.inputs.sourceCommit) {
-    throw new Error("The offline matrix does not bind the selected v3 replay manifest and source identities.");
+    throw new Error("The offline matrix does not bind the selected v4 replay manifest and source identities.");
   }
   const indexed = new Map(manifest.profiles.map((profile) => [profile.profileId, profile]));
   if (indexed.size !== PROFILE_IDS.length || PROFILE_IDS.some((profileId) => !indexed.has(profileId))) {
-    throw new Error("The v3 replay manifest must include all 25 fictional profiles.");
+    throw new Error("The v4 replay manifest must include all 25 fictional profiles.");
   }
   if (PROFILE_IDS.some((profileId) => !matrix.selectedProfiles.includes(profileId))
     || REPORT_TYPES.some((reportType) => !matrix.selectedReports.includes(reportType))) {
@@ -185,6 +192,12 @@ async function main(): Promise<void> {
       },
       mapping: profile.mapping,
       deepening: profile.deepening,
+      qualification: {
+        fullSession: profile.mapping === "complete" && profile.deepening === "complete" ? "complete" : "partial",
+        semanticCore: profile.semanticCore,
+        semanticDistinctionStatus: profile.semanticDistinctionStatus,
+        focusedBranch: "see focused-branches/manifest.json; focused router-contract cases are not full assessment transcripts",
+      },
       originalAnswers: {
         issuedAndAccepted: profile.originalAnswers.issuedAndAccepted,
         eligibleButNotReached: dispositionCounts.get("eligible_but_not_reached") ?? 0,
@@ -196,6 +209,8 @@ async function main(): Promise<void> {
       },
       acceptedSourceToRuntimeResponses: artifact.replay.submittedSourceToRuntimeResponses,
       syntheticMappingResponsesAccepted: artifact.replay.submittedSourceToRuntimeResponses.filter((answer) => answer.provenance === "new_synthetic_mapping_response").length,
+      syntheticDeepeningAnswersAdministered: artifact.replay.submittedSourceToRuntimeResponses.filter((answer) => answer.provenance === "new_synthetic_deepening_answer").length,
+      syntheticRespondentControls: artifact.replay.syntheticRespondentControls,
       replayAndBindings: {
         status: bindingStatus(artifact),
         replayDecisions: artifact.replay.replayAndDistinctnessDecisions,
@@ -234,7 +249,7 @@ async function main(): Promise<void> {
   const blockedCount = matrix.results.filter((result) => result.status === "blocked").length;
   const failedCount = matrix.results.filter((result) => result.status === "failed").length;
   const output = {
-    schemaVersion: "PWQE51-PWRP71-ROUTE-REPLAY-LEDGER-V1",
+    schemaVersion: "PWQE51-PWRP71-ROUTE-REPLAY-LEDGER-V4",
     qualificationBoundary: "internal_session_replay_and_offline_structural_mock_only; not independent routing qualification, semantic approval, or production evidence",
     sourceIdentity: manifest.inputs,
     routeReplayManifestSha256: manifestSha256,
@@ -258,15 +273,15 @@ async function main(): Promise<void> {
   await writeFile(jsonFile, jsonText, "utf8");
 
   const lines = [
-    "# PWQE 5.1 / PWRP 7.1 fictional route replay ledger",
+    "# PWQE 5.1 / PWRP 7.1 fictional route replay ledger (v4)",
     "",
     `- Replay manifest SHA-256: \`${manifestSha256}\``,
     `- Offline run: \`${matrix.runId}\` (\`${matrix.qualificationRunSha256}\`)`,
     `- Matrix: ${matrix.results.length} results; ${acceptedCount} accepted, ${blockedCount} blocked, ${failedCount} failed; reported provider cost $${(matrix.totalReportedCostMicros / 1_000_000).toFixed(6)}.`,
     "- This is internal session replay and deterministic structural mock evidence. It does not establish independent routing qualification or semantic approval.",
     "",
-    "| Profile | Mapping | Deepening | Original answers (issued / unreached / forbidden) | Replay/bindings | Packet | Adapter | Mock reports | Remaining reason |",
-    "|---|---|---|---:|---|---|---|---|---|",
+    "| Profile | Mapping | Deepening | Semantic core | Semantic distinction | Original answers (issued / unreached / forbidden / mismatch) | New synthetic Mapping / Deepening | Replay/bindings | Packet | Adapter | Mock reports | Remaining reason |",
+    "|---|---|---|---|---|---|---|---|---|---|---|",
   ];
   for (const row of profiles) {
     const profile = indexed.get(row.profileId)!;
@@ -283,7 +298,7 @@ async function main(): Promise<void> {
     const adapterLabel = `MAP ${packet.adapter.mapping}; Deepening ${packet.adapter.deepening}`;
     const reportsLabel = `${reports.accepted.join(",") || "none"} accepted; ${reports.blocked.join(",") || "none"} blocked; ${reports.failed.join(",") || "none"} failed`;
     const cause = `${reasonCodes.length ? `${reasonCodes.join(", ")}; ` : ""}${routeReason}${specialReasons.length ? `; authored branch: ${specialReasons.join("; ")}` : ""}`;
-    lines.push(`| ${row.profileId} | ${profile.mapping} | ${profile.deepening} | ${profile.originalAnswers.issuedAndAccepted} / ${profile.originalAnswers.unreached} / ${profile.originalAnswers.intentionallyForbidden} | ${markdownCell(bindingLabel)} | ${markdownCell(packetLabel)} | ${markdownCell(adapterLabel)} | ${markdownCell(reportsLabel)} | ${markdownCell(cause)} |`);
+    lines.push(`| ${row.profileId} | ${profile.mapping} | ${profile.deepening} | ${row.qualification.semanticCore} | ${markdownCell(row.qualification.semanticDistinctionStatus)} | ${profile.originalAnswers.issuedAndAccepted} / ${profile.originalAnswers.unreached} / ${profile.originalAnswers.intentionallyForbidden} / ${profile.sourceContractMismatchCount} | ${row.syntheticMappingResponsesAccepted} / ${row.syntheticDeepeningAnswersAdministered} | ${markdownCell(bindingLabel)} | ${markdownCell(packetLabel)} | ${markdownCell(adapterLabel)} | ${markdownCell(reportsLabel)} | ${markdownCell(cause)} |`);
   }
   lines.push(
     "",

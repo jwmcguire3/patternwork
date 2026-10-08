@@ -7,7 +7,7 @@ import { loadPwrp71SourcePackage } from "../../lib/server/reports/pwrp71-source.
 import { replayFictionalPwqe51Session, type FictionalHistoryV2 } from "../../lib/server/reports/qualification/session-replay.ts";
 
 const V2_DIRECTORY = path.join(process.cwd(), "qualification", "pwrp71", "constructed_histories_v2");
-const DEFAULT_OUTPUT = path.join(process.cwd(), "qualification", "pwrp71", "route_replays_v3");
+const DEFAULT_OUTPUT = path.join(process.cwd(), "qualification", "pwrp71", "route_replays_v4");
 const VALID_PROFILES = [...Array.from({ length: 9 }, (_, index) => `P${String(index + 1).padStart(2, "0")}`), ...Array.from({ length: 16 }, (_, index) => `C${String(index + 1).padStart(2, "0")}`)];
 const DIGEST = /^[a-f0-9]{64}$/u;
 const V2_MANIFEST_SHA256 = "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee";
@@ -51,7 +51,7 @@ function parseArgs(argv: readonly string[]): { profiles: readonly string[]; outp
   for (let index = 0; index < argv.length; index += 1) {
     const flag = argv[index];
     if (flag === "--help" || flag === "-h") {
-      process.stdout.write("Usage: npm run pwqe51:replay:fictional -- [--profiles P01,C01] [--output-dir qualification/pwrp71/route_replays_v3]\n");
+      process.stdout.write("Usage: npm run pwqe51:replay:fictional -- [--profiles P01,C01] [--output-dir qualification/pwrp71/route_replays_v4]\n");
       process.exit(0);
     }
     if (flag !== "--profiles" && flag !== "--output-dir") throw new Error(`Unknown argument: ${flag}`);
@@ -103,6 +103,7 @@ async function main(): Promise<void> {
 
   const [questionSource, reportSource] = await Promise.all([loadPwqe51SourcePackage(), loadPwrp71SourcePackage()]);
   const profileIndex: Array<Record<string, unknown>> = [];
+  const focusedBranchIndex: Array<Record<string, unknown>> = [];
   for (const profileId of profiles) {
     const sourceFile = path.join(V2_DIRECTORY, profileById.get(profileId)!.file);
     const sourceText = await readFile(sourceFile, "utf8");
@@ -138,10 +139,13 @@ async function main(): Promise<void> {
       replay.mappingComplete,
       replay.deepeningStarted,
       replay.deepeningComplete,
+      replay.semanticCore.status,
+      replay.semanticCore.requiredSourceResponseIds,
+      replay.semanticCore.acceptedSourceResponseIds,
     ];
     const unreachedById = new Map(replay.unreachedOriginalAnswers.map((answer) => [answer.responseId, answer]));
     const authoredAnswerDisposition = replay.responseProvenance
-      .filter((row) => !row.origin.includes("synthetic_mapping_answer"))
+      .filter((row) => row.origin.startsWith("original_authored_fictional_"))
       .map((row) => {
         const unreached = unreachedById.get(row.sourceResponseId);
         return {
@@ -161,6 +165,32 @@ async function main(): Promise<void> {
       trace: traceSemantic,
       completeness: completenessSemantic,
       packets: packetValidation,
+      syntheticDeepeningAnswerAudit: replay.syntheticDeepeningAnswerAudit.map((entry) => ({
+        profileId: entry.profileId,
+        sourceQuestionId: entry.sourceQuestionId,
+        selectedOptionIds: entry.selectedOptionIds,
+        status: entry.status,
+        selectionMode: entry.selectionMode,
+        occurrenceReference: normalizeRuntimeIds(entry.occurrenceReference),
+        step: entry.step,
+        existingFictionalFacts: entry.existingFictionalFacts.map(({ responseId, questionId, occurrenceId, stepId, selectedOptionIds, status, evidenceKind, contextRelation }) => ({
+          responseId,
+          questionId,
+          ...(occurrenceId ? { occurrenceId: normalizeRuntimeIds(occurrenceId) } : {}),
+          ...(stepId ? { stepId } : {}),
+          ...(selectedOptionIds ? { selectedOptionIds } : {}),
+          status,
+          ...(evidenceKind ? { evidenceKind } : {}),
+          ...(contextRelation ? { contextRelation } : {}),
+        })),
+        rationale: entry.rationale,
+        scenarioRole: entry.scenarioRole,
+        changesIntendedSemanticTest: entry.changesIntendedSemanticTest,
+        provenance: entry.provenance,
+        outcome: entry.outcome,
+      })),
+      syntheticRespondentControls: JSON.parse(normalizeRuntimeIds(JSON.stringify(replay.syntheticRespondentControls))) as unknown,
+      replayDecisions: replay.replayDecisions.map(({ sourceOccurrenceReference, outcome }) => ({ sourceOccurrenceReference, outcome })),
       authoredAnswerDisposition: allAuthoredAnswerDisposition.map((value) => {
         const row = object(value);
         return {
@@ -172,7 +202,7 @@ async function main(): Promise<void> {
       }),
     });
     const artifact = {
-      schemaVersion: "PWQE51-ROUTE-REPLAY-V3",
+      schemaVersion: "PWQE51-ROUTE-REPLAY-V4",
       profileId,
       sourceIdentity: {
         v2ManifestSha256,
@@ -188,6 +218,11 @@ async function main(): Promise<void> {
       },
       originalAuthoredFixtureIdentity: object(history.profile),
       sourceResponseProvenance: sourceProvenance,
+      originalAuthoredAnswers: history.originalAuthoredResponses ?? history.mappingResponses.filter((answer) => sourceProvenance.some((entry) => entry.responseId === answer.responseId && entry.origin === "original_authored_fictional_answer")),
+      newSyntheticMappingAnswers: history.syntheticMappingResponses ?? history.mappingResponses.filter((answer) => sourceProvenance.some((entry) => entry.responseId === answer.responseId && entry.origin === "new_synthetic_mapping_answer")),
+      newSyntheticDeepeningAnswers: replay.submitted.filter((answer) => answer.provenance === "new_synthetic_deepening_answer"),
+      syntheticDeepeningAnswerAudit: replay.syntheticDeepeningAnswerAudit,
+      syntheticRespondentControls: replay.syntheticRespondentControls,
       declaredFictionalDecisions: {
         topicPermissionEvents: history.topicPermissionEvents ?? [],
         originalConfiguredReferentRoles: history.originalConfiguredReferentRoles ?? [],
@@ -204,6 +239,9 @@ async function main(): Promise<void> {
         occurrenceReferenceToServerId: replay.occurrenceReferenceToServerId,
         submittedSourceToRuntimeResponses: replay.submitted,
         completeResponseProvenance: replay.responseProvenance,
+        newSyntheticDeepeningAnswers: replay.submitted.filter((answer) => answer.provenance === "new_synthetic_deepening_answer"),
+        syntheticDeepeningAnswerAudit: replay.syntheticDeepeningAnswerAudit,
+        syntheticRespondentControls: replay.syntheticRespondentControls,
         routingDecisionTrace: replay.routingTrace,
         replayAndDistinctnessDecisions: replay.replayDecisions,
         unreachedOriginalAnswers: replay.unreachedOriginalAnswers,
@@ -214,6 +252,7 @@ async function main(): Promise<void> {
           sessionPhase: replay.state.phase,
           sessionPass: replay.state.pass,
         },
+        semanticCore: replay.semanticCore,
         finalTargetResolutionState: replay.finalTargetResolutions,
         episodeRegistry: replay.episodeRegistry,
         sequenceGraph: replay.sequenceGraph,
@@ -232,18 +271,151 @@ async function main(): Promise<void> {
     const artifactText = `${JSON.stringify(artifact, null, 2)}\n`;
     const artifactFile = `${profileId}.json`;
     await atomicWrite(path.join(output, artifactFile), artifactText);
+
+    const requiredAnchorIds = replay.semanticCore.requiredSourceResponseIds;
+    const requiredAnchorSet = new Set(requiredAnchorIds);
+    const branchAnswers = history.deepeningResponses.filter((answer) => requiredAnchorSet.has(answer.responseId)
+      || (!requiredAnchorIds.length && (history.intendedDeepeningContext?.focusOccurrenceId === answer.occurrenceId)));
+    const relevantOccurrenceRefs = new Set(branchAnswers.map((answer) => answer.occurrenceId));
+    if (!relevantOccurrenceRefs.size && history.intendedDeepeningContext?.focusOccurrenceId) relevantOccurrenceRefs.add(history.intendedDeepeningContext.focusOccurrenceId);
+    const provenanceById = new Map(sourceProvenance.map((entry) => [entry.responseId, entry]));
+    const describeResponse = (answer: FictionalHistoryV2["mappingResponses"][number] | FictionalHistoryV2["deepeningResponses"][number]) => {
+      const routeResponse = replay.submitted.find((entry) => entry.sourceResponseId === answer.responseId);
+      const disposition = replay.unreachedOriginalAnswers.find((entry) => entry.responseId === answer.responseId);
+      const traceEntry = replay.routingTrace.find((entry) => entry.sourceResponseId === answer.responseId);
+      const question = questionSource.questionBank.items.find((item) => item.id === answer.questionId);
+      const variant = answer.variantId ? questionSource.questionBank.variants.find((item) => item.id === answer.variantId && item.replaces === answer.questionId) : undefined;
+      return {
+        sourceResponse: answer,
+        provenance: provenanceById.get(answer.responseId)?.origin ?? answer.provenance ?? "original_authored_fictional_response",
+        questionContract: question ? {
+          id: question.id,
+          stage: question.stage,
+          prompt: question.prompt,
+          episodeFamily: question.episode_family,
+          stepBinding: question.step_binding,
+          selection: question.selection,
+          optionsInSourceOrder: (variant?.options ?? question.options).map((option) => ({ id: option.id, text: option.text, reportedValue: option.reported_value ?? option.text })),
+          responseControls: question.response_controls,
+          ...(variant ? { variantId: variant.id, variantCapture: variant.captures } : {}),
+        } : null,
+        fullSessionRoute: routeResponse ? {
+          status: "issued_and_accepted",
+          runtimeResponseId: routeResponse.runtimeResponseId,
+          runtimeOccurrenceId: routeResponse.occurrenceId,
+          stepId: routeResponse.stepId,
+          phase: routeResponse.phase,
+          selection: routeResponse.selectedOptionIds,
+        } : {
+          status: disposition?.classification ?? "not_issued_or_not_accepted",
+          reason: disposition?.reason ?? "The full-session route did not administer this source response.",
+          ...(traceEntry ? { trace: traceEntry } : {}),
+        },
+      };
+    };
+    const branchFile = `${profileId}.json`;
+    const branch = {
+      schemaVersion: "PWQE51-FOCUSED-ROUTER-CONTRACT-CASE-V1",
+      profileId,
+      caseKind: "focused_router_contract_case",
+      fullAssessmentTranscript: false,
+      independentlyReviewedRoutingEvidence: false,
+      semanticClaim: history.profile.title ?? profileId,
+      status: requiredAnchorIds.length === 0 ? "no_authored_deepening_semantic_anchors"
+        : replay.semanticCore.status === "complete" ? "all_authored_semantic_anchors_issued_in_full_session"
+          : "authored_semantic_anchors_not_fully_issued_in_full_session",
+      sourcePins: {
+        v2ManifestSha256,
+        authoredFixtureFile: profileById.get(profileId)!.file,
+        authoredFixtureSha256,
+        routeReplayArtifactFile: artifactFile,
+        routeReplayArtifactSha256: digestText(artifactText),
+        semanticResultSha256,
+        questionRelease: PWQE51_RELEASE_IDENTITY.questionRelease,
+        routerVersion: PWQE51_RELEASE_IDENTITY.routerVersion,
+        questionSourceSha256: PWQE51_RELEASE_IDENTITY.sourceSha256,
+        reportRelease: reportSource.manifest.report_release,
+      },
+      separationRules: {
+        sourceAnswersRemainUnchanged: true,
+        syntheticMappingScaffoldIsNotEvidenceForThisSemanticClaim: true,
+        syntheticDeepeningAnswersAreContextOnly: true,
+        routerMustIssueEveryQuestion: true,
+        occurrenceAndBindingMustMatchExactly: true,
+      },
+      authoredCore: {
+        requiredSourceResponseIds: requiredAnchorIds,
+        acceptedSourceResponseIds: replay.semanticCore.acceptedSourceResponseIds,
+        status: replay.semanticCore.status,
+        ...(replay.semanticCore.reason ? { reason: replay.semanticCore.reason } : {}),
+        exactSourceAnswers: branchAnswers.map(describeResponse),
+      },
+      occurrenceConditions: [...relevantOccurrenceRefs].map((occurrenceId) => {
+        const episode = history.episodes?.find((entry) => entry.occurrenceId === occurrenceId);
+        const mapAnswers = history.mappingResponses.filter((answer) => answer.occurrenceId === occurrenceId);
+        return {
+          fixtureOccurrenceReference: occurrenceId,
+          runtimeOccurrenceId: replay.occurrenceReferenceToServerId[occurrenceId] ?? null,
+          episodeFamily: episode?.episodeFamily ?? null,
+          basis: episode?.basis ?? null,
+          origin: episode?.origin ?? null,
+          originalMappingContext: mapAnswers.filter((answer) => (provenanceById.get(answer.responseId)?.origin ?? answer.provenance) === "original_authored_fictional_answer").map(describeResponse),
+          syntheticMappingScaffoldContextOnly: mapAnswers.filter((answer) => (provenanceById.get(answer.responseId)?.origin ?? answer.provenance)?.includes("synthetic_mapping_answer")).map(describeResponse),
+          referentRoles: [...(history.originalConfiguredReferentRoles ?? []), ...(history.syntheticReferentRoles ?? [])].filter((entry) => entry.occurrenceId === occurrenceId),
+        };
+      }),
+      entryAndPermissionContext: {
+        focusOccurrenceId: history.intendedDeepeningContext?.focusOccurrenceId ?? null,
+        focusTopics: history.intendedDeepeningContext?.focusTopics ?? [],
+        permissionOnlyTopics: [...(history.intendedDeepeningContext?.optedInTopics ?? []), ...(history.topicPermissionEvents ?? []).filter((event) => event.outcome === "opt_in").map((event) => event.topic)],
+        actualAppliedFocusTopics: replay.contextDecisions.focusTopics,
+        focusTopicsApplied: replay.contextDecisions.focusTopicsApplied,
+        topicPermissionEvents: history.topicPermissionEvents ?? [],
+      },
+      distinctnessIntents: (history.distinctnessIntents ?? []).filter((intent) => relevantOccurrenceRefs.has(intent.sourceOccurrenceId) || relevantOccurrenceRefs.has(intent.otherOccurrenceId)).map((intent) => ({
+        ...intent,
+        runtimeDecision: replay.contextDecisions.distinctness.find((entry) => entry.sourceReference === intent.sourceOccurrenceId && entry.otherReference === intent.otherOccurrenceId) ?? null,
+      })),
+      comparisonBindingIntents: (history.comparisonBindingIntents ?? []).filter((intent) => requiredAnchorSet.has(intent.responseId)),
+      intentionallyForbiddenAnswers: Array.isArray(history.withheldAuthoredAnswers) ? history.withheldAuthoredAnswers : [],
+      focusedBranchExecution: "not_executed_as_a_separate_transcript; full-session source-answer results are shown per response",
+    };
+    const branchText = `${JSON.stringify(branch, null, 2)}\n`;
+    await atomicWrite(path.join(output, "focused-branches", branchFile), branchText);
+    focusedBranchIndex.push({
+      profileId,
+      file: branchFile,
+      artifactSha256: digestText(branchText),
+      fullAssessmentTranscript: false,
+      status: branch.status,
+      semanticClaim: history.profile.title ?? profileId,
+      requiredAnchorCount: requiredAnchorIds.length,
+      acceptedAnchorCount: replay.semanticCore.acceptedSourceResponseIds.length,
+    });
     profileIndex.push({
       profileId,
+      profileTitle: history.profile.title ?? profileId,
       file: artifactFile,
       artifactSha256: digestText(artifactText),
       semanticResultSha256,
       mapping: replay.mappingComplete ? "complete" : "partial",
       deepening: replay.deepeningComplete ? "complete" : replay.deepeningStarted ? "partial" : "not_applicable",
       originalAnswers: {
-        issuedAndAccepted: replay.responseProvenance.filter((row) => row.accepted && !row.origin.includes("synthetic_mapping_answer")).length,
+        issuedAndAccepted: replay.responseProvenance.filter((row) => row.accepted && row.origin.startsWith("original_authored_fictional_")).length,
         unreached: replay.unreachedOriginalAnswers.length,
         intentionallyForbidden: Array.isArray(history.withheldAuthoredAnswers) ? history.withheldAuthoredAnswers.length : 0,
       },
+      sourceContractMismatchCount: replay.unreachedOriginalAnswers.filter((answer) => answer.classification === "source_contract_mismatch").length,
+      implementationDefectCount: replay.unreachedOriginalAnswers.filter((answer) => answer.classification === "implementation_defect").length,
+      syntheticMappingScaffoldAnswersAdministered: replay.submitted.filter((answer) => answer.provenance === "new_synthetic_mapping_response").length,
+      newSyntheticDeepeningAnswers: replay.syntheticDeepeningAnswerAudit.length,
+      syntheticRespondentControls: replay.syntheticRespondentControls.length,
+      semanticCore: replay.semanticCore.status,
+      semanticDistinctionStatus: replay.semanticCore.status === "complete" ? "preserved_in_exact_original_semantic_anchors"
+        : replay.semanticCore.status === "unavailable" ? "cannot_be_claimed_no_authored_deepening_anchors"
+          : "partial_or_unverified_exact_original_semantic_anchors",
+      requiredSemanticCoreResponseIds: replay.semanticCore.requiredSourceResponseIds,
+      acceptedSemanticCoreResponseIds: replay.semanticCore.acceptedSourceResponseIds,
       replayConfirmed: replay.replayDecisions.some((decision) => decision.outcome === "different"),
       mappingPacketAccepted: replay.packets.MAP?.adapterAccepted ?? false,
       deepeningPacketAccepted: (replay.packets.IFS?.adapterAccepted && replay.packets.PV?.adapterAccepted && replay.packets.ATT?.adapterAccepted) ?? false,
@@ -252,8 +424,61 @@ async function main(): Promise<void> {
     });
   }
 
+  const focusedBranchManifest = {
+    schemaVersion: "PWQE51-FOCUSED-ROUTER-CONTRACT-CASES-V1-MANIFEST",
+    qualificationBoundary: "focused source-bound case specifications; not full assessment transcripts or independent routing qualification",
+    sourceIdentity: {
+      v2ManifestSha256,
+      sourceCommit: manifest.sourceCommit,
+      questionRelease: PWQE51_RELEASE_IDENTITY.questionRelease,
+      routerVersion: PWQE51_RELEASE_IDENTITY.routerVersion,
+      questionSourceSha256: PWQE51_RELEASE_IDENTITY.sourceSha256,
+      reportRelease: reportSource.manifest.report_release,
+    },
+    profiles: focusedBranchIndex,
+  };
+  const focusedBranchManifestText = `${JSON.stringify(focusedBranchManifest, null, 2)}\n`;
+  await atomicWrite(path.join(output, "focused-branches", "manifest.json"), focusedBranchManifestText);
+
+  const rootCauseLines = [
+    "# PWQE 5.1 / PWRP 7.1 v4 first-divergence and respondent-resolution ledger",
+    "",
+    "The exact question-selection causes and pre-response context audit are preserved in `root-cause-ledger.md` (the v3 baseline captured before fictional respondent answers were added). This v4 ledger records how the source-bound policy handled those routes and whether the original authored Deepening anchors survived.",
+    "",
+    `- Constructed-history source commit: \`${manifest.sourceCommit}\`.`,
+    "- Implementation branch base commit: `fbc0bf440d3f79668c8987a8ef2f2d1738a82c42`.",
+    `- V2 source manifest SHA-256: \`${v2ManifestSha256}\`.`,
+    "- All new Deepening answers are recorded with `new_synthetic_deepening_answer`; all respondent controls are recorded separately.",
+    "- Cohort B cases are in `focused-branches/`; they are source-bound case specifications, not complete assessment transcripts and not independent routing review.",
+    "- Packet acceptance below is a source/structure result. It is not semantic approval, reviewer approval, or provider quality.",
+    "",
+    "| Profile | Fictional case | Mapping | Deepening | Semantic anchors accepted / required | Original answers issued / unreached / forbidden / mismatch | Synthetic Mapping scaffold / synthetic Deepening answers | MAP packet | Deepening packets | Semantic distinction status |",
+    "|---|---|---|---|---:|---|---|---|---|---|",
+  ];
+  for (const row of profileIndex) {
+    const original = row.originalAnswers as { issuedAndAccepted: number; unreached: number; intentionallyForbidden: number };
+    const mismatches = Number(row.sourceContractMismatchCount ?? 0);
+    const anchorRequired = Array.isArray(row.requiredSemanticCoreResponseIds) ? row.requiredSemanticCoreResponseIds.length : 0;
+    const anchorAccepted = Array.isArray(row.acceptedSemanticCoreResponseIds) ? row.acceptedSemanticCoreResponseIds.length : 0;
+    const classification = String(row.semanticDistinctionStatus ?? "unclassified").replace(/\|/gu, "\\|");
+    rootCauseLines.push(`| ${row.profileId} | ${String(row.profileTitle ?? row.profileId).replace(/\|/gu, "\\|")} | ${row.mapping} | ${row.deepening} | ${anchorAccepted} / ${anchorRequired} | ${original.issuedAndAccepted} / ${original.unreached} / ${original.intentionallyForbidden} / ${mismatches} | ${row.syntheticMappingScaffoldAnswersAdministered} / ${row.newSyntheticDeepeningAnswers} | ${row.mappingPacketAccepted ? "accepted" : "unavailable"} | ${row.deepeningPacketAccepted ? "accepted" : "unavailable"} | ${classification} |`);
+  }
+  rootCauseLines.push(
+    "",
+    "## Discrepancy and interpretation notes",
+    "",
+    "- `M10.observable` remains distinct from base `M10`. P05, C10, and C11 preserve their authored base-item answers and use the supported skip control for the router-issued variant; no answer was translated between contracts.",
+    "- P03 and C12 answer a real router-issued D42 known-distance prompt on a linked actual `known_delay` occurrence. The question explicitly asks about a different time; the D42 response is accepted with `actual_recalled` basis and the target-resolution observation. Packet construction records the distinct pair only from that route evidence.",
+    "- C07's comparison pair requires an explicit replay binding and actual second M02 root. Occurrence IDs alone do not establish distinctness. P01 follows its separately source-authorized controlled replay path.",
+    "- C02's D67/D68 and C09's D79 answers remain intentionally forbidden. A router-issued forbidden question produces a discrepancy and supported skip only.",
+    "- P07 has no authored Deepening semantic anchors. Its completed Deepening route cannot qualify a semantic claim by adding novel synthetic answers.",
+    "- High synthetic response volume, including inherited Mapping scaffold, can make a structurally valid packet a weak test of the original case. The full answer-level audit and focused branch case file preserve that distinction.",
+    "",
+  );
+  await atomicWrite(path.join(output, "v4-root-cause-ledger.md"), rootCauseLines.join("\n"));
+
   const index = {
-    schemaVersion: "PWQE51-ROUTE-REPLAY-V3-MANIFEST",
+      schemaVersion: "PWQE51-ROUTE-REPLAY-V4-MANIFEST",
     qualificationStatus: "internal_session_replay_not_independent_qualification",
     inputs: {
       v2ManifestSha256,
@@ -265,6 +490,12 @@ async function main(): Promise<void> {
       reportRelease: reportSource.manifest.report_release,
       reportSourceManifestSha256: reportSource.manifestSha256,
     },
+    focusedBranches: {
+      manifestFile: "focused-branches/manifest.json",
+      manifestSha256: digestText(focusedBranchManifestText),
+      fullAssessmentTranscript: false,
+    },
+    rootCauseLedger: "v4-root-cause-ledger.md",
     profiles: profileIndex,
   };
   const indexText = `${JSON.stringify(index, null, 2)}\n`;

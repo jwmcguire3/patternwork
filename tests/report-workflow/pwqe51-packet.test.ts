@@ -178,3 +178,52 @@ test("current replay-derived distinctness survives packet construction and 7.1 a
   const result = preparePwrp71Request({ packet: packet as never, reportType: "MAP", questionSource: source, reportSource });
   assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify(result.issues));
 });
+
+test("confirmed recurrence evidence carries only the router-confirmed pair into target lineage", async () => {
+  const source = await loadPwqe51SourcePackage();
+  const reportSource = await loadPwrp71SourcePackage();
+  const pair = ["review-one", "review-two"] as const;
+  const responses: Pwqe51CanonicalResponse[] = [
+    { responseId: "review-one-root", questionId: "M02", occurrenceId: pair[0], stepId: "first", selectedOptionIds: ["M02.rehearse"], status: "answered", mode: "single", basis: "actual_recalled" },
+    { responseId: "review-one-aim", questionId: "M03", occurrenceId: pair[0], stepId: "first", selectedOptionIds: ["M03.exposure"], status: "answered", mode: "single" },
+    { responseId: "review-two-root", questionId: "M02", occurrenceId: pair[1], stepId: "first", selectedOptionIds: ["M02.rehearse"], status: "answered", mode: "single", basis: "actual_recalled", replayOfOccurrenceId: pair[0] },
+    { responseId: "review-two-aim", questionId: "M03", occurrenceId: pair[1], stepId: "first", selectedOptionIds: ["M03.exposure"], status: "answered", mode: "single" },
+  ];
+  const routerResult = compilePwqe51Route({
+    responses,
+    phase: "deepening",
+    details: ["recurrence"],
+    distinctPairs: [pair],
+    episodeLinks: [{ occurrenceId: pair[1], linkedFrom: pair[0] }],
+  }, source);
+  const packet = buildPwqe51RouterPacket({ snapshotId: "confirmed-recurrence", responses, routerResult, pass: 2, controls: [], source });
+  const recurrence = (packet.target_resolutions as Array<{ target_id: string; occurrence_id: string; comparison_ids: string[] }>).find((target) => target.target_id === "recurrence");
+  assert.ok(recurrence);
+  assert.deepEqual(recurrence.comparison_ids, pair);
+  const result = preparePwrp71Request({ packet: packet as never, reportType: "IFS", questionSource: source, reportSource });
+  assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify(result.issues));
+});
+
+test("ordered D36 recovery details project to the real router sequence sub-steps", async () => {
+  const source = await loadPwqe51SourcePackage();
+  const reportSource = await loadPwrp71SourcePackage();
+  const responses: Pwqe51CanonicalResponse[] = [
+    { responseId: "recovery-root", questionId: "M02", occurrenceId: "recovery-event", stepId: "first", selectedOptionIds: ["M02.rehearse"], status: "answered", mode: "single", basis: "actual_recalled" },
+    { responseId: "recovery-order", questionId: "D36", occurrenceId: "recovery-event", stepId: "recovery", selectedOptionIds: ["D36.input", "D36.words", "D36.think"], status: "answered", mode: "ordered" },
+  ];
+  const routerResult = compilePwqe51Route({ responses, phase: "deepening" }, source);
+  const packet = buildPwqe51RouterPacket({ snapshotId: "ordered-recovery", responses, routerResult, pass: 2, controls: [], source });
+  const steps = packet.steps as Array<{ occurrence_id: string; step_id: string; observation_ids: string[] }>;
+  const edges = packet.sequence_edges as Array<{ occurrence_id: string; from_step: string; to_step: string; evidence_ids: string[] }>;
+  assert.deepEqual(edges.map(({ from_step, to_step }) => [from_step, to_step]), [
+    ["recovery/D36.input", "recovery/D36.words"],
+    ["recovery/D36.words", "recovery/D36.think"],
+  ]);
+  for (const edge of edges) {
+    assert.ok(steps.some((step) => step.occurrence_id === edge.occurrence_id && step.step_id === edge.from_step));
+    assert.ok(steps.some((step) => step.occurrence_id === edge.occurrence_id && step.step_id === edge.to_step));
+    assert.equal(edge.evidence_ids.length, 2);
+  }
+  const result = preparePwrp71Request({ packet: packet as never, reportType: "IFS", questionSource: source, reportSource });
+  assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify(result.issues));
+});

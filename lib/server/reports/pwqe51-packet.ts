@@ -126,10 +126,25 @@ export function buildPwqe51RouterPacket(input: BuildPwqe51PacketInput): Record<s
     return packetId;
   });
 
+  // D36's ordered selection is one administered response, but the router
+  // deliberately exposes each selected recovery detail as a sequence
+  // sub-step. Project those real option observations onto the exact sub-steps
+  // named by the router's edges so PWRP sees the same ordered evidence.
+  const recoveryStepByObservationId = new Map<string, string>();
+  for (const edge of route.sequenceEdges.filter((entry) => entry.meaning === "reported_recovery_order")) {
+    for (const observationId of edge.observationIds) {
+      const observation = route.observations.find((entry) => entry.id === observationId);
+      const response = observation ? responseById.get(observation.responseId) : undefined;
+      if (!observation || response?.questionId !== "D36") continue;
+      const substep = `${response.stepId ?? questions.get(response.questionId)?.step_binding ?? "first"}/${observation.optionId}`;
+      if (edge.fromStep === substep || edge.toStep === substep) recoveryStepByObservationId.set(observation.id, substep);
+    }
+  }
+
   const observations = route.observations.map((observation) => {
     const response = responseById.get(observation.responseId)!;
     const question = questions.get(response.questionId)!;
-    const stepId = response.stepId ?? question.step_binding ?? "first";
+    const stepId = recoveryStepByObservationId.get(observation.id) ?? response.stepId ?? question.step_binding ?? "first";
     return {
       id: packetObservationId.get(observation.id)!,
       response_id: response.responseId,
@@ -160,7 +175,21 @@ export function buildPwqe51RouterPacket(input: BuildPwqe51PacketInput): Record<s
   // Comparisons selected at Mapping completion and distinct replay occasions
   // are two legitimate sources of pair evidence. The latter is derived from
   // trusted current router state, never from similarity of chosen responses.
-  const reportedDecisions: Pwqe51ComparisonDecision[] = [...(input.comparisonDecisions ?? [])];
+  const explicitDifferentEventDecisions: Pwqe51ComparisonDecision[] = responses.flatMap((response) => {
+    if (response.questionId !== "D42" || (response.status ?? "answered") !== "answered" || response.basis !== "actual_recalled") return [];
+    const second = route.episodes.find((episode) => episode.id === response.occurrenceId && episode.basis === "actual_recalled");
+    const firstId = second?.linkedFrom;
+    const first = firstId ? route.episodes.find((episode) => episode.id === firstId && episode.basis === "actual_recalled") : undefined;
+    const question = source.questionBank.items.find((item) => item.id === "D42");
+    const responseObservationIds = (response.selectedOptionIds ?? []).map((optionId) => `${response.responseId}:${optionId}`);
+    const routerIssuedEvidence = route.observations.some((observation) => observation.responseId === response.responseId
+      && observation.itemId === "D42" && observation.occurrenceId === response.occurrenceId)
+      && !!firstId && route.targets.some((target) => target.targetId === "known_distance" && target.occurrenceId === firstId
+        && target.resolutionObservationIds.some((observationId) => responseObservationIds.includes(observationId)));
+    if (!second || !first || !routerIssuedEvidence || !question?.prompt.includes("different time")) return [];
+    return [{ firstOccurrenceId: first.id, secondOccurrenceId: second.id, relation: "different" }];
+  });
+  const reportedDecisions: Pwqe51ComparisonDecision[] = [...(input.comparisonDecisions ?? []), ...explicitDifferentEventDecisions];
   const existingPairs = new Set(reportedDecisions.map((decision) =>
     [decision.firstOccurrenceId, decision.secondOccurrenceId].sort().join("\u0000")));
   const hasBoundReplayParent = (episode: Pwqe51RouterResult["episodes"][number]) => Boolean(episode.linkedFrom && episode.distinctFrom?.includes(episode.linkedFrom));
@@ -222,12 +251,31 @@ export function buildPwqe51RouterPacket(input: BuildPwqe51PacketInput): Record<s
     };
   });
 
-  const steps = route.steps.map((step) => ({
-    id: step.id,
-    occurrence_id: step.occurrenceId,
-    step_id: route.observations.find((observation) => step.observationIds.includes(observation.id))?.stepId ?? "first",
-    observation_ids: packetObservationIds(step.observationIds),
-  }));
+  const steps = route.steps.flatMap((step) => {
+    const observationIds = step.observationIds.filter((id) => !recoveryStepByObservationId.has(id));
+    if (!observationIds.length) return [];
+    return [{
+      id: step.id,
+      occurrence_id: step.occurrenceId,
+      step_id: route.observations.find((observation) => observationIds.includes(observation.id))?.stepId ?? "first",
+      observation_ids: packetObservationIds(observationIds),
+    }];
+  });
+  const recoverySteps = new Map<string, { id: string; occurrence_id: string; step_id: string; observation_ids: string[] }>();
+  for (const [observationId, stepId] of recoveryStepByObservationId) {
+    const observation = route.observations.find((entry) => entry.id === observationId)!;
+    const packetId = packetObservationId.get(observationId)!;
+    const key = `${observation.occurrenceId}\u0000${stepId}`;
+    const step = recoverySteps.get(key) ?? {
+      id: `${observation.occurrenceId}:${stepId}`,
+      occurrence_id: observation.occurrenceId,
+      step_id: stepId,
+      observation_ids: [],
+    };
+    step.observation_ids.push(packetId);
+    recoverySteps.set(key, step);
+  }
+  steps.push(...recoverySteps.values());
 
   const sequenceEdges = route.sequenceEdges.map((edge) => ({
     id: edge.id,
@@ -240,10 +288,28 @@ export function buildPwqe51RouterPacket(input: BuildPwqe51PacketInput): Record<s
     first_not_helping: edge.observationIds.some((id) => id.endsWith(":D08.after_failed")),
   }));
 
+  const confirmedDistinctPair = (first: string, second: string) => {
+    const a = route.episodes.find((episode) => episode.id === first && episode.basis === "actual_recalled");
+    const b = route.episodes.find((episode) => episode.id === second && episode.basis === "actual_recalled");
+    const explicitPair = reportedDecisions.some((decision) => decision.relation === "different"
+      && ((decision.firstOccurrenceId === first && decision.secondOccurrenceId === second)
+        || (decision.firstOccurrenceId === second && decision.secondOccurrenceId === first)));
+    return !!a && !!b && (explicitPair || a.distinctFrom?.includes(second) || b.distinctFrom?.includes(first) || false);
+  };
   const targetResolutions = route.targets.map((target) => {
     const attempts = responses.filter((response) => response.occurrenceId === target.occurrenceId
       && target.candidateItems.includes(response.questionId)
       && (response.stepId ?? questions.get(response.questionId)?.step_binding ?? "first") === target.stepId).length;
+    const referencedObservationIds = [...target.sourceObservationIds, ...target.resolutionObservationIds];
+    const referencedOccurrences = [...new Set(referencedObservationIds.flatMap((id) => {
+      const observation = route.observations.find((entry) => entry.id === id);
+      return observation ? [observation.occurrenceId] : [];
+    }))];
+    const inferredComparisonIds = ["recurrence", "known_distance"].includes(target.targetId) && referencedOccurrences.length === 2
+      && referencedOccurrences.includes(target.occurrenceId)
+      && confirmedDistinctPair(referencedOccurrences[0]!, referencedOccurrences[1]!)
+      ? referencedOccurrences as [string, string]
+      : undefined;
     return {
       id: target.id,
       target_id: target.targetId,
@@ -251,7 +317,7 @@ export function buildPwqe51RouterPacket(input: BuildPwqe51PacketInput): Record<s
       step_id: target.stepId,
       reason: target.reason,
       state: target.state,
-      comparison_ids: target.comparisonIds ?? [],
+      comparison_ids: target.comparisonIds ?? inferredComparisonIds ?? [],
       source_ids: packetObservationIds(target.sourceObservationIds),
       resolution_ids: packetObservationIds(target.resolutionObservationIds),
       attempts,

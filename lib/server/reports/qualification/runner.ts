@@ -19,8 +19,10 @@ import { PWRP71_SEMANTIC_CASE_SET_SHA256 } from "../pwrp71-readiness.ts";
 export const PWRP71_QUALIFICATION_RUN_SCHEMA = 1 as const;
 export const PWRP71_QUALIFICATION_REPORT_ORDER = ["MAP", "IFS", "PV", "ATT", "SYNTHESIS"] as const satisfies readonly ReportType[];
 export const PWRP71_ROUTER_PARITY_EVIDENCE_VERSION = "pwqe51-routing-qualification-1" as const;
-export type Pwrp71FixtureSet = "legacy-v1" | "route-replays-v3";
-type FixtureStatus = Pwrp71FixturePacket["fixtureStatus"] | "route_replay_v3_eligible" | "route_replay_v3_partial" | "route_replay_v3_ineligible" | "route_replay_v3_missing";
+export type Pwrp71FixtureSet = "legacy-v1" | "route-replays-v3" | "route-replays-v4";
+type FixtureStatus = Pwrp71FixturePacket["fixtureStatus"]
+  | "route_replay_v3_eligible" | "route_replay_v3_partial" | "route_replay_v3_ineligible" | "route_replay_v3_missing"
+  | "route_replay_v4_eligible" | "route_replay_v4_partial" | "route_replay_v4_ineligible" | "route_replay_v4_missing";
 
 const ROUTER_IMPLEMENTATION_FILES = [
   "lib/server/assessment/pwqe51-router.ts",
@@ -159,7 +161,7 @@ export interface RunPwrp71QualificationOptions {
 }
 
 interface RouteReplayManifest {
-  readonly schemaVersion: "PWQE51-ROUTE-REPLAY-V3-MANIFEST";
+  readonly schemaVersion: "PWQE51-ROUTE-REPLAY-V3-MANIFEST" | "PWQE51-ROUTE-REPLAY-V4-MANIFEST";
   readonly qualificationStatus: "internal_session_replay_not_independent_qualification";
   readonly inputs: {
     readonly v2ManifestSha256: string;
@@ -188,7 +190,7 @@ interface RouteReplayManifest {
 }
 
 interface RouteReplayCase {
-  readonly schemaVersion: "PWQE51-ROUTE-REPLAY-V3";
+  readonly schemaVersion: "PWQE51-ROUTE-REPLAY-V3" | "PWQE51-ROUTE-REPLAY-V4";
   readonly profileId: string;
   readonly authoredAnswerDisposition: readonly {
     readonly responseId: string;
@@ -210,6 +212,7 @@ interface RouteReplayCase {
 }
 
 interface RouteReplayFixtureSet {
+  readonly fixtureSet: "route-replays-v3" | "route-replays-v4";
   readonly fixtureSetSha256: string;
   readonly manifestSha256: string;
   readonly inputs: RouteReplayManifest["inputs"];
@@ -255,19 +258,21 @@ function normalizedTextSha256(text: string): string {
 async function loadRouteReplayFixtureSet(input: {
   readonly workspaceRoot: string;
   readonly fixtureRoot?: string;
+  readonly fixtureSet: "route-replays-v3" | "route-replays-v4";
   readonly questionSource: Pwqe51SourcePackage;
   readonly reportSource: Pwrp71SourcePackage;
 }): Promise<RouteReplayFixtureSet> {
-  const root = path.resolve(input.fixtureRoot ?? path.join(input.workspaceRoot, "qualification", "pwrp71", "route_replays_v3"));
+  const version = input.fixtureSet === "route-replays-v4" ? "V4" : "V3";
+  const root = path.resolve(input.fixtureRoot ?? path.join(input.workspaceRoot, "qualification", "pwrp71", `route_replays_${version.toLowerCase()}`));
   let manifestText: string;
   try { manifestText = await readFile(path.join(root, "manifest.json"), "utf8"); }
-  catch { throw new Error(`Selected v3 route replay fixture set is missing or unreadable at ${root}; no legacy fallback is available.`); }
+  catch { throw new Error(`Selected ${version.toLowerCase()} route replay fixture set is missing or unreadable at ${root}; no legacy fallback or alternate fixture fallback is available.`); }
   let manifest: RouteReplayManifest;
   try { manifest = JSON.parse(manifestText) as RouteReplayManifest; }
-  catch (error) { throw new Error(`Selected v3 route replay manifest is invalid JSON: ${String(error)}`); }
-  if (!isRecord(manifest) || manifest.schemaVersion !== "PWQE51-ROUTE-REPLAY-V3-MANIFEST"
+  catch (error) { throw new Error(`Selected ${version.toLowerCase()} route replay manifest is invalid JSON: ${String(error)}`); }
+  if (!isRecord(manifest) || manifest.schemaVersion !== `PWQE51-ROUTE-REPLAY-${version}-MANIFEST`
     || manifest.qualificationStatus !== "internal_session_replay_not_independent_qualification" || !isRecord(manifest.inputs) || !Array.isArray(manifest.profiles)) {
-    throw new Error("Selected route replay manifest does not use the internal PWQE51-ROUTE-REPLAY-V3-MANIFEST contract.");
+    throw new Error(`Selected route replay manifest does not use the internal PWQE51-ROUTE-REPLAY-${version}-MANIFEST contract.`);
   }
   const source = manifest.inputs;
   if (source.questionRelease !== PWQE51_RELEASE_IDENTITY.questionRelease
@@ -323,9 +328,9 @@ async function loadRouteReplayFixtureSet(input: {
     let replay: RouteReplayCase;
     try { replay = JSON.parse(file) as RouteReplayCase; }
     catch (error) { throw new Error(`${manifestCase.profileId} route replay artifact is invalid JSON: ${String(error)}`); }
-    if (!isRecord(replay) || replay.schemaVersion !== "PWQE51-ROUTE-REPLAY-V3" || replay.profileId !== manifestCase.profileId
+    if (!isRecord(replay) || replay.schemaVersion !== `PWQE51-ROUTE-REPLAY-${version}` || replay.profileId !== manifestCase.profileId
       || !isRecord(replay.sourceIdentity) || !isRecord(replay.replay) || !isRecord(replay.packets) || !isRecord(replay.packetValidation)) {
-      throw new Error(`${manifestCase.profileId} route replay artifact does not match the v3 replay contract.`);
+      throw new Error(`${manifestCase.profileId} route replay artifact does not match the ${version.toLowerCase()} replay contract.`);
     }
     const identity = replay.sourceIdentity;
     if (identity.v2ManifestSha256 !== source.v2ManifestSha256 || identity.sourceCommit !== source.sourceCommit
@@ -374,10 +379,56 @@ async function loadRouteReplayFixtureSet(input: {
         reason: typeof row.reason === "string" ? normalizeRouteReplayRuntimeIds(row.reason) : "",
       } : {})
       : [];
-    const completenessSemantic = [completeness.mapping === "complete", completeness.deepening !== "not_applicable", completeness.deepening === "complete"];
-    const semanticDigest = sha256Canonical({ submitted: submittedSemantic, trace: traceSemantic, completeness: completenessSemantic, packets: validationByType, authoredAnswerDisposition: authoredAnswerDispositionSemantic });
+    const completenessSemantic = version === "V4"
+      ? [
+        completeness.mapping === "complete",
+        completeness.deepening !== "not_applicable",
+        completeness.deepening === "complete",
+        isRecord(replay.replay.semanticCore) ? replay.replay.semanticCore.status : undefined,
+        isRecord(replay.replay.semanticCore) ? replay.replay.semanticCore.requiredSourceResponseIds : undefined,
+        isRecord(replay.replay.semanticCore) ? replay.replay.semanticCore.acceptedSourceResponseIds : undefined,
+      ]
+      : [completeness.mapping === "complete", completeness.deepening !== "not_applicable", completeness.deepening === "complete"];
+    const semanticDigest = version === "V4"
+      ? sha256Canonical({
+        submitted: submittedSemantic,
+        trace: traceSemantic,
+        completeness: completenessSemantic,
+        packets: validationByType,
+        syntheticDeepeningAnswerAudit: (Array.isArray(replay.replay.syntheticDeepeningAnswerAudit) ? replay.replay.syntheticDeepeningAnswerAudit : []).map((entry) => isRecord(entry) ? ({
+          profileId: entry.profileId,
+          sourceQuestionId: entry.sourceQuestionId,
+          selectedOptionIds: entry.selectedOptionIds,
+          status: entry.status,
+          selectionMode: entry.selectionMode,
+          occurrenceReference: normalizeRouteReplayRuntimeIds(String(entry.occurrenceReference ?? "")),
+          step: entry.step,
+          existingFictionalFacts: (Array.isArray(entry.existingFictionalFacts) ? entry.existingFictionalFacts : []).map((fact) => isRecord(fact) ? ({
+            responseId: fact.responseId,
+            questionId: fact.questionId,
+            status: fact.status,
+            ...(typeof fact.occurrenceId === "string" ? { occurrenceId: normalizeRouteReplayRuntimeIds(fact.occurrenceId) } : {}),
+            ...(typeof fact.stepId === "string" ? { stepId: fact.stepId } : {}),
+            ...(Array.isArray(fact.selectedOptionIds) ? { selectedOptionIds: fact.selectedOptionIds } : {}),
+            ...(typeof fact.evidenceKind === "string" ? { evidenceKind: fact.evidenceKind } : {}),
+            ...(typeof fact.contextRelation === "string" ? { contextRelation: fact.contextRelation } : {}),
+          }) : {}),
+          rationale: entry.rationale,
+          scenarioRole: entry.scenarioRole,
+          changesIntendedSemanticTest: entry.changesIntendedSemanticTest,
+          provenance: entry.provenance,
+          outcome: entry.outcome,
+        }) : {}),
+        syntheticRespondentControls: JSON.parse(normalizeRouteReplayRuntimeIds(JSON.stringify(replay.replay.syntheticRespondentControls ?? []))) as unknown,
+        replayDecisions: (Array.isArray(replay.replay.replayAndDistinctnessDecisions) ? replay.replay.replayAndDistinctnessDecisions : []).map((decision) => isRecord(decision) ? ({
+          sourceOccurrenceReference: decision.sourceOccurrenceReference,
+          outcome: decision.outcome,
+        }) : {}),
+        authoredAnswerDisposition: authoredAnswerDispositionSemantic,
+      })
+      : sha256Canonical({ submitted: submittedSemantic, trace: traceSemantic, completeness: completenessSemantic, packets: validationByType, authoredAnswerDisposition: authoredAnswerDispositionSemantic });
     const responseProvenance = Array.isArray(replay.replay.completeResponseProvenance) ? replay.replay.completeResponseProvenance : [];
-    const expectedAuthoredAccepted = responseProvenance.filter((row) => isRecord(row) && row.accepted === true && typeof row.origin === "string" && !row.origin.includes("synthetic_mapping_answer")).length;
+    const expectedAuthoredAccepted = responseProvenance.filter((row) => isRecord(row) && row.accepted === true && typeof row.origin === "string" && row.origin.startsWith("original_authored_fictional_")).length;
     const forbidden = isRecord(replay.declaredFictionalDecisions) && Array.isArray(replay.declaredFictionalDecisions.intentionallyForbiddenAnswers)
       ? replay.declaredFictionalDecisions.intentionallyForbiddenAnswers.length : 0;
     const issueCodes = Object.values(validationByType).flatMap((row) => row?.issueCodes ?? []);
@@ -397,10 +448,11 @@ async function loadRouteReplayFixtureSet(input: {
     casePins.push({ profileId: manifestCase.profileId, artifactSha256: manifestCase.artifactSha256, semanticResultSha256: manifestCase.semanticResultSha256 });
   }
   if (seen.size !== QUALIFICATION_PROFILE_IDS.length || QUALIFICATION_PROFILE_IDS.some((id) => !seen.has(id))) {
-    throw new Error("Selected v3 route replay manifest must explicitly index P01–P09 and C01–C16, including ineligible profiles.");
+    throw new Error(`Selected ${version.toLowerCase()} route replay manifest must explicitly index P01–P09 and C01–C16, including ineligible profiles.`);
   }
   const manifestSha256 = normalizedTextSha256(manifestText);
   return {
+    fixtureSet: input.fixtureSet,
     manifestSha256,
     fixtureSetSha256: sha256Canonical({ schemaVersion: manifest.schemaVersion, manifestSha256, casePins }),
     inputs: source,
@@ -428,10 +480,10 @@ function routeReplayFixturePacket(input: {
     const packetEntry = replay.packets[packetType];
     const packetValidation = replay.packetValidation[packetType];
     const reasons: ValidationIssue[] = [];
-    if (!stageComplete) reasons.push({ code: "route_replay_stage_incomplete", path: `$.${input.profileId}.${requiresMapping ? "mapping" : "deepening"}`, message: `The server replay did not complete the ${requiresMapping ? "Mapping" : "Deepening"} stage.` });
-    if (!packetEntry) reasons.push({ code: "route_replay_packet_unavailable", path: `$.${input.profileId}.packets.${reportType}`, message: `${reportType} is blocked because the v3 replay did not build its required packet.` });
+    if (!stageComplete) reasons.push({ code: "route_replay_stage_incomplete", path: `$.${input.profileId}.${requiresMapping ? "mapping" : "deepening"}`, message: `The ${input.set.fixtureSet} server replay did not complete the ${requiresMapping ? "Mapping" : "Deepening"} stage.` });
+    if (!packetEntry) reasons.push({ code: "route_replay_packet_unavailable", path: `$.${input.profileId}.packets.${reportType}`, message: `${reportType} is blocked because the ${input.set.fixtureSet} replay did not build its required packet.` });
     if (packetEntry && (!stagePacketAccepted || packetValidation?.accepted !== true)) {
-      reasons.push({ code: "route_replay_adapter_rejected", path: `$.${input.profileId}.packetValidation.${packetType}`, message: `The v3 artifact does not record adapter acceptance for ${packetType}.` });
+      reasons.push({ code: "route_replay_adapter_rejected", path: `$.${input.profileId}.packetValidation.${packetType}`, message: `The ${input.set.fixtureSet} artifact does not record adapter acceptance for ${packetType}.` });
     }
     if (packetEntry) {
       const packetScope = packetEntry.packet.assessment_scope as Record<string, unknown> | undefined;
@@ -448,7 +500,7 @@ function routeReplayFixturePacket(input: {
     const packetSha256 = sha256Canonical(packet);
     const fixture: Pwrp71FixturePacket = {
       profileId: input.profileId,
-      title: `${input.profileId} router-issued v3 fictional session replay`,
+      title: `${input.profileId} router-issued ${input.set.fixtureSet} fictional session replay`,
       packet,
       packetSha256,
       sourceHistorySha256: replay.sourceIdentity.authoredFixtureSha256,
@@ -461,14 +513,17 @@ function routeReplayFixturePacket(input: {
     reportIssues[reportType] = reasons;
   }
   const fallbackPacket = reportPackets.MAP ?? reportPackets[input.reportTypes[0] ?? "MAP"] ?? {
-    profileId: input.profileId, title: `${input.profileId} router-issued v3 fictional session replay`, packet: {}, packetSha256: sha256Canonical({}),
+    profileId: input.profileId, title: `${input.profileId} router-issued ${input.set.fixtureSet} fictional session replay`, packet: {}, packetSha256: sha256Canonical({}),
     fixtureStatus: "pending_router_parity" as const, routerParity: "pending" as const, issues: [],
   };
   const anyPacket = Object.keys(replay.packets).length > 0;
   const allStagesComplete = manifestCase.mapping === "complete" && manifestCase.deepening === "complete";
   return {
     ...fallbackPacket,
-    fixtureStatus: allStagesComplete && manifestCase.mappingPacketAccepted && manifestCase.deepeningPacketAccepted ? "route_replay_v3_eligible" : anyPacket ? "route_replay_v3_partial" : "route_replay_v3_ineligible",
+    fixtureStatus: allStagesComplete && manifestCase.mappingPacketAccepted && manifestCase.deepeningPacketAccepted
+      ? input.set.fixtureSet === "route-replays-v4" ? "route_replay_v4_eligible" : "route_replay_v3_eligible"
+      : anyPacket ? input.set.fixtureSet === "route-replays-v4" ? "route_replay_v4_partial" : "route_replay_v3_partial"
+        : input.set.fixtureSet === "route-replays-v4" ? "route_replay_v4_ineligible" : "route_replay_v3_ineligible",
     reportPackets,
     reportIssues,
   };
@@ -625,8 +680,8 @@ export async function runPwrp71Qualification(input: RunPwrp71QualificationOption
   if (!input.profileIds.length || new Set(input.profileIds).size !== input.profileIds.length) throw new Error("Select one or more unique PWRP 7.1 profiles.");
   if (!input.reportTypes.length || new Set(input.reportTypes).size !== input.reportTypes.length || input.reportTypes.some((type) => !PWRP71_QUALIFICATION_REPORT_ORDER.includes(type))) throw new Error("Select one or more unique PWRP 7.1 report types.");
   const fixtureSet = input.fixtureSet ?? "legacy-v1";
-  if (fixtureSet !== "legacy-v1" && fixtureSet !== "route-replays-v3") throw new Error(`Unknown PWRP 7.1 fixture set: ${String(fixtureSet)}.`);
-  if (fixtureSet === "route-replays-v3" && input.fixtures) throw new Error("The v3 route replay fixture set cannot be combined with injected legacy fixtures.");
+  if (fixtureSet !== "legacy-v1" && fixtureSet !== "route-replays-v3" && fixtureSet !== "route-replays-v4") throw new Error(`Unknown PWRP 7.1 fixture set: ${String(fixtureSet)}.`);
+  if (fixtureSet !== "legacy-v1" && input.fixtures) throw new Error(`The ${fixtureSet} fixture set cannot be combined with injected legacy fixtures.`);
   const reportTypes = PWRP71_QUALIFICATION_REPORT_ORDER.filter((type) => input.reportTypes.includes(type));
 
   const [legacyFixtures, questionSource, reportSource] = await Promise.all([
@@ -634,8 +689,8 @@ export async function runPwrp71Qualification(input: RunPwrp71QualificationOption
     input.questionSource ? Promise.resolve(input.questionSource) : loadPwqe51SourcePackage(workspaceRoot),
     input.reportSource ? Promise.resolve(input.reportSource) : loadPwrp71SourcePackage(workspaceRoot),
   ]);
-  const routeReplaySet = fixtureSet === "route-replays-v3"
-    ? await loadRouteReplayFixtureSet({ workspaceRoot, fixtureRoot: input.fixtureRoot, questionSource, reportSource })
+  const routeReplaySet = fixtureSet === "route-replays-v3" || fixtureSet === "route-replays-v4"
+    ? await loadRouteReplayFixtureSet({ workspaceRoot, fixtureRoot: input.fixtureRoot, fixtureSet, questionSource, reportSource })
     : undefined;
   let semanticCaseSetSha256: string;
   let semanticCasesCanonicalJsonSha256: string;
@@ -652,7 +707,7 @@ export async function runPwrp71Qualification(input: RunPwrp71QualificationOption
     semanticCaseSetSha256 = semanticSha256;
     semanticCasesCanonicalJsonSha256 = sha256Canonical(semanticCases);
   }
-  const selectedFixtures: SelectedQualificationFixture[] = fixtureSet === "route-replays-v3"
+  const selectedFixtures: SelectedQualificationFixture[] = fixtureSet !== "legacy-v1"
     ? input.profileIds.map((profileId) => routeReplayFixturePacket({ profileId, reportTypes, set: routeReplaySet!, questionSource, reportSource }))
     : await Promise.all(input.profileIds.map((profileId) => loadPwrp71FixturePacket({ profileId, fixtures: legacyFixtures!, questionSource })));
   const outputRoot = path.resolve(input.outputRoot ?? path.join(workspaceRoot, ".qualification", "pwrp71"));
@@ -683,7 +738,6 @@ export async function runPwrp71Qualification(input: RunPwrp71QualificationOption
     fixtureSetSha256: routeReplaySet?.fixtureSetSha256 ?? legacyFixtures!.fixtureSetSha256,
     ...(legacyFixtures ? { sourceArchiveSha256: legacyFixtures.sourceArchiveSha256 } : {}),
     ...(routeReplaySet ? {
-      fixtureSet: "route-replays-v3" as const,
       fixtureManifestSha256: routeReplaySet.manifestSha256,
       fixtureSourceCommit: routeReplaySet.inputs.sourceCommit,
       fixtureSourceSha256: routeReplaySet.inputs.v2ManifestSha256,
@@ -715,7 +769,7 @@ export async function runPwrp71Qualification(input: RunPwrp71QualificationOption
     schemaVersion: PWRP71_QUALIFICATION_RUN_SCHEMA,
     runId,
     mode: input.mode,
-    ...(fixtureSet === "route-replays-v3" ? { fixtureSet } : {}),
+    ...(fixtureSet !== "legacy-v1" ? { fixtureSet } : {}),
     status: blockers.length ? "blocked" : "running",
     createdAt: now().toISOString(),
     updatedAt: now().toISOString(),
@@ -773,7 +827,7 @@ export async function runPwrp71Qualification(input: RunPwrp71QualificationOption
           requestedModel: policy[reportType].model,
           reasoningEffort: policy[reportType].reasoningEffort,
           validationIssues: reportIssues,
-          failure: { code: fixtureSet === "route-replays-v3" ? "route_replay_report_ineligible" : "fixture_packet_invalid", message: `${fixture.profileId} is not eligible for ${reportType} with the selected fixture set.`, issues: reportIssues },
+          failure: { code: fixtureSet !== "legacy-v1" ? "route_replay_report_ineligible" : "fixture_packet_invalid", message: `${fixture.profileId} is not eligible for ${reportType} with the selected fixture set.`, issues: reportIssues },
         };
         const existingIndex = results.findIndex((result) => result.profileId === fixture.profileId && result.reportType === reportType);
         if (existingIndex >= 0) results[existingIndex] = blocked; else results.push(blocked);
