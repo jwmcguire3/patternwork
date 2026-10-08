@@ -1,4 +1,5 @@
-import { selectDebugReports, type DebugReportResult, type DebugReportRunInput } from "../lib/server/debug/report-runner.ts";
+import { selectDebugReports } from "../lib/server/debug/report-selection.ts";
+import type { DebugReportResult, DebugReportRunInput } from "../lib/server/debug/report-runner.ts";
 import {
   failDebugReportRunStep,
   finishDebugReportRunStep,

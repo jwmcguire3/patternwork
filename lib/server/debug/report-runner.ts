@@ -15,13 +15,11 @@ import { loadPwrp71FixturePacket } from "../reports/qualification/replay.ts";
 import { loadPwrp71QualificationFixtures } from "../reports/qualification/fixtures.ts";
 import type { Pwqe51RouterQualificationEvidence } from "../reports/qualification/runner.ts";
 
-export type DebugReportMode = "mapping" | "ifs" | "pv" | "att" | "deepening" | "all";
+import { DEBUG_PROFILE_IDS } from "./report-selection.ts";
+import type { DebugReportMode } from "./report-selection.ts";
+export { DEBUG_PROFILE_IDS, DEBUG_REPORT_MODES, selectDebugReports } from "./report-selection.ts";
+export type { DebugReportMode } from "./report-selection.ts";
 export type DebugReportPhase = "PREPARING" | "MAP" | "IFS" | "PV" | "ATT" | "SYNTHESIS" | "COMPLETE";
-export const DEBUG_REPORT_MODES: readonly DebugReportMode[] = ["mapping", "ifs", "pv", "att", "deepening", "all"];
-export const DEBUG_PROFILE_IDS: readonly string[] = [
-  ...Array.from({ length: 9 }, (_, index) => `P${String(index + 1).padStart(2, "0")}`),
-  ...Array.from({ length: 16 }, (_, index) => `C${String(index + 1).padStart(2, "0")}`),
-];
 
 const ROUTER_EVIDENCE_ENV = "PWQE51_ROUTING_QUALIFICATION_EVIDENCE_JSON";
 const ROUTER_IMPLEMENTATION_FILES = [
@@ -65,14 +63,7 @@ export interface DebugProfileAvailability {
   readonly reason?: string;
 }
 
-export function selectDebugReports(mode: DebugReportMode): readonly ReportType[] {
-  if (mode === "mapping") return ["MAP"];
-  if (mode === "ifs") return ["IFS"];
-  if (mode === "pv") return ["PV"];
-  if (mode === "att") return ["ATT"];
-  if (mode === "deepening") return ["IFS", "PV", "ATT"];
-  return ["MAP", "IFS", "PV", "ATT", "SYNTHESIS"];
-}
+
 
 function object(value: unknown): Record<string, unknown> | undefined {
   return typeof value === "object" && value !== null && !Array.isArray(value) ? value as Record<string, unknown> : undefined;
