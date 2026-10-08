@@ -46,7 +46,15 @@ export interface GenerateCanonicalReportOptions {
     readonly packet: JsonObject;
     readonly source: Pwrp71SourcePackage;
   };
+  /** Optional audit sink for qualification/debug tooling; production behavior does not depend on it. */
+  readonly onPwrp71Event?: (event: Pwrp71GenerationEvent) => Promise<void> | void;
 }
+
+export type Pwrp71GenerationEvent =
+  | { readonly type: "draft_validation"; readonly attemptId: string; readonly reportType: ReportType; readonly ok: boolean; readonly issues: readonly ValidationIssue[]; readonly draftSha256?: string }
+  | { readonly type: "review_receipt"; readonly attemptId: string; readonly reportType: ReportType; readonly receipt: JsonObject; readonly verdict: "accept" | "revise" | "invalid_input" }
+  | { readonly type: "review_validation"; readonly attemptId: string; readonly reportType: ReportType; readonly ok: false; readonly issues: readonly ValidationIssue[] }
+  | { readonly type: "repair_decision"; readonly triggerAttemptId: string; readonly reportType: ReportType; readonly reason: "draft_validation" | "review_revise"; readonly issueCount: number };
 
 function invalidJsonIssue(result: Extract<OpenRouterGenerationResult, { ok: false }>): ValidationIssue {
   return { code: result.kind, path: "$", message: result.message };
@@ -86,6 +94,8 @@ export async function generateCanonicalReport(options: GenerateCanonicalReportOp
   let currentPrompt = buildGenerationPrompt(options.reportType, providerInput);
   let previousOutput: JsonObject | undefined;
   let validationIssues: readonly ValidationIssue[] = [];
+  let callOrdinal = 0;
+  let lastAttemptId = "";
 
   const call = async (
     tierIndex: number,
@@ -95,7 +105,8 @@ export async function generateCanonicalReport(options: GenerateCanonicalReportOp
     const tier = QUALIFICATION_MODEL_ORDER[tierIndex];
     const spentMicros = options.spentMicros + usages.reduce((sum, usage) => sum + usage.costMicros, 0);
     assertCallWithinCostCap({ capMicros: options.costCapMicros, spentMicros }, tier, currentPrompt, config.maxOutputTokens);
-    const result = await options.provider.generate({
+    const attemptOrdinal = options.contractVersion === "v7.1" ? `:attempt-${++callOrdinal}` : "";
+    const request = {
       model: tierIndex === config.pinnedTier ? config.model : config.escalationModel,
       reasoningEffort: tierIndex === config.pinnedTier ? config.reasoningEffort : config.escalationReasoningEffort,
       system: override?.system ?? (options.contractVersion === "v7.1" && (phase === "repair" || phase === "escalation")
@@ -105,16 +116,21 @@ export async function generateCanonicalReport(options: GenerateCanonicalReportOp
       schemaName: override?.schemaName ?? providerSchemaName,
       schema: override?.schema ?? providerSchema,
       maxOutputTokens: config.maxOutputTokens,
-      idempotencyKey: `${options.invocationKey}:${options.reportType}:${phase}:${tier.name}`,
-    });
+      idempotencyKey: `${options.invocationKey}:${options.reportType}:${phase}:${tier.name}${attemptOrdinal}`,
+    };
+    lastAttemptId = request.idempotencyKey;
+    const result = await options.provider.generate(request);
     usages.push(result.usage);
+    if (options.contractVersion === "v7.1" && result.usage.model !== "offline/mock" && result.usage.model !== request.model) {
+      throw new OpenRouterTransportError("protocol", `OpenRouter returned model ${result.usage.model}, but the qualification request pinned ${request.model}.`, { retryable: false });
+    }
     if (options.spentMicros + usages.reduce((sum, usage) => sum + usage.costMicros, 0) > options.costCapMicros) {
       throw new ReportCostCapError(options.costCapMicros, options.spentMicros, usages.reduce((sum, usage) => sum + usage.costMicros, 0));
     }
     return result;
   };
 
-  const validate = async (result: OpenRouterGenerationResult) => {
+  const validate = async (result: OpenRouterGenerationResult, attemptId: string) => {
     if (!result.ok) return { ok: false as const, issues: [invalidJsonIssue(result)] };
     previousOutput = result.output;
     const validation = options.contractVersion === "v7.1"
@@ -139,6 +155,14 @@ export async function generateCanonicalReport(options: GenerateCanonicalReportOp
           options.workspaceRoot,
           options.synthesisBundle as SynthesisBundle | undefined,
         );
+    await options.onPwrp71Event?.({
+      type: "draft_validation",
+      attemptId,
+      reportType: options.reportType,
+      ok: validation.ok,
+      issues: validation.ok ? [] : validation.issues,
+      ...(validation.ok ? { draftSha256: hashCanonical(validation.value.draft) } : {}),
+    });
     return validation.ok
       ? { ok: true as const, artifact: validation.value }
       : { ok: false as const, issues: validation.issues };
@@ -175,8 +199,10 @@ export async function generateCanonicalReport(options: GenerateCanonicalReportOp
     }
     const validatedReview = validatePwrp71Review({ value: reviewResult.output, artifact, packet: pwrp71.packet, source: pwrp71.source });
     if (!validatedReview.ok) {
+      await options.onPwrp71Event?.({ type: "review_validation", attemptId: lastAttemptId, reportType: options.reportType, ok: false, issues: validatedReview.issues });
       return { ok: false, outcome: failure(options.reportType, "review_validation_failed", "PWRP 7.1 reviewer output failed schema or draft/evidence binding validation.", validatedReview.issues, usages) };
     }
+    await options.onPwrp71Event?.({ type: "review_receipt", attemptId: lastAttemptId, reportType: options.reportType, receipt: validatedReview.value as unknown as JsonObject, verdict: validatedReview.value.verdict });
     return { ok: true, verdict: validatedReview.value.verdict, review: validatedReview.value.review };
   };
 
@@ -187,6 +213,7 @@ export async function generateCanonicalReport(options: GenerateCanonicalReportOp
     if (firstReview.verdict !== "revise") return failure(options.reportType, "review_invalid_input", "PWRP 7.1 reviewer marked the source invalid.", [], usages);
 
     const reviewIssues = Array.isArray(firstReview.review.issues) ? firstReview.review.issues as JsonObject[] : [];
+    await options.onPwrp71Event?.({ type: "repair_decision", triggerAttemptId: lastAttemptId, reportType: options.reportType, reason: "review_revise", issueCount: reviewIssues.length });
     const feedback = reviewIssues.map((item) => ({
       code: String(item.category ?? "review_issue"),
       path: `$.review.issues.${String(item.id ?? "unknown")}`,
@@ -214,7 +241,7 @@ export async function generateCanonicalReport(options: GenerateCanonicalReportOp
     if (options.contractVersion === "v7.1" && firstResult.finishReason !== "stop") {
       return failure(options.reportType, "incomplete_generation", `PWRP 7.1 provider response is not complete (finish reason: ${firstResult.finishReason ?? "missing"}).`, [{ code: "finish_reason", path: "$.finish_reason", message: "A PWRP 7.1 response requires provider finishReason 'stop'." }], usages);
     }
-    let checked = await validate(firstResult);
+    let checked = await validate(firstResult, lastAttemptId);
     if (checked.ok) {
       if (options.contractVersion === "v7.1") return reviewAndAcceptPwrp71(checked.artifact as Pwrp71ReportArtifact);
       return { ok: true, value: { reportType: options.reportType, artifact: checked.artifact, usage: totalUsage(usages) } as GeneratedCanonicalArtifact };
@@ -225,11 +252,12 @@ export async function generateCanonicalReport(options: GenerateCanonicalReportOp
       currentPrompt = options.contractVersion === "v7.1"
         ? buildPwrp71RepairPrompt(options.reportType, providerInput, validationIssues, previousOutput)
         : buildRepairPrompt(options.reportType, providerInput, validationIssues, previousOutput);
+      if (options.contractVersion === "v7.1") await options.onPwrp71Event?.({ type: "repair_decision", triggerAttemptId: lastAttemptId, reportType: options.reportType, reason: "draft_validation", issueCount: validationIssues.length });
       const repairedResult = await call(config.pinnedTier, "repair");
       if (options.contractVersion === "v7.1" && repairedResult.finishReason !== "stop") {
         return failure(options.reportType, "incomplete_generation", `PWRP 7.1 provider response is not complete (finish reason: ${repairedResult.finishReason ?? "missing"}).`, [{ code: "finish_reason", path: "$.finish_reason", message: "A PWRP 7.1 response requires provider finishReason 'stop'." }], usages);
       }
-      checked = await validate(repairedResult);
+      checked = await validate(repairedResult, lastAttemptId);
       if (checked.ok) {
         if (options.contractVersion === "v7.1") return reviewAndAcceptPwrp71(checked.artifact as Pwrp71ReportArtifact);
         return { ok: true, value: { reportType: options.reportType, artifact: checked.artifact, usage: totalUsage(usages) } as GeneratedCanonicalArtifact };
@@ -244,7 +272,7 @@ export async function generateCanonicalReport(options: GenerateCanonicalReportOp
     if (options.contractVersion === "v7.1" && escalatedResult.finishReason !== "stop") {
       return failure(options.reportType, "incomplete_generation", `PWRP 7.1 provider response is not complete (finish reason: ${escalatedResult.finishReason ?? "missing"}).`, [{ code: "finish_reason", path: "$.finish_reason", message: "A PWRP 7.1 response requires provider finishReason 'stop'." }], usages);
     }
-    checked = await validate(escalatedResult);
+    checked = await validate(escalatedResult, lastAttemptId);
     if (checked.ok) {
       if (options.contractVersion === "v7.1") return reviewAndAcceptPwrp71(checked.artifact as Pwrp71ReportArtifact);
       return { ok: true, value: { reportType: options.reportType, artifact: checked.artifact, usage: totalUsage(usages) } as GeneratedCanonicalArtifact };

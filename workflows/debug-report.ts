@@ -1,5 +1,4 @@
-import type { ReportType } from "../lib/question-engine/types.ts";
-import type { DebugReportMode, DebugReportResult, DebugReportRunInput } from "../lib/server/debug/report-runner.ts";
+import { selectDebugReports, type DebugReportResult, type DebugReportRunInput } from "../lib/server/debug/report-runner.ts";
 import {
   failDebugReportRunStep,
   finishDebugReportRunStep,
@@ -7,14 +6,9 @@ import {
   startDebugReportRunStep,
 } from "../lib/server/debug/report-runner.ts";
 
-function selectedReports(mode: DebugReportMode): readonly ReportType[] {
-  if (mode === "mapping") return ["MAP"];
-  if (mode === "deepening") return ["IFS", "PV", "ATT", "SYNTHESIS"];
-  return ["MAP", "IFS", "PV", "ATT", "SYNTHESIS"];
-}
-
 function failureCode(error: unknown): string {
   const message = error instanceof Error ? error.message : "";
+  if (message.includes("router_qualification_pending")) return "ROUTER_QUALIFICATION_PENDING";
   if (message.includes("cost_cap")) return "COST_CAP";
   if (message.includes("provider_")) return "OPENROUTER";
   if (message.includes("validation")) return "VALIDATION";
@@ -29,7 +23,7 @@ export async function debugReportWorkflow(input: DebugReportRunInput): Promise<{
   const results: DebugReportResult[] = [];
   let spentMicros = 0;
   try {
-    for (const reportType of selectedReports(input.mode)) {
+    for (const reportType of selectDebugReports(input.mode)) {
       const result = await generateDebugReportStep({ ...input, reportType, layerReports: results, spentMicros });
       results.push(result);
       spentMicros += result.usage.costMicros;

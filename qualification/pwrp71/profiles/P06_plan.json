@@ -1,0 +1,96 @@
+{
+  "id": "P06",
+  "title": "Different preventive jobs in different settings",
+  "fictional": true,
+  "source_kind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+  "config": {
+    "people": {
+      "P1": "partner",
+      "P2": "supervisor",
+      "P3": "friend"
+    },
+    "referents": {
+      "evaluator": "P2",
+      "boundary_person": "P2",
+      "close_person": "P1",
+      "support_person": "P3",
+      "repair_person": "P1",
+      "conflict_person": "P1"
+    },
+    "topics": [
+      "body_detail"
+    ],
+    "unavailable_contexts": [],
+    "focus_topics": [
+      "conflict"
+    ],
+    "focus_occurrences": [],
+    "details": [],
+    "report_language": "no_preference",
+    "recall_window": "recent_weeks",
+    "entry_context": null,
+    "total_limit": 56,
+    "mapping_limit": 32,
+    "decision_limit": 72,
+    "option_seed": "patternwork-reference"
+  },
+  "answers": {
+    "M02": [
+      {
+        "selected": [
+          "M02.rehearse"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "M03": [
+      {
+        "selected": [
+          "M03.exposure"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "D61": [
+      {
+        "selected": [
+          "D61.settle"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "D02": [
+      {
+        "selected": [
+          "D02.prevent"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "D03": [
+      {
+        "selected": [
+          "D03.connection"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "D01": [
+      {
+        "selected": [
+          "D01.during"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ]
+  },
+  "focus_roots": [
+    "D61"
+  ]
+}

@@ -66,6 +66,7 @@ $RECYCLE.BIN/
 /output/
 /tmp/
 /report-runs/
+/.qualification/
 /docs/plans/
 /focus-html-visual-refresh/
 /.swc

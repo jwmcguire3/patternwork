@@ -1,0 +1,1597 @@
+{
+  "status": "Nine authored fictional branch segments, not full respondents or observed product outcomes. Selection reasons are declared snapshots for design review; the reference prioritizer does not derive them automatically.",
+  "profiles": [
+    {
+      "id": "P01",
+      "title": "A preventive role with a real stopping point",
+      "fictional": true,
+      "episodes": [
+        {
+          "id": "E1",
+          "context": "evaluation",
+          "person": "P1",
+          "basis": "actual_recalled"
+        },
+        {
+          "id": "E2",
+          "context": "evaluation",
+          "person": "P1",
+          "basis": "actual_recalled",
+          "distinct_from": [
+            "E1"
+          ]
+        }
+      ],
+      "answers": [
+        {
+          "id": "P01-A01",
+          "item_id": "M02",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "M02.rehearse"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "Sample preparation before evaluation.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P01-A02",
+          "item_id": "M03",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "M03.exposure"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "function",
+          "selection_reason": "Separate rehearsal from ordinary task preparation.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P01-A03",
+          "item_id": "D04",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "D04.sign"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "stand_down",
+          "selection_reason": "Task completion and feeling ready may have different endings.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P01-A04",
+          "item_id": "M02",
+          "occurrence_id": "E2",
+          "step_id": "first",
+          "selected": [
+            "M02.rehearse"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "recurrence",
+          "selection_reason": "Replay on a confirmed different review; do not reuse E1.",
+          "replay": true,
+          "same_template_as_prior": true
+        },
+        {
+          "id": "P01-A05",
+          "item_id": "M03",
+          "occurrence_id": "E2",
+          "step_id": "first",
+          "selected": [
+            "M03.exposure"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "function",
+          "selection_reason": "Check whether the same outward behavior served the same job.",
+          "replay": false,
+          "same_template_as_prior": true
+        },
+        {
+          "id": "P01-A06",
+          "item_id": "D04",
+          "occurrence_id": "E2",
+          "step_id": "first",
+          "selected": [
+            "D04.choice"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "stand_down",
+          "selection_reason": "A distinct ending tests whether rehearsal must continue until reassurance.",
+          "replay": false,
+          "same_template_as_prior": true
+        }
+      ],
+      "claims": [
+        {
+          "id": "P01-C01",
+          "text": "The Rehearsal Manager prepares you against being caught without an answer.",
+          "kind": "supported_interpretation",
+          "scope": "two sampled evaluations",
+          "evidence_ids": [
+            "P01-A01",
+            "P01-A02",
+            "P01-A04",
+            "P01-A05"
+          ],
+          "rationale": "Preventive action plus specific aim in two distinct episodes supports this functional handle.",
+          "counterevidence_ids": [],
+          "status": "authored test claim; not an empirical conclusion"
+        },
+        {
+          "id": "P01-C02",
+          "text": "Rehearsal had different endings: a sign that things were okay in one review, and choosing to stop with uncertainty still present in the other.",
+          "kind": "reported",
+          "scope": "two sampled evaluations",
+          "evidence_ids": [
+            "P01-A03",
+            "P01-A06"
+          ],
+          "rationale": "Different stopping conditions are directly reported; no cause of the difference is supplied.",
+          "counterevidence_ids": [],
+          "status": "authored test claim; not an empirical conclusion"
+        }
+      ],
+      "remaining_uncertainty": [
+        "Why the stopping conditions differed; how often this occurs outside the two reviews."
+      ],
+      "must_not_claim": [
+        "A lifelong need for approval",
+        "Childhood punishment",
+        "A fixed number of protectors"
+      ],
+      "sample_report_passage": "The Rehearsal Manager is preparing more than the work. It is preparing you for the moment someone asks a question you cannot answer. That was the job of rehearsal before both reviews. Its stopping point was not fixed, though. Once, a sign that things were okay let it stop; another time, you stopped while some uncertainty was still there. The preparation is recognizable, but it does not always need the same ending.",
+      "stopping_reason": "The preventive role and bounded recurrence are sufficiently described. Do not ask a third confirmation just to strengthen the label."
+    },
+    {
+      "id": "P02",
+      "title": "A manager-to-firefighter handoff in one disagreement",
+      "fictional": true,
+      "episodes": [
+        {
+          "id": "E1",
+          "context": "conflict",
+          "person": "P1",
+          "basis": "actual_recalled"
+        }
+      ],
+      "answers": [
+        {
+          "id": "P02-A01",
+          "item_id": "D61",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "D61.explain"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "conflict",
+          "selection_reason": "User chose an actual disagreement to deepen.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P02-A02",
+          "item_id": "D02",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "D02.prevent"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "function",
+          "selection_reason": "Resolve what explaining was trying to change.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P02-A03",
+          "item_id": "D03",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "D03.connection"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "prediction",
+          "selection_reason": "Identify the feared next outcome without inventing it.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P02-A04",
+          "item_id": "D07",
+          "occurrence_id": "E1",
+          "step_id": "next",
+          "selected": [
+            "D07.leave"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "next_move",
+          "selection_reason": "Capture a later response instead of flattening the episode.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P02-A05",
+          "item_id": "D08",
+          "occurrence_id": "E1",
+          "step_id": "edge",
+          "selected": [
+            "D08.after_failed"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "sequence_relation",
+          "selection_reason": "Check that leaving followed explaining no longer helping.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P02-A06",
+          "item_id": "D09",
+          "occurrence_id": "E1",
+          "step_id": "next",
+          "selected": [
+            "D09.relief"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "goal_change",
+          "selection_reason": "A change of action need not mean a change of purpose.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P02-A07",
+          "item_id": "D10",
+          "occurrence_id": "E1",
+          "step_id": "next",
+          "selected": [
+            "D10.relief"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "next_effect",
+          "selection_reason": "Record what leaving actually changed.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P02-A08",
+          "item_id": "D06",
+          "occurrence_id": "E1",
+          "step_id": "next",
+          "selected": [
+            "D06.contact"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "cost",
+          "selection_reason": "A later cost is useful only if reported.",
+          "replay": false,
+          "same_template_as_prior": false
+        }
+      ],
+      "claims": [
+        {
+          "id": "P02-C01",
+          "text": "The Explaining Manager was trying to protect connection in that disagreement.",
+          "kind": "supported_interpretation",
+          "scope": "first step of this disagreement",
+          "evidence_ids": [
+            "P02-A01",
+            "P02-A02",
+            "P02-A03"
+          ],
+          "rationale": "The protective aim was prevention even though the disagreement had already begun.",
+          "counterevidence_ids": [],
+          "status": "authored test claim; not an empirical conclusion"
+        },
+        {
+          "id": "P02-C02",
+          "text": "When explaining stopped helping, the Exit Switch took on a firefighter job: making the feeling easier to bear right then.",
+          "kind": "supported_interpretation",
+          "scope": "later step and handoff in this disagreement",
+          "evidence_ids": [
+            "P02-A04",
+            "P02-A05",
+            "P02-A06",
+            "P02-A07"
+          ],
+          "rationale": "Distinct action, stated sequence relation, immediate relief aim and effect establish the bounded functional change.",
+          "counterevidence_ids": [],
+          "status": "authored test claim; not an empirical conclusion"
+        },
+        {
+          "id": "P02-C03",
+          "text": "The exit brought relief and also left an unwanted cost to contact.",
+          "kind": "supported_interpretation",
+          "scope": "aftermath of the exit",
+          "evidence_ids": [
+            "P02-A07",
+            "P02-A08"
+          ],
+          "rationale": "Immediate benefit and later downside belong to one response; no other costs are added.",
+          "counterevidence_ids": [],
+          "status": "authored test claim; not an empirical conclusion"
+        }
+      ],
+      "remaining_uncertainty": [
+        "Whether this sequence recurs; whether explaining or leaving serves different jobs elsewhere."
+      ],
+      "must_not_claim": [
+        "All conflict exits are firefighters",
+        "Work-related rehearsal caused this exit",
+        "A specific exile or developmental origin"
+      ],
+      "sample_report_passage": "The Explaining Manager starts by trying to prevent the connection from getting worse. In this disagreement, it kept explaining until that no longer helped. Then the job changed. The Exit Switch was not trying to improve the explanation; it wanted the feeling to ease. Leaving did bring relief. It also cost you contact. The two responses were solving different problems, and solving the immediate pressure did not undo the distance afterward.",
+      "stopping_reason": "The episode supports a named handoff. Recurrence remains unclaimed; an optional replay is justified only if broader scope matters to the respondent."
+    },
+    {
+      "id": "P03",
+      "title": "Uncertainty, not all distance",
+      "fictional": true,
+      "episodes": [
+        {
+          "id": "E1",
+          "context": "reply_wait",
+          "person": "P1",
+          "basis": "actual_recalled"
+        },
+        {
+          "id": "E2",
+          "context": "known_delay",
+          "person": "P1",
+          "basis": "actual_recalled",
+          "distinct_from": [
+            "E1"
+          ]
+        }
+      ],
+      "answers": [
+        {
+          "id": "P03-A01",
+          "item_id": "M17",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "M17.check"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "Sample a meaningful delayed reply.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P03-A02",
+          "item_id": "M18",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "M18.upset"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "attachment_meaning",
+          "selection_reason": "Find out whether the meaning was relational or practical.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P03-A03",
+          "item_id": "M19",
+          "occurrence_id": "E1",
+          "step_id": "effect",
+          "selected": [
+            "M19.ease"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "Separate relief about the relationship from information receipt.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P03-A04",
+          "item_id": "D43",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "D43.okay"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "contact_function",
+          "selection_reason": "Check the function of monitoring.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P03-A05",
+          "item_id": "D44",
+          "occurrence_id": "E1",
+          "step_id": "context",
+          "selected": [
+            "D44.reliable"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "availability_history",
+          "selection_reason": "Retain the respondent's usual experience of this person.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P03-A06",
+          "item_id": "D42",
+          "occurrence_id": "E2",
+          "step_id": "first",
+          "selected": [
+            "D42.miss"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "known_distance",
+          "selection_reason": "A different wait with an understood reason tests the claim that distance itself is the problem.",
+          "replay": false,
+          "same_template_as_prior": false
+        }
+      ],
+      "claims": [
+        {
+          "id": "P03-C01",
+          "text": "During the unexplained wait, you monitored for a sign that the relationship was okay.",
+          "kind": "supported_interpretation",
+          "scope": "one unexplained wait with P1",
+          "evidence_ids": [
+            "P03-A01",
+            "P03-A02",
+            "P03-A03",
+            "P03-A04"
+          ],
+          "rationale": "Behavior, threat meaning, aim and relational relief converge.",
+          "counterevidence_ids": [],
+          "status": "authored test claim; not an empirical conclusion"
+        },
+        {
+          "id": "P03-C02",
+          "text": "In these two waits, knowing why the person was unavailable separated missing them from worrying where you stood.",
+          "kind": "supported_interpretation",
+          "scope": "comparison of two waits with P1",
+          "evidence_ids": [
+            "P03-A02",
+            "P03-A06"
+          ],
+          "rationale": "An actual contrast supports a bounded distinction, not a universal causal rule.",
+          "counterevidence_ids": [],
+          "status": "authored test claim; not an empirical conclusion"
+        }
+      ],
+      "remaining_uncertainty": [
+        "Whether this contrast holds across more waits or other people; whether reassurance remains effective for long."
+      ],
+      "must_not_claim": [
+        "Globally anxious attachment",
+        "Any distance is intolerable",
+        "The other person intentionally withholds contact"
+      ],
+      "sample_report_passage": "When the reply had no explanation, the wait became a question about whether you had upset them. Checking was a way of looking for a sign that things were okay. A different wait had another shape: you knew why they were unavailable and could miss them without wondering where you stood. Here, distance and uncertainty were not the same experience. The anxious monitoring belonged to the unexplained gap, not to every moment apart.",
+      "stopping_reason": "The contrast is more useful than another generic distancing scene. Stop unless duration or another relationship is an explicit focus."
+    },
+    {
+      "id": "P04",
+      "title": "A contact pattern that does not support attachment anxiety",
+      "fictional": true,
+      "episodes": [
+        {
+          "id": "E1",
+          "context": "reply_wait",
+          "person": "P1",
+          "basis": "actual_recalled"
+        },
+        {
+          "id": "E2",
+          "context": "practical_wait",
+          "person": "P2",
+          "basis": "actual_recalled",
+          "distinct_from": [
+            "E1"
+          ]
+        }
+      ],
+      "answers": [
+        {
+          "id": "P04-A01",
+          "item_id": "M17",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "M17.send"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "Sending again is a candidate action, not an anxious classification.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P04-A02",
+          "item_id": "M18",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "M18.info"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "attachment_meaning",
+          "selection_reason": "Practical information is directly identified.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P04-A03",
+          "item_id": "M19",
+          "occurrence_id": "E1",
+          "step_id": "effect",
+          "selected": [
+            "M19.information"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "Information arrival ended this wait.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P04-A04",
+          "item_id": "D43",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "D43.information"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "contact_function",
+          "selection_reason": "The requested clarification confirms the task, not hidden insecurity.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P04-A05",
+          "item_id": "M15",
+          "occurrence_id": "E2",
+          "step_id": "first",
+          "selected": [
+            "M15.chase"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "Sample nonrelational waiting with practical stakes.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P04-A06",
+          "item_id": "M16",
+          "occurrence_id": "E2",
+          "step_id": "first",
+          "selected": [
+            "M16.practical"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "uncertainty_meaning",
+          "selection_reason": "Confirm blocked next step.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P04-A07",
+          "item_id": "D16",
+          "occurrence_id": "E1",
+          "step_id": "context",
+          "selected": [
+            "D16.consequence"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "practical_context",
+          "selection_reason": "Keep realistic consequences visible.",
+          "replay": false,
+          "same_template_as_prior": false
+        }
+      ],
+      "claims": [
+        {
+          "id": "P04-C01",
+          "text": "You followed up to get information you needed, and moved on when it arrived.",
+          "kind": "reported",
+          "scope": "the message wait",
+          "evidence_ids": [
+            "P04-A01",
+            "P04-A02",
+            "P04-A03",
+            "P04-A04"
+          ],
+          "rationale": "The literal selections directly support an information-seeking account.",
+          "counterevidence_ids": [],
+          "status": "authored test claim; not an empirical conclusion"
+        },
+        {
+          "id": "P04-C02",
+          "text": "The two waits share a practical information gap; they do not establish a need to be reassured about closeness.",
+          "kind": "supported_interpretation",
+          "scope": "two sampled waits",
+          "evidence_ids": [
+            "P04-A02",
+            "P04-A04",
+            "P04-A05",
+            "P04-A06",
+            "P04-A07"
+          ],
+          "rationale": "The alternative interpretation wins; an attachment hypothesis is closed rather than escalated.",
+          "counterevidence_ids": [],
+          "status": "authored test claim; not an empirical conclusion"
+        }
+      ],
+      "remaining_uncertainty": [
+        "How the person responds to an actual relational uncertainty; this route did not sample one."
+      ],
+      "must_not_claim": [
+        "Reassurance Manager",
+        "Avoidant denial of need",
+        "They are secure in all relationships"
+      ],
+      "sample_report_passage": "You did not need the second message to prove that you mattered. You needed an answer so you could do the next thing. Once you had it, you moved on. The practical wait elsewhere had the same information-seeking shape. There is no need to turn those follow-ups into a hidden relationship worry: the actual task already explains what you were doing.",
+      "stopping_reason": "Close the attachment-monitoring target with a practical account. Additional reassurance questions would be confirmation chasing."
+    },
+    {
+      "id": "P05",
+      "title": "Loss of words is not the same as deciding to withdraw",
+      "fictional": true,
+      "episodes": [
+        {
+          "id": "E1",
+          "context": "overload",
+          "person": null,
+          "basis": "actual_recalled"
+        }
+      ],
+      "answers": [
+        {
+          "id": "P05-A01",
+          "item_id": "M10",
+          "occurrence_id": "E1",
+          "step_id": "first_notice",
+          "selected": [
+            "M10.words"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "Speech access is the first reported cue.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P05-A02",
+          "item_id": "M11",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "M11.stop"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "Stopping is outward behavior; motive is not assigned.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P05-A03",
+          "item_id": "M12",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "M12.same"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "No immediate relief is reported.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P05-A04",
+          "item_id": "D34",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "D34.words"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "quiet_or_access",
+          "selection_reason": "Resolve deliberate distance versus unavailable words.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P05-A05",
+          "item_id": "D30",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "D30.stuck"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "words",
+          "selection_reason": "Separate knowing what to say from being able to say it.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P05-A06",
+          "item_id": "M13",
+          "occurrence_id": "E1",
+          "step_id": "later",
+          "selected": [
+            "M13.quiet"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "Record a later actual reduction in input.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P05-A07",
+          "item_id": "M14",
+          "occurrence_id": "E1",
+          "step_id": "later",
+          "selected": [
+            "M14.choice"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "Record later room for choice.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P05-A08",
+          "item_id": "D36",
+          "occurrence_id": "E1",
+          "step_id": "recovery",
+          "selected": [
+            "D36.input",
+            "D36.words",
+            "D36.think"
+          ],
+          "status": "answered",
+          "mode": "ordered",
+          "routing_target": "recovery_sequence",
+          "selection_reason": "Only the remembered partial order is retained.",
+          "replay": false,
+          "same_template_as_prior": false
+        }
+      ],
+      "claims": [
+        {
+          "id": "P05-C01",
+          "text": "You knew what you wanted to say, but could not get the words out.",
+          "kind": "reported",
+          "scope": "the overload episode",
+          "evidence_ids": [
+            "P05-A04",
+            "P05-A05"
+          ],
+          "rationale": "The access description is directly reported, not inferred from silence.",
+          "counterevidence_ids": [],
+          "status": "authored test claim; not an empirical conclusion"
+        },
+        {
+          "id": "P05-C02",
+          "text": "Less input, words returning, and clearer thinking were distinct remembered stages of recovery.",
+          "kind": "reported",
+          "scope": "reported partial recovery order",
+          "evidence_ids": [
+            "P05-A06",
+            "P05-A07",
+            "P05-A08"
+          ],
+          "rationale": "Order is supplied explicitly; it does not establish vagal anatomy or causal necessity.",
+          "counterevidence_ids": [],
+          "status": "authored test claim; not an empirical conclusion"
+        }
+      ],
+      "remaining_uncertainty": [
+        "Why words became inaccessible; whether the same response occurs elsewhere."
+      ],
+      "must_not_claim": [
+        "Deliberate punishment by silence",
+        "A firefighter chose to shut down",
+        "Dorsal vagal collapse",
+        "A dissociative disorder"
+      ],
+      "sample_report_passage": "Your quietness on that day was not simply a decision to stop engaging. You knew what you wanted to say and could not get the words out. Stopping did not immediately make the pressure easier. Later, there was less input, words became available, and clearer thinking followed in the order you remember. From outside, several of those stages could look like “being quiet.” From inside, they were different experiences.",
+      "stopping_reason": "The important ambiguity has been resolved descriptively. No protector label is needed to make the report specific."
+    },
+    {
+      "id": "P06",
+      "title": "Different preventive jobs in different settings",
+      "fictional": true,
+      "episodes": [
+        {
+          "id": "E1",
+          "context": "evaluation",
+          "person": "P1",
+          "basis": "actual_recalled"
+        },
+        {
+          "id": "E2",
+          "context": "conflict",
+          "person": "P2",
+          "basis": "actual_recalled",
+          "distinct_from": [
+            "E1"
+          ]
+        }
+      ],
+      "answers": [
+        {
+          "id": "P06-A01",
+          "item_id": "M02",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "M02.rehearse"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "Sample preparation before review.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P06-A02",
+          "item_id": "M03",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "M03.exposure"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "function",
+          "selection_reason": "Define preventive exposure concern.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P06-A03",
+          "item_id": "D61",
+          "occurrence_id": "E2",
+          "step_id": "first",
+          "selected": [
+            "D61.settle"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "conflict",
+          "selection_reason": "The respondent chooses a distinct tense exchange.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P06-A04",
+          "item_id": "D02",
+          "occurrence_id": "E2",
+          "step_id": "first",
+          "selected": [
+            "D02.prevent"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "function",
+          "selection_reason": "Determine whether settling is preventive or immediate feeling relief.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P06-A05",
+          "item_id": "D03",
+          "occurrence_id": "E2",
+          "step_id": "first",
+          "selected": [
+            "D03.connection"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "prediction",
+          "selection_reason": "The feared outcome concerns contact or uncertainty about standing.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P06-A06",
+          "item_id": "D01",
+          "occurrence_id": "E2",
+          "step_id": "first",
+          "selected": [
+            "D01.during"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "timing",
+          "selection_reason": "Show that preventive function can operate while feelings are already high.",
+          "replay": false,
+          "same_template_as_prior": false
+        }
+      ],
+      "claims": [
+        {
+          "id": "P06-C01",
+          "text": "Before the review, rehearsal was directed at not being caught without an answer.",
+          "kind": "reported",
+          "scope": "evaluation episode",
+          "evidence_ids": [
+            "P06-A01",
+            "P06-A02"
+          ],
+          "rationale": "An anticipatory purpose is directly supplied.",
+          "counterevidence_ids": [],
+          "status": "authored test claim; not an empirical conclusion"
+        },
+        {
+          "id": "P06-C02",
+          "text": "In the disagreement, a Keep-the-Peace Manager was trying to prevent a loss of connection, even though the pressure was already present.",
+          "kind": "supported_interpretation",
+          "scope": "conflict episode",
+          "evidence_ids": [
+            "P06-A03",
+            "P06-A04",
+            "P06-A05",
+            "P06-A06"
+          ],
+          "rationale": "A preventive function during pressure supports the manager interpretation; clock timing is not the classifier.",
+          "counterevidence_ids": [],
+          "status": "authored test claim; not an empirical conclusion"
+        }
+      ],
+      "remaining_uncertainty": [
+        "Whether these are stable distinct parts or two context-dependent jobs; whether either recurs."
+      ],
+      "must_not_claim": [
+        "The same protector must cause both",
+        "Every during-conflict response is a firefighter",
+        "A full polarization network"
+      ],
+      "sample_report_passage": "At work, the Rehearsal Manager prepares against being caught without an answer. In the disagreement, the Keep-the-Peace Manager was working on a different risk: losing contact or not knowing where you stood. Both moves were preventive, but they were not preparing for the same thing. The fact that the disagreement was already intense does not make its first job immediate escape. It was still trying to keep something from getting worse.",
+      "stopping_reason": "The contextual distinction is useful at an episode scope. Do not multiply entities or infer dominance merely to make a fuller map."
+    },
+    {
+      "id": "P07",
+      "title": "A useful map without a problem inventory",
+      "fictional": true,
+      "episodes": [
+        {
+          "id": "E1",
+          "context": "evaluation",
+          "person": "P1",
+          "basis": "actual_recalled"
+        },
+        {
+          "id": "E2",
+          "context": "mistake",
+          "person": null,
+          "basis": "actual_recalled",
+          "distinct_from": [
+            "E1"
+          ]
+        },
+        {
+          "id": "E3",
+          "context": "boundary",
+          "person": "P2",
+          "basis": "actual_recalled",
+          "distinct_from": [
+            "E1",
+            "E2"
+          ]
+        },
+        {
+          "id": "E4",
+          "context": "ordinary",
+          "person": null,
+          "basis": "actual_recalled",
+          "distinct_from": [
+            "E1",
+            "E2",
+            "E3"
+          ]
+        }
+      ],
+      "answers": [
+        {
+          "id": "P07-A01",
+          "item_id": "M02",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "M02.bounded"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "Sample actual preparation without presuming excess.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P07-A02",
+          "item_id": "M03",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "M03.requirements"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "Task requirements are the reported aim.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P07-A03",
+          "item_id": "M04",
+          "occurrence_id": "E2",
+          "step_id": "first",
+          "selected": [
+            "M04.fix"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "Sample a mistake.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P07-A04",
+          "item_id": "M05",
+          "occurrence_id": "E2",
+          "step_id": "inner",
+          "selected": [
+            "M05.learn"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "Record self-treatment.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P07-A05",
+          "item_id": "M06",
+          "occurrence_id": "E2",
+          "step_id": "effect",
+          "selected": [
+            "M06.clear"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "Record effect rather than awarding virtue points.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P07-A06",
+          "item_id": "M08",
+          "occurrence_id": "E3",
+          "step_id": "first",
+          "selected": [
+            "M08.limit"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "Sample a boundary.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P07-A07",
+          "item_id": "M09",
+          "occurrence_id": "E3",
+          "step_id": "prediction",
+          "selected": [
+            "M09.accept"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "Retain expected room to negotiate.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P07-A08",
+          "item_id": "M01",
+          "occurrence_id": "E4",
+          "step_id": "first",
+          "selected": [
+            "M01.rest"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "Ordinary rest is represented.",
+          "replay": false,
+          "same_template_as_prior": false
+        }
+      ],
+      "claims": [
+        {
+          "id": "P07-C01",
+          "text": "In these moments, preparation had an endpoint, mistakes led to correction, and you could state what you could manage.",
+          "kind": "reported",
+          "scope": "four sampled contexts",
+          "evidence_ids": [
+            "P07-A01",
+            "P07-A02",
+            "P07-A03",
+            "P07-A04",
+            "P07-A05",
+            "P07-A06",
+            "P07-A07",
+            "P07-A08"
+          ],
+          "rationale": "No invented distress is needed to connect the observable examples.",
+          "counterevidence_ids": [],
+          "status": "authored test claim; not an empirical conclusion"
+        }
+      ],
+      "remaining_uncertainty": [
+        "How these capacities change in different conditions; no claim of enduring ease is established."
+      ],
+      "must_not_claim": [
+        "No protectors exist",
+        "Fully secure attachment",
+        "High vagal tone",
+        "Ideal Self-leadership score"
+      ],
+      "sample_report_passage": "Preparation had somewhere to stop: once the work met its requirements, you left it there. After a mistake, understanding what you could learn made the practical correction clearer. When another request arrived while you were stretched, you could say what you could manage. These are specific capacities, not a claim that everything is easy for you. They show moments when a task or limit could stay proportionate to the situation.",
+      "stopping_reason": "When the common coverage offers are complete and no useful chosen gap remains, finish. Do not search for hidden distress to fill IFS/PV/attachment templates."
+    },
+    {
+      "id": "P08",
+      "title": "The need is present, but its visibility gets managed",
+      "fictional": true,
+      "episodes": [
+        {
+          "id": "E1",
+          "context": "help_request",
+          "person": "P1",
+          "basis": "actual_recalled"
+        },
+        {
+          "id": "E2",
+          "context": "disclosure",
+          "person": "P1",
+          "basis": "actual_recalled",
+          "distinct_from": [
+            "E1"
+          ]
+        }
+      ],
+      "answers": [
+        {
+          "id": "P08-A01",
+          "item_id": "M20",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "M20.small"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "mapping",
+          "selection_reason": "Record reducing a real request.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P08-A02",
+          "item_id": "M21",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "M21.burden"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "help_function",
+          "selection_reason": "Record the shaping concern rather than infer it from the smaller ask.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P08-A03",
+          "item_id": "D21",
+          "occurrence_id": "E1",
+          "step_id": "inner",
+          "selected": [
+            "D21.visible"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "need_exposure",
+          "selection_reason": "Separate needing, being seen needing, refusal and receiving.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P08-A04",
+          "item_id": "D18",
+          "occurrence_id": "E1",
+          "step_id": "inner",
+          "selected": [
+            "D18.need"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "need_exposure",
+          "selection_reason": "Identify the actual vulnerable experience.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P08-A05",
+          "item_id": "D19",
+          "occurrence_id": "E1",
+          "step_id": "prediction",
+          "selected": [
+            "D19.burden"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "predicted_response",
+          "selection_reason": "Retain the specific expected consequence of visibility.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P08-A06",
+          "item_id": "D47",
+          "occurrence_id": "E2",
+          "step_id": "first",
+          "selected": [
+            "D47.light"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "disclosure",
+          "selection_reason": "Use a distinct disclosure episode rather than asking the same need four ways as recurrence.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P08-A07",
+          "item_id": "D48",
+          "occurrence_id": "E2",
+          "step_id": "first",
+          "selected": [
+            "D48.burden"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "disclosure_prediction",
+          "selection_reason": "Check whether similar minimization serves a related aim in another event.",
+          "replay": false,
+          "same_template_as_prior": false
+        }
+      ],
+      "claims": [
+        {
+          "id": "P08-C01",
+          "text": "The Keep-It-Small Manager reduces how much need another person is asked to carry.",
+          "kind": "supported_interpretation",
+          "scope": "help and disclosure episodes with P1",
+          "evidence_ids": [
+            "P08-A01",
+            "P08-A02",
+            "P08-A05",
+            "P08-A06",
+            "P08-A07"
+          ],
+          "rationale": "Action and burden-related purpose recur across two distinct contexts with one person.",
+          "counterevidence_ids": [],
+          "status": "authored test claim; not an empirical conclusion"
+        },
+        {
+          "id": "P08-C02",
+          "text": "In the help episode, being seen needing support was the difficult point—not merely whether the request would be refused.",
+          "kind": "supported_interpretation",
+          "scope": "help episode only",
+          "evidence_ids": [
+            "P08-A03",
+            "P08-A04",
+            "P08-A05"
+          ],
+          "rationale": "The selected discriminator permits this specific comparison without inventing a childhood need.",
+          "counterevidence_ids": [],
+          "status": "authored test claim; not an empirical conclusion"
+        }
+      ],
+      "remaining_uncertainty": [
+        "Whether the other person would actually feel burdened; whether minimized requests receive less help; whether this pattern generalizes to other people."
+      ],
+      "must_not_claim": [
+        "A neglected child exile",
+        "Other people never meet their needs",
+        "A hidden reason the respondent denied",
+        "The person is avoidant globally"
+      ],
+      "sample_report_passage": "The Keep-It-Small Manager does not remove the need. It reduces how much of it the other person is asked to carry. You asked for less help than you needed, and in a separate conversation you made something personal sound less important. Both times, not adding too much for them shaped the presentation. In the help episode, the exposed point was being seen needing support. The useful distinction is between needing less and showing less need. Your answers describe the second.",
+      "stopping_reason": "The current vulnerable theme and protective presentation are sufficiently linked. Do not ask for an origin or require the respondent to name an exile."
+    },
+    {
+      "id": "P09",
+      "title": "Function inferred without pretending the person stated the motive",
+      "fictional": true,
+      "episodes": [
+        {
+          "id": "E1",
+          "context": "conflict",
+          "person": "P1",
+          "basis": "actual_recalled"
+        },
+        {
+          "id": "E2",
+          "context": "conflict",
+          "person": "P1",
+          "basis": "actual_recalled",
+          "distinct_from": [
+            "E1"
+          ]
+        }
+      ],
+      "answers": [
+        {
+          "id": "P09-A01",
+          "item_id": "D61",
+          "occurrence_id": "E1",
+          "step_id": "first",
+          "selected": [
+            "D61.explain"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "conflict",
+          "selection_reason": "Anchor first behavior.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P09-A02",
+          "item_id": "D07",
+          "occurrence_id": "E1",
+          "step_id": "next",
+          "selected": [
+            "D07.leave"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "next_move",
+          "selection_reason": "Capture later exit.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P09-A03",
+          "item_id": "D08",
+          "occurrence_id": "E1",
+          "step_id": "edge",
+          "selected": [
+            "D08.after_failed"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "sequence_relation",
+          "selection_reason": "Reported sequence establishes the first response no longer helped.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P09-A04",
+          "item_id": "D11",
+          "occurrence_id": "E1",
+          "step_id": "next",
+          "selected": [
+            "D11.urgent"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "access_before_change",
+          "selection_reason": "Distinguish urgent pressure reduction from a leisurely change of plan.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P09-A05",
+          "item_id": "D09",
+          "occurrence_id": "E1",
+          "step_id": "next",
+          "selected": [
+            "D09.none"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "goal_change",
+          "selection_reason": "The person cannot identify a clear aim; preserve that absence.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P09-A06",
+          "item_id": "D10",
+          "occurrence_id": "E1",
+          "step_id": "next",
+          "selected": [
+            "D10.relief"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "next_effect",
+          "selection_reason": "Relief is reported, but is not alone treated as intent.",
+          "replay": false,
+          "same_template_as_prior": false
+        },
+        {
+          "id": "P09-A07",
+          "item_id": "D61",
+          "occurrence_id": "E2",
+          "step_id": "first",
+          "selected": [
+            "D61.explain"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "recurrence",
+          "selection_reason": "A confirmed different disagreement is replayed.",
+          "replay": true,
+          "same_template_as_prior": true
+        },
+        {
+          "id": "P09-A08",
+          "item_id": "D07",
+          "occurrence_id": "E2",
+          "step_id": "next",
+          "selected": [
+            "D07.leave"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "next_move",
+          "selection_reason": "Check later course rather than only repeating the first action.",
+          "replay": false,
+          "same_template_as_prior": true
+        },
+        {
+          "id": "P09-A09",
+          "item_id": "D08",
+          "occurrence_id": "E2",
+          "step_id": "edge",
+          "selected": [
+            "D08.after_failed"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "sequence_relation",
+          "selection_reason": "The relation repeats in a genuinely distinct event.",
+          "replay": false,
+          "same_template_as_prior": true
+        },
+        {
+          "id": "P09-A10",
+          "item_id": "D11",
+          "occurrence_id": "E2",
+          "step_id": "next",
+          "selected": [
+            "D11.urgent"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "access_before_change",
+          "selection_reason": "Urgency is independently reported again.",
+          "replay": false,
+          "same_template_as_prior": true
+        },
+        {
+          "id": "P09-A11",
+          "item_id": "D10",
+          "occurrence_id": "E2",
+          "step_id": "next",
+          "selected": [
+            "D10.relief"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "routing_target": "next_effect",
+          "selection_reason": "The same immediate effect repeats.",
+          "replay": false,
+          "same_template_as_prior": true
+        }
+      ],
+      "claims": [
+        {
+          "id": "P09-C01",
+          "text": "Across these two disagreements, the Exit Switch functioned as immediate pressure relief after explaining stopped helping.",
+          "kind": "supported_interpretation",
+          "scope": "two sampled disagreements",
+          "evidence_ids": [
+            "P09-A01",
+            "P09-A02",
+            "P09-A03",
+            "P09-A04",
+            "P09-A05",
+            "P09-A06",
+            "P09-A07",
+            "P09-A08",
+            "P09-A09",
+            "P09-A10",
+            "P09-A11"
+          ],
+          "rationale": "The function is inferred from repeated timing, urgency and effect, not attributed as a stated motive. It remains narrower than an origin or exclusive cause.",
+          "counterevidence_ids": [],
+          "status": "authored test claim; not an empirical conclusion"
+        }
+      ],
+      "remaining_uncertainty": [
+        "The person did not state a clear conscious aim; other influences on leaving were not fully assessed."
+      ],
+      "must_not_claim": [
+        "You said you left to escape",
+        "The inferred function is the only cause",
+        "A named manager preceded the exit when its function was not assessed"
+      ],
+      "sample_report_passage": "The Exit Switch has a recognizable job in these two disagreements: it brings immediate relief after explaining has stopped helping. Leaving felt urgent, and the feeling eased afterward. You did not identify a clear aim in the first moment. The relief function is visible in the repeated sequence rather than something you had already put into words. That makes it a useful firefighter reading of these exits, not a claim that every departure has the same purpose.",
+      "stopping_reason": "The supported inference can be stated with its bounded basis. Do not demand explicit self-analysis or fabricate a quotation to make it sound more certain."
+    }
+  ]
+}
