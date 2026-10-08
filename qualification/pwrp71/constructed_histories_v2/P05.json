@@ -1,0 +1,1672 @@
+{
+  "schemaVersion": "PWQE51-FICTIONAL-HISTORY-V2",
+  "source": {
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "pinnedRepositoryCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb",
+    "questionBankBlobSha": "816dab7239b8788ab2ecb82c261633dec5f45373",
+    "originalFixtureBlobSha": "401d292f0052d8f62bd0d25c5611a2b05d7c67dd",
+    "originalFixturePath": "qualification/pwrp71/authored_worked_paths.json"
+  },
+  "profile": {
+    "id": "P05",
+    "title": "Loss of words is not the same as deciding to withdraw",
+    "fictional": true,
+    "origin": "archived_adapted_fictional_branch"
+  },
+  "qualification": {
+    "status": "author_constructed_candidate",
+    "currentSessionReplayed": false,
+    "serverIssued": false,
+    "semanticClaimsFromSyntheticMappingProhibited": true,
+    "note": "Valid authored question/option/mode/parent surface, but session candidate selection and authenticated APIs have not been run. Do not call a fabricated fictional branch a completed user assessment."
+  },
+  "syntheticMappingPolicy": {
+    "mappingAdministrations": 30,
+    "newSyntheticMappingAnswers": 25,
+    "syntheticContextRoleAssignments": 7,
+    "interpretationRule": "Treat newly synthetic Mapping items as structural workflow inputs, not independently observed evidence for semantic approval."
+  },
+  "topicPermissionEvents": [
+    {
+      "topic": "body_detail",
+      "outcome": "opt_in",
+      "provenance": "new_synthetic_mapping_control",
+      "reason": "Preserve archived authored M10 body-detail selection under the current consented presentation contract."
+    }
+  ],
+  "mappingControls": [
+    {
+      "kind": "mapping_exception_focus",
+      "effectiveBeforeQuestion": "M28",
+      "occurrenceId": "fx_P05_mapping_M02",
+      "provenance": "new_synthetic_mapping_control",
+      "purpose": "provide a source-backed actual focus for the authored M28 {focus_situation} prompt"
+    },
+    {
+      "kind": "mapping_complete",
+      "provenance": "intended_fictional_pass_boundary",
+      "serverVerified": false
+    }
+  ],
+  "intendedDeepeningContext": {
+    "optedInTopics": [
+      "body_detail"
+    ],
+    "focusTopics": [],
+    "details": [],
+    "focusOccurrenceId": "fx_P05_mapping_M02",
+    "mappingExceptionFocusOccurrenceId": "fx_P05_mapping_M02"
+  },
+  "syntheticReferentRoles": [
+    {
+      "occurrenceId": "fx_P05_mapping_M02",
+      "slot": "evaluator",
+      "role": "reviewer",
+      "origin": "new_synthetic_context_role"
+    },
+    {
+      "occurrenceId": "fx_P05_mapping_M08",
+      "slot": "boundary_person",
+      "role": "colleague",
+      "origin": "new_synthetic_context_role"
+    },
+    {
+      "occurrenceId": "fx_P05_mapping_M17",
+      "slot": "close_person",
+      "role": "friend",
+      "origin": "new_synthetic_context_role"
+    },
+    {
+      "occurrenceId": "fx_P05_mapping_M20",
+      "slot": "support_person",
+      "role": "friend",
+      "origin": "new_synthetic_context_role"
+    },
+    {
+      "occurrenceId": "fx_P05_mapping_M22",
+      "slot": "support_person",
+      "role": "friend",
+      "origin": "new_synthetic_context_role"
+    },
+    {
+      "occurrenceId": "fx_P05_mapping_M23",
+      "slot": "repair_person",
+      "role": "friend",
+      "origin": "new_synthetic_context_role"
+    },
+    {
+      "occurrenceId": "fx_P05_mapping_M24",
+      "slot": "repair_person",
+      "role": "friend",
+      "origin": "new_synthetic_context_role"
+    }
+  ],
+  "originalConfiguredReferentRoles": [],
+  "episodes": [
+    {
+      "occurrenceId": "fx_P05_mapping_M01",
+      "episodeFamily": "ordinary",
+      "basis": "actual_recalled",
+      "fictional": true,
+      "origin": "new_synthetic_mapping_episode"
+    },
+    {
+      "occurrenceId": "fx_P05_mapping_M02",
+      "episodeFamily": "evaluation",
+      "basis": "actual_recalled",
+      "fictional": true,
+      "origin": "new_synthetic_mapping_episode"
+    },
+    {
+      "occurrenceId": "fx_P05_mapping_M04",
+      "episodeFamily": "mistake",
+      "basis": "actual_recalled",
+      "fictional": true,
+      "origin": "new_synthetic_mapping_episode"
+    },
+    {
+      "occurrenceId": "fx_P05_mapping_M07",
+      "episodeFamily": "praise",
+      "basis": "actual_recalled",
+      "fictional": true,
+      "origin": "new_synthetic_mapping_episode"
+    },
+    {
+      "occurrenceId": "fx_P05_mapping_M08",
+      "episodeFamily": "boundary",
+      "basis": "actual_recalled",
+      "fictional": true,
+      "origin": "new_synthetic_mapping_episode"
+    },
+    {
+      "occurrenceId": "fx_P05_E1",
+      "episodeFamily": "overload",
+      "basis": "actual_recalled",
+      "fictional": true,
+      "origin": "original_authored_scenario_episode",
+      "archivedOccurrenceId": "E1"
+    },
+    {
+      "occurrenceId": "fx_P05_mapping_M15",
+      "episodeFamily": "practical_wait",
+      "basis": "actual_recalled",
+      "fictional": true,
+      "origin": "new_synthetic_mapping_episode"
+    },
+    {
+      "occurrenceId": "fx_P05_mapping_M17",
+      "episodeFamily": "reply_wait",
+      "basis": "actual_recalled",
+      "fictional": true,
+      "origin": "new_synthetic_mapping_episode"
+    },
+    {
+      "occurrenceId": "fx_P05_mapping_M20",
+      "episodeFamily": "help_request",
+      "basis": "actual_recalled",
+      "fictional": true,
+      "origin": "new_synthetic_mapping_episode"
+    },
+    {
+      "occurrenceId": "fx_P05_mapping_M22",
+      "episodeFamily": "receiving_help",
+      "basis": "actual_recalled",
+      "fictional": true,
+      "origin": "new_synthetic_mapping_episode"
+    },
+    {
+      "occurrenceId": "fx_P05_mapping_M23",
+      "episodeFamily": "repair_offered",
+      "basis": "actual_recalled",
+      "fictional": true,
+      "origin": "new_synthetic_mapping_episode"
+    },
+    {
+      "occurrenceId": "fx_P05_mapping_M24",
+      "episodeFamily": "repair_received",
+      "basis": "actual_recalled",
+      "fictional": true,
+      "origin": "new_synthetic_mapping_episode"
+    },
+    {
+      "occurrenceId": "fx_P05_mapping_M25",
+      "episodeFamily": "rest",
+      "basis": "actual_recalled",
+      "fictional": true,
+      "origin": "new_synthetic_mapping_episode"
+    },
+    {
+      "occurrenceId": "fx_P05_mapping_M26",
+      "episodeFamily": "two_pulls",
+      "basis": "actual_recalled",
+      "fictional": true,
+      "origin": "new_synthetic_mapping_episode"
+    },
+    {
+      "occurrenceId": "fx_P05_mapping_M28",
+      "episodeFamily": "exception",
+      "basis": "actual_recalled",
+      "fictional": true,
+      "origin": "new_synthetic_mapping_episode"
+    }
+  ],
+  "distinctnessIntents": [],
+  "comparisonBindingIntents": [],
+  "mappingResponses": [
+    {
+      "responseId": "P05-SYN-M01",
+      "questionId": "M01",
+      "occurrenceId": "fx_P05_mapping_M01",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M01.rest"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M02",
+      "questionId": "M02",
+      "occurrenceId": "fx_P05_mapping_M02",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M02.bounded"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M03",
+      "questionId": "M03",
+      "occurrenceId": "fx_P05_mapping_M02",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M03.requirements"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M04",
+      "questionId": "M04",
+      "occurrenceId": "fx_P05_mapping_M04",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M04.fix"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M05",
+      "questionId": "M05",
+      "occurrenceId": "fx_P05_mapping_M04",
+      "stepId": "self_response",
+      "selectedOptionIds": [
+        "M05.learn"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M06",
+      "questionId": "M06",
+      "occurrenceId": "fx_P05_mapping_M04",
+      "stepId": "self_response",
+      "selectedOptionIds": [
+        "M06.clear"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M07",
+      "questionId": "M07",
+      "occurrenceId": "fx_P05_mapping_M07",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M07.accept"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M08",
+      "questionId": "M08",
+      "occurrenceId": "fx_P05_mapping_M08",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M08.limit"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M09",
+      "questionId": "M09",
+      "occurrenceId": "fx_P05_mapping_M08",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M09.accept"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-A01",
+      "questionId": "M10",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M10.words"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-A02",
+      "questionId": "M11",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M11.stop"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-A03",
+      "questionId": "M12",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M12.same"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-A06",
+      "questionId": "M13",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "later",
+      "selectedOptionIds": [
+        "M13.quiet"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-A07",
+      "questionId": "M14",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "later",
+      "selectedOptionIds": [
+        "M14.choice"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M15",
+      "questionId": "M15",
+      "occurrenceId": "fx_P05_mapping_M15",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M15.pause"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M16",
+      "questionId": "M16",
+      "occurrenceId": "fx_P05_mapping_M15",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M16.practical"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M17",
+      "questionId": "M17",
+      "occurrenceId": "fx_P05_mapping_M17",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M17.wait"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M18",
+      "questionId": "M18",
+      "occurrenceId": "fx_P05_mapping_M17",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M18.busy"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M19",
+      "questionId": "M19",
+      "occurrenceId": "fx_P05_mapping_M17",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M19.information"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M20",
+      "questionId": "M20",
+      "occurrenceId": "fx_P05_mapping_M20",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M20.ask"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M21",
+      "questionId": "M21",
+      "occurrenceId": "fx_P05_mapping_M20",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M21.clear"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M22",
+      "questionId": "M22",
+      "occurrenceId": "fx_P05_mapping_M22",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M22.ease"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M23",
+      "questionId": "M23",
+      "occurrenceId": "fx_P05_mapping_M23",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M23.apology"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M24",
+      "questionId": "M24",
+      "occurrenceId": "fx_P05_mapping_M24",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M24.helped"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M25",
+      "questionId": "M25",
+      "occurrenceId": "fx_P05_mapping_M25",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M25.stop"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M26",
+      "questionId": "M26",
+      "occurrenceId": "fx_P05_mapping_M26",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M26.finish"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M27",
+      "questionId": "M27",
+      "occurrenceId": "fx_P05_mapping_M26",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M27.compromise"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M28",
+      "questionId": "M28",
+      "occurrenceId": "fx_P05_mapping_M28",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M28.stop"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M29",
+      "questionId": "M29",
+      "occurrenceId": "fx_P05_mapping_M28",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M29.clear"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M30",
+      "questionId": "M30",
+      "occurrenceId": "fx_P05_mapping_M28",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M30.choice"
+      ],
+      "status": "answered",
+      "mode": "single"
+    }
+  ],
+  "deepeningResponses": [
+    {
+      "responseId": "P05-A04",
+      "questionId": "D34",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "D34.words"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-A05",
+      "questionId": "D30",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "D30.stuck"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-A08",
+      "questionId": "D36",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "recovery",
+      "selectedOptionIds": [
+        "D36.input",
+        "D36.words",
+        "D36.think"
+      ],
+      "status": "answered",
+      "mode": "ordered"
+    }
+  ],
+  "originalAuthoredResponses": [
+    {
+      "responseId": "P05-A01",
+      "questionId": "M10",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M10.words"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-A02",
+      "questionId": "M11",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M11.stop"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-A03",
+      "questionId": "M12",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M12.same"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-A06",
+      "questionId": "M13",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "later",
+      "selectedOptionIds": [
+        "M13.quiet"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-A07",
+      "questionId": "M14",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "later",
+      "selectedOptionIds": [
+        "M14.choice"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-A04",
+      "questionId": "D34",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "D34.words"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-A05",
+      "questionId": "D30",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "D30.stuck"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-A08",
+      "questionId": "D36",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "recovery",
+      "selectedOptionIds": [
+        "D36.input",
+        "D36.words",
+        "D36.think"
+      ],
+      "status": "answered",
+      "mode": "ordered"
+    }
+  ],
+  "syntheticMappingResponses": [
+    {
+      "responseId": "P05-SYN-M01",
+      "questionId": "M01",
+      "occurrenceId": "fx_P05_mapping_M01",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M01.rest"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M02",
+      "questionId": "M02",
+      "occurrenceId": "fx_P05_mapping_M02",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M02.bounded"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M03",
+      "questionId": "M03",
+      "occurrenceId": "fx_P05_mapping_M02",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M03.requirements"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M04",
+      "questionId": "M04",
+      "occurrenceId": "fx_P05_mapping_M04",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M04.fix"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M05",
+      "questionId": "M05",
+      "occurrenceId": "fx_P05_mapping_M04",
+      "stepId": "self_response",
+      "selectedOptionIds": [
+        "M05.learn"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M06",
+      "questionId": "M06",
+      "occurrenceId": "fx_P05_mapping_M04",
+      "stepId": "self_response",
+      "selectedOptionIds": [
+        "M06.clear"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M07",
+      "questionId": "M07",
+      "occurrenceId": "fx_P05_mapping_M07",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M07.accept"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M08",
+      "questionId": "M08",
+      "occurrenceId": "fx_P05_mapping_M08",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M08.limit"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M09",
+      "questionId": "M09",
+      "occurrenceId": "fx_P05_mapping_M08",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M09.accept"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M15",
+      "questionId": "M15",
+      "occurrenceId": "fx_P05_mapping_M15",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M15.pause"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M16",
+      "questionId": "M16",
+      "occurrenceId": "fx_P05_mapping_M15",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M16.practical"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M17",
+      "questionId": "M17",
+      "occurrenceId": "fx_P05_mapping_M17",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M17.wait"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M18",
+      "questionId": "M18",
+      "occurrenceId": "fx_P05_mapping_M17",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M18.busy"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M19",
+      "questionId": "M19",
+      "occurrenceId": "fx_P05_mapping_M17",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M19.information"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M20",
+      "questionId": "M20",
+      "occurrenceId": "fx_P05_mapping_M20",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M20.ask"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M21",
+      "questionId": "M21",
+      "occurrenceId": "fx_P05_mapping_M20",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M21.clear"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M22",
+      "questionId": "M22",
+      "occurrenceId": "fx_P05_mapping_M22",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M22.ease"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M23",
+      "questionId": "M23",
+      "occurrenceId": "fx_P05_mapping_M23",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M23.apology"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M24",
+      "questionId": "M24",
+      "occurrenceId": "fx_P05_mapping_M24",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M24.helped"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M25",
+      "questionId": "M25",
+      "occurrenceId": "fx_P05_mapping_M25",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M25.stop"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M26",
+      "questionId": "M26",
+      "occurrenceId": "fx_P05_mapping_M26",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M26.finish"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M27",
+      "questionId": "M27",
+      "occurrenceId": "fx_P05_mapping_M26",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M27.compromise"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M28",
+      "questionId": "M28",
+      "occurrenceId": "fx_P05_mapping_M28",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M28.stop"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M29",
+      "questionId": "M29",
+      "occurrenceId": "fx_P05_mapping_M28",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M29.clear"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M30",
+      "questionId": "M30",
+      "occurrenceId": "fx_P05_mapping_M28",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M30.choice"
+      ],
+      "status": "answered",
+      "mode": "single"
+    }
+  ],
+  "combinedCanonicalResponses": [
+    {
+      "responseId": "P05-SYN-M01",
+      "questionId": "M01",
+      "occurrenceId": "fx_P05_mapping_M01",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M01.rest"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M02",
+      "questionId": "M02",
+      "occurrenceId": "fx_P05_mapping_M02",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M02.bounded"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M03",
+      "questionId": "M03",
+      "occurrenceId": "fx_P05_mapping_M02",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M03.requirements"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M04",
+      "questionId": "M04",
+      "occurrenceId": "fx_P05_mapping_M04",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M04.fix"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M05",
+      "questionId": "M05",
+      "occurrenceId": "fx_P05_mapping_M04",
+      "stepId": "self_response",
+      "selectedOptionIds": [
+        "M05.learn"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M06",
+      "questionId": "M06",
+      "occurrenceId": "fx_P05_mapping_M04",
+      "stepId": "self_response",
+      "selectedOptionIds": [
+        "M06.clear"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M07",
+      "questionId": "M07",
+      "occurrenceId": "fx_P05_mapping_M07",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M07.accept"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M08",
+      "questionId": "M08",
+      "occurrenceId": "fx_P05_mapping_M08",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M08.limit"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M09",
+      "questionId": "M09",
+      "occurrenceId": "fx_P05_mapping_M08",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M09.accept"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-A01",
+      "questionId": "M10",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M10.words"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-A02",
+      "questionId": "M11",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M11.stop"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-A03",
+      "questionId": "M12",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M12.same"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-A06",
+      "questionId": "M13",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "later",
+      "selectedOptionIds": [
+        "M13.quiet"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-A07",
+      "questionId": "M14",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "later",
+      "selectedOptionIds": [
+        "M14.choice"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M15",
+      "questionId": "M15",
+      "occurrenceId": "fx_P05_mapping_M15",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M15.pause"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M16",
+      "questionId": "M16",
+      "occurrenceId": "fx_P05_mapping_M15",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M16.practical"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M17",
+      "questionId": "M17",
+      "occurrenceId": "fx_P05_mapping_M17",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M17.wait"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M18",
+      "questionId": "M18",
+      "occurrenceId": "fx_P05_mapping_M17",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M18.busy"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M19",
+      "questionId": "M19",
+      "occurrenceId": "fx_P05_mapping_M17",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M19.information"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M20",
+      "questionId": "M20",
+      "occurrenceId": "fx_P05_mapping_M20",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M20.ask"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M21",
+      "questionId": "M21",
+      "occurrenceId": "fx_P05_mapping_M20",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M21.clear"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M22",
+      "questionId": "M22",
+      "occurrenceId": "fx_P05_mapping_M22",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M22.ease"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M23",
+      "questionId": "M23",
+      "occurrenceId": "fx_P05_mapping_M23",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M23.apology"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M24",
+      "questionId": "M24",
+      "occurrenceId": "fx_P05_mapping_M24",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M24.helped"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M25",
+      "questionId": "M25",
+      "occurrenceId": "fx_P05_mapping_M25",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M25.stop"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M26",
+      "questionId": "M26",
+      "occurrenceId": "fx_P05_mapping_M26",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M26.finish"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M27",
+      "questionId": "M27",
+      "occurrenceId": "fx_P05_mapping_M26",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M27.compromise"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M28",
+      "questionId": "M28",
+      "occurrenceId": "fx_P05_mapping_M28",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M28.stop"
+      ],
+      "status": "answered",
+      "mode": "single",
+      "basis": "actual_recalled"
+    },
+    {
+      "responseId": "P05-SYN-M29",
+      "questionId": "M29",
+      "occurrenceId": "fx_P05_mapping_M28",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M29.clear"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-SYN-M30",
+      "questionId": "M30",
+      "occurrenceId": "fx_P05_mapping_M28",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "M30.choice"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-A04",
+      "questionId": "D34",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "D34.words"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-A05",
+      "questionId": "D30",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "first",
+      "selectedOptionIds": [
+        "D30.stuck"
+      ],
+      "status": "answered",
+      "mode": "single"
+    },
+    {
+      "responseId": "P05-A08",
+      "questionId": "D36",
+      "occurrenceId": "fx_P05_E1",
+      "stepId": "recovery",
+      "selectedOptionIds": [
+        "D36.input",
+        "D36.words",
+        "D36.think"
+      ],
+      "status": "answered",
+      "mode": "ordered"
+    }
+  ],
+  "responseProvenance": [
+    {
+      "responseId": "P05-SYN-M01",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M02",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M03",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M04",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M05",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "self_response",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M06",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "self_response",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M07",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M08",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M09",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-A01",
+      "origin": "original_authored_fictional_answer",
+      "authoredSourceRef": "P05-A01",
+      "originalStepId": "first_notice",
+      "canonicalStepId": "first",
+      "usage": "authored_scenario_semantic_candidate",
+      "note": "Original selected option retained unchanged; any step translation is explicit."
+    },
+    {
+      "responseId": "P05-A02",
+      "origin": "original_authored_fictional_answer",
+      "authoredSourceRef": "P05-A02",
+      "originalStepId": "first",
+      "canonicalStepId": "first",
+      "usage": "authored_scenario_semantic_candidate",
+      "note": "Original selected option retained unchanged; any step translation is explicit."
+    },
+    {
+      "responseId": "P05-A03",
+      "origin": "original_authored_fictional_answer",
+      "authoredSourceRef": "P05-A03",
+      "originalStepId": "first",
+      "canonicalStepId": "first",
+      "usage": "authored_scenario_semantic_candidate",
+      "note": "Original selected option retained unchanged; any step translation is explicit."
+    },
+    {
+      "responseId": "P05-A06",
+      "origin": "original_authored_fictional_answer",
+      "authoredSourceRef": "P05-A06",
+      "originalStepId": "later",
+      "canonicalStepId": "later",
+      "usage": "authored_scenario_semantic_candidate",
+      "note": "Original selected option retained unchanged; any step translation is explicit."
+    },
+    {
+      "responseId": "P05-A07",
+      "origin": "original_authored_fictional_answer",
+      "authoredSourceRef": "P05-A07",
+      "originalStepId": "later",
+      "canonicalStepId": "later",
+      "usage": "authored_scenario_semantic_candidate",
+      "note": "Original selected option retained unchanged; any step translation is explicit."
+    },
+    {
+      "responseId": "P05-SYN-M15",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M16",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M17",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M18",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M19",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M20",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M21",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M22",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M23",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M24",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M25",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M26",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M27",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M28",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M29",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-SYN-M30",
+      "origin": "new_synthetic_mapping_answer",
+      "authoredSourceRef": null,
+      "originalStepId": null,
+      "canonicalStepId": "first",
+      "usage": "structural_full_session_scaffold_only",
+      "note": "Newly authored neutral/bounded answer; not evidence independently observed in the original scenario."
+    },
+    {
+      "responseId": "P05-A04",
+      "origin": "original_authored_fictional_answer",
+      "authoredSourceRef": "P05-A04",
+      "originalStepId": "first",
+      "canonicalStepId": "first",
+      "usage": "authored_scenario_semantic_candidate",
+      "note": "Original selected option retained unchanged; any step translation is explicit."
+    },
+    {
+      "responseId": "P05-A05",
+      "origin": "original_authored_fictional_answer",
+      "authoredSourceRef": "P05-A05",
+      "originalStepId": "first",
+      "canonicalStepId": "first",
+      "usage": "authored_scenario_semantic_candidate",
+      "note": "Original selected option retained unchanged; any step translation is explicit."
+    },
+    {
+      "responseId": "P05-A08",
+      "origin": "original_authored_fictional_answer",
+      "authoredSourceRef": "P05-A08",
+      "originalStepId": "recovery",
+      "canonicalStepId": "recovery",
+      "usage": "authored_scenario_semantic_candidate",
+      "note": "Original selected option retained unchanged; any step translation is explicit."
+    }
+  ],
+  "withheldAuthoredAnswers": [],
+  "originalExpectations": {},
+  "originalSemanticNotes": [
+    "Deliberate punishment by silence",
+    "A firefighter chose to shut down",
+    "Dorsal vagal collapse",
+    "A dissociative disorder"
+  ]
+}
