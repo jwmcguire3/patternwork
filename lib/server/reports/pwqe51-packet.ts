@@ -164,7 +164,7 @@ export function buildPwqe51RouterPacket(input: BuildPwqe51PacketInput): Record<s
   const existingPairs = new Set(reportedDecisions.map((decision) =>
     [decision.firstOccurrenceId, decision.secondOccurrenceId].sort().join("\u0000")));
   for (const episode of route.episodes) {
-    for (const sourceId of episode.distinctFrom) {
+    for (const sourceId of episode.distinctFrom ?? []) {
       const key = [episode.id, sourceId].sort().join("\u0000");
       if (existingPairs.has(key)) continue;
       if (!actualEpisodeIds.has(episode.id) || !actualEpisodeIds.has(sourceId)) {
@@ -198,7 +198,7 @@ export function buildPwqe51RouterPacket(input: BuildPwqe51PacketInput): Record<s
     const root = episode.responseIds.map((id) => responseById.get(id)).find((response) => response?.basis === "actual_recalled" || response?.basis === "reported_typicality");
     const rootQuestion = root ? questions.get(root.questionId) : undefined;
     const comparison = comparisonByOccurrence.get(episode.id);
-    const distinctFrom = new Set(episode.distinctFrom);
+    const distinctFrom = new Set(episode.distinctFrom ?? []);
     if (comparison?.relation === "different") distinctFrom.add(comparison.firstOccurrenceId);
     return {
       id: episode.id,
