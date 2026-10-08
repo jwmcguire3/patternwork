@@ -280,7 +280,6 @@ async function updateRunProgress(input: {
 }
 
 export async function startDebugReportRunStep(runId: string): Promise<void> {
-  "use step";
   await updateRunProgress({ runId, phase: "PREPARING", progressNote: "Loading the fictional profile packet.", status: "RUNNING" });
 }
 
@@ -289,7 +288,6 @@ export async function generateDebugReportStep(input: DebugReportRunInput & {
   readonly layerReports: readonly DebugReportResult[];
   readonly spentMicros: number;
 }): Promise<DebugReportResult> {
-  "use step";
   await updateRunProgress({ runId: input.runId, phase: input.reportType, progressNote: `Generating the ${input.reportType} draft with GPT-6 Luna · max.` });
   const result = await generateDebugDraft({
     runId: input.runId,
@@ -311,15 +309,12 @@ export async function generateDebugReportStep(input: DebugReportRunInput & {
   });
   return result;
 }
-generateDebugReportStep.maxRetries = 0;
 
 export async function finishDebugReportRunStep(runId: string): Promise<void> {
-  "use step";
   await updateRunProgress({ runId, phase: "COMPLETE", progressNote: "All selected report drafts are ready.", status: "SUCCEEDED" });
 }
 
 export async function failDebugReportRunStep(input: { readonly runId: string; readonly failureCode: string }): Promise<void> {
-  "use step";
   await updateRunProgress({
     runId: input.runId,
     phase: "COMPLETE",

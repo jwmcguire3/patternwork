@@ -5,7 +5,7 @@ import {
   finishDebugReportRunStep,
   generateDebugReportStep,
   startDebugReportRunStep,
-} from "../lib/server/debug/report-runner.ts";
+} from "../lib/server/debug/report-steps.ts";
 
 function failureCode(error: unknown): string {
   const message = error instanceof Error ? error.message : "";
