@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
-import os from "node:os";
+import { mkdir, mkdtemp, rm } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
 import type { JsonObject } from "@/lib/question-engine/types";
@@ -13,6 +12,13 @@ import {
   type Pwqe5PendingQualificationResult,
 } from "@/lib/server/openrouter/pwqe5-provider-qualification";
 import type { OpenRouterGenerationRequest, OpenRouterTransport } from "@/lib/server/openrouter/types";
+
+const TEST_SCRATCH = path.join(process.cwd(), ".codex-temp", "test-runs");
+
+async function makeTestDirectory(prefix: string): Promise<string> {
+  await mkdir(TEST_SCRATCH, { recursive: true });
+  return mkdtemp(path.join(TEST_SCRATCH, prefix));
+}
 
 function requestInput(request: OpenRouterGenerationRequest): Record<string, unknown> {
   const marker = "The following object is the complete validated, pseudonymous input contract. It contains no email, direct contact data, or flat raw-answer list.\n\n";
@@ -67,7 +73,7 @@ function success(request: OpenRouterGenerationRequest, output: JsonObject, gener
 }
 
 test("qualifies all profile/report pairs, repairs once, isolates synthesis by profile, and activates reviewed pins", async () => {
-  const outputDirectory = await mkdtemp(path.join(os.tmpdir(), "pwqe5-provider-qualification-"));
+  const outputDirectory = await makeTestDirectory("pwqe5-provider-qualification-");
   const requests: OpenRouterGenerationRequest[] = [];
   let firstCall = true;
   const provider: OpenRouterTransport = {
@@ -153,7 +159,7 @@ test("qualifies all profile/report pairs, repairs once, isolates synthesis by pr
 });
 
 test("blocks a too-low cost cap before the mock transport is called", async () => {
-  const outputDirectory = await mkdtemp(path.join(os.tmpdir(), "pwqe5-provider-budget-"));
+  const outputDirectory = await makeTestDirectory("pwqe5-provider-budget-");
   let calls = 0;
   const provider: OpenRouterTransport = {
     async generate() {
@@ -177,7 +183,7 @@ test("blocks a too-low cost cap before the mock transport is called", async () =
 });
 
 test("resumes a persisted initial attempt without making the same provider call twice", async () => {
-  const outputDirectory = await mkdtemp(path.join(os.tmpdir(), "pwqe5-provider-resume-"));
+  const outputDirectory = await makeTestDirectory("pwqe5-provider-resume-");
   const requests: OpenRouterGenerationRequest[] = [];
   let nowCalls = 0;
   try {

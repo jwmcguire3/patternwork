@@ -91,7 +91,11 @@ function parseJson<T>(text: string, label: string): T {
 }
 
 function sha256(bytes: Uint8Array): string {
-  return createHash("sha256").update(bytes).digest("hex");
+  // These source-pinned fixture assets are UTF-8 JSON text. Git may check them
+  // out with CRLF on Windows, so hash their canonical LF representation while
+  // still detecting every content change.
+  const text = Buffer.from(bytes).toString("utf8").replace(/\r\n/gu, "\n");
+  return createHash("sha256").update(text, "utf8").digest("hex");
 }
 
 function safeAssetPath(root: string, relative: string): string {

@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
-import os from "node:os";
+import { mkdir, mkdtemp, rm } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
 import type { JsonObject } from "../../lib/question-engine/types.ts";
@@ -14,6 +13,8 @@ import type {
   OpenRouterGenerationResult,
   OpenRouterTransport,
 } from "../../lib/server/openrouter/types.ts";
+
+const TEST_SCRATCH = path.join(process.cwd(), ".codex-temp", "test-runs");
 
 const request: OpenRouterGenerationRequest = {
   model: "openai/gpt-6-luna",
@@ -48,7 +49,8 @@ const result: OpenRouterGenerationResult = {
 };
 
 async function withStore(run: (store: FileQualificationAttemptStore) => Promise<void>): Promise<void> {
-  const runDirectory = await mkdtemp(path.join(os.tmpdir(), "pwrp71-attempts-"));
+  await mkdir(TEST_SCRATCH, { recursive: true });
+  const runDirectory = await mkdtemp(path.join(TEST_SCRATCH, "pwrp71-attempts-"));
   try {
     await run(new FileQualificationAttemptStore(runDirectory));
   } finally {

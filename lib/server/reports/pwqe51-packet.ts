@@ -163,14 +163,19 @@ export function buildPwqe51RouterPacket(input: BuildPwqe51PacketInput): Record<s
   const reportedDecisions: Pwqe51ComparisonDecision[] = [...(input.comparisonDecisions ?? [])];
   const existingPairs = new Set(reportedDecisions.map((decision) =>
     [decision.firstOccurrenceId, decision.secondOccurrenceId].sort().join("\u0000")));
-  for (const episode of route.episodes) {
+  const hasBoundReplayParent = (episode: Pwqe51RouterResult["episodes"][number]) => Boolean(episode.linkedFrom && episode.distinctFrom?.includes(episode.linkedFrom));
+  const episodesInComparisonOrder = [...route.episodes].sort((left, right) =>
+    Number(hasBoundReplayParent(right)) - Number(hasBoundReplayParent(left)) || left.id.localeCompare(right.id));
+  for (const episode of episodesInComparisonOrder) {
     for (const sourceId of episode.distinctFrom ?? []) {
       const key = [episode.id, sourceId].sort().join("\u0000");
       if (existingPairs.has(key)) continue;
       if (!actualEpisodeIds.has(episode.id) || !actualEpisodeIds.has(sourceId)) {
         throw new Error("PWQE 5.1 replay distinctness must join two current actual episodes.");
       }
-      reportedDecisions.push({ firstOccurrenceId: sourceId, secondOccurrenceId: episode.id, relation: "different" });
+      const linkedSource = episode.linkedFrom && episode.distinctFrom?.includes(episode.linkedFrom)
+        ? episode.linkedFrom : sourceId;
+      reportedDecisions.push({ firstOccurrenceId: linkedSource, secondOccurrenceId: linkedSource === episode.id ? sourceId : episode.id, relation: "different" });
       existingPairs.add(key);
     }
   }

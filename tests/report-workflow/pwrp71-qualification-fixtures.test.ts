@@ -45,6 +45,24 @@ test("PWRP 7.1 fixture identities retain authored lineage and pending router sta
   assert.ok(fixtures.coverageCandidates.every((candidate) => candidate.packet.release_id === "PWQE-5.1.0-candidate.1"));
 });
 
+test("PWRP 7.1 fixture pins tolerate Git's Windows CRLF checkout without weakening content checks", async () => {
+  const copied = await copiedFixtureRoot();
+  try {
+    const file = path.join(copied.root, "authored_worked_paths.json");
+    const original = await readFile(file, "utf8");
+    const crlf = original.replace(/\r\n/gu, "\n").replace(/\n/gu, "\r\n");
+    await writeFile(file, crlf);
+    const fixtures = await loadPwrp71QualificationFixtures({ fixtureRoot: copied.root });
+    assert.equal(fixtures.profiles.length, 9);
+    assert.equal(fixtures.coverageCandidates.length, 16);
+
+    await writeFile(file, crlf.replace("A preventive role", "A changed role"));
+    await assert.rejects(loadPwrp71QualificationFixtures({ fixtureRoot: copied.root }), /authored P01–P09 answer-history asset digest drifted/u);
+  } finally {
+    await copied.cleanup();
+  }
+});
+
 test("authored histories replay explicit answer lineage and preserve pending report-adapter findings", async () => {
   const fixtures = await loadPwrp71QualificationFixtures();
   const questionSource = await loadPwqe51SourcePackage();

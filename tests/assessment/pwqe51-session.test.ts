@@ -338,6 +338,8 @@ test("original C07 fixture traverses trusted replay, attached M03, D56/D57/D77 l
   }, source);
   assert.equal(state.currentInteraction?.questionId, "M03", "the second M03 must attach to the replayed M02 occurrence");
   assert.equal(state.currentInteraction?.occurrenceId, replayOccurrenceId);
+  const replayComparison = state.routerResult.targets.find((target) => target.targetId === "contrast_context" && target.comparisonIds?.includes(replayOccurrenceId));
+  assert.deepEqual(replayComparison?.comparisonIds, [firstOccurrenceId, replayOccurrenceId], "the respondent-confirmed replay pair retains source-first occurrence orientation");
 
   let iterations = 0;
   while (!state.responses.some((response) => response.questionId === "D77" && response.status === "answered") && iterations < 60) {

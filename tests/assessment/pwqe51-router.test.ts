@@ -180,6 +180,21 @@ test("opted-in Deepening roots are offered before basis exists, then enforce act
   }
 });
 
+test("bound entry candidates use administration order instead of randomized occurrence IDs", async () => {
+  const source = await sourcePromise;
+  const responses = [
+    answer("first-administered", "M01", "M01.rest", "z-first", undefined, { basis: "actual_recalled" }),
+    answer("second-administered", "M04", "M04.fix", "a-second", undefined, { basis: "actual_recalled" }),
+  ];
+  const route = compilePwqe51Route({ phase: "deepening", optedInTopics: ["body_detail"], responses }, source);
+  assert.equal(route.candidates.find((candidate) => candidate.questionId === "D41")?.occurrenceId, "z-first");
+
+  const focused = compilePwqe51Route({
+    phase: "deepening", optedInTopics: ["body_detail"], responses, focusOccurrences: ["a-second"],
+  }, source);
+  assert.equal(focused.candidates.find((candidate) => candidate.questionId === "D41")?.occurrenceId, "a-second");
+});
+
 test("an answered topic entry root is not reoffered in the same actual occurrence", async () => {
   const source = await sourcePromise;
   const result = compilePwqe51Route({ phase: "deepening", optedInTopics: ["conflict"], responses: [
@@ -534,6 +549,20 @@ test("comparison targets retain pair identity and close from their own administe
   assert.deepEqual(context?.comparisonIds, pair);
   assert.equal(context?.state, "resolved_descriptively");
   assert.ok(result.targets.some((target) => target.targetId === "contrast_goal" && target.stepId === "comparison" && target.comparisonIds?.join("|") === pair.join("|")));
+});
+
+test("comparison target keeps the declared source-first orientation when IDs sort the other way", async () => {
+  const source = await sourcePromise;
+  const responses = [
+    answer("source-root", "M02", "M02.rehearse", "z-source", undefined, { basis: "actual_recalled" }),
+    answer("source-aim", "M03", "M03.exposure", "z-source"),
+    answer("second-root", "M02", "M02.rehearse", "a-second", undefined, { basis: "actual_recalled" }),
+    answer("second-aim", "M03", "M03.exposure", "a-second"),
+  ];
+  const route = compilePwqe51Route({ phase: "deepening", responses, distinctPairs: [["z-source", "a-second"]] }, source);
+  const comparison = route.targets.find((target) => target.targetId === "contrast_context");
+  assert.equal(comparison?.occurrenceId, "z-source");
+  assert.deepEqual(comparison?.comparisonIds, ["z-source", "a-second"]);
 });
 
 test("target-bound missingness and linked actual episodes preserve their distinct closure paths", async () => {

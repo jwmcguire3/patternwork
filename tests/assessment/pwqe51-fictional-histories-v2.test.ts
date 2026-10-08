@@ -69,7 +69,8 @@ test("v2 fictional histories contain exact 30-question Mapping scaffolds and no 
       assert.ok(!administrations.has(administration), administration);
       administrations.add(administration);
       const options = r.variantId === "M10.observable" ? observable.options : question.options;
-      assert.ok(r.selectedOptionIds.length > 0 && r.selectedOptionIds.length <= question.selection.max_select);
+      const maxSelect = typeof question.selection.max_select === "number" ? question.selection.max_select : 1;
+      assert.ok(r.selectedOptionIds.length > 0 && r.selectedOptionIds.length <= maxSelect);
       for (const selectedId of r.selectedOptionIds)
         assert.ok(options.some((option) => option.id === selectedId), `${entry.profile.id}: invalid ${selectedId}`);
       if (question.selection.mode === "single") {

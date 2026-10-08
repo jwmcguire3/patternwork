@@ -120,8 +120,8 @@ function routeInput(state: Pick<Pwqe51SessionState, "pass" | "responses" | "phas
   });
   const basePairs = (state.routerInput.distinctPairs ?? []).filter((pair) => !pair.some((occurrenceId) => allReplayOccurrences.has(occurrenceId)));
   const distinctPairs = [...new Map([...basePairs, ...replayPairs].map((pair) => {
-    const canonical = [...pair].sort() as [string, string];
-    return [canonical.join("\u0000"), canonical] as const;
+    const identity = [...pair].sort().join("\u0000");
+    return [identity, pair] as const;
   })).values()];
   const episodeLinks = [
     ...(state.routerInput.episodeLinks ?? []).filter((link) => !allReplayOccurrences.has(link.occurrenceId)),

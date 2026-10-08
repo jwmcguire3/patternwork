@@ -885,9 +885,14 @@ function makeCandidates(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, a
       const bindingKey = `entry:${entry.id}`;
       const bound = input.occurrenceBindings?.[bindingKey];
       const focused = new Set(input.focusOccurrences ?? []);
+      const episodeAdministrationOrder = new Map<string, number>();
+      active.forEach((response, index) => {
+        if (!episodeAdministrationOrder.has(response.occurrenceId)) episodeAdministrationOrder.set(response.occurrenceId, index);
+      });
       const eligibleEpisodes = episodes.filter((episode) => episode.actual
         && (q.episode_family === "bound" || q.episode_family === episode.family))
-        .sort((left, right) => Number(focused.has(right.id)) - Number(focused.has(left.id)) || left.id.localeCompare(right.id));
+        .sort((left, right) => Number(focused.has(right.id)) - Number(focused.has(left.id))
+          || (episodeAdministrationOrder.get(left.id) ?? Number.MAX_SAFE_INTEGER) - (episodeAdministrationOrder.get(right.id) ?? Number.MAX_SAFE_INTEGER));
     const parentEpisode = q.eligibility.requires_answered.length
       ? [...active].reverse().find((response) => answered(response) && q.eligibility.requires_answered.includes(response.questionId))?.occurrenceId
       : undefined;
@@ -967,9 +972,9 @@ function makeCandidates(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, a
 export function compilePwqe51Route(input: Pwqe51RouterInput, source: Pwqe51SourcePackage): Pwqe51RouterResult {
   const normalizedPairs = [...new Map((input.distinctPairs ?? []).map((pair) => {
     if (!Array.isArray(pair) || pair.length !== 2) throw new Error("Confirmed distinctness requires exactly two episode IDs.");
-    const canonical = [...pair].sort() as [string, string];
-    return [canonical.join("\u0000"), canonical] as const;
-  })).values()].sort((left, right) => `${left[0]}\u0000${left[1]}`.localeCompare(`${right[0]}\u0000${right[1]}`));
+    const identity = [...pair].sort().join("\u0000");
+    return [identity, pair] as const;
+  })).values()];
   input = { ...input, distinctPairs: normalizedPairs };
   const normalized = normalize(input, source);
   const active = normalized.active;
