@@ -13,6 +13,7 @@ import type {
   SynthesisBundle,
 } from "../../report-contracts/types.ts";
 import type { DecryptedAssessmentSnapshot, PreparedReportInputs } from "./types.ts";
+import { containsAccountIdentifier } from "./privacy-patterns.ts";
 
 const FORBIDDEN_KEYS = new Set([
   "email", "email_address", "contact_email", "phone", "phone_number", "street_address",
@@ -24,7 +25,6 @@ const EMAIL = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/iu;
 const PHONE = /(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}/u;
 const SSN = /\b\d{3}-\d{2}-\d{4}\b/u;
 const INTERNATIONAL_PHONE = /(?:^|\s)\+\d(?:[\s().-]*\d){7,14}(?:\s|$)/u;
-const ACCOUNT_ID = /\b(?:account|acct|member|customer)[\s:#-]*(?:id|number|no\.?|#)?[\s:#-]*[A-Z0-9-]{5,}\b/iu;
 const STREET_ADDRESS = /\b\d{1,6}\s+[\p{L}0-9.'-]+(?:\s+[\p{L}0-9.'-]+){0,5}\s+(?:street|st|road|rd|avenue|ave|boulevard|blvd|lane|ln|drive|dr|way|court|ct)\b/iu;
 
 function object(value: unknown): Record<string, unknown> | undefined {
@@ -33,7 +33,7 @@ function object(value: unknown): Record<string, unknown> | undefined {
 
 function piiIssues(value: unknown, path = "$", issues: ValidationIssue[] = []): ValidationIssue[] {
   if (typeof value === "string") {
-    if (EMAIL.test(value) || PHONE.test(value) || INTERNATIONAL_PHONE.test(value) || SSN.test(value) || ACCOUNT_ID.test(value) || STREET_ADDRESS.test(value)) {
+    if (EMAIL.test(value) || PHONE.test(value) || INTERNATIONAL_PHONE.test(value) || SSN.test(value) || containsAccountIdentifier(value) || STREET_ADDRESS.test(value)) {
       issues.push({ code: "direct_pii", path, message: "Provider input contains direct contact or government-identifier data." });
     }
     return issues;

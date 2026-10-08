@@ -101,7 +101,7 @@ test("packet promotion ignores a fully populated client objectEvidence payload",
   } } };
   const snapshot: DecryptedAssessmentSnapshot = {
     databaseId:"db", assessmentSessionId:"session", snapshotId:"pwsn_tamper", snapshotRevision:"1", completedPass:2,
-    evidenceSha256:"a".repeat(64), scopeSha256:"b".repeat(64), canonicalSnapshot:{ assessment_completion:{ completed_at:"2026-09-02T12:00:00.000Z" }, responses:[{
+    evidenceSha256:"a".repeat(64), scopeSha256:"b".repeat(64), canonicalSnapshot:{ assessment_completion:{ completion_mode:"pass2_complete", last_completed_stage:"S5", safe_resume_stage:"complete", completed_at:"2026-09-02T12:00:00.000Z" }, responses:[{
       responseId:"response", interactionInstanceId:"interaction", bankItemId:"FCF-201", bankItemVersion:"3.0.0", administrationSequence:1, stage:"S5", completionState:"COMPLETED", responseOrder:[], content:{ response },
     }] },
   };

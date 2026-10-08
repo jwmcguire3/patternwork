@@ -2,6 +2,9 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { JsonObject, ReportType, ValidationIssue } from "../../question-engine/types.ts";
 import { loadPatternworkSchemas } from "../../report-contracts/schema-loader.ts";
+import { loadPwqe5SourcePackage, type Pwqe5SourcePackage } from "./pwqe6-source.ts";
+import { loadPwrp71SourcePackage, type Pwrp71SourcePackage } from "./pwrp71-source.ts";
+import { containsAccountIdentifier } from "./privacy-patterns.ts";
 
 const PROMPT_DIRECTORY = "specs/patternwork/report-prompts-v4.1";
 const WRITER_CONTRACT = "specs/patternwork/question-engine-v3.1/09_report_writer_contract.md";
@@ -32,13 +35,49 @@ export interface LoadedReportPrompt {
   readonly schemaName: string;
 }
 
+export async function loadPwrp71ReportPrompt(
+  reportType: ReportType,
+  workspaceRoot = process.cwd(),
+): Promise<LoadedReportPrompt & { readonly source: Pwrp71SourcePackage }> {
+  const source = await loadPwrp71SourcePackage(workspaceRoot);
+  const specificKey = reportType === "MAP" ? "mapping"
+    : reportType === "IFS" ? "ifs"
+      : reportType === "PV" ? "state"
+        : reportType === "ATT" ? "attachment" : "synthesis";
+  return {
+    source,
+    system: [
+      "You are the Patternwork PWRP 7.1 report writer. Return only the requested JSON object.",
+      source.prompts.shared,
+      source.prompts[specificKey],
+    ].join("\n\n"),
+    schema: source.schemas.reportDraft as JsonObject,
+    schemaName: `patternwork_${reportType.toLowerCase()}_pwrp_7_1_candidate`,
+  };
+}
+
+export async function loadPwqe6ReportPrompt(reportType: ReportType, workspaceRoot = process.cwd()): Promise<LoadedReportPrompt & { readonly source: Pwqe5SourcePackage }> {
+  const source = await loadPwqe5SourcePackage(workspaceRoot);
+  const specificKey = reportType === "MAP" ? "mapping" : reportType === "IFS" ? "ifs" : reportType === "PV" ? "state" : reportType === "ATT" ? "attachment" : "synthesis";
+  return {
+    source,
+    system: [
+      "You are the Patternwork v6 report writer for a design candidate release. Return only the requested JSON object.",
+      source.reportPrompts.shared,
+      source.reportPrompts[specificKey],
+    ].join("\n\n"),
+    schema: source.schemas.reportDraft as JsonObject,
+    schemaName: `patternwork_${reportType.toLowerCase()}_v6_design`,
+  };
+}
+
 const PRIVATE_INPUT_KEYS = new Set(["narrative", "privateNote", "private_note", "freeText", "free_text", "raw_answers", "answers", "all_responses"]);
-const DIRECT_PII = /(?:\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b|(?:^|\s)\+\d(?:[\s().-]*\d){7,14}(?:\s|$)|\b\d{3}-\d{2}-\d{4}\b|\b(?:account|acct|member|customer)[\s:#-]*(?:id|number|no\.?|#)?[\s:#-]*[A-Z0-9-]{5,}\b)/iu;
+const DIRECT_PII = /(?:\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b|(?:^|\s)\+\d(?:[\s().-]*\d){7,14}(?:\s|$)|\b\d{3}-\d{2}-\d{4}\b)/iu;
 
 /** Final synchronous fail-closed check immediately before prompt serialization. */
 export function assertProviderPromptPrivacy(input: unknown, path = "$"): void {
   if (typeof input === "string") {
-    if (DIRECT_PII.test(input)) throw new Error(`Provider prompt privacy boundary rejected direct identifying data at ${path}.`);
+    if (DIRECT_PII.test(input) || containsAccountIdentifier(input)) throw new Error(`Provider prompt privacy boundary rejected direct identifying data at ${path}.`);
     return;
   }
   if (Array.isArray(input)) return input.forEach((value, index) => assertProviderPromptPrivacy(value, `${path}[${index}]`));

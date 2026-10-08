@@ -6,8 +6,18 @@ import { promisify } from "node:util";
 import PDFDocument from "pdfkit";
 import type { ReportType } from "../../question-engine/types.ts";
 import { normalizeLf, sha256Text } from "../../report-contracts/delivery-validator.ts";
+import type { JsonObject } from "../../question-engine/types.ts";
 import type { ReportArtifact, ReportEvidencePacketV3_1, SynthesisAudit, SynthesisBundle } from "../../report-contracts/types.ts";
 import { validateCanonicalArtifact } from "../reports/validation.ts";
+import { validatePwqe6ReportDraft, validatePwqe6ArtifactLineage } from "../reports/pwqe6-validation.ts";
+import { loadPwqe5SourcePackage } from "../reports/pwqe6-source.ts";
+import type { Pwqe6ReportArtifact } from "../reports/types.ts";
+import type { Pwrp71ReportArtifact } from "../reports/pwrp71-validation.ts";
+import { validatePwrp71ReportDraft } from "../reports/pwrp71-validation.ts";
+import { loadPwqe51SourcePackage } from "../../question-engine/pwqe51-source.ts";
+import { loadPwrp71SourcePackage } from "../reports/pwrp71-source.ts";
+import { preparePwrp71Request } from "../reports/pwrp71-adapter.ts";
+import { sha256Canonical } from "../../report-contracts/delivery-validator.ts";
 import { sha256 } from "../security/index.ts";
 import type { PdfExternalVerification, PdfLayoutMetrics, PdfVerificationBoundary, VerifiedPdf } from "./types.ts";
 
@@ -17,6 +27,10 @@ const PAGE_HEIGHT = 792;
 const MARGIN = 58;
 const CONTENT_BOTTOM = PAGE_HEIGHT - 54;
 const MAX_PAGES = 80;
+
+function popplerCommand(environmentName: "PDFTOTEXT_PATH" | "PDFINFO_PATH" | "PDFTOPPM_PATH", fallback: string): string {
+  return process.env[environmentName]?.trim() || fallback;
+}
 
 const REPORT_NAMES: Readonly<Record<ReportType, string>> = {
   MAP: "Patternwork Mapping Summary",
@@ -160,11 +174,11 @@ export class PopplerPdfVerificationBoundary implements PdfVerificationBoundary {
     const pngPrefix = path.join(directory, "page");
     try {
       await writeFile(pdfPath, pdf);
-      await execFileAsync("pdftotext", ["-layout", pdfPath, textPath], { windowsHide: true, maxBuffer: 8 * 1024 * 1024 });
-      const { stdout } = await execFileAsync("pdfinfo", [pdfPath], { windowsHide: true });
+      await execFileAsync(popplerCommand("PDFTOTEXT_PATH", "pdftotext"), ["-layout", pdfPath, textPath], { windowsHide: true, maxBuffer: 8 * 1024 * 1024 });
+      const { stdout } = await execFileAsync(popplerCommand("PDFINFO_PATH", "pdfinfo"), [pdfPath], { windowsHide: true });
       const pageMatch = stdout.match(/^Pages:\s+(\d+)\s*$/mu);
       if (!pageMatch) throw new Error("pdfinfo did not report a page count.");
-      await execFileAsync("pdftoppm", ["-png", "-r", "110", pdfPath, pngPrefix], { windowsHide: true, maxBuffer: 8 * 1024 * 1024 });
+      await execFileAsync(popplerCommand("PDFTOPPM_PATH", "pdftoppm"), ["-png", "-r", "110", pdfPath, pngPrefix], { windowsHide: true, maxBuffer: 8 * 1024 * 1024 });
       const names = (await readdir(directory)).filter((name) => /^page-\d+\.png$/u.test(name)).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
       return { extractedText: await readFile(textPath, "utf8"), pageCount: Number(pageMatch[1]), pngPages: await Promise.all(names.map((name) => readFile(path.join(directory, name)))) };
     } finally {
@@ -175,16 +189,57 @@ export class PopplerPdfVerificationBoundary implements PdfVerificationBoundary {
 
 export interface RenderCanonicalPdfInput {
   readonly reportType: ReportType;
-  readonly artifact: ReportArtifact | SynthesisAudit;
+  readonly artifact: ReportArtifact | SynthesisAudit | Pwqe6ReportArtifact | Pwrp71ReportArtifact;
   readonly packets?: readonly ReportEvidencePacketV3_1[];
+  readonly routerPacket?: JsonObject;
+  readonly acceptedLayers?: Readonly<Record<string, JsonObject>>;
   readonly bundle?: SynthesisBundle;
+  readonly snapshotId?: string;
+  readonly contractVersion?: "v3.1" | "v6" | "v7.1";
   readonly workspaceRoot?: string;
   readonly verification?: PdfVerificationBoundary;
 }
 
 export async function renderAndVerifyCanonicalPdf(input: RenderCanonicalPdfInput): Promise<VerifiedPdf> {
-  const validation = await validateCanonicalArtifact(input.reportType, input.artifact, input.packets ?? [], input.workspaceRoot, input.bundle);
-  if (!validation.ok) throw new Error(`Canonical artifact is not validator-clean: ${JSON.stringify(validation.issues)}`);
+  if (input.contractVersion === "v7.1") {
+    const packet = input.routerPacket;
+    const artifact = input.artifact;
+    if (!packet || !input.snapshotId || artifact.artifact_type !== "pwrp71_report") throw new Error("PWRP 7.1 PDF rendering requires a validated packet, snapshot, and PWRP 7.1 artifact.");
+    const [questionSource, reportSource] = await Promise.all([
+      loadPwqe51SourcePackage(input.workspaceRoot),
+      loadPwrp71SourcePackage(input.workspaceRoot),
+    ]);
+    const prepared = preparePwrp71Request({ packet, reportType: input.reportType, questionSource, reportSource, acceptedLayers: input.acceptedLayers });
+    const validation = validatePwrp71ReportDraft({ value: artifact.draft, reportType: input.reportType, snapshotId: input.snapshotId, packet, source: reportSource });
+    const reconstructed = validation.ok ? validation.value : undefined;
+    const artifactDigest = (artifact.digests as JsonObject).artifact_sha256;
+    const artifactWithoutDigests = Object.fromEntries(Object.entries(artifact).filter(([key]) => key !== "digests"));
+    if (!prepared.ok || !validation.ok || !reconstructed
+      || reconstructed.report_id !== artifact.report_id
+      || reconstructed.source_manifest_sha256 !== artifact.source_manifest_sha256
+      || reconstructed.report_markdown !== artifact.report_markdown
+      || reconstructed.digests.artifact_sha256 !== artifactDigest
+      || artifactDigest !== sha256Canonical(artifactWithoutDigests)
+    ) {
+      // `validatePwrp71ReportDraft` reconstructs the canonical release artifact.
+      // Packet adapter validation is also required here so a source-valid report
+      // cannot be rendered from a modified observation envelope.
+      if (!prepared.ok) throw new Error(`PWRP 7.1 packet is not renderable: ${JSON.stringify(prepared.issues)}`);
+      throw new Error(`PWRP 7.1 artifact is not validator-clean: ${JSON.stringify(validation.ok ? [{ code: "artifact_digest", path: "$.digests", message: "Artifact digest or reconstructed fields do not match." }] : validation.issues)}`);
+    }
+  } else if (input.contractVersion === "v6") {
+    const packet = input.routerPacket;
+    if (!packet || !input.snapshotId || input.artifact.artifact_type !== "pwqe6_report") throw new Error("PWQE6 PDF rendering requires a validated packet, snapshot, and PWQE6 artifact.");
+    const source = await loadPwqe5SourcePackage(input.workspaceRoot);
+    const validation = validatePwqe6ReportDraft({ value: input.artifact.draft, reportType: input.reportType, snapshotId: input.snapshotId, packet, source, qualificationManifestSha256: input.artifact.qualification_manifest_sha256 });
+    const lineageIssues = validatePwqe6ArtifactLineage(input.artifact, packet, input.snapshotId);
+    if (!validation.ok || lineageIssues.length || validation.value.digests.artifact_sha256 !== input.artifact.digests.artifact_sha256) {
+      throw new Error(`PWQE6 artifact is not validator-clean: ${JSON.stringify(validation.ok ? lineageIssues : validation.issues)}`);
+    }
+  } else {
+    const validation = await validateCanonicalArtifact(input.reportType, input.artifact as ReportArtifact | SynthesisAudit, (input.packets ?? []) as ReportEvidencePacketV3_1[], input.workspaceRoot, input.bundle);
+    if (!validation.ok) throw new Error(`Canonical artifact is not validator-clean: ${JSON.stringify(validation.issues)}`);
+  }
   const markdown = input.artifact.artifact_type === "synthesis_audit" ? input.artifact.reader_markdown : input.artifact.report_markdown;
   const rendered = await renderMarkdownPdf(markdown, REPORT_NAMES[input.reportType]);
   const checked = await (input.verification ?? new PopplerPdfVerificationBoundary()).verify(rendered.bytes);

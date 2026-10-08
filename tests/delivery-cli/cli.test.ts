@@ -3,10 +3,40 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { classifyCliInput } from "../../scripts/report-cli/input.ts";
 import { parseReportCliArguments } from "../../scripts/report-cli/index.ts";
-import { codexExecArguments } from "../../scripts/report-cli/process.ts";
+import { codexCompatibleOutputSchema, codexExecArguments, safeCodexDiagnostic } from "../../scripts/report-cli/process.ts";
 
 test("CLI constructs an ephemeral read-only codex exec command", () => {
   assert.deepEqual(codexExecArguments({ schemaPath: "schema.json", outputPath: "last.json" }), ["exec", "--ephemeral", "--sandbox", "read-only", "--output-schema", "schema.json", "--output-last-message", "last.json", "-"]);
+});
+
+test("CLI removes unsupported Codex schema hints while preserving canonical structure", () => {
+  const schema: Parameters<typeof codexCompatibleOutputSchema>[0] = {
+    type: "object",
+    allOf: [{ if: { properties: { kind: { const: "x" } } }, then: { required: ["extra"] } }],
+    additionalProperties: false,
+    properties: {
+      source_ids: { type: "array", minItems: 1, uniqueItems: true, items: { type: "string", pattern: "^EP-" } },
+      section: { oneOf: [{ const: "a" }, { enum: ["b", "c"] }] },
+      optional_note: { type: "string" },
+      digest: { $ref: "#/$defs/Sha256", description: "canonical-only guidance" },
+    },
+    required: ["source_ids", "section"],
+  };
+  assert.deepEqual(codexCompatibleOutputSchema(schema), {
+    type: "object",
+    additionalProperties: false,
+    properties: { source_ids: { type: "array", items: { type: "string" } }, section: { anyOf: [{ const: "a", type: "string" }, { enum: ["b", "c"], type: "string" }] }, optional_note: { type: "string" }, digest: { $ref: "#/$defs/Sha256" } },
+    required: ["source_ids", "section", "optional_note", "digest"],
+  });
+  assert.equal(JSON.stringify(schema).includes('"uniqueItems":true'), true, "canonical input schema remains immutable");
+});
+
+test("CLI diagnostics expose schema errors without echoing report input", () => {
+  const stderr = `sensitive packet text\nERROR: {"error":{"code":"invalid_json_schema","message":"Echoed sensitive packet text."}}`;
+  const diagnostic = safeCodexDiagnostic(stderr);
+  assert.equal(diagnostic, "invalid_json_schema: Codex rejected the structured-output request.");
+  assert.equal(diagnostic?.includes("sensitive packet text"), false);
+  assert.equal(safeCodexDiagnostic("sensitive packet text only"), undefined);
 });
 
 test("CLI requires input/output and does not persist by default", () => {

@@ -5,6 +5,8 @@ import remarkGfm from "remark-gfm";
 import { ASSESSMENT_SESSION_COOKIE } from "@/lib/server/security";
 import { authorizedSessionFromCookies, loadActiveReportSets, loadReportProgress, REPORT_VIEW_COOKIE } from "../_server/access";
 import { DeleteAssessmentButton } from "./delete-assessment";
+import { ResponseExportControls } from "./response-export-controls";
+import exportStyles from "./response-export-controls.module.css";
 import styles from "../reports.module.css";
 
 const labels: Readonly<Record<string, string>> = { MAP: "Mapping Summary", IFS: "IFS Report", PV: "Polyvagal Report", ATT: "Attachment Report", SYNTHESIS: "Synthesis Report" };
@@ -27,6 +29,7 @@ export default async function ReportBundlePage({ params }: { readonly params: Pr
         <div className={styles.markdown}><ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml>{artifact.markdown}</ReactMarkdown></div>
       </article>)}
     </section>)}
+    {canDelete ? <ResponseExportControls /> : <section className={exportStyles.exports}><h2>Your response export</h2><p>Open your assessment resume link to request a separate secure response export. Report-view links cannot access your responses or private notes.</p></section>}
     <footer className={styles.danger}><h2>Privacy controls</h2><p>You can permanently remove the assessment, responses, reports, PDFs, links, and delivery records.</p>{canDelete?<DeleteAssessmentButton />:<p>For deletion, open your assessment resume link first. Report-view links cannot change or delete your saved assessment.</p>}</footer>
   </main>;
 }

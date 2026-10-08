@@ -32,11 +32,24 @@ test("OpenRouter request enforces strict schema and ZDR/no-collection routing an
   } });
   const result = await client.generate(request);
   assert.equal(result.ok, true);
+  if (result.ok) assert.equal(result.finishReason, "stop");
+  assert.equal(body?.max_completion_tokens, request.maxOutputTokens);
+  assert.equal("max_tokens" in (body ?? {}), false);
+  assert.deepEqual(body?.reasoning, { effort: request.reasoningEffort });
   assert.deepEqual(body?.provider, { zdr: true, data_collection: "deny", require_parameters: true });
   assert.deepEqual(body?.response_format, { type: "json_schema", json_schema: { name: "test_schema", strict: true, schema: request.schema } });
   assert.equal(result.usage.generationId, "gen-real-1");
   assert.equal(result.usage.reasoningTokens, 2);
   assert.equal(result.usage.costMicros, 1_200);
+});
+
+test("retains provider finish reason so report contracts can reject truncated structured output", async () => {
+  const client = new OpenRouterClient({ apiKey: "test", fetch: async () => response('{"ok":true}', {
+    choices: [{ message: { content: '{"ok":true}' }, finish_reason: "length" }],
+  }) });
+  const result = await client.generate(request);
+  assert.equal(result.ok, true);
+  if (result.ok) assert.equal(result.finishReason, "length");
 });
 
 for (const [status, kind] of [[429, "rate_limited"], [503, "server_error"]] as const) {
@@ -46,6 +59,7 @@ for (const [status, kind] of [[429, "rate_limited"], [503, "server_error"]] as c
       assert.ok(error instanceof OpenRouterTransportError);
       assert.equal(error.kind, kind);
       assert.equal(error.retryable, true);
+      assert.equal(error.statusCode, status);
       return true;
     });
   });
@@ -61,6 +75,20 @@ test("classifies refusal and malformed structured content without releasing outp
   const invalid = await malformed.generate(request);
   assert.equal(invalid.ok, false);
   if (!invalid.ok) assert.equal(invalid.kind, "invalid_json");
+});
+
+test("retains bounded provider error code and parameter diagnostics without exposing provider message text", async () => {
+  const client = new OpenRouterClient({ apiKey: "test", fetch: async () => Response.json({
+    error: { code: "unsupported_parameter", param: "reasoning.exclude", message: "sensitive provider detail", metadata: { raw: "Unsupported reasoning parameter in JSON schema request" } },
+  }, { status: 400 }) });
+  await assert.rejects(client.generate(request), (error: unknown) => {
+    assert.ok(error instanceof OpenRouterTransportError);
+    assert.equal(error.providerCode, "unsupported_parameter");
+    assert.equal(error.providerParam, "reasoning.exclude");
+    assert.deepEqual(error.providerMetadataKeys, ["error.raw"]);
+    assert.deepEqual(error.providerHints, ["reasoning", "schema", "schema_keyword"]);
+    return true;
+  });
 });
 
 test("classifies an aborted request as retryable timeout", async () => {

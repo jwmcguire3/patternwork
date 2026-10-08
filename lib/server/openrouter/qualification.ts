@@ -18,6 +18,9 @@ import {
 } from "./policy.ts";
 import type { OpenRouterGenerationRequest, OpenRouterTransport } from "./types.ts";
 
+export { loadPwqe5OfflineQualificationFixtures } from "./pwqe5-qualification.ts";
+export type { Pwqe5OfflineNegativeCase, Pwqe5OfflineProfileFixture, Pwqe5OfflineQualificationFixtures } from "./pwqe5-qualification.ts";
+
 export const QUALIFICATION_RUNS_PER_CANDIDATE = 3 as const;
 export const QUALIFICATION_REPORT_ORDER = ["MAP", "IFS", "PV", "ATT", "SYNTHESIS"] as const satisfies readonly ReportType[];
 export const QUALIFICATION_RUN_FILE = "qualification-run.json";

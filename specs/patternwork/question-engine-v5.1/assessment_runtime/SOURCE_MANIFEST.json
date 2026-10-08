@@ -1,0 +1,44 @@
+{
+  "source_binding": {
+    "question_release": "PWQE-5.1.0-candidate.1",
+    "runtime_version": "PW-ROUTER-1.1.0-candidate.1",
+    "source_sha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832"
+  },
+  "files": {
+    "architecture/01_EVIDENCE_MODEL.md": "45b3a07f06f0b9d96b1853508568e4cf87827053283acb02b841e01408d8797c",
+    "architecture/02_PATTERN_OBJECTS_AND_CLAIM_RULES.md": "b38446fa7794877931aac6a1ae55cdaa9d45254393186416105a5da63237b734",
+    "architecture/03_ROUTING_AND_STOPPING.md": "7a5ee61445671f3efd1a7d212e14771fbb672d1d2d9d907b2a38201488d246bb",
+    "architecture/REPORT_INTERFACE.md": "1c80c8167ff86df58d778e108af9948cb2ab0d8c1a2e923b8bbb82f31f6a9bc2",
+    "architecture/coverage_rules.json": "e844ac613a188adc1e7c68746bd8574b5e9a2b699bd1eeae2e13e86956cffb0f",
+    "architecture/item_gates.json": "86d0bdf6be862abcff2e2206804c184f42f9ab9d6789e3bd9a05fbde4a511d05",
+    "architecture/routing_targets.json": "37157110a83d88250c8ce15b90f3c4e6dc48953f5112e9bd0180182cdb653c3f",
+    "assessment/CONTROLS_AND_RENDERING.md": "f890407dbd92a6e6090063c383886b9f14bb6aa4e5cd3d5b5258a4bea16074fb",
+    "assessment/question_bank.json": "800dec8dcb8b1cecf92bbaefe15012f2252d7a1d93764e814924f0332560aa04",
+    "implementation/patternwork_router/__init__.py": "187d577b9049a767cffbd906bbc258e449ee29605d16af38797c6a4d97b42ce3",
+    "implementation/patternwork_router/__main__.py": "5a58bacb939242ad447d57d9aa350b2732f6571ec646ee7bfff5f2a2db42621a",
+    "implementation/patternwork_router/candidates.py": "18edd4abe591f7165435b6c90fd921d5b4726a733afdff14c5f0a0caf805d725",
+    "implementation/patternwork_router/coverage.py": "162ab5f1411bb7f8da56d668deb418a8680dbcbeddfde92febd1a0bd83f60f65",
+    "implementation/patternwork_router/engine.py": "9d8e882494444ecf5e5ef6e70b3e041337f99971151c6cfc74834d7970101a2d",
+    "implementation/patternwork_router/evidence.py": "394273f22209720d5df01dc70bfc9d22e0919f26f4942d1fa4d870d370ced303",
+    "implementation/patternwork_router/findings.py": "c371e387a15b5f33eed8f374c8a9e358bc631b501764c5a1baa54fefc5f446c1",
+    "implementation/patternwork_router/model.py": "696f9168fe69049ec957fda747929bd78057399807b836675692c681b03669e0",
+    "implementation/patternwork_router/packet.py": "e070e661c167a5663947ab6fc20a47525f4592855177b65b7131b914b38ac894",
+    "implementation/patternwork_router/replay.py": "6db1cc8921f055ecab194bcbc67ff71948bb959c6b3e6f8213fa15e1d78a7548",
+    "implementation/patternwork_router/semantics.py": "96a33567ecbddcf676aa0cf0e80366c0e34478dd928d258dfe77449c86e370ba",
+    "implementation/patternwork_router/source.py": "483473d25a6f22cb0a963ad2d622dd82ccbd71760679ee73403569f805739d62",
+    "implementation/patternwork_router/storage.py": "6daeea29bc441113d212a0d389c7b3a5181d456720f5486ee93ce994166e855b",
+    "implementation/patternwork_router/targets.py": "e07bfd4d3da60e5c196d922930216859543383f953973b5c47f5710c5fbdce4d",
+    "implementation/reference_router.py": "e31819ac615c0bbf4f35e323337d7cb1b628398f459b9c2b6efafe2155a7b87b",
+    "implementation/runtime_policy.json": "614bd0e1f00fa10a8df613840da5cf5de0728f693e59cb2e973328edde728ad9",
+    "schemas/router_packet.schema.json": "0e4e62a10ca14841b0c90f22465761f33fc0975c874dc045a6cda3f242bdb24a"
+  },
+  "counts": {
+    "mapping": 30,
+    "deepening": 100,
+    "templates": 130,
+    "base_options": 766,
+    "variants": 1,
+    "targets": 92
+  },
+  "status": "candidate_content_identity_not_production_activation"
+}

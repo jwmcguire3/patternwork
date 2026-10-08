@@ -1,6 +1,6 @@
 import type { JsonObject } from "../../question-engine/types.ts";
 
-export type OpenRouterReasoningEffort = "low" | "medium" | "high";
+export type OpenRouterReasoningEffort = "low" | "medium" | "high" | "max";
 
 export interface OpenRouterProviderPolicy {
   readonly zdr: true;
@@ -37,13 +37,14 @@ export type OpenRouterFailureKind =
   | "client_error";
 
 export type OpenRouterGenerationResult =
-  | { readonly ok: true; readonly output: JsonObject; readonly usage: OpenRouterUsage }
+  | { readonly ok: true; readonly output: JsonObject; readonly usage: OpenRouterUsage; readonly finishReason?: string }
   | {
       readonly ok: false;
       readonly kind: "invalid_json" | "refusal";
       readonly message: string;
       readonly usage: OpenRouterUsage;
       readonly rawContent?: string;
+      readonly finishReason?: string;
     };
 
 export interface OpenRouterGenerationRequest {
@@ -65,16 +66,30 @@ export class OpenRouterTransportError extends Error {
   readonly kind: Exclude<OpenRouterFailureKind, "invalid_json" | "refusal">;
   readonly retryable: boolean;
   readonly retryAfterMs?: number;
+  readonly statusCode?: number;
+  readonly providerCode?: string;
+  readonly providerParam?: string;
+  readonly providerName?: string;
+  readonly providerUpstreamCode?: string;
+  readonly providerMetadataKeys?: readonly string[];
+  readonly providerHints?: readonly string[];
 
   constructor(
     kind: Exclude<OpenRouterFailureKind, "invalid_json" | "refusal">,
     message: string,
-    options: { retryable: boolean; retryAfterMs?: number; cause?: unknown },
+    options: { retryable: boolean; retryAfterMs?: number; statusCode?: number; providerCode?: string; providerParam?: string; providerName?: string; providerUpstreamCode?: string; providerMetadataKeys?: readonly string[]; providerHints?: readonly string[]; cause?: unknown },
   ) {
     super(message, options.cause === undefined ? undefined : { cause: options.cause });
     this.name = "OpenRouterTransportError";
     this.kind = kind;
     this.retryable = options.retryable;
     this.retryAfterMs = options.retryAfterMs;
+    this.statusCode = options.statusCode;
+    this.providerCode = options.providerCode;
+    this.providerParam = options.providerParam;
+    this.providerName = options.providerName;
+    this.providerUpstreamCode = options.providerUpstreamCode;
+    this.providerMetadataKeys = options.providerMetadataKeys;
+    this.providerHints = options.providerHints;
   }
 }

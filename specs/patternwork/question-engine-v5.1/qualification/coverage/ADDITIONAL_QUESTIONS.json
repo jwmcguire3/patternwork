@@ -1,0 +1,4850 @@
+{
+  "release": "PWQE-5.1.0-candidate.1",
+  "status": "authored_candidate_not_psychometric_validation",
+  "items": [
+    {
+      "id": "D65",
+      "version": "5.1.0-candidate.1",
+      "title": "How you met your own reaction",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "self_stance",
+      "step_binding": "first",
+      "prompt": "When you noticed your own reaction in {episode_label}, how did you relate to it?",
+      "options": [
+        {
+          "id": "D65.curious",
+          "text": "I wanted to understand what was happening in me.",
+          "reported_value": "curious",
+          "candidate_signals": [
+            "self_stance:curious"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D65.patient",
+          "text": "I could let the reaction be there without rushing to change it.",
+          "reported_value": "patient",
+          "candidate_signals": [
+            "self_stance:patient"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D65.judge",
+          "text": "I judged myself for reacting that way.",
+          "reported_value": "judge",
+          "candidate_signals": [
+            "self_stance:judge"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D65.remove",
+          "text": "I wanted the reaction gone.",
+          "reported_value": "remove",
+          "candidate_signals": [
+            "self_stance:remove"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D65.caught",
+          "text": "I was caught up in it, rather than noticing it from any distance.",
+          "reported_value": "caught",
+          "candidate_signals": [
+            "self_stance:caught"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D65.late",
+          "text": "I only noticed my reaction afterward.",
+          "reported_value": "late",
+          "candidate_signals": [
+            "self_stance:late"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D65.not_noticed",
+          "text": "I did not notice a reaction I can describe.",
+          "reported_value": "not_noticed",
+          "candidate_signals": [
+            "self_stance:not_noticed"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_self_stance"
+        }
+      },
+      "primary_evidence_target": "coverage_self_stance",
+      "secondary_signals": [
+        "self_stance:caught",
+        "self_stance:curious",
+        "self_stance:judge",
+        "self_stance:late",
+        "self_stance:not_noticed",
+        "self_stance:patient",
+        "self_stance:remove"
+      ],
+      "follow_up_targets": [
+        "coverage_awareness_choice",
+        "coverage_feeling_tolerance"
+      ],
+      "confounds": [
+        "Curiosity, patience, judgment and noticing late concern stance toward this reaction; none alone establishes Self leadership.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Samples the relationship to a reaction, which ordinary calm, competence, or receiving help cannot establish.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [
+        "coverage_awareness_choice",
+        "coverage_feeling_tolerance"
+      ],
+      "hypotheses_strengthened": [
+        "self_stance"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Samples the relationship to a reaction, which ordinary calm, competence, or receiving help cannot establish."
+    },
+    {
+      "id": "D66",
+      "version": "5.1.0-candidate.1",
+      "title": "Awareness and room to choose",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "awareness_choice",
+      "step_binding": "first",
+      "prompt": "While noticing that reaction, how much room did you have to choose what happened next?",
+      "options": [
+        {
+          "id": "D66.choice",
+          "text": "I could feel the reaction and still consider different responses.",
+          "reported_value": "choice",
+          "candidate_signals": [
+            "awareness_choice:choice"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D66.compelled",
+          "text": "I noticed it, but still felt driven to act one way.",
+          "reported_value": "compelled",
+          "candidate_signals": [
+            "awareness_choice:compelled"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D66.dismiss",
+          "text": "I got distance by dismissing what I felt.",
+          "reported_value": "dismiss",
+          "candidate_signals": [
+            "awareness_choice:dismiss"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D66.far",
+          "text": "I felt detached from the situation, rather than more able to choose.",
+          "reported_value": "far",
+          "candidate_signals": [
+            "awareness_choice:far"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D66.later",
+          "text": "I could reflect on it only after the moment had passed.",
+          "reported_value": "later",
+          "candidate_signals": [
+            "awareness_choice:later"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "D65"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_awareness_choice"
+        }
+      },
+      "primary_evidence_target": "coverage_awareness_choice",
+      "secondary_signals": [
+        "awareness_choice:choice",
+        "awareness_choice:compelled",
+        "awareness_choice:dismiss",
+        "awareness_choice:far",
+        "awareness_choice:later"
+      ],
+      "follow_up_targets": [
+        "coverage_feeling_tolerance"
+      ],
+      "confounds": [
+        "Distance that increases choice differs from suppression or felt detachment; hindsight does not establish choice during the moment.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Distinguishes awareness, room for choice, retrospective reflection, dismissal and felt detachment; none alone yields a Self score.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [
+        "coverage_feeling_tolerance"
+      ],
+      "hypotheses_strengthened": [
+        "awareness_choice"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Distinguishes awareness, room for choice, retrospective reflection, dismissal and felt detachment; none alone yields a Self score."
+    },
+    {
+      "id": "D67",
+      "version": "5.1.0-candidate.1",
+      "title": "Why it was hard to acknowledge",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "internal_admission_barrier",
+      "step_binding": "first",
+      "prompt": "What made it difficult to acknowledge that feeling or need to yourself in {episode_label}?",
+      "options": [
+        {
+          "id": "D67.not_allowed",
+          "text": "It felt wrong for me to feel or need that.",
+          "reported_value": "not_allowed",
+          "candidate_signals": [
+            "internal_admission_barrier:not_allowed"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D67.too_much",
+          "text": "I was afraid the feeling would become too much.",
+          "reported_value": "too_much",
+          "candidate_signals": [
+            "internal_admission_barrier:too_much"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D67.control",
+          "text": "I worried that acknowledging it would make it harder to control what I did.",
+          "reported_value": "control",
+          "candidate_signals": [
+            "internal_admission_barrier:control"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D67.unclear",
+          "text": "I could not make sense of what I was feeling.",
+          "reported_value": "unclear",
+          "candidate_signals": [
+            "internal_admission_barrier:unclear"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D67.demands",
+          "text": "There was too much to deal with just then.",
+          "reported_value": "demands",
+          "candidate_signals": [
+            "internal_admission_barrier:demands"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D67.not_difficult",
+          "text": "Acknowledging it was not difficult; something else was.",
+          "reported_value": "not_difficult",
+          "candidate_signals": [
+            "internal_admission_barrier:not_difficult"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "D20"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_internal_admission_barrier"
+        }
+      },
+      "primary_evidence_target": "coverage_internal_admission_barrier",
+      "secondary_signals": [
+        "internal_admission_barrier:control",
+        "internal_admission_barrier:demands",
+        "internal_admission_barrier:not_allowed",
+        "internal_admission_barrier:not_difficult",
+        "internal_admission_barrier:too_much",
+        "internal_admission_barrier:unclear"
+      ],
+      "follow_up_targets": [
+        "coverage_internal_return"
+      ],
+      "confounds": [
+        "Identification difficulty, time pressure and internal prohibition differ; no single response establishes an exile.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Resolves internal exclusion versus temporary demands or difficulty identifying experience, after an actual admission difficulty.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [
+        "coverage_internal_return"
+      ],
+      "hypotheses_strengthened": [
+        "internal_admission_barrier"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Resolves internal exclusion versus temporary demands or difficulty identifying experience, after an actual admission difficulty."
+    },
+    {
+      "id": "D68",
+      "version": "5.1.0-candidate.1",
+      "title": "Returning to what was set aside",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "internal_return",
+      "step_binding": "first",
+      "prompt": "Later in {episode_label}, what happened to the feeling or need you had struggled to acknowledge?",
+      "options": [
+        {
+          "id": "D68.returned",
+          "text": "I came back to it and could give it some room.",
+          "reported_value": "returned",
+          "candidate_signals": [
+            "internal_return:returned"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D68.pushed",
+          "text": "It came up again and I pushed it away.",
+          "reported_value": "pushed",
+          "candidate_signals": [
+            "internal_return:pushed"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D68.still_hard",
+          "text": "It was still there, but I still found it difficult to allow.",
+          "reported_value": "still_hard",
+          "candidate_signals": [
+            "internal_return:still_hard"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D68.faded",
+          "text": "It faded without my doing anything in particular.",
+          "reported_value": "faded",
+          "candidate_signals": [
+            "internal_return:faded"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D68.no_room",
+          "text": "I did not get another chance to attend to it.",
+          "reported_value": "no_room",
+          "candidate_signals": [
+            "internal_return:no_room"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D68.no_later",
+          "text": "I cannot recall a later part of that situation.",
+          "reported_value": "no_later",
+          "candidate_signals": [
+            "internal_return:no_later"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "D20",
+          "D67"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_internal_return"
+        }
+      },
+      "primary_evidence_target": "coverage_internal_return",
+      "secondary_signals": [
+        "internal_return:faded",
+        "internal_return:no_later",
+        "internal_return:no_room",
+        "internal_return:pushed",
+        "internal_return:returned",
+        "internal_return:still_hard"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "Delayed acknowledgment can reflect temporary practical demands; later absence is not proof the feeling was exiled.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Separates temporary postponement, later access, persistence and disappearance without requiring a hidden-part story.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "internal_return"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Separates temporary postponement, later access, persistence and disappearance without requiring a hidden-part story."
+    },
+    {
+      "id": "D69",
+      "version": "5.1.0-candidate.1",
+      "title": "What the response changed inside",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "response_internal_effect",
+      "step_binding": "first",
+      "prompt": "In {episode_label}, how did {response_label} affect your access to what you were feeling or wanting?",
+      "options": [
+        {
+          "id": "D69.clearer",
+          "text": "I could tell more clearly what I felt or wanted.",
+          "reported_value": "clearer",
+          "candidate_signals": [
+            "response_internal_effect:clearer"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D69.bearable",
+          "text": "I could still feel it, but it was easier to stay with.",
+          "reported_value": "bearable",
+          "candidate_signals": [
+            "response_internal_effect:bearable"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D69.less_notice",
+          "text": "I became less aware of it.",
+          "reported_value": "less_notice",
+          "candidate_signals": [
+            "response_internal_effect:less_notice"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D69.hidden_only",
+          "text": "I still knew what I felt; I was showing less of it.",
+          "reported_value": "hidden_only",
+          "candidate_signals": [
+            "response_internal_effect:hidden_only"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D69.stronger",
+          "text": "It became harder to ignore.",
+          "reported_value": "stronger",
+          "candidate_signals": [
+            "response_internal_effect:stronger"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D69.same",
+          "text": "I did not notice a change.",
+          "reported_value": "same",
+          "candidate_signals": [
+            "response_internal_effect:same"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D69.unclear",
+          "text": "I cannot tell whether that response changed it.",
+          "reported_value": "unclear",
+          "candidate_signals": [
+            "response_internal_effect:unclear"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_response_internal_effect"
+        }
+      },
+      "primary_evidence_target": "coverage_response_internal_effect",
+      "secondary_signals": [
+        "response_internal_effect:bearable",
+        "response_internal_effect:clearer",
+        "response_internal_effect:hidden_only",
+        "response_internal_effect:less_notice",
+        "response_internal_effect:same",
+        "response_internal_effect:stronger",
+        "response_internal_effect:unclear"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "Reduced display, reduced awareness and increased tolerance are different effects; effect is not proof of an intended motive.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Links an actual response to internal access without assuming that outward concealment removes internal access.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "response_internal_effect"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Links an actual response to internal access without assuming that outward concealment removes internal access."
+    },
+    {
+      "id": "D70",
+      "version": "5.1.0-candidate.1",
+      "title": "How convincing a self-conclusion felt",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "self_belief_force",
+      "step_binding": "self_response",
+      "prompt": "How convincing did that conclusion about yourself feel at the time?",
+      "options": [
+        {
+          "id": "D70.certain",
+          "text": "It felt like a fact I could not argue with.",
+          "reported_value": "certain",
+          "candidate_signals": [
+            "self_belief_force:certain"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D70.pulled",
+          "text": "Part of me questioned it, but it still pulled strongly.",
+          "reported_value": "pulled",
+          "candidate_signals": [
+            "self_belief_force:pulled"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D70.possibility",
+          "text": "It was one possible explanation, not a settled truth.",
+          "reported_value": "possibility",
+          "candidate_signals": [
+            "self_belief_force:possibility"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D70.local",
+          "text": "It applied to that mistake, not to me as a whole.",
+          "reported_value": "local",
+          "candidate_signals": [
+            "self_belief_force:local"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D70.rejected",
+          "text": "I noticed the thought but did not believe it.",
+          "reported_value": "rejected",
+          "candidate_signals": [
+            "self_belief_force:rejected"
+          ],
+          "exclusive": false
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "M04",
+          "D22"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_self_belief_force"
+        }
+      },
+      "primary_evidence_target": "coverage_self_belief_force",
+      "secondary_signals": [
+        "self_belief_force:certain",
+        "self_belief_force:local",
+        "self_belief_force:possibility",
+        "self_belief_force:pulled",
+        "self_belief_force:rejected"
+      ],
+      "follow_up_targets": [
+        "coverage_self_belief_update"
+      ],
+      "confounds": [
+        "A strongly held current self-conclusion has no automatically inferred childhood origin; an episode-bound thought is not a global belief.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Tests the current force and scope of an organizing belief; this does not establish a historical burden or origin.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [
+        "coverage_self_belief_update"
+      ],
+      "hypotheses_strengthened": [
+        "self_belief_force"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Tests the current force and scope of an organizing belief; this does not establish a historical burden or origin."
+    },
+    {
+      "id": "D71",
+      "version": "5.1.0-candidate.1",
+      "title": "Whether the self-conclusion changed",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "self_belief_update",
+      "step_binding": "self_response",
+      "prompt": "Did anything later in that mistake episode change how you saw yourself?",
+      "options": [
+        {
+          "id": "D71.revised",
+          "text": "What happened gave me reason to revise the conclusion.",
+          "reported_value": "revised",
+          "candidate_signals": [
+            "self_belief_update:revised"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D71.discounted",
+          "text": "Something went better, but I treated it as an exception or luck.",
+          "reported_value": "discounted",
+          "candidate_signals": [
+            "self_belief_update:discounted"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D71.mixed",
+          "text": "I could see another interpretation, but the original conclusion still felt true.",
+          "reported_value": "mixed",
+          "candidate_signals": [
+            "self_belief_update:mixed"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D71.held",
+          "text": "The conclusion stayed the same even after the mistake was handled.",
+          "reported_value": "held",
+          "candidate_signals": [
+            "self_belief_update:held"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D71.no_new",
+          "text": "Nothing relevant happened that would test it.",
+          "reported_value": "no_new",
+          "candidate_signals": [
+            "self_belief_update:no_new"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D71.unfinished",
+          "text": "The situation was still unfinished when I last thought about it.",
+          "reported_value": "unfinished",
+          "candidate_signals": [
+            "self_belief_update:unfinished"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "M04",
+          "D22",
+          "D70"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_self_belief_update"
+        }
+      },
+      "primary_evidence_target": "coverage_self_belief_update",
+      "secondary_signals": [
+        "self_belief_update:discounted",
+        "self_belief_update:held",
+        "self_belief_update:mixed",
+        "self_belief_update:no_new",
+        "self_belief_update:revised",
+        "self_belief_update:unfinished"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "Remembered evidence and belief revision do not prove an objectively false self-appraisal or its developmental cause.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Collects reported updating or non-updating rather than assuming a belief resists contrary evidence.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "self_belief_update"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Collects reported updating or non-updating rather than assuming a belief resists contrary evidence."
+    },
+    {
+      "id": "D72",
+      "version": "5.1.0-candidate.1",
+      "title": "Something you kept to yourself",
+      "stage": "deepening",
+      "context": "self_expression",
+      "episode_family": "self_expression",
+      "captures": "held_back_material",
+      "step_binding": "first",
+      "prompt": "Think of a recent moment when you kept a reaction or wish to yourself. What did you hold back?",
+      "options": [
+        {
+          "id": "D72.anger",
+          "text": "Anger or a wish to push back.",
+          "reported_value": "anger",
+          "candidate_signals": [
+            "held_back_material:anger"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D72.hurt",
+          "text": "Hurt or sadness.",
+          "reported_value": "hurt",
+          "candidate_signals": [
+            "held_back_material:hurt"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D72.care",
+          "text": "A wish for help or care.",
+          "reported_value": "care",
+          "candidate_signals": [
+            "held_back_material:care"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D72.pride",
+          "text": "Excitement or pride in something.",
+          "reported_value": "pride",
+          "candidate_signals": [
+            "held_back_material:pride"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D72.interest",
+          "text": "An interest or ambition I wanted to pursue.",
+          "reported_value": "interest",
+          "candidate_signals": [
+            "held_back_material:interest"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D72.opinion",
+          "text": "An opinion I wanted to express.",
+          "reported_value": "opinion",
+          "candidate_signals": [
+            "held_back_material:opinion"
+          ],
+          "exclusive": false
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_held_back_material"
+        }
+      },
+      "primary_evidence_target": "coverage_held_back_material",
+      "secondary_signals": [
+        "held_back_material:anger",
+        "held_back_material:care",
+        "held_back_material:hurt",
+        "held_back_material:interest",
+        "held_back_material:opinion",
+        "held_back_material:pride"
+      ],
+      "follow_up_targets": [
+        "coverage_held_back_reason"
+      ],
+      "confounds": [
+        "Keeping pride, ambition, anger or care private is not itself internal exclusion.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": true,
+        "reading_answer_seconds_planning_only": [
+          25,
+          60
+        ]
+      },
+      "authoring_note": "A user-selected new episode extends beyond hurt and need to anger, pride, interests and voice. Keeping something private is not itself evidence of an exile.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [
+        "coverage_held_back_reason"
+      ],
+      "hypotheses_strengthened": [
+        "held_back_material"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "A user-selected new episode extends beyond hurt and need to anger, pride, interests and voice. Keeping something private is not itself evidence of an exile."
+    },
+    {
+      "id": "D73",
+      "version": "5.1.0-candidate.1",
+      "title": "What shaped keeping it private",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "held_back_reason",
+      "step_binding": "first",
+      "prompt": "What most shaped keeping that reaction or wish to yourself?",
+      "options": [
+        {
+          "id": "D73.privacy",
+          "text": "I wanted to keep it private.",
+          "reported_value": "privacy",
+          "candidate_signals": [
+            "held_back_reason:privacy"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D73.timing",
+          "text": "There was a better time or place for it.",
+          "reported_value": "timing",
+          "candidate_signals": [
+            "held_back_reason:timing"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D73.consequences",
+          "text": "There were practical consequences to showing it.",
+          "reported_value": "consequences",
+          "candidate_signals": [
+            "held_back_reason:consequences"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D73.response",
+          "text": "I expected a response I did not want.",
+          "reported_value": "response",
+          "candidate_signals": [
+            "held_back_reason:response"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D73.wrong",
+          "text": "It felt wrong for me to have that feeling or wish.",
+          "reported_value": "wrong",
+          "candidate_signals": [
+            "held_back_reason:wrong"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D73.overwhelm",
+          "text": "Letting myself feel it fully seemed too much.",
+          "reported_value": "overwhelm",
+          "candidate_signals": [
+            "held_back_reason:overwhelm"
+          ],
+          "exclusive": false
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "D72"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_held_back_reason"
+        }
+      },
+      "primary_evidence_target": "coverage_held_back_reason",
+      "secondary_signals": [
+        "held_back_reason:consequences",
+        "held_back_reason:overwhelm",
+        "held_back_reason:privacy",
+        "held_back_reason:response",
+        "held_back_reason:timing",
+        "held_back_reason:wrong"
+      ],
+      "follow_up_targets": [
+        "coverage_private_permission"
+      ],
+      "confounds": [
+        "Privacy, timing and realistic consequences remain ordinary explanations, not disguised pathology.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Separates external consequences, chosen privacy, timing and internal prohibition in a volunteered actual episode.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [
+        "coverage_private_permission"
+      ],
+      "hypotheses_strengthened": [
+        "held_back_reason"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Separates external consequences, chosen privacy, timing and internal prohibition in a volunteered actual episode."
+    },
+    {
+      "id": "D74",
+      "version": "5.1.0-candidate.1",
+      "title": "Private acknowledgment",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "private_permission",
+      "step_binding": "first",
+      "prompt": "Even without showing it, how much room did you give that reaction or wish inside?",
+      "options": [
+        {
+          "id": "D74.allow",
+          "text": "I could acknowledge it and let myself feel it.",
+          "reported_value": "allow",
+          "candidate_signals": [
+            "private_permission:allow"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D74.later",
+          "text": "I intended to return to it when I had room.",
+          "reported_value": "later",
+          "candidate_signals": [
+            "private_permission:later"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D74.push",
+          "text": "I tried not to let myself feel it.",
+          "reported_value": "push",
+          "candidate_signals": [
+            "private_permission:push"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D74.attack",
+          "text": "I was hard on myself for having it.",
+          "reported_value": "attack",
+          "candidate_signals": [
+            "private_permission:attack"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D74.hard_locate",
+          "text": "I found it difficult to tell what I actually felt.",
+          "reported_value": "hard_locate",
+          "candidate_signals": [
+            "private_permission:hard_locate"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D74.changed",
+          "text": "It changed or faded without my trying to push it away.",
+          "reported_value": "changed",
+          "candidate_signals": [
+            "private_permission:changed"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "D72",
+          "D73"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_private_permission"
+        }
+      },
+      "primary_evidence_target": "coverage_private_permission",
+      "secondary_signals": [
+        "private_permission:allow",
+        "private_permission:attack",
+        "private_permission:changed",
+        "private_permission:hard_locate",
+        "private_permission:later",
+        "private_permission:push"
+      ],
+      "follow_up_targets": [
+        "coverage_self_stance"
+      ],
+      "confounds": [
+        "Private acknowledgment can coexist with withholding expression; internal difficulty is a current description rather than a diagnosis.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Directly tests internal permission rather than upgrading outward concealment into an exile.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [
+        "coverage_self_stance"
+      ],
+      "hypotheses_strengthened": [
+        "private_permission"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Directly tests internal permission rather than upgrading outward concealment into an exile."
+    },
+    {
+      "id": "D75",
+      "version": "5.1.0-candidate.1",
+      "title": "Giving two wants room",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "two_wants_access",
+      "step_binding": "first",
+      "prompt": "In that moment of wanting {first_want} and {second_want}, what happened when you tried to listen to both?",
+      "options": [
+        {
+          "id": "D75.clearer",
+          "text": "Both concerns became clearer without my having to choose immediately.",
+          "reported_value": "clearer",
+          "candidate_signals": [
+            "two_wants_access:clearer"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D75.negotiate",
+          "text": "I could find room for some of each.",
+          "reported_value": "negotiate",
+          "candidate_signals": [
+            "two_wants_access:negotiate"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D75.louder",
+          "text": "One pull became louder when I attended to the other.",
+          "reported_value": "louder",
+          "candidate_signals": [
+            "two_wants_access:louder"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D75.dismiss",
+          "text": "I dismissed one so I could get on with the other.",
+          "reported_value": "dismiss",
+          "candidate_signals": [
+            "two_wants_access:dismiss"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D75.unable",
+          "text": "I could not keep both in mind.",
+          "reported_value": "unable",
+          "candidate_signals": [
+            "two_wants_access:unable"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D75.not_tried",
+          "text": "I did not try to listen to both in that moment.",
+          "reported_value": "not_tried",
+          "candidate_signals": [
+            "two_wants_access:not_tried"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "M26",
+          "M27",
+          "D12"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_two_wants_access"
+        }
+      },
+      "primary_evidence_target": "coverage_two_wants_access",
+      "secondary_signals": [
+        "two_wants_access:clearer",
+        "two_wants_access:dismiss",
+        "two_wants_access:louder",
+        "two_wants_access:negotiate",
+        "two_wants_access:not_tried",
+        "two_wants_access:unable"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "Two wishes are not automatically polarized parts; allowing both is not a measured Self score.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Samples actual internal engagement, not an instruction to perform an exercise; not trying is a valid endpoint.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "two_wants_access"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Samples actual internal engagement, not an instruction to perform an exercise; not trying is a valid endpoint."
+    },
+    {
+      "id": "D76",
+      "version": "5.1.0-candidate.1",
+      "title": "Whether the concerns were shared",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "shared_concern",
+      "step_binding": "first",
+      "prompt": "Looking back at those two pulls, how did their concerns fit together?",
+      "options": [
+        {
+          "id": "D76.same",
+          "text": "They were trying to avoid the same thing in different ways.",
+          "reported_value": "same",
+          "candidate_signals": [
+            "shared_concern:same"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D76.different",
+          "text": "They were concerned about different outcomes.",
+          "reported_value": "different",
+          "candidate_signals": [
+            "shared_concern:different"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D76.one",
+          "text": "One was about avoiding something; the other was simply something I wanted.",
+          "reported_value": "one",
+          "candidate_signals": [
+            "shared_concern:one"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D76.neither",
+          "text": "Neither felt like an attempt to avoid something.",
+          "reported_value": "neither",
+          "candidate_signals": [
+            "shared_concern:neither"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D76.unclear",
+          "text": "I could not tell how the concerns related.",
+          "reported_value": "unclear",
+          "candidate_signals": [
+            "shared_concern:unclear"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": false,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "M26",
+          "D13",
+          "D14"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_shared_concern"
+        }
+      },
+      "primary_evidence_target": "coverage_shared_concern",
+      "secondary_signals": [
+        "shared_concern:different",
+        "shared_concern:neither",
+        "shared_concern:one",
+        "shared_concern:same",
+        "shared_concern:unclear"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "Reported shared concern does not prove a shared Exile or identical part identity.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Records a perceived relation between two actual concerns without turning a shared word into a shared Exile or separate entities.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "shared_concern"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Records a perceived relation between two actual concerns without turning a shared word into a shared Exile or separate entities."
+    },
+    {
+      "id": "D77",
+      "version": "5.1.0-candidate.1",
+      "title": "Continuity beyond a matching action",
+      "stage": "deepening",
+      "context": "comparison",
+      "episode_family": "comparison",
+      "captures": "pattern_continuity",
+      "step_binding": "comparison",
+      "prompt": "Across those two moments, what felt continuous besides the outward response?",
+      "options": [
+        {
+          "id": "D77.concern",
+          "text": "The same concern kept coming up.",
+          "reported_value": "concern",
+          "candidate_signals": [
+            "pattern_continuity:concern"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D77.rule",
+          "text": "I felt held to the same expectation of myself.",
+          "reported_value": "rule",
+          "candidate_signals": [
+            "pattern_continuity:rule"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D77.feeling",
+          "text": "The same feeling was difficult to stay with.",
+          "reported_value": "feeling",
+          "candidate_signals": [
+            "pattern_continuity:feeling"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D77.different",
+          "text": "The outward response matched, but the experience behind it felt different.",
+          "reported_value": "different",
+          "candidate_signals": [
+            "pattern_continuity:different"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D77.only_action",
+          "text": "Only the outward response seemed the same.",
+          "reported_value": "only_action",
+          "candidate_signals": [
+            "pattern_continuity:only_action"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D77.unclear",
+          "text": "I cannot make that comparison.",
+          "reported_value": "unclear",
+          "candidate_signals": [
+            "pattern_continuity:unclear"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_pattern_continuity"
+        }
+      },
+      "primary_evidence_target": "coverage_pattern_continuity",
+      "secondary_signals": [
+        "pattern_continuity:concern",
+        "pattern_continuity:different",
+        "pattern_continuity:feeling",
+        "pattern_continuity:only_action",
+        "pattern_continuity:rule",
+        "pattern_continuity:unclear"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "Same action in two episodes does not establish same function or same part; continuity is the reported comparison.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "A distinct-occurrence comparison follows a reported matched action. Identity remains an interpretation, not a literal part count.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "pattern_continuity"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "A distinct-occurrence comparison follows a reported matched action. Identity remains an interpretation, not a literal part count."
+    },
+    {
+      "id": "D78",
+      "version": "5.1.0-candidate.1",
+      "title": "Whether the earlier response returned",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "response_return",
+      "step_binding": "return",
+      "prompt": "After {next_response_label}, did your earlier response return before that same situation ended?",
+      "options": [
+        {
+          "id": "D78.returned",
+          "text": "I went back to the earlier response.",
+          "reported_value": "returned",
+          "candidate_signals": [
+            "response_return:returned"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D78.urge",
+          "text": "I wanted to go back to it, but did not.",
+          "reported_value": "urge",
+          "candidate_signals": [
+            "response_return:urge"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D78.no",
+          "text": "I did not return to it.",
+          "reported_value": "no",
+          "candidate_signals": [
+            "response_return:no"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D78.ended",
+          "text": "The situation ended before there was a chance to return.",
+          "reported_value": "ended",
+          "candidate_signals": [
+            "response_return:ended"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D78.unclear",
+          "text": "I cannot remember whether it returned.",
+          "reported_value": "unclear",
+          "candidate_signals": [
+            "response_return:unclear"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": false,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "D07",
+          "D08"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_response_return"
+        }
+      },
+      "primary_evidence_target": "coverage_response_return",
+      "secondary_signals": [
+        "response_return:ended",
+        "response_return:no",
+        "response_return:returned",
+        "response_return:unclear",
+        "response_return:urge"
+      ],
+      "follow_up_targets": [
+        "coverage_return_context",
+        "coverage_sequence_typicality"
+      ],
+      "confounds": [
+        "A later return is a new time step, not a directed cycle or proof that one response caused the next.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Records an actual return rather than calling every two-step sequence a loop. Return has a new step identity, not a cyclic chronology.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [
+        "coverage_return_context",
+        "coverage_sequence_typicality"
+      ],
+      "hypotheses_strengthened": [
+        "response_return"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Records an actual return rather than calling every two-step sequence a loop. Return has a new step identity, not a cyclic chronology."
+    },
+    {
+      "id": "D79",
+      "version": "5.1.0-candidate.1",
+      "title": "What preceded the return",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "return_context",
+      "step_binding": "return",
+      "prompt": "What was happening just before you went back to that earlier response?",
+      "options": [
+        {
+          "id": "D79.unresolved",
+          "text": "The original issue was still unresolved.",
+          "reported_value": "unresolved",
+          "candidate_signals": [
+            "return_context:unresolved"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D79.consequence",
+          "text": "Something about my next move had left another problem.",
+          "reported_value": "consequence",
+          "candidate_signals": [
+            "return_context:consequence"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D79.reaction",
+          "text": "The other person responded in a way that drew me back in.",
+          "reported_value": "reaction",
+          "candidate_signals": [
+            "return_context:reaction"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D79.obligation",
+          "text": "An unfinished practical responsibility needed attention.",
+          "reported_value": "obligation",
+          "candidate_signals": [
+            "return_context:obligation"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D79.urge",
+          "text": "The urge returned without a new event I could identify.",
+          "reported_value": "urge",
+          "candidate_signals": [
+            "return_context:urge"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D79.unclear",
+          "text": "I cannot tell what came just before it.",
+          "reported_value": "unclear",
+          "candidate_signals": [
+            "return_context:unclear"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "D78"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_return_context"
+        }
+      },
+      "primary_evidence_target": "coverage_return_context",
+      "secondary_signals": [
+        "return_context:consequence",
+        "return_context:obligation",
+        "return_context:reaction",
+        "return_context:unclear",
+        "return_context:unresolved",
+        "return_context:urge"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "What preceded a return may be relevant without being its unique cause.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Describes the reported conditions before a return; not proof of the unique cause of a feedback loop.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "return_context"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Describes the reported conditions before a return; not proof of the unique cause of a feedback loop."
+    },
+    {
+      "id": "D80",
+      "version": "5.1.0-candidate.1",
+      "title": "What remained available",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "remaining_capacity",
+      "step_binding": "first",
+      "prompt": "Even while {episode_label} was difficult, what could you still do most readily?",
+      "options": [
+        {
+          "id": "D80.information",
+          "text": "Take in new information.",
+          "reported_value": "information",
+          "candidate_signals": [
+            "remaining_capacity:information"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D80.words",
+          "text": "Say what I needed to say.",
+          "reported_value": "words",
+          "candidate_signals": [
+            "remaining_capacity:words"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D80.change",
+          "text": "Change course rather than keep doing the same thing.",
+          "reported_value": "change",
+          "candidate_signals": [
+            "remaining_capacity:change"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D80.feel",
+          "text": "Notice what I was feeling.",
+          "reported_value": "feel",
+          "candidate_signals": [
+            "remaining_capacity:feel"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D80.task",
+          "text": "Carry out a familiar task.",
+          "reported_value": "task",
+          "candidate_signals": [
+            "remaining_capacity:task"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D80.little",
+          "text": "Very little felt available to me.",
+          "reported_value": "little",
+          "candidate_signals": [
+            "remaining_capacity:little"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D80.unclear",
+          "text": "I cannot judge what was still available.",
+          "reported_value": "unclear",
+          "candidate_signals": [
+            "remaining_capacity:unclear"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_remaining_capacity"
+        }
+      },
+      "primary_evidence_target": "coverage_remaining_capacity",
+      "secondary_signals": [
+        "remaining_capacity:change",
+        "remaining_capacity:feel",
+        "remaining_capacity:information",
+        "remaining_capacity:little",
+        "remaining_capacity:task",
+        "remaining_capacity:unclear",
+        "remaining_capacity:words"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "A capacity selected as most readily available does not imply other capacities were absent.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Samples a remaining capability without pretending an unselected capability was absent or measuring total state range.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "remaining_capacity"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Samples a remaining capability without pretending an unselected capability was absent or measuring total state range."
+    },
+    {
+      "id": "D81",
+      "version": "5.1.0-candidate.1",
+      "title": "What showed and what was happening inside",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "outward_inward",
+      "step_binding": "first",
+      "prompt": "How did what another person could have seen compare with how you felt in {episode_label}?",
+      "options": [
+        {
+          "id": "D81.steady_strained",
+          "text": "I looked steady while feeling strained inside.",
+          "reported_value": "steady_strained",
+          "candidate_signals": [
+            "outward_inward:steady_strained"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D81.engaged_far",
+          "text": "I stayed involved while feeling far away inside.",
+          "reported_value": "engaged_far",
+          "candidate_signals": [
+            "outward_inward:engaged_far"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D81.quiet_settled",
+          "text": "I was quiet and felt settled enough inside.",
+          "reported_value": "quiet_settled",
+          "candidate_signals": [
+            "outward_inward:quiet_settled"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D81.matched",
+          "text": "What I showed was close to what I felt.",
+          "reported_value": "matched",
+          "candidate_signals": [
+            "outward_inward:matched"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D81.more_outward",
+          "text": "I looked more affected than I felt inside.",
+          "reported_value": "more_outward",
+          "candidate_signals": [
+            "outward_inward:more_outward"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D81.no_view",
+          "text": "I cannot make a useful comparison.",
+          "reported_value": "no_view",
+          "candidate_signals": [
+            "outward_inward:no_view"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_outward_inward"
+        }
+      },
+      "primary_evidence_target": "coverage_outward_inward",
+      "secondary_signals": [
+        "outward_inward:engaged_far",
+        "outward_inward:matched",
+        "outward_inward:more_outward",
+        "outward_inward:no_view",
+        "outward_inward:quiet_settled",
+        "outward_inward:steady_strained"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "This is the respondent’s account of visible behavior, not an independent observer rating or proof of unconscious masking.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Records the respondent’s own estimate of presentation; not an observer measurement or evidence that the body is the hidden truth.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "outward_inward"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Records the respondent’s own estimate of presentation; not an observer measurement or evidence that the body is the hidden truth."
+    },
+    {
+      "id": "D82",
+      "version": "5.1.0-candidate.1",
+      "title": "How the change unfolded",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "onset_shape",
+      "step_binding": "first",
+      "prompt": "How did the change you noticed in {episode_label} unfold?",
+      "options": [
+        {
+          "id": "D82.sudden",
+          "text": "It seemed to happen all at once.",
+          "reported_value": "sudden",
+          "candidate_signals": [
+            "onset_shape:sudden"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D82.gradual",
+          "text": "It built gradually.",
+          "reported_value": "gradual",
+          "candidate_signals": [
+            "onset_shape:gradual"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D82.waves",
+          "text": "It rose and eased in waves.",
+          "reported_value": "waves",
+          "candidate_signals": [
+            "onset_shape:waves"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D82.already",
+          "text": "It was already there when I first noticed it.",
+          "reported_value": "already",
+          "candidate_signals": [
+            "onset_shape:already"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D82.late",
+          "text": "I could only recognize the change afterward.",
+          "reported_value": "late",
+          "candidate_signals": [
+            "onset_shape:late"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D82.unclear",
+          "text": "I cannot recall how it unfolded.",
+          "reported_value": "unclear",
+          "candidate_signals": [
+            "onset_shape:unclear"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_onset_shape"
+        }
+      },
+      "primary_evidence_target": "coverage_onset_shape",
+      "secondary_signals": [
+        "onset_shape:already",
+        "onset_shape:gradual",
+        "onset_shape:late",
+        "onset_shape:sudden",
+        "onset_shape:unclear",
+        "onset_shape:waves"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "First noticed change is not physiological onset; waves and gradual buildup can coexist.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Describes remembered onset without inferring objective speed, cause, thresholds or body-first precedence.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "onset_shape"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Describes remembered onset without inferring objective speed, cause, thresholds or body-first precedence."
+    },
+    {
+      "id": "D83",
+      "version": "5.1.0-candidate.1",
+      "title": "What functioning did not yet restore",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "residual_difficulty",
+      "step_binding": "first",
+      "prompt": "After that first response let you carry on, what was still difficult?",
+      "options": [
+        {
+          "id": "D83.settle",
+          "text": "Feeling settled rather than on edge.",
+          "reported_value": "settle",
+          "candidate_signals": [
+            "residual_difficulty:settle"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D83.choose",
+          "text": "Having room to choose instead of just keeping going.",
+          "reported_value": "choose",
+          "candidate_signals": [
+            "residual_difficulty:choose"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D83.contact",
+          "text": "Wanting conversation or contact.",
+          "reported_value": "contact",
+          "candidate_signals": [
+            "residual_difficulty:contact"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D83.feel",
+          "text": "Telling what I felt or needed.",
+          "reported_value": "feel",
+          "candidate_signals": [
+            "residual_difficulty:feel"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D83.energy",
+          "text": "Having enough energy for anything beyond the task.",
+          "reported_value": "energy",
+          "candidate_signals": [
+            "residual_difficulty:energy"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D83.nothing",
+          "text": "Nothing else stood out as difficult.",
+          "reported_value": "nothing",
+          "candidate_signals": [
+            "residual_difficulty:nothing"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D83.not_back",
+          "text": "I had not reached a point where I could carry on again.",
+          "reported_value": "not_back",
+          "candidate_signals": [
+            "residual_difficulty:not_back"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_residual_difficulty"
+        }
+      },
+      "primary_evidence_target": "coverage_residual_difficulty",
+      "secondary_signals": [
+        "residual_difficulty:choose",
+        "residual_difficulty:contact",
+        "residual_difficulty:energy",
+        "residual_difficulty:feel",
+        "residual_difficulty:not_back",
+        "residual_difficulty:nothing",
+        "residual_difficulty:settle"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "Continued task performance is not full recovery; the question is anchored to the first move’s reported functional effect.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Distinguishes resuming activity from recovery in other channels without assuming an unseen residual cost.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "residual_difficulty"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Distinguishes resuming activity from recovery in other channels without assuming an unseen residual cost."
+    },
+    {
+      "id": "D84",
+      "version": "5.1.0-candidate.1",
+      "title": "Approximate time to first easing",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "easing_time_estimate",
+      "step_binding": "recovery",
+      "prompt": "About how long was it from first noticing the pressure to the first easing you remember?",
+      "options": [
+        {
+          "id": "D84.under5",
+          "text": "Less than about five minutes.",
+          "reported_value": "under5",
+          "candidate_signals": [
+            "easing_time_estimate:under5"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D84.5to30",
+          "text": "About five minutes to less than half an hour.",
+          "reported_value": "5to30",
+          "candidate_signals": [
+            "easing_time_estimate:5to30"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D84.30to120",
+          "text": "About half an hour to two hours.",
+          "reported_value": "30to120",
+          "candidate_signals": [
+            "easing_time_estimate:30to120"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D84.later_day",
+          "text": "More than two hours, but within the same day.",
+          "reported_value": "later_day",
+          "candidate_signals": [
+            "easing_time_estimate:later_day"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D84.later_days",
+          "text": "Not until a later day.",
+          "reported_value": "later_days",
+          "candidate_signals": [
+            "easing_time_estimate:later_days"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D84.no_easing",
+          "text": "I did not notice easing in the period I am describing.",
+          "reported_value": "no_easing",
+          "candidate_signals": [
+            "easing_time_estimate:no_easing"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D84.cannot_estimate",
+          "text": "I cannot estimate it reliably.",
+          "reported_value": "cannot_estimate",
+          "candidate_signals": [
+            "easing_time_estimate:cannot_estimate"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": false,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_easing_time_estimate"
+        }
+      },
+      "primary_evidence_target": "coverage_easing_time_estimate",
+      "secondary_signals": [
+        "easing_time_estimate:30to120",
+        "easing_time_estimate:5to30",
+        "easing_time_estimate:cannot_estimate",
+        "easing_time_estimate:later_day",
+        "easing_time_estimate:later_days",
+        "easing_time_estimate:no_easing",
+        "easing_time_estimate:under5"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "Coarse recalled intervals are estimates of first easing, not exact durations, regulatory thresholds or autonomic measurements.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "A coarse recalled interval, not a physiological recovery latency, treatment target or exact threshold.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "easing_time_estimate"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "A coarse recalled interval, not a physiological recovery latency, treatment target or exact threshold."
+    },
+    {
+      "id": "D85",
+      "version": "5.1.0-candidate.1",
+      "title": "Functioning and ease",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "function_ease_order",
+      "step_binding": "recovery",
+      "prompt": "On the way back in {episode_label}, how did being able to function and feeling more settled relate?",
+      "options": [
+        {
+          "id": "D85.function_first",
+          "text": "I could function before I felt more settled.",
+          "reported_value": "function_first",
+          "candidate_signals": [
+            "function_ease_order:function_first"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D85.ease_first",
+          "text": "I felt more settled before I could do much.",
+          "reported_value": "ease_first",
+          "candidate_signals": [
+            "function_ease_order:ease_first"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D85.together",
+          "text": "They returned together, as far as I could tell.",
+          "reported_value": "together",
+          "candidate_signals": [
+            "function_ease_order:together"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D85.function_only",
+          "text": "I could function, but I did not notice feeling more settled.",
+          "reported_value": "function_only",
+          "candidate_signals": [
+            "function_ease_order:function_only"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D85.neither",
+          "text": "Neither had returned in the period I am describing.",
+          "reported_value": "neither",
+          "candidate_signals": [
+            "function_ease_order:neither"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D85.unclear",
+          "text": "I cannot put those changes in order.",
+          "reported_value": "unclear",
+          "candidate_signals": [
+            "function_ease_order:unclear"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": false,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_function_ease_order"
+        }
+      },
+      "primary_evidence_target": "coverage_function_ease_order",
+      "secondary_signals": [
+        "function_ease_order:ease_first",
+        "function_ease_order:function_first",
+        "function_ease_order:function_only",
+        "function_ease_order:neither",
+        "function_ease_order:together",
+        "function_ease_order:unclear"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "Function and felt ease are separate changes; neither or unclear order remains valid.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "A remembered channel comparison, not a required recovery ladder or measured physiology.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "function_ease_order"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "A remembered channel comparison, not a required recovery ladder or measured physiology."
+    },
+    {
+      "id": "D86",
+      "version": "5.1.0-candidate.1",
+      "title": "What changed around the easing",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "recovery_conditions",
+      "step_binding": "recovery",
+      "prompt": "After that later attempt to get some room back, what had changed around you?",
+      "options": [
+        {
+          "id": "D86.demands",
+          "text": "There was less to deal with.",
+          "reported_value": "demands",
+          "candidate_signals": [
+            "recovery_conditions:demands"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D86.information",
+          "text": "I had clearer information.",
+          "reported_value": "information",
+          "candidate_signals": [
+            "recovery_conditions:information"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D86.support",
+          "text": "Someone was sharing the load or staying with me.",
+          "reported_value": "support",
+          "candidate_signals": [
+            "recovery_conditions:support"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D86.setting",
+          "text": "The setting had become quieter or less demanding.",
+          "reported_value": "setting",
+          "candidate_signals": [
+            "recovery_conditions:setting"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D86.same",
+          "text": "The conditions were much the same.",
+          "reported_value": "same",
+          "candidate_signals": [
+            "recovery_conditions:same"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D86.unclear",
+          "text": "I cannot tell which conditions changed.",
+          "reported_value": "unclear",
+          "candidate_signals": [
+            "recovery_conditions:unclear"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "M13",
+          "M14"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_recovery_conditions",
+          "required_flags": [
+            "actual_easing"
+          ]
+        }
+      },
+      "primary_evidence_target": "coverage_recovery_conditions",
+      "secondary_signals": [
+        "recovery_conditions:demands",
+        "recovery_conditions:information",
+        "recovery_conditions:same",
+        "recovery_conditions:setting",
+        "recovery_conditions:support",
+        "recovery_conditions:unclear"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "A changed setting, clearer information or support can accompany easing without establishing unique causation.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Preserves changing circumstances instead of attributing every improvement to an internal strategy.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "recovery_conditions"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Preserves changing circumstances instead of attributing every improvement to an internal strategy."
+    },
+    {
+      "id": "D87",
+      "version": "5.1.0-candidate.1",
+      "title": "What company changed",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "company_effect",
+      "step_binding": "recovery",
+      "prompt": "While you had company later in that day, what changed inside?",
+      "options": [
+        {
+          "id": "D87.settled",
+          "text": "I felt more settled.",
+          "reported_value": "settled",
+          "candidate_signals": [
+            "company_effect:settled"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D87.words",
+          "text": "It became easier to find words.",
+          "reported_value": "words",
+          "candidate_signals": [
+            "company_effect:words"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D87.present",
+          "text": "I felt more present with what was happening.",
+          "reported_value": "present",
+          "candidate_signals": [
+            "company_effect:present"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D87.perform",
+          "text": "I worked harder to appear okay.",
+          "reported_value": "perform",
+          "candidate_signals": [
+            "company_effect:perform"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D87.demand",
+          "text": "Having someone there felt like another demand.",
+          "reported_value": "demand",
+          "candidate_signals": [
+            "company_effect:demand"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D87.practical",
+          "text": "Only the practical situation improved, as far as I noticed.",
+          "reported_value": "practical",
+          "candidate_signals": [
+            "company_effect:practical"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D87.same",
+          "text": "I did not notice an internal change.",
+          "reported_value": "same",
+          "candidate_signals": [
+            "company_effect:same"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "M13"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_company_effect"
+        }
+      },
+      "primary_evidence_target": "coverage_company_effect",
+      "secondary_signals": [
+        "company_effect:demand",
+        "company_effect:perform",
+        "company_effect:practical",
+        "company_effect:present",
+        "company_effect:same",
+        "company_effect:settled",
+        "company_effect:words"
+      ],
+      "follow_up_targets": [
+        "coverage_company_aftereffect"
+      ],
+      "confounds": [
+        "Company can improve the practical situation without internal settling; discomfort with company is not automatically attachment avoidance.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Distinguishes practical assistance, internal settling, performance and added demand during the same actual company episode.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [
+        "coverage_company_aftereffect"
+      ],
+      "hypotheses_strengthened": [
+        "company_effect"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Distinguishes practical assistance, internal settling, performance and added demand during the same actual company episode."
+    },
+    {
+      "id": "D88",
+      "version": "5.1.0-candidate.1",
+      "title": "After company",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "company_aftereffect",
+      "step_binding": "recovery",
+      "prompt": "When you were on your own again after that company, what happened?",
+      "options": [
+        {
+          "id": "D88.held",
+          "text": "The extra room or steadiness stayed with me.",
+          "reported_value": "held",
+          "candidate_signals": [
+            "company_aftereffect:held"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D88.returned",
+          "text": "The earlier pressure returned.",
+          "reported_value": "returned",
+          "candidate_signals": [
+            "company_aftereffect:returned"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D88.relieved",
+          "text": "I felt relief at being on my own again.",
+          "reported_value": "relieved",
+          "candidate_signals": [
+            "company_aftereffect:relieved"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D88.new",
+          "text": "Something new happened that changed how I felt.",
+          "reported_value": "new",
+          "candidate_signals": [
+            "company_aftereffect:new"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D88.same",
+          "text": "I did not notice a change.",
+          "reported_value": "same",
+          "candidate_signals": [
+            "company_aftereffect:same"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D88.not_alone",
+          "text": "I was not on my own again in the period I can describe.",
+          "reported_value": "not_alone",
+          "candidate_signals": [
+            "company_aftereffect:not_alone"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "M13",
+          "D87"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_company_aftereffect"
+        }
+      },
+      "primary_evidence_target": "coverage_company_aftereffect",
+      "secondary_signals": [
+        "company_aftereffect:held",
+        "company_aftereffect:new",
+        "company_aftereffect:not_alone",
+        "company_aftereffect:relieved",
+        "company_aftereffect:returned",
+        "company_aftereffect:same"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "Persistence or return after company is not proof company caused either change; new events remain a competing explanation.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Adds durability without claiming another person regulates someone universally or that company caused a change.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "company_aftereffect"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Adds durability without claiming another person regulates someone universally or that company caused a change."
+    },
+    {
+      "id": "D89",
+      "version": "5.1.0-candidate.1",
+      "title": "What you expected of yourself in the wait",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "relational_self_expectation",
+      "step_binding": "first",
+      "prompt": "During that wait for {close_person}, what did you expect of yourself?",
+      "options": [
+        {
+          "id": "D89.repair",
+          "text": "To work out whether I had done something wrong and put it right.",
+          "reported_value": "repair",
+          "candidate_signals": [
+            "relational_self_expectation:repair"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D89.not_need",
+          "text": "To manage without showing that I needed an answer.",
+          "reported_value": "not_need",
+          "candidate_signals": [
+            "relational_self_expectation:not_need"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D89.patient",
+          "text": "To wait patiently because their time mattered too.",
+          "reported_value": "patient",
+          "candidate_signals": [
+            "relational_self_expectation:patient"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D89.direct",
+          "text": "To ask plainly for what I needed.",
+          "reported_value": "direct",
+          "candidate_signals": [
+            "relational_self_expectation:direct"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D89.practical",
+          "text": "To make the practical decision once I had the information.",
+          "reported_value": "practical",
+          "candidate_signals": [
+            "relational_self_expectation:practical"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D89.none",
+          "text": "I did not have a particular expectation of myself.",
+          "reported_value": "none",
+          "candidate_signals": [
+            "relational_self_expectation:none"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "M17",
+          "M18"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_relational_self_expectation"
+        }
+      },
+      "primary_evidence_target": "coverage_relational_self_expectation",
+      "secondary_signals": [
+        "relational_self_expectation:direct",
+        "relational_self_expectation:none",
+        "relational_self_expectation:not_need",
+        "relational_self_expectation:patient",
+        "relational_self_expectation:practical",
+        "relational_self_expectation:repair"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "An expectation remembered from one wait does not establish a lifelong working model or the origin of the expectation.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "A present working expectation in one wait; not a global self-model or childhood rule.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "relational_self_expectation"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "A present working expectation in one wait; not a global self-model or childhood rule."
+    },
+    {
+      "id": "D90",
+      "version": "5.1.0-candidate.1",
+      "title": "What you expected from them",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "relational_expected_response",
+      "step_binding": "first",
+      "prompt": "At that point in the wait, what did you expect {close_person} would do?",
+      "options": [
+        {
+          "id": "D90.reply",
+          "text": "They would reply when they were able.",
+          "reported_value": "reply",
+          "candidate_signals": [
+            "relational_expected_response:reply"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D90.acknowledge",
+          "text": "They would notice the wait had mattered to me.",
+          "reported_value": "acknowledge",
+          "candidate_signals": [
+            "relational_expected_response:acknowledge"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D90.prompt",
+          "text": "I would need to ask again to get a response.",
+          "reported_value": "prompt",
+          "candidate_signals": [
+            "relational_expected_response:prompt"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D90.dismiss",
+          "text": "They would treat my concern as unnecessary.",
+          "reported_value": "dismiss",
+          "candidate_signals": [
+            "relational_expected_response:dismiss"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D90.defensive",
+          "text": "They would become defensive if I raised it.",
+          "reported_value": "defensive",
+          "candidate_signals": [
+            "relational_expected_response:defensive"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D90.undecided",
+          "text": "I did not know what to expect.",
+          "reported_value": "undecided",
+          "candidate_signals": [
+            "relational_expected_response:undecided"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "M17",
+          "M18"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_relational_expected_response"
+        }
+      },
+      "primary_evidence_target": "coverage_relational_expected_response",
+      "secondary_signals": [
+        "relational_expected_response:reply",
+        "relational_expected_response:acknowledge",
+        "relational_expected_response:prompt",
+        "relational_expected_response:dismiss",
+        "relational_expected_response:defensive",
+        "relational_expected_response:undecided"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "A prediction remembered from that wait is not an independently known intention or evidence that the other person actually responded that way.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Distinguishes what the respondent expected the other person would do from what the respondent wanted their own follow-up to achieve.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "relational_expected_response"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Distinguishes what the respondent expected the other person would do from what the respondent wanted their own follow-up to achieve."
+    },
+    {
+      "id": "D91",
+      "version": "5.1.0-candidate.1",
+      "title": "What response the request received",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "help_response",
+      "step_binding": "first",
+      "prompt": "How did {support_person} respond to the request you actually made?",
+      "options": [
+        {
+          "id": "D91.offered",
+          "text": "They offered the help I had asked for.",
+          "reported_value": "offered",
+          "candidate_signals": [
+            "help_response:offered"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D91.limited",
+          "text": "They said what they could offer, which was less than I asked for.",
+          "reported_value": "limited",
+          "candidate_signals": [
+            "help_response:limited"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D91.no",
+          "text": "They said no.",
+          "reported_value": "no",
+          "candidate_signals": [
+            "help_response:no"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D91.different",
+          "text": "They offered a different kind of help.",
+          "reported_value": "different",
+          "candidate_signals": [
+            "help_response:different"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D91.misunderstood",
+          "text": "Their response did not address what I was asking for.",
+          "reported_value": "misunderstood",
+          "candidate_signals": [
+            "help_response:misunderstood"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D91.pending",
+          "text": "I had not received an answer by that point.",
+          "reported_value": "pending",
+          "candidate_signals": [
+            "help_response:pending"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "M20"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_help_response"
+        }
+      },
+      "primary_evidence_target": "coverage_help_response",
+      "secondary_signals": [
+        "help_response:different",
+        "help_response:limited",
+        "help_response:misunderstood",
+        "help_response:no",
+        "help_response:offered",
+        "help_response:pending"
+      ],
+      "follow_up_targets": [
+        "coverage_need_after_response"
+      ],
+      "confounds": [
+        "An actual response to the request does not establish whether the underlying need was met.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Adds the actual reported other response so the report need not invent the consequence of a smaller request.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [
+        "coverage_need_after_response"
+      ],
+      "hypotheses_strengthened": [
+        "help_response"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Adds the actual reported other response so the report need not invent the consequence of a smaller request."
+    },
+    {
+      "id": "D92",
+      "version": "5.1.0-candidate.1",
+      "title": "What remained after the response",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "need_after_response",
+      "step_binding": "first",
+      "prompt": "After that response, what happened to what you needed?",
+      "options": [
+        {
+          "id": "D92.met",
+          "text": "The help was enough for what I needed.",
+          "reported_value": "met",
+          "candidate_signals": [
+            "need_after_response:met"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D92.more_asked",
+          "text": "Some need remained, and I said so.",
+          "reported_value": "more_asked",
+          "candidate_signals": [
+            "need_after_response:more_asked"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D92.more_hidden",
+          "text": "Some need remained, but I did not say more.",
+          "reported_value": "more_hidden",
+          "candidate_signals": [
+            "need_after_response:more_hidden"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D92.elsewhere",
+          "text": "I looked elsewhere for what I still needed.",
+          "reported_value": "elsewhere",
+          "candidate_signals": [
+            "need_after_response:elsewhere"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D92.changed",
+          "text": "The need changed or passed for another reason.",
+          "reported_value": "changed",
+          "candidate_signals": [
+            "need_after_response:changed"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D92.unresolved",
+          "text": "It remained unresolved, and I had not decided what to do next.",
+          "reported_value": "unresolved",
+          "candidate_signals": [
+            "need_after_response:unresolved"
+          ],
+          "exclusive": false
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "M20",
+          "D91"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_need_after_response"
+        }
+      },
+      "primary_evidence_target": "coverage_need_after_response",
+      "secondary_signals": [
+        "need_after_response:changed",
+        "need_after_response:elsewhere",
+        "need_after_response:met",
+        "need_after_response:more_asked",
+        "need_after_response:more_hidden",
+        "need_after_response:unresolved"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "An answered request can leave need unmet, and a small request can also be enough; neither outcome may be assumed.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Distinguishes receiving the requested amount from having the actual need met; the other person’s intention remains unknown.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "need_after_response"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Distinguishes receiving the requested amount from having the actual need met; the other person’s intention remains unknown."
+    },
+    {
+      "id": "D93",
+      "version": "5.1.0-candidate.1",
+      "title": "How that pace felt",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "pace_fit",
+      "step_binding": "first",
+      "prompt": "At that stage of the new connection, how did the pace of contact feel to you?",
+      "options": [
+        {
+          "id": "D93.fit",
+          "text": "It fit the pace I wanted then.",
+          "reported_value": "fit",
+          "candidate_signals": [
+            "pace_fit:fit"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D93.slower",
+          "text": "I wanted it to slow down.",
+          "reported_value": "slower",
+          "candidate_signals": [
+            "pace_fit:slower"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D93.faster",
+          "text": "I wanted more contact or closeness sooner.",
+          "reported_value": "faster",
+          "candidate_signals": [
+            "pace_fit:faster"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D93.vary",
+          "text": "I wanted different paces at different moments.",
+          "reported_value": "vary",
+          "candidate_signals": [
+            "pace_fit:vary"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D93.unsure",
+          "text": "I had not worked out what pace I wanted.",
+          "reported_value": "unsure",
+          "candidate_signals": [
+            "pace_fit:unsure"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": false,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "D52",
+          "D53"
+        ],
+        "topic_opt_in": "growing_closeness",
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_pace_fit"
+        }
+      },
+      "primary_evidence_target": "coverage_pace_fit",
+      "secondary_signals": [
+        "pace_fit:faster",
+        "pace_fit:fit",
+        "pace_fit:slower",
+        "pace_fit:unsure",
+        "pace_fit:vary"
+      ],
+      "follow_up_targets": [
+        "coverage_pace_conditions"
+      ],
+      "confounds": [
+        "Pace fit refers to one stage of an actual connection, not the person’s ideal universal pace or attachment subtype.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Adds desired versus actual pace at a known stage, without claiming a universal ideal speed or rare-bonding subtype.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [
+        "coverage_pace_conditions"
+      ],
+      "hypotheses_strengthened": [
+        "pace_fit"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Adds desired versus actual pace at a known stage, without claiming a universal ideal speed or rare-bonding subtype."
+    },
+    {
+      "id": "D94",
+      "version": "5.1.0-candidate.1",
+      "title": "What shaped the pace you wanted",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "pace_conditions",
+      "step_binding": "first",
+      "prompt": "What most affected the pace you wanted in that connection at that stage?",
+      "options": [
+        {
+          "id": "D94.knowing",
+          "text": "How much I knew about the person.",
+          "reported_value": "knowing",
+          "candidate_signals": [
+            "pace_conditions:knowing"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D94.room",
+          "text": "How much room I had for a relationship then.",
+          "reported_value": "room",
+          "candidate_signals": [
+            "pace_conditions:room"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D94.response",
+          "text": "How they responded when I showed interest.",
+          "reported_value": "response",
+          "candidate_signals": [
+            "pace_conditions:response"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D94.expectations",
+          "text": "The expectations that seemed to come with getting closer.",
+          "reported_value": "expectations",
+          "candidate_signals": [
+            "pace_conditions:expectations"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D94.interest",
+          "text": "How interested I felt, apart from worry about what would happen.",
+          "reported_value": "interest",
+          "candidate_signals": [
+            "pace_conditions:interest"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D94.unclear",
+          "text": "I could not tell what was shaping it.",
+          "reported_value": "unclear",
+          "candidate_signals": [
+            "pace_conditions:unclear"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "D52",
+          "D93"
+        ],
+        "topic_opt_in": "growing_closeness",
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_pace_conditions"
+        }
+      },
+      "primary_evidence_target": "coverage_pace_conditions",
+      "secondary_signals": [
+        "pace_conditions:expectations",
+        "pace_conditions:interest",
+        "pace_conditions:knowing",
+        "pace_conditions:response",
+        "pace_conditions:room",
+        "pace_conditions:unclear"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "A reported influence on pace is not a unique causal account or a diagnosis.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Preserves practical capacity, actual interest and expected commitments as alternatives to protective explanations.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "pace_conditions"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Preserves practical capacity, actual interest and expected commitments as alternatives to protective explanations."
+    },
+    {
+      "id": "D95",
+      "version": "5.1.0-candidate.1",
+      "title": "After showing interest",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "interest_aftereffect",
+      "step_binding": "first",
+      "prompt": "After you showed some of that interest, what happened inside?",
+      "options": [
+        {
+          "id": "D95.settled",
+          "text": "I felt more at ease with the connection.",
+          "reported_value": "settled",
+          "candidate_signals": [
+            "interest_aftereffect:settled"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D95.exposed",
+          "text": "I felt more exposed.",
+          "reported_value": "exposed",
+          "candidate_signals": [
+            "interest_aftereffect:exposed"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D95.withdraw",
+          "text": "I wanted to pull back after having shown it.",
+          "reported_value": "withdraw",
+          "candidate_signals": [
+            "interest_aftereffect:withdraw"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D95.more",
+          "text": "I wanted to show more.",
+          "reported_value": "more",
+          "candidate_signals": [
+            "interest_aftereffect:more"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D95.same",
+          "text": "It did not change much inside.",
+          "reported_value": "same",
+          "candidate_signals": [
+            "interest_aftereffect:same"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D95.unclear",
+          "text": "I cannot separate that from what the other person did next.",
+          "reported_value": "unclear",
+          "candidate_signals": [
+            "interest_aftereffect:unclear"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "D52",
+          "D53"
+        ],
+        "topic_opt_in": "growing_closeness",
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_interest_aftereffect"
+        }
+      },
+      "primary_evidence_target": "coverage_interest_aftereffect",
+      "secondary_signals": [
+        "interest_aftereffect:exposed",
+        "interest_aftereffect:more",
+        "interest_aftereffect:same",
+        "interest_aftereffect:settled",
+        "interest_aftereffect:unclear",
+        "interest_aftereffect:withdraw"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "Feeling exposed after expressing interest does not prove avoidant attachment or predict withdrawal behavior.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Records what followed actual expressed interest. Do not invent a disclosure episode when the person only waited.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "interest_aftereffect"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Records what followed actual expressed interest. Do not invent a disclosure episode when the person only waited."
+    },
+    {
+      "id": "D96",
+      "version": "5.1.0-candidate.1",
+      "title": "What was still unfinished after repair",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "repair_unfinished",
+      "step_binding": "first",
+      "prompt": "After that repair attempt, what did you still need to see change, if anything?",
+      "options": [
+        {
+          "id": "D96.practical",
+          "text": "The practical effect of what happened.",
+          "reported_value": "practical",
+          "candidate_signals": [
+            "repair_unfinished:practical"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D96.acknowledge",
+          "text": "Whether they understood the specific thing that hurt.",
+          "reported_value": "acknowledge",
+          "candidate_signals": [
+            "repair_unfinished:acknowledge"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D96.consistent",
+          "text": "Whether their changed behavior would continue.",
+          "reported_value": "consistent",
+          "candidate_signals": [
+            "repair_unfinished:consistent"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D96.pressure",
+          "text": "The pressure to act as though everything was already fine.",
+          "reported_value": "pressure",
+          "candidate_signals": [
+            "repair_unfinished:pressure"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D96.nothing",
+          "text": "Nothing specific was left for them to put right.",
+          "reported_value": "nothing",
+          "candidate_signals": [
+            "repair_unfinished:nothing"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D96.unclear",
+          "text": "I was not sure what was still unfinished.",
+          "reported_value": "unclear",
+          "candidate_signals": [
+            "repair_unfinished:unclear"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "M24"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_repair_unfinished"
+        }
+      },
+      "primary_evidence_target": "coverage_repair_unfinished",
+      "secondary_signals": [
+        "repair_unfinished:acknowledge",
+        "repair_unfinished:consistent",
+        "repair_unfinished:nothing",
+        "repair_unfinished:practical",
+        "repair_unfinished:pressure",
+        "repair_unfinished:unclear"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "Something left to repair differs from refusal or inability to receive adequate repair.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Distinguishes unfinished or inadequate repair from an assumed inability to receive it.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "repair_unfinished"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Distinguishes unfinished or inadequate repair from an assumed inability to receive it."
+    },
+    {
+      "id": "D97",
+      "version": "5.1.0-candidate.1",
+      "title": "Trying something unfamiliar",
+      "stage": "deepening",
+      "context": "exploration",
+      "episode_family": "exploration",
+      "captures": "exploration_support",
+      "step_binding": "first",
+      "prompt": "Think of a recent time you tried something unfamiliar. How did you involve {support_person}, if at all?",
+      "options": [
+        {
+          "id": "D97.share",
+          "text": "I shared what I was trying.",
+          "reported_value": "share",
+          "candidate_signals": [
+            "exploration_support:share"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D97.think",
+          "text": "I asked them to help me think it through.",
+          "reported_value": "think",
+          "candidate_signals": [
+            "exploration_support:think"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D97.encourage",
+          "text": "I looked for encouragement.",
+          "reported_value": "encourage",
+          "candidate_signals": [
+            "exploration_support:encourage"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D97.approval",
+          "text": "I waited for their approval before going ahead.",
+          "reported_value": "approval",
+          "candidate_signals": [
+            "exploration_support:approval"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D97.private",
+          "text": "I kept it to myself.",
+          "reported_value": "private",
+          "candidate_signals": [
+            "exploration_support:private"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D97.none",
+          "text": "Their involvement was not relevant to what I was doing.",
+          "reported_value": "none",
+          "candidate_signals": [
+            "exploration_support:none"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_exploration_support"
+        }
+      },
+      "primary_evidence_target": "coverage_exploration_support",
+      "secondary_signals": [
+        "exploration_support:approval",
+        "exploration_support:encourage",
+        "exploration_support:none",
+        "exploration_support:private",
+        "exploration_support:share",
+        "exploration_support:think"
+      ],
+      "follow_up_targets": [
+        "coverage_exploration_effect"
+      ],
+      "confounds": [
+        "Involving another person can support exploration; privacy and irrelevant involvement do not imply insecurity.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": true,
+        "reading_answer_seconds_planning_only": [
+          25,
+          60
+        ]
+      },
+      "authoring_note": "A user-selected context samples support for exploration rather than only relationship threat.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [
+        "coverage_exploration_effect"
+      ],
+      "hypotheses_strengthened": [
+        "exploration_support"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "A user-selected context samples support for exploration rather than only relationship threat."
+    },
+    {
+      "id": "D98",
+      "version": "5.1.0-candidate.1",
+      "title": "What support did for going ahead",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "exploration_effect",
+      "step_binding": "first",
+      "prompt": "What part did their response play in going ahead with it?",
+      "options": [
+        {
+          "id": "D98.encouraged",
+          "text": "It encouraged me while leaving the decision mine.",
+          "reported_value": "encouraged",
+          "candidate_signals": [
+            "exploration_effect:encouraged"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D98.practical",
+          "text": "It supplied information or practical help I needed.",
+          "reported_value": "practical",
+          "candidate_signals": [
+            "exploration_effect:practical"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D98.permission",
+          "text": "I treated it as permission to go ahead.",
+          "reported_value": "permission",
+          "candidate_signals": [
+            "exploration_effect:permission"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D98.disagree",
+          "text": "I went ahead even though they did not agree.",
+          "reported_value": "disagree",
+          "candidate_signals": [
+            "exploration_effect:disagree"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D98.same",
+          "text": "It made little difference to going ahead.",
+          "reported_value": "same",
+          "candidate_signals": [
+            "exploration_effect:same"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D98.no_response",
+          "text": "There was no response I can use for this question.",
+          "reported_value": "no_response",
+          "candidate_signals": [
+            "exploration_effect:no_response"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "D97"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_exploration_effect"
+        }
+      },
+      "primary_evidence_target": "coverage_exploration_effect",
+      "secondary_signals": [
+        "exploration_effect:disagree",
+        "exploration_effect:encouraged",
+        "exploration_effect:no_response",
+        "exploration_effect:permission",
+        "exploration_effect:practical",
+        "exploration_effect:same"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "Practical help, encouragement and treating a reply as permission are different reported effects; none determines global attachment style.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Distinguishes secure-base-like support, practical input and permission-seeking within one recalled event.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "exploration_effect"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Distinguishes secure-base-like support, practical input and permission-seeking within one recalled event."
+    },
+    {
+      "id": "D99",
+      "version": "5.1.0-candidate.1",
+      "title": "How the sequence compares with other occasions",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "sequence_typicality",
+      "step_binding": "first",
+      "prompt": "Compared with other occasions you remember, how typical was this sequence of responses?",
+      "options": [
+        {
+          "id": "D99.similar",
+          "text": "I remember the responses happening in a similar sequence.",
+          "reported_value": "similar",
+          "candidate_signals": [
+            "sequence_typicality:similar"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D99.varies",
+          "text": "The responses recur, but their order varies.",
+          "reported_value": "varies",
+          "candidate_signals": [
+            "sequence_typicality:varies"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D99.context",
+          "text": "I recognize this sequence in some situations but not others.",
+          "reported_value": "context",
+          "candidate_signals": [
+            "sequence_typicality:context"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D99.once",
+          "text": "This was the only occasion like this I can recall.",
+          "reported_value": "once",
+          "candidate_signals": [
+            "sequence_typicality:once"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D99.unclear",
+          "text": "I cannot make a reliable comparison.",
+          "reported_value": "unclear",
+          "candidate_signals": [
+            "sequence_typicality:unclear"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "D07",
+          "D08"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_sequence_typicality"
+        }
+      },
+      "primary_evidence_target": "coverage_sequence_typicality",
+      "secondary_signals": [
+        "sequence_typicality:context",
+        "sequence_typicality:once",
+        "sequence_typicality:similar",
+        "sequence_typicality:unclear",
+        "sequence_typicality:varies"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "Reported typicality is a respondent generalization, not a newly sampled independent occurrence.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Reported sequence typicality is not a collection of independent observed episodes or proof of a lifetime loop.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "sequence_typicality"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Reported sequence typicality is not a collection of independent observed episodes or proof of a lifetime loop."
+    },
+    {
+      "id": "D100",
+      "version": "5.1.0-candidate.1",
+      "title": "How the situation looked after easing",
+      "stage": "deepening",
+      "context": "bound_episode",
+      "episode_family": "bound",
+      "captures": "meaning_after_easing",
+      "step_binding": "recovery",
+      "prompt": "After that later attempt gave you more room, how did you understand the situation?",
+      "options": [
+        {
+          "id": "D100.options",
+          "text": "I could see options I had not been considering.",
+          "reported_value": "options",
+          "candidate_signals": [
+            "meaning_after_easing:options"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D100.perspective",
+          "text": "I could understand another point of view more easily.",
+          "reported_value": "perspective",
+          "candidate_signals": [
+            "meaning_after_easing:perspective"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D100.same_less",
+          "text": "The concern still made sense, but it felt less urgent.",
+          "reported_value": "same_less",
+          "candidate_signals": [
+            "meaning_after_easing:same_less"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D100.revised",
+          "text": "I thought I had read part of the situation differently while under pressure.",
+          "reported_value": "revised",
+          "candidate_signals": [
+            "meaning_after_easing:revised"
+          ],
+          "exclusive": false
+        },
+        {
+          "id": "D100.same",
+          "text": "My understanding stayed much the same.",
+          "reported_value": "same",
+          "candidate_signals": [
+            "meaning_after_easing:same"
+          ],
+          "exclusive": true
+        },
+        {
+          "id": "D100.unclear",
+          "text": "I cannot compare how I understood it at those two points.",
+          "reported_value": "unclear",
+          "candidate_signals": [
+            "meaning_after_easing:unclear"
+          ],
+          "exclusive": true
+        }
+      ],
+      "selection": {
+        "mode": "single",
+        "max_select": 1,
+        "allow_simultaneous_pair": true,
+        "order_not_implied": true
+      },
+      "eligibility": {
+        "requires_answered": [
+          "M13",
+          "M14"
+        ],
+        "topic_opt_in": null,
+        "actual_episode_required": true,
+        "specific": {
+          "coverage_rule": "coverage_meaning_after_easing",
+          "required_flags": [
+            "actual_easing"
+          ]
+        }
+      },
+      "primary_evidence_target": "coverage_meaning_after_easing",
+      "secondary_signals": [
+        "meaning_after_easing:options",
+        "meaning_after_easing:perspective",
+        "meaning_after_easing:revised",
+        "meaning_after_easing:same",
+        "meaning_after_easing:same_less",
+        "meaning_after_easing:unclear"
+      ],
+      "follow_up_targets": [],
+      "confounds": [
+        "Different understanding after easing is not proof the earlier concern was false or that a nervous-system circuit caused it.",
+        "Missing or unselected information remains unknown."
+      ],
+      "estimate": {
+        "new_episode_retrieval": false,
+        "reading_answer_seconds_planning_only": [
+          15,
+          40
+        ]
+      },
+      "authoring_note": "Captures a reported change in interpretation, rather than assigning a cognitive stereotype from a state label.",
+      "response_controls": [
+        "none_fit",
+        "not_sure",
+        "no_event",
+        "not_applicable",
+        "skip"
+      ],
+      "cannot_establish": [
+        "developmental_origin",
+        "diagnosis",
+        "measured_autonomic_circuit",
+        "another_person_intent",
+        "independent_recurrence_from_same_episode"
+      ],
+      "hypotheses_opened": [],
+      "hypotheses_strengthened": [
+        "meaning_after_easing"
+      ],
+      "burden": {
+        "base_decisions": 1,
+        "optional_pair_adds_decisions": 2,
+        "recalled_sequence_cost": null
+      },
+      "status": "conditional_resolution",
+      "allowed_variants": [
+        "base"
+      ],
+      "purpose": "Captures a reported change in interpretation, rather than assigning a cognitive stereotype from a state label."
+    }
+  ]
+}

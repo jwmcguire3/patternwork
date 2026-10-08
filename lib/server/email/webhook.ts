@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 export interface VerifiedResendWebhook {
+  readonly id: string;
   readonly type: string;
   readonly data: { readonly email_id?: string } & Readonly<Record<string, unknown>>;
 }
@@ -32,7 +33,7 @@ export function verifyResendWebhook(payload: string, headers: Headers, secret: s
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Webhook payload is invalid.");
   const record = value as Record<string, unknown>;
   if (typeof record.type !== "string" || !record.data || typeof record.data !== "object" || Array.isArray(record.data)) throw new Error("Webhook event shape is invalid.");
-  return { type: record.type, data: record.data as VerifiedResendWebhook["data"] };
+  return { id, type: record.type, data: record.data as VerifiedResendWebhook["data"] };
 }
 
 export function deliveryStatusForResendEvent(type: string): "DELIVERED" | "BOUNCED" | "FAILED" | undefined {

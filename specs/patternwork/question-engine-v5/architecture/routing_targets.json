@@ -1,0 +1,1132 @@
+{
+  "release": "PWQE-5.0.0-design.1",
+  "status": "authored routing contracts, not calibrated scores",
+  "targets": [
+    {
+      "id": "access_before_change",
+      "opens_from_items": [
+        "D07"
+      ],
+      "candidate_items": [
+        "D11"
+      ],
+      "default_priority": 3,
+      "open_condition": "A later move could be either chosen relief or reduced capacity",
+      "discriminator": "Distinguish choice, urgency, unavailable words and stuckness",
+      "close_condition": "Access at the selected step is described; unclear stays unclear",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "after_stop",
+      "opens_from_items": [
+        "D04"
+      ],
+      "candidate_items": [
+        "D59"
+      ],
+      "default_priority": 5,
+      "open_condition": "A response was reported to stop",
+      "discriminator": "Separate finished task from continuing urge or self-pressure",
+      "close_condition": "The residue after the actual stop is described",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "attachment_meaning",
+      "opens_from_items": [
+        "M17"
+      ],
+      "candidate_items": [
+        "M18"
+      ],
+      "default_priority": 1,
+      "open_condition": "A delayed-reply action has no meaning field yet",
+      "discriminator": "Relationship concern versus practical information or no particular interpretation",
+      "close_condition": "Meaning recorded for that wait; no additional label required",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "attention",
+      "opens_from_items": [
+        "M10"
+      ],
+      "candidate_items": [
+        "D29"
+      ],
+      "default_priority": 6,
+      "open_condition": "First notice includes attention difficulty, or user asks for state detail",
+      "discriminator": "Narrow focus versus shifting focus, scanning and slow processing",
+      "close_condition": "One reported attention description is retained",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "availability_history",
+      "opens_from_items": [
+        "M18",
+        "D43",
+        "D45"
+      ],
+      "candidate_items": [
+        "D44"
+      ],
+      "default_priority": 3,
+      "open_condition": "Contact concern risks being framed as a person-wide insecurity",
+      "discriminator": "Usual reliability and known exceptions in this actual relationship",
+      "close_condition": "Reported relational context is retained without deciding the other person's intent",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "care_scope",
+      "opens_from_items": [
+        "D21",
+        "D27",
+        "D38",
+        "D39"
+      ],
+      "candidate_items": [
+        "REPLAY:M20",
+        "REPLAY:M22",
+        "D56"
+      ],
+      "default_priority": 5,
+      "open_condition": "A care-related description is being generalized beyond its episode",
+      "discriminator": "Another actual care occasion and contextual contrast",
+      "close_condition": "Broader statement is supported at a bounded scope or remains event-specific",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "contact_function",
+      "opens_from_items": [
+        "M17",
+        "M18"
+      ],
+      "candidate_items": [
+        "D43"
+      ],
+      "default_priority": 3,
+      "open_condition": "Checking, contacting or rereading during a meaningful wait has an unclear aim",
+      "discriminator": "Information, reassurance, recognition of hurt or ordinary contact",
+      "close_condition": "Reported aim resolves or narrows the contact account",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "contrast_context",
+      "opens_from_items": [
+        "M16",
+        "M28",
+        "M30",
+        "D05",
+        "D06",
+        "D14",
+        "D16",
+        "D22",
+        "D23",
+        "D25",
+        "D28",
+        "D37",
+        "D42",
+        "D44",
+        "D45",
+        "D48",
+        "D51",
+        "D53",
+        "D58",
+        "D64"
+      ],
+      "candidate_items": [
+        "REPLAY",
+        "D56",
+        "D58"
+      ],
+      "default_priority": 5,
+      "open_condition": "Generalization is proposed or comparable episodes differ",
+      "discriminator": "Reliability, stakes, capacity, freedom or trigger presence",
+      "close_condition": "Difference retained; no single cause imposed if respondent cannot separate them",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "contrast_goal",
+      "opens_from_items": [
+        "D56"
+      ],
+      "candidate_items": [
+        "D57"
+      ],
+      "default_priority": 3,
+      "open_condition": "Similar outward actions in two events might be merged as one protector",
+      "discriminator": "Same action with same versus different aims",
+      "close_condition": "Merge only at the supported functional level or keep descriptions separate",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "cost",
+      "opens_from_items": [
+        "M06",
+        "D10"
+      ],
+      "candidate_items": [
+        "D06"
+      ],
+      "default_priority": 6,
+      "open_condition": "An identified strategy has no aftermath detail and user chose depth",
+      "discriminator": "Specific downside versus no downside",
+      "close_condition": "Cost or absence of a noticed cost is recorded",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "disclosure_prediction",
+      "opens_from_items": [
+        "D47",
+        "D53"
+      ],
+      "candidate_items": [
+        "D48"
+      ],
+      "default_priority": 4,
+      "open_condition": "A personal disclosure was limited and its shaping expectation is missing",
+      "discriminator": "Pacing, trust, burden, judgment, privacy or time constraints",
+      "close_condition": "The actual remembered expectation is recorded",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "distance_function",
+      "opens_from_items": [
+        "D62"
+      ],
+      "candidate_items": [
+        "D46"
+      ],
+      "default_priority": 3,
+      "open_condition": "Contact was reduced but autonomy and pressure relief remain live alternatives",
+      "discriminator": "Own time, input load, emotional relief, control or relational signaling",
+      "close_condition": "One contextual function is described without an automatic avoidance label",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "energy",
+      "opens_from_items": [
+        "M10"
+      ],
+      "candidate_items": [
+        "D32"
+      ],
+      "default_priority": 6,
+      "open_condition": "The user selected energy or mixed arousal as useful detail",
+      "discriminator": "Rising, falling, mixed, changing or unchanged energy",
+      "close_condition": "Describe subjective energy without circuitry",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "expressed_pace",
+      "opens_from_items": [
+        "D52"
+      ],
+      "candidate_items": [
+        "D53"
+      ],
+      "default_priority": 4,
+      "open_condition": "A new connection's private importance has been reported",
+      "discriminator": "Outward pace may match or differ from private pace",
+      "close_condition": "Private and public pace are kept as two observations",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "feeling_access",
+      "opens_from_items": [
+        "D25"
+      ],
+      "candidate_items": [
+        "D23"
+      ],
+      "default_priority": 6,
+      "open_condition": "A feeling is described and an actual attempt to leave room for it exists",
+      "discriminator": "What occurred during that actual attempt, not a hypothetical exercise",
+      "close_condition": "Access or no recalled trial recorded without exile inference",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "function",
+      "opens_from_items": [
+        "M02",
+        "M04",
+        "M08",
+        "M11",
+        "M12",
+        "D01",
+        "D24",
+        "D26",
+        "D28",
+        "D54",
+        "D55",
+        "D57",
+        "D61",
+        "D63",
+        "D64"
+      ],
+      "candidate_items": [
+        "D02",
+        "D03",
+        "D16"
+      ],
+      "default_priority": 4,
+      "open_condition": "A reported action's present purpose matters to an emerging account",
+      "discriminator": "Practical task, prevention, visibility, felt relief, contact or no conscious aim",
+      "close_condition": "Stated aim or discriminating contextual account retained; do not keep probing for hidden fear after a sufficient practical explanation",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "goal_change",
+      "opens_from_items": [
+        "D07",
+        "D08"
+      ],
+      "candidate_items": [
+        "D09"
+      ],
+      "default_priority": 4,
+      "open_condition": "A second move occurred and the account might claim a goal shift",
+      "discriminator": "Same goal, immediate relief, ending exchange, time, practical need or no known aim",
+      "close_condition": "Goal relationship recorded; unknown aim does not erase the action",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "help_function",
+      "opens_from_items": [
+        "M20"
+      ],
+      "candidate_items": [
+        "M21"
+      ],
+      "default_priority": 1,
+      "open_condition": "A help-request action lacks its shaping aim/context",
+      "discriminator": "Burden, refusal, obligation, unclear need, practical issue or direct reciprocity",
+      "close_condition": "Request meaning is described without treating all smaller requests as insecure",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "hidden_want",
+      "opens_from_items": [
+        "M20",
+        "D02"
+      ],
+      "candidate_items": [
+        "D17",
+        "D20"
+      ],
+      "default_priority": 4,
+      "open_condition": "A need or experience was left unexpressed, or user selects wanting as focus",
+      "discriminator": "What was actually wanted and whether self-admission was difficult",
+      "close_condition": "Specific want/no hidden want retained; do not demand a deeper need",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "known_distance",
+      "opens_from_items": [
+        "M18",
+        "M19",
+        "D44"
+      ],
+      "candidate_items": [
+        "D42"
+      ],
+      "default_priority": 3,
+      "open_condition": "An uncertainty account might overgeneralize to distance itself",
+      "discriminator": "A distinct wait where the reason was known",
+      "close_condition": "Known-distance experience narrows the claim or leaves the distinction open",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "loss_want",
+      "opens_from_items": [
+        "D24"
+      ],
+      "candidate_items": [
+        "D25"
+      ],
+      "default_priority": 4,
+      "open_condition": "An optional loss episode has been answered",
+      "discriminator": "Remembering, sharing, privacy, a break or change",
+      "close_condition": "The current wish is described without completion or exile claims",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "money_context",
+      "opens_from_items": [
+        "D63"
+      ],
+      "candidate_items": [
+        "D64"
+      ],
+      "default_priority": 1,
+      "open_condition": "A money-pressure action lacks actual resource context",
+      "discriminator": "Affordable adjustment, uncertainty, actual shortfall or another concern",
+      "close_condition": "Retain real constraint before interpreting the response",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "need_exposure",
+      "opens_from_items": [
+        "M20",
+        "M21",
+        "M22",
+        "D17",
+        "D18"
+      ],
+      "candidate_items": [
+        "D21",
+        "D18",
+        "D27"
+      ],
+      "default_priority": 4,
+      "open_condition": "Help or disclosure answers suggest the difficult point remains unclear",
+      "discriminator": "Need itself, visibility, refusal, receipt of care, logistics or no difficulty",
+      "close_condition": "The particular difficulty is described; no compulsory vulnerability",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "next_effect",
+      "opens_from_items": [
+        "D07",
+        "D09"
+      ],
+      "candidate_items": [
+        "D10"
+      ],
+      "default_priority": 1,
+      "open_condition": "An actual later move is recorded without an effect",
+      "discriminator": "Relief, control, ending contact, attention shift, no change or worsening",
+      "close_condition": "Immediate effect attached to that move, not retroactively to the first move",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "next_move",
+      "opens_from_items": [
+        "M11",
+        "M12",
+        "D55",
+        "D59",
+        "D61"
+      ],
+      "candidate_items": [
+        "D07"
+      ],
+      "default_priority": 4,
+      "open_condition": "A first response is described and its later course is important",
+      "discriminator": "Continuation, escalation, different response or no further move",
+      "close_condition": "A later action or no remembered later action is recorded",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "noticed_order",
+      "opens_from_items": [
+        "M10",
+        "D29",
+        "D32",
+        "D41"
+      ],
+      "candidate_items": [
+        "D33"
+      ],
+      "default_priority": 6,
+      "open_condition": "A temporal sentence is being considered from mixed channels",
+      "discriminator": "First noticed, simultaneous, recognized afterward or order unknown",
+      "close_condition": "Only reported noticing order is retained",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "ordinary_contrast",
+      "opens_from_items": [
+        "M01",
+        "M29",
+        "D40",
+        "D60"
+      ],
+      "candidate_items": [
+        "D40",
+        "REPLAY:M01"
+      ],
+      "default_priority": 5,
+      "open_condition": "Pressure episodes risk becoming a claimed baseline",
+      "discriminator": "A distinct ordinary/easier occasion",
+      "close_condition": "Ordinary experience is represented without a baseline score",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "polarization_first",
+      "opens_from_items": [
+        "M27",
+        "D12"
+      ],
+      "candidate_items": [
+        "D13"
+      ],
+      "default_priority": 4,
+      "open_condition": "A real simultaneous pair is established and each side's concern matters",
+      "discriminator": "The first displayed want's remembered concern",
+      "close_condition": "Concern or ordinary preference recorded; no automatic part creation",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "polarization_relation",
+      "opens_from_items": [
+        "M26",
+        "M27"
+      ],
+      "candidate_items": [
+        "D12"
+      ],
+      "default_priority": 4,
+      "open_condition": "Two simultaneous wants plus actual action are recorded",
+      "discriminator": "Ordinary weighing, interference, alternation or compatible wants",
+      "close_condition": "Relation described without assuming distinct protectors",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "polarization_second",
+      "opens_from_items": [
+        "M27",
+        "D12",
+        "D13"
+      ],
+      "candidate_items": [
+        "D14"
+      ],
+      "default_priority": 4,
+      "open_condition": "A real simultaneous pair is established and only one side is understood",
+      "discriminator": "The second displayed want's remembered concern",
+      "close_condition": "Both perspectives are retained, including no fearful prediction",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "practical_context",
+      "opens_from_items": [
+        "M03",
+        "M04",
+        "M08",
+        "M09",
+        "M15",
+        "M16",
+        "M21",
+        "M25",
+        "D02",
+        "D03",
+        "D19",
+        "D34",
+        "D46",
+        "D48",
+        "D49",
+        "D54",
+        "D60",
+        "D61",
+        "D62"
+      ],
+      "candidate_items": [
+        "D16"
+      ],
+      "default_priority": 3,
+      "open_condition": "An interpretation might ignore real demands, constraints or inadequate support",
+      "discriminator": "Actual consequence, unreliability, restricted choice, overload or low stakes",
+      "close_condition": "Context retained; no causal diagnosis or hidden-protection search required",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "praise_experience",
+      "opens_from_items": [
+        "M07"
+      ],
+      "candidate_items": [
+        "D28"
+      ],
+      "default_priority": 3,
+      "open_condition": "Modest/humorous praise response could be mistaken for discomfort",
+      "discriminator": "Pleasure, pressure, doubt, exposure, accurate credit or little reaction",
+      "close_condition": "Separate visible response from felt experience",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "predicted_response",
+      "opens_from_items": [
+        "M21",
+        "D17",
+        "D18",
+        "D21",
+        "D27"
+      ],
+      "candidate_items": [
+        "D19"
+      ],
+      "default_priority": 4,
+      "open_condition": "Exposure concern was actually reported for a real episode",
+      "discriminator": "What the person then expected another person would do",
+      "close_condition": "Prediction is kept as the respondent's expectation, not the other's intent",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "prediction",
+      "opens_from_items": [
+        "M08",
+        "D02"
+      ],
+      "candidate_items": [
+        "D03"
+      ],
+      "default_priority": 4,
+      "open_condition": "A preventive aim is reported but its anticipated outcome is unclear",
+      "discriminator": "Concrete remembered consequence rather than an imagined blocked-strategy test",
+      "close_condition": "Expectation/no recalled expectation retained",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "quiet_or_access",
+      "opens_from_items": [
+        "M11",
+        "D09",
+        "D11",
+        "D30",
+        "D55"
+      ],
+      "candidate_items": [
+        "D34"
+      ],
+      "default_priority": 3,
+      "open_condition": "Quiet, stopped response or felt distance is being interpreted",
+      "discriminator": "Chosen pause, organizing thought, unavailable words, fatigue, distance or constrained speech",
+      "close_condition": "Describe access and choice without calling all quiet a firefighter",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "reassurance_duration",
+      "opens_from_items": [
+        "M19",
+        "D43"
+      ],
+      "candidate_items": [
+        "D45"
+      ],
+      "default_priority": 5,
+      "open_condition": "Immediate relational relief is being described as durable reassurance",
+      "discriminator": "A real reassurance occasion and how its effect persisted",
+      "close_condition": "Duration separated from new triggers and credibility; no recalled occasion closes the target",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "recovery_duration",
+      "opens_from_items": [
+        "M14",
+        "D35",
+        "D36"
+      ],
+      "candidate_items": [
+        "D37"
+      ],
+      "default_priority": 5,
+      "open_condition": "A recovery effect is described but permanence is unstated",
+      "discriminator": "Held, faded, partial or disrupted by a new event",
+      "close_condition": "Duration bounded to the episode",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "recovery_marker",
+      "opens_from_items": [
+        "M12",
+        "M13",
+        "D29",
+        "D30",
+        "D32",
+        "D34"
+      ],
+      "candidate_items": [
+        "D35"
+      ],
+      "default_priority": 4,
+      "open_condition": "A difficult episode has an actual later shift",
+      "discriminator": "First remembered sign of return versus no clear return",
+      "close_condition": "Marker or uncertainty recorded",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "recovery_sequence",
+      "opens_from_items": [
+        "M14",
+        "D33",
+        "D35"
+      ],
+      "candidate_items": [
+        "D36"
+      ],
+      "default_priority": 5,
+      "open_condition": "At least two actual recovery changes are remembered and order matters",
+      "discriminator": "Partial order, simultaneous changes or order unknown",
+      "close_condition": "No invented missing steps; selected ordering alone is not causal proof",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "recurrence",
+      "opens_from_items": [
+        "M02",
+        "M03",
+        "D04",
+        "D05"
+      ],
+      "candidate_items": [
+        "REPLAY",
+        "D05"
+      ],
+      "default_priority": 5,
+      "open_condition": "The report might broaden a named one-event response",
+      "discriminator": "Distinct occurrence versus only reported typicality",
+      "close_condition": "Repeat supports exactly its captured features; no repeat leaves scope unchanged",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "repair_aim",
+      "opens_from_items": [
+        "M23"
+      ],
+      "candidate_items": [
+        "D49"
+      ],
+      "default_priority": 4,
+      "open_condition": "An attempt to put something right has an unclear goal",
+      "discriminator": "Practical repair, understanding, closeness, pressure relief or preventing worsening",
+      "close_condition": "Aim recorded; sincerity and others' motives not inferred",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "repair_feature",
+      "opens_from_items": [
+        "M24",
+        "D49"
+      ],
+      "candidate_items": [
+        "D50"
+      ],
+      "default_priority": 4,
+      "open_condition": "A received repair had a meaningful effect",
+      "discriminator": "Which actual feature reached the person, or none",
+      "close_condition": "Feature is episode-specific, not a prescription",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "rest_access",
+      "opens_from_items": [
+        "M01",
+        "M25",
+        "D59"
+      ],
+      "candidate_items": [
+        "D60"
+      ],
+      "default_priority": 4,
+      "open_condition": "Stopping behavior or unstructured time leaves inner rest unclear",
+      "discriminator": "Settling, tasks, guilt, restlessness, exhaustion or no actual attempt",
+      "close_condition": "Inner experience separated from visible stopping",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "return_after_repair",
+      "opens_from_items": [
+        "M24",
+        "D46",
+        "D50"
+      ],
+      "candidate_items": [
+        "D51"
+      ],
+      "default_priority": 5,
+      "open_condition": "Repair or distance is being generalized to renewed closeness",
+      "discriminator": "Actual approach after the repair without assuming reconciliation",
+      "close_condition": "Return, delay, ambivalence or no wish for return retained",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "self_pressure",
+      "opens_from_items": [
+        "M05",
+        "M06",
+        "D22"
+      ],
+      "candidate_items": [
+        "D15",
+        "D22"
+      ],
+      "default_priority": 4,
+      "open_condition": "Harsh self-response or self-directed rules have meaningful effects",
+      "discriminator": "Preventive, punitive, effort-driving or unformulated function and meaning",
+      "close_condition": "Specific self-relation described; criticism not automatically a manager",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "sequence_relation",
+      "opens_from_items": [
+        "D07"
+      ],
+      "candidate_items": [
+        "D08"
+      ],
+      "default_priority": 3,
+      "open_condition": "A later move might be narrated as an earlier response failing",
+      "discriminator": "After failure, simply later, overlap, alternating, unknown or separate events",
+      "close_condition": "Temporal edge established or left partial; separate events never become a cascade",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "social_feature",
+      "opens_from_items": [
+        "M13",
+        "M22"
+      ],
+      "candidate_items": [
+        "D38",
+        "D39"
+      ],
+      "default_priority": 4,
+      "open_condition": "Actual company/help changed the experience or user selects this topic",
+      "discriminator": "Helpful feature or a separately recalled mismatched-help episode",
+      "close_condition": "Keep effect and actual interaction together; do not infer a universal regulation prescription",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "stand_down",
+      "opens_from_items": [
+        "M02",
+        "M03",
+        "M25",
+        "D15",
+        "D60"
+      ],
+      "candidate_items": [
+        "D04"
+      ],
+      "default_priority": 4,
+      "open_condition": "A strategy continues beyond the first action and its stopping point matters",
+      "discriminator": "Task finished, information, interpersonal sign, exhaustion, chosen stop or continued action",
+      "close_condition": "Actual stop condition described; no stop is legitimate",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "timing",
+      "opens_from_items": [
+        "M02"
+      ],
+      "candidate_items": [
+        "D01"
+      ],
+      "default_priority": 4,
+      "open_condition": "The role of a response depends on when it appears",
+      "discriminator": "Prevention before an event, early signs, high feeling, aftermath or ordinary routine",
+      "close_condition": "Timing recorded; clock time alone does not classify a manager/firefighter",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "uncertainty_meaning",
+      "opens_from_items": [
+        "M15"
+      ],
+      "candidate_items": [
+        "M16"
+      ],
+      "default_priority": 1,
+      "open_condition": "Practical waiting action has no stakes/meaning context",
+      "discriminator": "Practical next step, loss, mistake, unpreparedness, not-knowing or little concern",
+      "close_condition": "Context recorded, preventing generic intolerance-of-uncertainty claims",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "urge_action_difference",
+      "opens_from_items": [
+        "D31"
+      ],
+      "candidate_items": [
+        "D31"
+      ],
+      "default_priority": 6,
+      "open_condition": "Reported action differs from an independently mentioned impulse or user selects impulse detail",
+      "discriminator": "Actual urge versus actual action in the same step",
+      "close_condition": "Keep desire and behavior separate; do not infer suppression merely from difference",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "vulnerable_meaning",
+      "opens_from_items": [
+        "M05",
+        "M09",
+        "D03",
+        "D15",
+        "D20",
+        "D26"
+      ],
+      "candidate_items": [
+        "D18",
+        "D20",
+        "D22"
+      ],
+      "default_priority": 4,
+      "open_condition": "A remembered reaction raises a specific question about exposure or self-meaning",
+      "discriminator": "The actual feeling, want or self-meaning rather than an inferred origin",
+      "close_condition": "Present vulnerability or no such difficulty retained; do not force a hidden part",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    },
+    {
+      "id": "words",
+      "opens_from_items": [
+        "M10",
+        "D11"
+      ],
+      "candidate_items": [
+        "D30"
+      ],
+      "default_priority": 3,
+      "open_condition": "Low response could mean speech access rather than a distancing strategy",
+      "discriminator": "Normal, faster, blocked words, forming thoughts, choosing silence or tiredness",
+      "close_condition": "Language access described at the actual step",
+      "decline_or_missing": "Close after explicit decline/unavailable event; at most two distinct attempts; not_sure remains unknown.",
+      "escalation": "Prioritize a live alternative that could reverse a material claim; never prioritize because distress looks severe.",
+      "maximum_attempts": 2,
+      "explicitly_requested_maximum_attempts": 3
+    }
+  ],
+  "entry_points": [
+    {
+      "id": "body_detail",
+      "first_item": "D41",
+      "gate": "Explicit body-detail opt-in plus a bound actual episode; not a new universal screen"
+    },
+    {
+      "id": "family_comment",
+      "first_item": "D55",
+      "gate": "D54 was answered and the respondent reports an actual bothersome comment in that contact"
+    },
+    {
+      "id": "loss",
+      "first_item": "D24",
+      "gate": "Explicit topic opt-in plus user-selected loss focus; never inferred from intense answers"
+    },
+    {
+      "id": "disappointment",
+      "first_item": "D26",
+      "gate": "User selects a non-relational disappointment or a needed different context"
+    },
+    {
+      "id": "disclosure",
+      "first_item": "D47",
+      "gate": "User selects disclosure or a guarded-expression account needs another real episode"
+    },
+    {
+      "id": "growing_closeness",
+      "first_item": "D52",
+      "gate": "Explicit optional topic/focus; no automatic rare-bonding axis"
+    },
+    {
+      "id": "family",
+      "first_item": "D54",
+      "gate": "Explicit family topic/focus"
+    },
+    {
+      "id": "conflict",
+      "first_item": "D61",
+      "gate": "User-selected conflict focus, or relevant unresolved function/sequence in a volunteered disagreement"
+    },
+    {
+      "id": "autonomy",
+      "first_item": "D62",
+      "gate": "User-selected space/closeness focus, not triggered by solitude alone"
+    },
+    {
+      "id": "money",
+      "first_item": "D63",
+      "gate": "Explicit money topic/focus"
+    }
+  ],
+  "operators": {
+    "REPLAY": {
+      "allowed_roots": [
+        "M01",
+        "M02",
+        "M04",
+        "M07",
+        "M08",
+        "M10",
+        "M11",
+        "M15",
+        "M17",
+        "M20",
+        "M22",
+        "M23",
+        "M24",
+        "M25",
+        "D26",
+        "D40",
+        "D47",
+        "D61",
+        "D62",
+        "D63"
+      ],
+      "distinct_occurrence_required": true,
+      "counts_as_administration": true
+    },
+    "BIND": {
+      "generated_wording": false,
+      "source": "versioned authored slots plus respondent-selected episode/person IDs"
+    },
+    "CORRECT": {
+      "rebuild_affected_targets": true,
+      "history": "append supersession; preserve immutable old snapshots"
+    }
+  }
+}

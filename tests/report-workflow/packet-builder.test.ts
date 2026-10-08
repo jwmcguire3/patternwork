@@ -10,6 +10,9 @@ import { loadStructuredInstrumentManifest } from "../../lib/question-engine/rend
 import { enrichResponseFromAuthoredContract, normalizeTypedAssessmentResponse } from "../../lib/server/assessment/service.ts";
 
 function snapshot(completedPass: 1 | 2 = 1, response: JsonValue = { schemaVersion: "PWRS-1", semantic: { choices: ["OPT-MS-101-wait-a1b2c3d4"], timeHorizon: "immediate", certainty: 0.7, coverageSectionCodes: ["IFS-02"] } }, routingState?: JsonValue): DecryptedAssessmentSnapshot {
+  const completion = completedPass === 1
+    ? { completion_mode: "pass1_complete", last_completed_stage: "S2", safe_resume_stage: "S3" }
+    : { completion_mode: "pass2_complete", last_completed_stage: "S5", safe_resume_stage: "complete" };
   return {
     databaseId: "db-snapshot-1",
     assessmentSessionId: "private-session-id",
@@ -19,7 +22,7 @@ function snapshot(completedPass: 1 | 2 = 1, response: JsonValue = { schemaVersio
     evidenceSha256: "a".repeat(64),
     scopeSha256: "b".repeat(64),
     canonicalSnapshot: {
-      assessment_completion: { completed_at: "2026-09-02T12:00:00.000Z" },
+      assessment_completion: { ...completion, completed_at: "2026-09-02T12:00:00.000Z" },
       ...(routingState ? { routing_state: routingState } : {}),
       responses: [{
         responseId: "private-response-id",
@@ -44,6 +47,30 @@ test("deterministic builder creates validator-clean IFS/PV/ATT packets from orde
     assert.equal(validation.ok, true, validation.ok ? undefined : JSON.stringify(validation.issues));
     assert.equal(packet.assessment_completion.completion_mode, "pass1_complete");
   }
+});
+
+test("builder propagates canonical normal-completion boundaries and rejects drift", () => {
+  const passOne = buildPseudonymousPacketsFromCanonicalSnapshot(snapshot(1));
+  assert.deepEqual(passOne[0].assessment_completion, {
+    completion_mode: "pass1_complete",
+    last_completed_stage: "S2",
+    safe_resume_stage: "S3",
+    underdetermined_section_codes: passOne[0].assessment_completion.underdetermined_section_codes,
+  });
+
+  const passTwo = buildPseudonymousPacketsFromCanonicalSnapshot(snapshot(2));
+  assert.equal(passTwo[0].assessment_completion.completion_mode, "pass2_complete");
+  assert.equal(passTwo[0].assessment_completion.last_completed_stage, "S5");
+  assert.equal(passTwo[0].assessment_completion.safe_resume_stage, "complete");
+
+  const invalid = structuredClone(snapshot(1));
+  invalid.canonicalSnapshot.assessment_completion = {
+    completion_mode: "pass1_complete",
+    last_completed_stage: "S1",
+    safe_resume_stage: "S1",
+    completed_at: "2026-09-02T12:00:00.000Z",
+  };
+  assert.throws(() => buildPseudonymousPacketsFromCanonicalSnapshot(invalid), /completion boundary does not match completed Pass 1/u);
 });
 
 test("builder default-denies adversarial names, addresses, international phones, account IDs, and mixed narrative", async () => {

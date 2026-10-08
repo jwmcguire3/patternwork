@@ -12,6 +12,11 @@
     "test:contracts": "tsx --test tests/contracts/*.test.ts",
     "reports:codex": "tsx scripts/report-cli/index.ts",
     "reports:qualify": "tsx scripts/qualify-openrouter/index.ts",
+    "reports:qualify:pwrp71": "tsx scripts/qualify-pwrp71/index.ts",
+    "reports:preflight": "tsx scripts/report-preflight/index.ts",
+    "reports:retry": "tsx scripts/report-retry/index.ts",
+    "pwqe51:parity": "tsx scripts/pwqe51-parity/index.ts",
+    "pwqe51:parity:strict": "tsx scripts/pwqe51-parity/index.ts --strict",
     "postinstall": "prisma generate"
   },
   "dependencies": {

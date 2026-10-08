@@ -1,0 +1,92 @@
+{
+  "id": "P03",
+  "title": "Uncertainty, not all distance",
+  "fictional": true,
+  "source_kind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+  "config": {
+    "people": {
+      "P1": "partner",
+      "P2": "supervisor",
+      "P3": "friend"
+    },
+    "referents": {
+      "evaluator": "P2",
+      "boundary_person": "P2",
+      "close_person": "P1",
+      "support_person": "P3",
+      "repair_person": "P1",
+      "conflict_person": "P1"
+    },
+    "topics": [
+      "body_detail"
+    ],
+    "unavailable_contexts": [],
+    "focus_topics": [],
+    "focus_occurrences": [],
+    "details": [],
+    "report_language": "no_preference",
+    "recall_window": "recent_weeks",
+    "entry_context": null,
+    "total_limit": 56,
+    "mapping_limit": 32,
+    "decision_limit": 72,
+    "option_seed": "patternwork-reference"
+  },
+  "answers": {
+    "M17": [
+      {
+        "selected": [
+          "M17.check"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "M18": [
+      {
+        "selected": [
+          "M18.upset"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "M19": [
+      {
+        "selected": [
+          "M19.ease"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "D43": [
+      {
+        "selected": [
+          "D43.okay"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "D44": [
+      {
+        "selected": [
+          "D44.reliable"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "D42": [
+      {
+        "selected": [
+          "D42.miss"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ]
+  },
+  "focus_roots": []
+}

@@ -1,5 +1,7 @@
 import { prisma } from "../../prisma.ts";
 import { ASSESSMENT_SESSION_COOKIE, constantTimeEqual, cookieKeyringFromEnv, readSessionCookieValue } from "../security/index.ts";
+import { isCompleteActiveReportSet, reportFailureStatus } from "./attempts.ts";
+import type { ReportFailureCategory } from "./types.ts";
 
 export interface ReportStatusAuthorizationBoundary {
   authorize(request: Request, assessmentSessionId: string): Promise<boolean>;
@@ -16,13 +18,25 @@ export interface ReportRunStatus {
   readonly status: string;
   readonly artifactAvailable: boolean;
   readonly reportId?: string;
-  readonly failureCode?: string;
   readonly updatedAt: string;
 }
 
 export interface ReportSessionStatus {
   readonly assessmentSessionId: string;
   readonly runs: readonly ReportRunStatus[];
+  readonly reportStatus: "NOT_STARTED" | "QUEUED" | "GENERATING" | "READY" | "FAILED";
+  readonly deliveryStatus: "NOT_STARTED" | "PENDING" | "SENT" | "DELIVERED" | "FAILED";
+  readonly failureCategory?: string;
+  readonly retryAudience: "USER" | "OPERATOR" | "NONE";
+  readonly canRetry: boolean;
+  readonly currentAttempt?: {
+    readonly attemptId: string;
+    readonly attemptNumber: number;
+    readonly status: string;
+    readonly failureCategory?: string;
+    readonly userRetryable: boolean;
+    readonly operatorRetryable: boolean;
+  };
 }
 
 interface StatusPrisma {
@@ -32,12 +46,14 @@ interface StatusPrisma {
       snapshots: Array<{
         snapshotId: string;
         completedPass: number;
+        currentReportAttemptNumber: number;
+        reportAttempts: Array<{ id: string; attemptNumber: number; status: string; failureCategory: string | null; retryAudience: "USER" | "OPERATOR" | "NONE"; notifications: Array<{ type: string; status: string }> }>;
         reportRuns: Array<{
           reportType: string;
           status: string;
           failureCode: string | null;
           updatedAt: Date;
-          artifact: { reportId: string; artifactStatus: string } | null;
+          artifact: { reportId: string; artifactStatus: string; pdfStatus: string; deliveries: Array<{ status: string }> } | null;
         }>;
       }>;
     } | null>;
@@ -78,6 +94,8 @@ export class PrismaReportStatusPersistence implements ReportStatusPersistenceBou
           select: {
             snapshotId: true,
             completedPass: true,
+            currentReportAttemptNumber: true,
+            reportAttempts: { orderBy: { attemptNumber: "desc" }, take: 1, select: { id: true, attemptNumber: true, status: true, failureCategory: true, retryAudience: true, notifications: { orderBy: { createdAt: "desc" }, select: { type: true, status: true } } } },
             reportRuns: {
               orderBy: { reportType: "asc" },
               select: {
@@ -85,7 +103,7 @@ export class PrismaReportStatusPersistence implements ReportStatusPersistenceBou
                 status: true,
                 failureCode: true,
                 updatedAt: true,
-                artifact: { select: { reportId: true, artifactStatus: true } },
+                artifact: { select: { reportId: true, artifactStatus: true, pdfStatus: true, deliveries: { select: { status: true } } } },
               },
             },
           },
@@ -93,18 +111,36 @@ export class PrismaReportStatusPersistence implements ReportStatusPersistenceBou
       },
     });
     if (!session) return null;
+    const latest = [...session.snapshots].sort((a, b) => b.completedPass - a.completedPass)[0];
+    const complete = latest ? isCompleteActiveReportSet(latest.completedPass as 1 | 2, latest.reportRuns) : false;
+    const attempt = latest?.reportAttempts[0];
+    const retry = reportFailureStatus((attempt?.failureCategory ?? null) as ReportFailureCategory | null, attempt?.retryAudience ?? "NONE");
+    const reportStatus = complete ? "READY" : !latest ? "NOT_STARTED" : attempt?.status === "QUEUED" ? "QUEUED" : attempt && ["FAILED", "STALLED"].includes(attempt.status) ? "FAILED" : "GENERATING";
+    const deliveryStates = complete ? latest!.reportRuns.flatMap((run) => run.artifact?.deliveries.map((delivery) => delivery.status) ?? []) : [];
+    const attemptNotification = attempt?.notifications.find((notification) => notification.type === (attempt.status === "FAILED" || attempt.status === "STALLED" ? "REPORT_FAILED" : "REPORT_STARTED"));
+    const notificationDeliveryStatus = !attemptNotification ? "NOT_STARTED" : attemptNotification.status === "DELIVERED" ? "DELIVERED" : attemptNotification.status === "SENT" ? "SENT" : attemptNotification.status === "FAILED" || attemptNotification.status === "BOUNCED" ? "FAILED" : "PENDING";
+    const deliveryStatus = !complete ? notificationDeliveryStatus : deliveryStates.length === 0 ? "NOT_STARTED" : deliveryStates.some((status) => status === "FAILED" || status === "BOUNCED") ? "FAILED" : deliveryStates.every((status) => status === "DELIVERED") ? "DELIVERED" : deliveryStates.every((status) => status === "SENT" || status === "DELIVERED") ? "SENT" : "PENDING";
+    const failureCategory = complete && deliveryStatus === "FAILED" ? "DELIVERY" : attempt?.failureCategory ?? undefined;
+    const retryAudience = complete && deliveryStatus === "FAILED" ? "OPERATOR" : attempt?.retryAudience ?? "NONE";
     return {
       assessmentSessionId: session.id,
-      runs: session.snapshots.flatMap((snapshot) => snapshot.reportRuns.map((run) => ({
+      reportStatus,
+      deliveryStatus,
+      ...(failureCategory ? { failureCategory } : {}),
+      retryAudience,
+      canRetry: Boolean(attempt && ["FAILED", "STALLED"].includes(attempt.status) && attempt.retryAudience === "USER"),
+      ...(attempt ? { currentAttempt: { attemptId: attempt.id, attemptNumber: attempt.attemptNumber, status: attempt.status, ...(attempt.failureCategory ? { failureCategory: attempt.failureCategory } : {}), ...retry } } : {}),
+      runs: session.snapshots.flatMap((snapshot) => {
+        const released = isCompleteActiveReportSet(snapshot.completedPass as 1 | 2, snapshot.reportRuns);
+        return snapshot.reportRuns.map((run) => ({
         snapshotId: snapshot.snapshotId,
         completedPass: snapshot.completedPass,
         reportType: run.reportType,
         status: run.status,
-        artifactAvailable: run.artifact?.artifactStatus === "ACTIVE",
-        ...(run.artifact?.artifactStatus === "ACTIVE" ? { reportId: run.artifact.reportId } : {}),
-        ...(run.failureCode ? { failureCode: run.failureCode } : {}),
+        artifactAvailable: released && run.artifact?.artifactStatus === "ACTIVE" && run.artifact.pdfStatus === "READY",
+        ...(released && run.artifact?.artifactStatus === "ACTIVE" && run.artifact.pdfStatus === "READY" ? { reportId: run.artifact.reportId } : {}),
         updatedAt: run.updatedAt.toISOString(),
-      }))),
+      })); }),
     };
   }
 }

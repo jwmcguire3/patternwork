@@ -13,6 +13,7 @@ export async function PUT(request: NextRequest) {
     responseOrder?: unknown;
     userArousal?: unknown;
     unsafeContext?: unknown;
+    correctionOfResponseId?: unknown;
   };
   try { body = await request.json(); } catch { return NextResponse.json({ error: "Invalid request." }, { status: 400 }); }
   const idempotencyKey = request.headers.get("Idempotency-Key")?.trim() ?? "";
@@ -30,6 +31,7 @@ export async function PUT(request: NextRequest) {
       responseOrder: Array.isArray(body.responseOrder) ? body.responseOrder.filter((entry): entry is string => typeof entry === "string") : [],
       userArousal: ["low", "unknown", "elevated", "high"].includes(String(body.userArousal)) ? body.userArousal as "low" | "unknown" | "elevated" | "high" : undefined,
       unsafeContext: body.unsafeContext === true,
+      correctionOfResponseId: typeof body.correctionOfResponseId === "string" ? body.correctionOfResponseId : undefined,
     });
     return NextResponse.json(result, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {

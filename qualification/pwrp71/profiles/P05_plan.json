@@ -1,0 +1,114 @@
+{
+  "id": "P05",
+  "title": "Loss of words is not the same as deciding to withdraw",
+  "fictional": true,
+  "source_kind": "adapted_authored_branch_segment_not_complete_observed_respondent",
+  "config": {
+    "people": {
+      "P1": "partner",
+      "P2": "supervisor",
+      "P3": "friend"
+    },
+    "referents": {
+      "evaluator": "P2",
+      "boundary_person": "P2",
+      "close_person": "P1",
+      "support_person": "P3",
+      "repair_person": "P1",
+      "conflict_person": "P1"
+    },
+    "topics": [
+      "body_detail"
+    ],
+    "unavailable_contexts": [],
+    "focus_topics": [],
+    "focus_occurrences": [],
+    "details": [
+      "state"
+    ],
+    "report_language": "no_preference",
+    "recall_window": "recent_weeks",
+    "entry_context": null,
+    "total_limit": 56,
+    "mapping_limit": 32,
+    "decision_limit": 72,
+    "option_seed": "patternwork-reference"
+  },
+  "answers": {
+    "M10": [
+      {
+        "selected": [
+          "M10.words"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "M11": [
+      {
+        "selected": [
+          "M11.stop"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "M12": [
+      {
+        "selected": [
+          "M12.same"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "D34": [
+      {
+        "selected": [
+          "D34.words"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "D30": [
+      {
+        "selected": [
+          "D30.stuck"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "M13": [
+      {
+        "selected": [
+          "M13.quiet"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "M14": [
+      {
+        "selected": [
+          "M14.choice"
+        ],
+        "status": "answered",
+        "mode": "single"
+      }
+    ],
+    "D36": [
+      {
+        "selected": [
+          "D36.input",
+          "D36.words",
+          "D36.think"
+        ],
+        "status": "answered",
+        "mode": "ordered"
+      }
+    ]
+  },
+  "focus_roots": []
+}

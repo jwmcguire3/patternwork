@@ -1,0 +1,27 @@
+{
+  "release": "PWRP-7.1.0-candidate.1",
+  "status": "authored_and_locally_testable_not_provider_qualified",
+  "compatible_router_format": "patternwork-router-evidence-v1",
+  "compatible_router_source_sha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+  "shared_prompt": "prompts/00_SHARED_REPORT_PROMPT_v7.md",
+  "layer_prompts": {
+    "MAP": "prompts/01_MAPPING_REPORT_PROMPT.md",
+    "IFS": "prompts/02_IFS_REPORT_PROMPT.md",
+    "PV": "prompts/03_STATE_REPORT_PROMPT.md",
+    "ATT": "prompts/04_ATTACHMENT_REPORT_PROMPT.md",
+    "SYNTHESIS": "prompts/05_SYNTHESIS_REPORT_PROMPT.md"
+  },
+  "reviewer_prompt": "prompts/06_REVIEWER_PROMPT.md",
+  "draft_schema": "schemas/report_draft.schema.json",
+  "review_schema": "schemas/report_review.schema.json",
+  "findings_cardinality": {
+    "minimum": null,
+    "maximum": null,
+    "theoretical_balance_required": false
+  },
+  "prompt_composition": "shared_plus_selected_layer_only",
+  "activation": "requires_external_provider_qualification_and_authorized_release_approval",
+  "runtime_implementation": "standalone_adapter_not_deployed",
+  "repair_prompt": "prompts/07_REPAIR_REPORT_PROMPT.md",
+  "compatible_question_release": "PWQE-5.1.0-candidate.1"
+}

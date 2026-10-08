@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://patternwork.invalid/schemas/pwrp71-approval-input-1.json",
+  "title": "PWRP 7.1 human approval input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "qualificationRunSha256",
+    "providerQualificationEvidenceSha256",
+    "semanticApprovalEvidenceSha256",
+    "draftPinsSha256",
+    "reviewedBy",
+    "reviewedAt",
+    "checklist"
+  ],
+  "properties": {
+    "status": { "const": "approved" },
+    "qualificationRunSha256": { "$ref": "#/$defs/sha256" },
+    "providerQualificationEvidenceSha256": { "$ref": "#/$defs/sha256" },
+    "semanticApprovalEvidenceSha256": { "$ref": "#/$defs/sha256" },
+    "draftPinsSha256": { "$ref": "#/$defs/sha256" },
+    "reviewedBy": { "type": "string", "minLength": 1 },
+    "reviewedAt": { "type": "string", "format": "date-time" },
+    "checklist": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allOutputsReviewed", "overreachAndOmissionReviewed", "sourceAndLineageReviewed", "pinsApproved"],
+      "properties": {
+        "allOutputsReviewed": { "const": true },
+        "overreachAndOmissionReviewed": { "const": true },
+        "sourceAndLineageReviewed": { "const": true },
+        "pinsApproved": { "const": true }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

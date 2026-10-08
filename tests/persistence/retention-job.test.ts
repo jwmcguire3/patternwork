@@ -15,10 +15,13 @@ function fakeRetentionDatabase(candidateCount: number) {
     completedAt: null,
   }));
   const transaction = {
+    patternworkV31Notification: { findMany: async () => [], deleteMany: async () => ({ count: 0 }) },
+    patternworkV31NotificationWebhookEvent: { deleteMany: async () => ({ count: 0 }) },
     patternworkV31AssessmentSnapshot: { findMany: async () => [], deleteMany: async () => ({ count: 0 }) },
     patternworkV31ReportRun: { findMany: async () => [], deleteMany: async () => ({ count: 0 }) },
     patternworkV31ReportArtifact: { findMany: async () => [], deleteMany: async () => ({ count: 0 }) },
-    patternworkV31ReportDelivery: { deleteMany: async () => ({ count: 0 }) },
+    patternworkV31ReportDelivery: { findMany: async () => [], deleteMany: async () => ({ count: 0 }) },
+    patternworkV31ReportWorkflowAttempt: { deleteMany: async () => ({ count: 0 }) },
     patternworkV31EvidencePacket: { deleteMany: async () => ({ count: 0 }) },
     patternworkV31AssessmentResponse: { deleteMany: async () => ({ count: 0 }) },
     patternworkV31AccessToken: { deleteMany: async () => ({ count: 0 }) },

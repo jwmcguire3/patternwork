@@ -1,0 +1,124 @@
+[
+  {
+    "id": "N01",
+    "unsupported_claim": "Anxious attachment from sending a second message",
+    "profile": "P04",
+    "evidence_indices": [
+      1
+    ],
+    "reason": "M17.send supplies action only. M18.info, M19.information and D43.information favor a practical account."
+  },
+  {
+    "id": "N02",
+    "unsupported_claim": "A handoff when events were simultaneous",
+    "profile": "synthetic_edge",
+    "evidence_indices": [],
+    "reason": "Change D08.after_failed to D08.overlap. Keep both actions but withdraw the failed-first-then-second sentence."
+  },
+  {
+    "id": "N03",
+    "unsupported_claim": "Two corroborating occasions from five questions about one event",
+    "profile": "P02",
+    "evidence_indices": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "reason": "All refer to E1. Rich detail strengthens that episode, not event count."
+  },
+  {
+    "id": "N04",
+    "unsupported_claim": "Shutdown was chosen to escape",
+    "profile": "P05",
+    "evidence_indices": [
+      2,
+      4,
+      5
+    ],
+    "reason": "Stopping plus blocked words is not a reported relief strategy; M12.same supplies no relief either."
+  },
+  {
+    "id": "N05",
+    "unsupported_claim": "Burden fear means a neglected child",
+    "profile": "P08",
+    "evidence_indices": [
+      1,
+      2,
+      5
+    ],
+    "reason": "Current aim and exposure do not provide childhood facts, age or historical cause."
+  },
+  {
+    "id": "N06",
+    "unsupported_claim": "Doubt returning means reassurance never works",
+    "profile": "counterfactual_reassurance",
+    "evidence_indices": [],
+    "reason": "D45.return differs from D45.words and D45.new. Keep immediate versus durable effect and new-event context separate."
+  },
+  {
+    "id": "N07",
+    "unsupported_claim": "A protective action always has a hidden cost",
+    "profile": "counterfactual_cost",
+    "evidence_indices": [],
+    "reason": "D06.none is a complete answer. Omit a cost not supplied elsewhere."
+  },
+  {
+    "id": "N08",
+    "unsupported_claim": "The body began the chain because it was noticed first",
+    "profile": "counterfactual_order",
+    "evidence_indices": [],
+    "reason": "D33.body supports first noticed, not physiological/causal precedence."
+  },
+  {
+    "id": "N09",
+    "unsupported_claim": "Two parts are polarized because two wants coexist",
+    "profile": "counterfactual_tension",
+    "evidence_indices": [],
+    "reason": "M26 plus M27 does not establish opposed entities. D12.ordinary specifically supports ordinary weighing."
+  },
+  {
+    "id": "N10",
+    "unsupported_claim": "A rejected name means resistance",
+    "profile": "correction",
+    "evidence_indices": [],
+    "reason": "C08 rejection changes the name/claim as appropriate. It is not independent evidence for it."
+  },
+  {
+    "id": "N11",
+    "unsupported_claim": "Missing body answers imply disconnection",
+    "profile": "missingness",
+    "evidence_indices": [],
+    "reason": "Topic preference and missingness create absent information, never dissociation evidence."
+  },
+  {
+    "id": "N12",
+    "unsupported_claim": "Raw recurrence rate equals protector prevalence",
+    "profile": "selection_bias",
+    "evidence_indices": [],
+    "reason": "A route deliberately repeats promising items. Its proportions cannot estimate how often a strategy occurs in daily life."
+  },
+  {
+    "id": "N13",
+    "unsupported_claim": "A manager cannot operate once a disagreement is intense",
+    "profile": "P06",
+    "evidence_indices": [
+      3,
+      4,
+      5,
+      6
+    ],
+    "reason": "Preventive aim can operate during pressure. Role is functional, not a before/during clock rule."
+  },
+  {
+    "id": "N14",
+    "unsupported_claim": "An inferred aim can be rewritten as a quote",
+    "profile": "P09",
+    "evidence_indices": [
+      5,
+      6
+    ],
+    "reason": "D09.none explicitly preserves no clear aim. Keep the relief function as an inference, not what the respondent said."
+  }
+]

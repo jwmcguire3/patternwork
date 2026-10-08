@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://patternwork.invalid/schemas/pwrp71-semantic-review-evidence-1.json",
+  "title": "PWRP 7.1 human semantic review evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "qualificationRunSha256",
+    "semanticCaseSetSha256",
+    "fixtureSetSha256",
+    "sourcePinsSha256",
+    "draftPinsSha256",
+    "reviewedBy",
+    "reviewedAt",
+    "cases"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "pwrp71-semantic-review-evidence-1" },
+    "qualificationRunSha256": { "$ref": "#/$defs/sha256" },
+    "semanticCaseSetSha256": { "$ref": "#/$defs/sha256" },
+    "fixtureSetSha256": { "$ref": "#/$defs/sha256" },
+    "sourcePinsSha256": { "$ref": "#/$defs/sha256" },
+    "draftPinsSha256": { "$ref": "#/$defs/sha256" },
+    "reviewedBy": { "type": "string", "minLength": 1 },
+    "reviewedAt": { "type": "string", "format": "date-time" },
+    "cases": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/case" }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "reportType": { "enum": ["MAP", "IFS", "PV", "ATT", "SYNTHESIS"] },
+    "reportRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profileId", "reportType", "artifactSha256"],
+      "properties": {
+        "profileId": { "type": "string", "pattern": "^C(?:0[1-9]|1[0-6])$" },
+        "reportType": { "$ref": "#/$defs/reportType" },
+        "artifactSha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "verdict", "reportRefs", "notes"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^CQ(?:0[1-9]|1[0-4])$" },
+        "verdict": { "enum": ["pass", "fail"] },
+        "reportRefs": { "type": "array", "items": { "$ref": "#/$defs/reportRef" } },
+        "notes": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

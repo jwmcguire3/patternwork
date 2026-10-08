@@ -35,12 +35,25 @@ class QueueProvider implements OpenRouterTransport {
 }
 
 function reviewedManifest(): { raw: string; sha256: string } {
+  const pin = (tierIndex: number, maxOutputTokens: number): ReviewedQualificationPin => {
+    const tier = QUALIFICATION_MODEL_ORDER[tierIndex];
+    const escalation = QUALIFICATION_MODEL_ORDER[Math.min(tierIndex + 1, QUALIFICATION_MODEL_ORDER.length - 1)];
+    return {
+      tier: tier.name,
+      model: tier.model,
+      reasoningEffort: tier.reasoningEffort,
+      escalationTier: escalation.name,
+      escalationModel: escalation.model,
+      escalationReasoningEffort: escalation.reasoningEffort,
+      maxOutputTokens,
+    };
+  };
   const pins = {
-    MAP: { tier: "luna-low", model: QUALIFICATION_MODEL_ORDER[0].model, reasoningEffort: "low", escalationTier: "luna-medium", escalationModel: QUALIFICATION_MODEL_ORDER[1].model, escalationReasoningEffort: "medium", maxOutputTokens: 16_000 },
-    IFS: { tier: "luna-medium", model: QUALIFICATION_MODEL_ORDER[1].model, reasoningEffort: "medium", escalationTier: "terra-medium", escalationModel: QUALIFICATION_MODEL_ORDER[2].model, escalationReasoningEffort: "medium", maxOutputTokens: 20_000 },
-    PV: { tier: "luna-medium", model: QUALIFICATION_MODEL_ORDER[1].model, reasoningEffort: "medium", escalationTier: "terra-medium", escalationModel: QUALIFICATION_MODEL_ORDER[2].model, escalationReasoningEffort: "medium", maxOutputTokens: 20_000 },
-    ATT: { tier: "terra-medium", model: QUALIFICATION_MODEL_ORDER[2].model, reasoningEffort: "medium", escalationTier: "sol-high", escalationModel: QUALIFICATION_MODEL_ORDER[3].model, escalationReasoningEffort: "high", maxOutputTokens: 20_000 },
-    SYNTHESIS: { tier: "terra-medium", model: QUALIFICATION_MODEL_ORDER[2].model, reasoningEffort: "medium", escalationTier: "sol-high", escalationModel: QUALIFICATION_MODEL_ORDER[3].model, escalationReasoningEffort: "high", maxOutputTokens: 16_000 },
+    MAP: pin(0, 16_000),
+    IFS: pin(1, 20_000),
+    PV: pin(1, 20_000),
+    ATT: pin(2, 20_000),
+    SYNTHESIS: pin(2, 16_000),
   } satisfies Readonly<Record<"MAP" | "IFS" | "PV" | "ATT" | "SYNTHESIS", ReviewedQualificationPin>>;
   const qualificationRunSha256 = "c".repeat(64);
   const draftPinsSha256 = sha256Canonical(pins);
@@ -68,6 +81,23 @@ test("live model activation fails closed without reviewed qualification evidence
   const activated = activateReviewedQualificationManifest(reviewed.raw, reviewed.sha256);
   assert.equal(activated.policy.MAP.model, QUALIFICATION_MODEL_ORDER[0].model);
   assert.equal(activated.policy.ATT.escalationModel, QUALIFICATION_MODEL_ORDER[3].model);
+  for (const pin of Object.values(activated.policy)) {
+    assert.equal(pin.model, "openai/gpt-6-luna");
+    assert.equal(pin.reasoningEffort, "max");
+    assert.equal(pin.escalationModel, "openai/gpt-6-luna");
+    assert.equal(pin.escalationReasoningEffort, "max");
+  }
+});
+
+test("rejects a manifest reviewed for the previous model and effort even when it is re-digested", () => {
+  const manifest = JSON.parse(reviewedManifest().raw) as ReviewedQualificationManifest;
+  const candidates = manifest.candidates.map((candidate, index) => ({
+    ...candidate,
+    model: "openai/gpt-5.6-luna",
+    reasoningEffort: (["low", "medium", "medium", "high"] as const)[index],
+  }));
+  const oldCandidateManifest = { ...manifest, candidates, candidateOrderSha256: sha256Canonical(candidates) };
+  assert.throws(() => activateReviewedQualificationManifest(JSON.stringify(oldCandidateManifest), sha256Canonical(oldCandidateManifest)), /different configured OpenRouter model/u);
 });
 
 test("validator rejection gets one same-tier repair and aggregates actual usage", async () => {
@@ -99,7 +129,8 @@ test("failed repair escalates exactly one tier and refusal skips same-tier repai
   ]);
   const repaired = await generateCanonicalReport({ reportType: "MAP", input: { packets: [packet] } as unknown as JsonObject, packets: [packet], provider: invalidProvider, invocationKey: "stable", spentMicros: 0, costCapMicros: 10_000_000, modelPolicy: UNQUALIFIED_MOCK_MODEL_POLICY });
   assert.equal(repaired.ok, true);
-  assert.deepEqual(invalidProvider.calls.map((call) => call.reasoningEffort), ["low", "low", "medium"]);
+  assert.deepEqual(invalidProvider.calls.map((call) => call.reasoningEffort), ["max", "max", "max"]);
+  assert.ok(invalidProvider.calls.every((call) => call.model === "openai/gpt-6-luna"));
 
   const refusalProvider = new QueueProvider([
     { ok: false, kind: "refusal", message: "refused", usage: usage("gen-r1") },
@@ -107,7 +138,8 @@ test("failed repair escalates exactly one tier and refusal skips same-tier repai
   ]);
   const escalated = await generateCanonicalReport({ reportType: "MAP", input: { packets: [packet] } as unknown as JsonObject, packets: [packet], provider: refusalProvider, invocationKey: "stable", spentMicros: 0, costCapMicros: 10_000_000, modelPolicy: UNQUALIFIED_MOCK_MODEL_POLICY });
   assert.equal(escalated.ok, true);
-  assert.deepEqual(refusalProvider.calls.map((call) => call.reasoningEffort), ["low", "medium"]);
+  assert.deepEqual(refusalProvider.calls.map((call) => call.reasoningEffort), ["max", "max"]);
+  assert.ok(refusalProvider.calls.every((call) => call.model === "openai/gpt-6-luna"));
 });
 
 test("cost cap is checked before every provider call", async () => {
