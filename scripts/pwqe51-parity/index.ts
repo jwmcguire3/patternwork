@@ -1,27 +1,67 @@
 import { spawnSync } from "node:child_process";
+import { closeSync, existsSync, mkdtempSync, mkdirSync, openSync, readFileSync, rmdirSync, unlinkSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { compilePwqe51Route, type Pwqe51CanonicalResponse, type Pwqe51RouterInput } from "../../lib/server/assessment/pwqe51-router.ts";
 import { loadPwqe51SourcePackage } from "../../lib/question-engine/pwqe51-source.ts";
 import { isReplayOperatorItem } from "./classification.ts";
+import { runPwqe51ControlContractQualification } from "./control-contract-qualification.ts";
+import { runPwqe51ReplayContractQualification } from "./replay-contract-qualification.ts";
 
 async function main(): Promise<void> {
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, "../..");
 const json = async (file: string) => JSON.parse(await readFile(path.join(root, file), "utf8"));
-const runCollector = (args: readonly string[] = []) => {
-  const result = spawnSync(process.env.PYTHON ?? "python", ["-B", path.join(here, "collect.py"), ...args], {
-    cwd: root, encoding: "utf8", maxBuffer: 64 * 1024 * 1024,
-    env: { ...process.env, PYTHONDONTWRITEBYTECODE: "1" },
-  });
-  if (result.status !== 0) throw new Error(`Python replay collector (${args.join(" ") || "original cohort"}) failed (${result.status}): ${(result.stderr || result.stdout).slice(-3000)}`);
-  return JSON.parse(result.stdout) as { plans: any[]; legacy_profile_ids: string[]; coverage_ids: string[]; config_policy?: any };
+const collectorRuns: { readonly cohort: string; readonly attempts: readonly { readonly status: number | null; readonly stdoutBytes: number; readonly stderrBytes: number }[] }[] = [];
+const runCollector = (cohort: string, args: readonly string[] = []) => {
+  const tempRoot = path.join(root, ".tmp");
+  mkdirSync(tempRoot, { recursive: true });
+  const tempDirectory = mkdtempSync(path.join(tempRoot, "pwqe51-parity-collector-"));
+  const outputPath = path.join(tempDirectory, "collector.json");
+  const errorPath = path.join(tempDirectory, "collector.stderr");
+  let result: ReturnType<typeof spawnSync> | undefined;
+  let stdout = "";
+  let stderr = "";
+  const attempts: { status: number | null; stdoutBytes: number; stderrBytes: number }[] = [];
+  try {
+    for (let attempt = 1; attempt <= 3; attempt += 1) {
+      const outputFd = openSync(outputPath, "w");
+      const errorFd = openSync(errorPath, "w");
+      try {
+        // Use files for both streams because this pinned Windows Python build
+        // can access-violate in Mapping readiness when its stderr is a pipe.
+        // PYTHONMALLOC=malloc also avoids the allocator-sensitive crash seen
+        // in the same reference code. These runtime settings do not alter the
+        // router, source package, or test inputs.
+        result = spawnSync(process.env.PYTHON ?? "python", ["-B", "-X", "faulthandler", path.join(here, "collect.py"), ...args], {
+          cwd: root, encoding: "utf8", maxBuffer: 64 * 1024 * 1024,
+          env: { ...process.env, PYTHONDONTWRITEBYTECODE: "1", PYTHONMALLOC: "malloc" },
+          stdio: ["ignore", outputFd, errorFd],
+        });
+      } finally {
+        closeSync(outputFd);
+        closeSync(errorFd);
+      }
+      stdout = existsSync(outputPath) ? readFileSync(outputPath, "utf8") : "";
+      stderr = existsSync(errorPath) ? readFileSync(errorPath, "utf8") : "";
+      attempts.push({ status: result.status, stdoutBytes: Buffer.byteLength(stdout), stderrBytes: Buffer.byteLength(stderr) });
+      const nativeAccessViolation = result.status === 3221225477 || result.status === -1073741819;
+      if (!nativeAccessViolation || stdout.length > 0 || attempt === 3) break;
+    }
+  } finally {
+    if (existsSync(outputPath)) unlinkSync(outputPath);
+    if (existsSync(errorPath)) unlinkSync(errorPath);
+    rmdirSync(tempDirectory);
+  }
+  if (!result || result.status !== 0) throw new Error(`Python replay collector (${cohort}) failed (${result?.status ?? result?.error?.message ?? "unknown status"}): ${(stderr || stdout).slice(-3000)}`);
+  collectorRuns.push({ cohort, attempts });
+  return JSON.parse(stdout) as { plans: any[]; legacy_profile_ids: string[]; coverage_ids: string[]; config_policy?: any };
 };
-const independent = runCollector();
+const independent = runCollector("original");
 // Keep the published 25-plan corpus intact. This second run is an independently
 // collected cohort with only the C04 body_detail permission removed.
-const withoutBodyDetail = runCollector(["--without-body-detail"]);
+const withoutBodyDetail = runCollector("without_body_detail", ["--without-body-detail"]);
 const [worked, coverage, source, parityExceptions, referenceExtensions] = await Promise.all([
   json("specs/patternwork/question-engine-v5/examples/worked_paths.json"),
   json("specs/patternwork/question-engine-v5.1/qualification/coverage/FICTIONAL_PLANS.json"),
@@ -811,6 +851,8 @@ const d41ExtensionCases = (referenceExtensions.cases ?? []).map((fixture: any) =
 });
 const d41ExtensionPassed = d41ExtensionPinned && requiredD41Cases.size === d41CaseIds.size
   && d41ExtensionCases.length === requiredD41Cases.size && d41ExtensionCases.every((row: any) => row.passed);
+const replayContractQualification = await runPwqe51ReplayContractQualification(root);
+const controlContractQualification = await runPwqe51ControlContractQualification(root);
 
 const report: any[] = [];
 for (const profile of worked.profiles) {
@@ -1100,17 +1142,17 @@ const unsupportedComparisonCount = coverageCounts.unsupported_python_replay_cand
   + coverageCounts.post_target_invalidated_rows_unsupported
   + coverageCounts.post_target_typescript_removed_targets_unsupported;
 const unsupportedCoverageReasons = [
-  ["python_replay_candidate_rows", coverageCounts.unsupported_python_replay_candidate_rows],
+  ["replay_candidate_rows_not_cross_engine_compared", coverageCounts.unsupported_python_replay_candidate_rows],
   ["typescript_entry_point_candidates_without_python_equivalent", coverageCounts.shared_route_unsupported_python_entry_point_candidate_rows],
   ["typescript_entry_point_choices_without_python_equivalent", coverageCounts.unsupported_python_entry_point_choice_steps],
   ["typescript_entry_point_finishes_without_python_equivalent", coverageCounts.unsupported_python_entry_point_finish_steps],
   ["other_finish_rows_after_divergence_or_outside_policy", coverageCounts.unsupported_finish_steps],
-  ["python_binding_control_steps", coverageCounts.python_binding_control_steps_not_comparable],
-  ["python_mapping_ready_steps", coverageCounts.python_mapping_ready_steps_not_comparable],
+  ["python_binding_controls_not_normalized_with_typescript_session_decisions", coverageCounts.python_binding_control_steps_not_comparable],
+  ["python_mapping_ready_controls_not_normalized_with_typescript_pass_transitions", coverageCounts.python_mapping_ready_steps_not_comparable],
   ["unmatched_candidate_rejection_rows", coverageCounts.python_rejection_rows_without_typescript_reason + coverageCounts.typescript_rejection_rows_without_python_reason],
-  ["python_REPLAY_rejection_rows_without_comparable_selector", coverageCounts.python_replay_rejection_rows_unsupported],
-  ["typescript_REPLAY_rejection_rows_without_comparable_selector", coverageCounts.typescript_replay_rejection_rows_unsupported],
-  ["separate_no_body_detail_cohort_replay_or_control_gaps", noBodyDetailReports.reduce((sum: number, row: any) => sum
+  ["python_replay_rejection_rows_not_cross_engine_compared", coverageCounts.python_replay_rejection_rows_unsupported],
+  ["typescript_replay_rejection_rows_not_cross_engine_compared", coverageCounts.typescript_replay_rejection_rows_unsupported],
+  ["opt_out_cohort_replay_and_control_surfaces_not_cross_engine_compared", noBodyDetailReports.reduce((sum: number, row: any) => sum
     + (row.replay_operator_rows_unsupported ?? 0) + (row.binding_controls_not_comparable ?? 0) + (row.mapping_ready_rows_not_comparable ?? 0), 0)],
   ["post_target_rows_without_accepted_response_transition", coverageCounts.post_target_transition_steps_unsupported],
   ["post_target_entry_point_pseudo_rows", coverageCounts.post_target_entry_point_rows_unsupported],
@@ -1121,6 +1163,8 @@ const structuralMismatchCount = coverageCounts.observation_projection_mismatches
   + coverageCounts.no_body_detail_projection_mismatches;
 for (const row of d41ExtensionCases as any[]) if (!row.passed) unexplainedDifferenceKeys.add(`d41_contract_case:${row.id}`);
 if (!d41ExtensionPinned || !d41ExtensionPassed) unexplainedDifferenceKeys.add("d41_contract_extension_binding_or_required_cases_incomplete");
+if (replayContractQualification.status !== "passed") unexplainedDifferenceKeys.add("controlled_replay_contract_qualification_failed");
+if (controlContractQualification.status !== "passed") unexplainedDifferenceKeys.add("control_semantics_contract_qualification_failed");
 if (coverageCounts.approved_representation_exception_keys !== 11 || coverageCounts.stale_parity_exception_keys !== 0) unexplainedDifferenceKeys.add("entry_point_representation_exception_scope_changed");
 if (!noBodyDetailSummary.d41_opt_out_behavior_verified || noBodyDetailSummary.replayed_plans !== 25) unexplainedDifferenceKeys.add("no_body_detail_cohort_incomplete_or_d41_opt_out_failed");
 if (!noBodyDetailExceptionScopeMatches) unexplainedDifferenceKeys.add("no_body_detail_entry_point_exception_scope_changed");
@@ -1158,8 +1202,37 @@ const outcome = {
     && coverageCounts.occurrence_binding_mismatch_steps === 0,
   full_applicable_parity_established: strictStatus === "pass_on_full_declared_comparison_surface",
 };
+const gateResults = {
+  implementation_completeness: {
+    status: replayContractQualification.status === "passed" ? "session_runtime_path_implemented_and_exercised" : "incomplete_or_failing",
+    controlled_replay: replayContractQualification.status,
+    attached_children: replayContractQualification.cases.find((row) => row.id === "attached-child-and-comparison-lineage-stay-on-the-confirmed-pair")?.passed ? "implemented_and_exercised_on_original_C07_session" : "incomplete_or_failing",
+    correction_invalidation: replayContractQualification.cases.find((row) => row.id === "corrections-invalidate-only-evidence-whose-support-was-withdrawn")?.passed ? "implemented_and_exercised" : "incomplete_or_failing",
+    authenticated_database_and_browser_integration: "implemented_in_source; not exercised against a live qualified PWQE51 session in this run",
+    activation: "not_attempted",
+  },
+  independent_behavioral_qualification: {
+    status: d41ExtensionPassed && replayContractQualification.status === "passed" && controlContractQualification.status === "passed"
+      ? "declared_case_sets_passed; broader_integration_scope_incomplete" : "failed_or_incomplete",
+    source_binding: source.manifest.source_binding,
+    d41: { status: d41ExtensionPassed ? "passed" : "failed_or_incomplete", case_count: d41ExtensionCases.length, classification: "independent contract qualification; not Python/TypeScript parity" },
+    controlled_replay_and_C07: replayContractQualification,
+    control_semantics: controlContractQualification,
+    limitations: ["authenticated database writes and browser reload were not exercised through a live session", "Python bind and mapping_ready action normalization remains outside the cross-engine comparison surface"],
+  },
+  cross_engine_parity: {
+    status: strictStatus,
+    full_applicable_parity_established: strictStatus === "pass_on_full_declared_comparison_surface",
+    unexplained_differences: unexplainedDifferenceCount,
+    unnormalized_comparison_surfaces: unsupportedComparisonCount,
+    interpretation: "A passed independent contract case does not convert an unnormalized Python/TypeScript trajectory into cross-engine parity.",
+  },
+};
 console.log(JSON.stringify({
   audit_status: "completed; not a parity-pass assertion",
+  reference_runtime: { executable: process.env.PYTHON ?? "python", allocator: "malloc", collectors: collectorRuns,
+    retry_policy: "retry only a Windows access-violation exit with no stdout, up to three attempts; any repeated failure blocks the audit",
+    allocator_note: "Windows collector stability setting; reference code and source package unchanged" },
   strict_mode: strictMode,
   strict_status: strictStatus,
   strict_unexplained_difference_count: unexplainedDifferenceCount,
@@ -1168,6 +1241,7 @@ console.log(JSON.stringify({
   strict_unsupported_comparison_count_is_unique_rows: false,
   strict_unsupported_comparison_count_note: "This additive total counts unsupported comparison surfaces, not unique rows; the category counts below are the reviewable breakdown and may overlap.",
   strict_unsupported_coverage_reasons: unsupportedCoverageReasons,
+  gate_results: gateResults,
   outcome,
   d41_independent_contract_qualification: {
     source_binding_verified: d41ExtensionPinned,
@@ -1177,11 +1251,14 @@ console.log(JSON.stringify({
     cases: d41ExtensionCases,
     classification: "independent contract-based qualification; not Python/TypeScript cross-engine parity",
   },
+  control_semantics_independent_contract_qualification: controlContractQualification,
+  controlled_replay_independent_contract_qualification: replayContractQualification,
   no_body_detail_cohort: noBodyDetailSummary,
   approved_target_state_exception_ids: [...new Set(mismatches.flatMap((mismatch: any) => mismatch.approved_exception_id ? [mismatch.approved_exception_id] : []))],
   coverage_counts: coverageCounts, python_failures: pythonFailures, mismatches, plans: report,
 }, null, 2));
-if (strictMode && strictStatus !== "pass_on_full_declared_comparison_surface") process.exitCode = 1;
+if (strictMode && (strictStatus !== "pass_on_full_declared_comparison_surface"
+  || replayContractQualification.status !== "passed" || controlContractQualification.status !== "passed")) process.exitCode = 1;
 }
 
 main().catch((error) => { console.error(error); process.exitCode = 1; });

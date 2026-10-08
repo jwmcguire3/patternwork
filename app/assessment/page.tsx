@@ -20,6 +20,7 @@ export default function AssessmentPage(){
  if(state.status==="generating_pass1"||state.status==="generating_pass2")return <Generating state={state} pass={state.status.endsWith("pass1")?1:2} poll={load}/>;
  if(state.status==="pass1_ready"||state.status==="pass2_ready"||state.status==="report_ready")return <Boundary state={state} request={request}/>;
  if(state.status==="paused"||state.status==="recovery")return <Pause state={state} request={request}/>;
+ if(state.engine==="PWQE51"&&state.pendingReplayBinding)return <Pwqe51ReplayBinding state={state} request={request}/>;
  if(state.interaction===null&&state.canCompletePass)return <Boundary state={state} request={request}/>;
  if(state.engine==="PWQE51"&&state.pwqe51Interaction)return <Pwqe51Question key={state.pwqe51Interaction.instanceId} state={state} item={state.pwqe51Interaction} request={request} save={save} preview={preview}/>;
  if(state.engine==="PWQE5"&&state.pwqe5Interaction)return <Pwqe5Question key={state.pwqe5Interaction.instanceId} state={state} item={state.pwqe5Interaction} request={request} save={save} preview={preview}/>;
@@ -29,6 +30,7 @@ export default function AssessmentPage(){
 function Pwqe51Question({state,item,request,save,preview}:{state:AssessmentState;item:Pwqe51RenderedInteraction;request:(p:string,m:"POST"|"PUT",b:Record<string,unknown>,h?:Record<string,string>)=>void;save:string;preview:boolean}){
  const initial=state.draft??{};
  const [value,setValue]=useState<Record<string,unknown>>(()=>initial);
+ const [bindingCorrectionRef,setBindingCorrectionRef]=useState<string|undefined>();
  const lastSaved=useRef(JSON.stringify(initial));
  const selected=Array.isArray(value.selectedOptionIds)?value.selectedOptionIds.filter((entry):entry is string=>typeof entry==="string"):[];
  const set=(key:string,next:unknown)=>setValue((prior)=>({...prior,[key]:next}));
@@ -53,9 +55,11 @@ function Pwqe51Question({state,item,request,save,preview}:{state:AssessmentState
  const canAnswer=isPwqe51AnswerValid(value,item);
  const choose=(id:string)=>setValue((prior)=>togglePwqe51Option(prior,item,id));
  const basisLabels:Record<string,string>={actual_recalled:"A specific situation I can recall",reported_typicality:"A pattern I recognize as typical"};
+ if(bindingCorrectionRef)return <Pwqe51ReplayBinding state={state} request={request} correctionRef={bindingCorrectionRef} cancelCorrection={()=>setBindingCorrectionRef(undefined)}/>;
  return <main className={styles.shell}>
   <header className={styles.header}><div><p className={styles.kicker}>Patternwork · {item.stage==="mapping"?"Mapping":"Deepening"}</p><p className={styles.progressText}>Question {item.administrationSequence}. You can skip or pause whenever you need.</p>{state.mappingSummaryUrl&&<a href={state.mappingSummaryUrl}>Open your Mapping Summary</a>}</div><p className={styles.save} aria-live="polite">{preview?"Preview — not saved":save||"Saved automatically"}</p></header>
   {state.resumeNotificationStatus==="FAILED"?<ResumeEmailWarning/>:null}
+  {state.replayBindingHistory?.some((binding)=>binding.canCorrect)&&<details className={styles.history}><summary>Change an earlier occasion distinction</summary>{state.replayBindingHistory.filter((binding)=>binding.canCorrect).map((binding)=><button className={styles.textButton} type="button" key={binding.ref} onClick={()=>setBindingCorrectionRef(binding.ref)}>{binding.rootTitle}</button>)}</details>}
   <div className={styles.stageBar} aria-label="Stage progress"><span style={{width:`${Math.max(8,Math.min(100,state.stageProgress??8))}%`}}/></div>
   <section className={styles.card} aria-labelledby="pwqe51-prompt">
    {roleChoicesVisible&&<fieldset><legend>{item.referentSlotPrompt??"Who was involved in the moment you are answering about?"}</legend><div className={styles.options}>{item.referentRoleOptions.map((role)=><button type="button" key={role.id} aria-pressed={selectedRole?.id===role.id} className={selectedRole?.id===role.id?styles.selected:styles.option} onClick={()=>setValue(()=>({referentRole:role.id,selectedOptionIds:[],mode:"single",basis:undefined}))}>{role.label}</button>)}</div></fieldset>}
@@ -116,6 +120,31 @@ function Pwqe5Question({state,item,request,save,preview}:{state:AssessmentState;
    <label className={styles.field}>Private note (optional)<textarea value={String(value.note??"")} onChange={(event)=>set("note",event.target.value)}/></label>
    <div className={styles.controls}>{question.responseControls.filter((control)=>control.id!=="skip").map((control)=><button className={styles.textButton} type="button" key={control.id} onClick={()=>submit(control.id)}>{control.text}</button>)}{controls.has("skip")&&<button className={styles.textButton} type="button" onClick={()=>submit("skip")}>{controls.get("skip")}</button>}{state.canPause&&<button className={styles.textButton} type="button" onClick={()=>request("pause","POST",{expectedRevision:state.revision,action:"pause"})}>Pause & save</button>}{state.allowedControls?.includes("shorten")&&<button className={styles.textButton} type="button" onClick={()=>request("control","POST",{expectedRevision:state.revision,action:"shorten"})}>Shorten this assessment</button>}{state.allowedControls?.includes("end")&&<button className={styles.textButton} type="button" onClick={()=>request("complete-pass","POST",{expectedRevision:state.revision,completedPass:state.pass,action:"end"})}>End now with what is supported</button>}<button className={styles.primary} type="button" disabled={!canAnswer} onClick={()=>submit("answered")}>{correctionOfResponseId?"Save correction":"Continue"}</button></div>
    <p className={styles.small}>Only the options you select become structured answers. Your private note is excluded from report generation.</p>
+  </section>
+ </main>;
+}
+function Pwqe51ReplayBinding({state,request,correctionRef,cancelCorrection}:{state:AssessmentState;request:(p:string,m:"POST"|"PUT",b:Record<string,unknown>,h?:Record<string,string>)=>void;correctionRef?:string;cancelCorrection?:()=>void}){
+ const prior=correctionRef?state.replayBindingHistory?.find((binding)=>binding.ref===correctionRef):undefined;
+ const pending=state.pendingReplayBinding;
+ const item=prior?{rootTitle:prior.rootTitle,prompt:"A different question does not necessarily mean a different event.",sourceLabel:"the situation you compared it with"}:pending;
+ if(!item)return <main className={styles.shell}><section className={styles.intro}><h1>This choice is no longer available.</h1><button className={styles.primary} type="button" onClick={cancelCorrection}>Continue</button></section></main>;
+ const options:["different"|"same"|"unknown"|"no_event"|"skip",string][]=[
+  ["different","A different actual occasion"],
+  ["same","The same occasion"],
+  ["unknown","I can’t distinguish it, or this describes what usually happens"],
+  ["no_event","I can’t recall another actual occasion"],
+  ["skip","Skip"],
+ ];
+ const choose=(outcome:string)=>request("replay-binding","POST",{expectedRevision:Number(state.revision),outcome,...(correctionRef?{correctionOfBindingRef:correctionRef}:{})},{"Idempotency-Key":crypto.randomUUID()});
+ return <main className={styles.shell}>
+  <header className={styles.header}><div><p className={styles.kicker}>Patternwork · Deepening</p><p className={styles.progressText}>{item.rootTitle}</p></div></header>
+  <section className={styles.card} aria-labelledby="replay-binding-prompt">
+   <h1 id="replay-binding-prompt">{item.prompt}</h1>
+   <p>This check concerns {item.sourceLabel}. Think of the event itself, not the question used to describe it.</p>
+   {correctionRef&&<p className={styles.small}>Changing this choice will update which later answers remain supported.</p>}
+   <fieldset><legend>Which describes the occasion?</legend><div className={styles.options}>{options.map(([id,label])=><button type="button" className={styles.option} key={id} onClick={()=>choose(id)}>{label}</button>)}</div></fieldset>
+   {cancelCorrection&&<button className={styles.textButton} type="button" onClick={cancelCorrection}>Cancel</button>}
+   {state.replayBindingHistory?.some((binding)=>binding.canCorrect)&&<details className={styles.history}><summary>Change an earlier occasion distinction</summary>{state.replayBindingHistory.filter((binding)=>binding.canCorrect).map((binding)=><button className={styles.textButton} type="button" key={binding.ref} onClick={()=>request("replay-binding","POST",{expectedRevision:Number(state.revision),outcome:binding.outcome,correctionOfBindingRef:binding.ref},{"Idempotency-Key":crypto.randomUUID()})}>{binding.rootTitle}</button>)}</details>}
   </section>
  </main>;
 }

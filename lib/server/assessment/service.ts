@@ -56,6 +56,7 @@ import { assertPwrp71ReportActivationReady } from "../reports/pwrp71-readiness.t
 import { buildPwqe51RouterPacket } from "../reports/pwqe51-packet.ts";
 import {
   advancePwqe51Session,
+  applyPwqe51ReplayBinding,
   beginPwqe51Correction,
   canCompletePwqe51Pass,
   createPwqe51SessionState,
@@ -68,6 +69,7 @@ import {
   shortenPwqe51Session,
   startPwqe51Deepening,
   type Pwqe51SessionState,
+  type Pwqe51ReplayBindingOutcome,
 } from "./pwqe51-session.ts";
 
 const ACCESS_TOKEN_SCOPE = "RESUME_ASSESSMENT" as const;
@@ -345,6 +347,10 @@ function focusOccurrenceRef(sessionId: string, occurrenceId: string): string {
   return `focus_${sha256(`${sessionId}:${occurrenceId}`).slice(0, 20)}`;
 }
 
+function replayBindingRef(sessionId: string, decisionId: string): string {
+  return `binding_${sha256(`${sessionId}:${decisionId}`).slice(0, 24)}`;
+}
+
 export function resolvePwqe51PassTwoContext(sessionId: string, state: Pwqe51SessionState, input: Pwqe51PassTwoContextInput = {}) {
   const choices = pwqe51FocusChoices(state);
   const occurrenceByRef = new Map(choices.map((choice) => [focusOccurrenceRef(sessionId, choice.occurrenceId), choice.occurrenceId]));
@@ -415,6 +421,9 @@ async function pwqe51StateView(client: Database | Prisma.TransactionClient, sess
   const questions = new Map(source.questionBank.items.map((question) => [question.id, question]));
   const variants = new Map(source.questionBank.variants.map((variant) => [variant.id, variant]));
   const superseded = new Set(state.responses.flatMap((response) => response.supersedesResponseId ? [response.supersedesResponseId] : []));
+  const supersededBindings = new Set((state.replayBindingHistory ?? []).flatMap((decision) => decision.supersedesDecisionId ? [decision.supersedesDecisionId] : []));
+  const activeReplayBindings = (state.replayBindingHistory ?? []).filter((decision) => !supersededBindings.has(decision.decisionId));
+  const pendingCandidate = state.routerResult.next?.bindingRequest === "confirm_replay_distinctness" ? state.routerResult.next : null;
   return {
     engine: "PWQE51" as const,
     schemaVersion: state.schemaVersion,
@@ -425,6 +434,17 @@ async function pwqe51StateView(client: Database | Prisma.TransactionClient, sess
     stage: pwqe51Stage(state),
     safeResumeStage: pwqe51Stage(state),
     currentInteraction: renderPwqe51Interaction(state, source),
+    pendingReplayBinding: pendingCandidate ? {
+      rootTitle: questions.get(pendingCandidate.questionId)?.title ?? "A repeated situation",
+      prompt: "A different question does not necessarily mean a different event.",
+      sourceLabel: "the situation you described earlier",
+    } : null,
+    replayBindingHistory: activeReplayBindings.map((decision) => ({
+      ref: replayBindingRef(session.id, decision.decisionId),
+      rootTitle: questions.get(decision.questionId)?.title ?? "A repeated situation",
+      outcome: decision.outcome,
+      canCorrect: !state.paused && state.phase !== "finished",
+    })),
     canCompletePass: canCompletePwqe51Pass(state),
     canPause: true as const,
     completedCount: state.responses.length,
@@ -438,8 +458,6 @@ async function pwqe51StateView(client: Database | Prisma.TransactionClient, sess
       return {
         responseId: response.responseId,
         questionId: response.questionId,
-        occurrenceId: response.occurrenceId,
-        stepId: response.stepId ?? question?.step_binding ?? "first",
         basis: response.basis,
         title: question?.title ?? response.questionId,
         context: question?.context ?? question?.episode_family ?? "",
@@ -591,6 +609,83 @@ export async function getPwqe51AssessmentState(sessionId: string, dependencies: 
   const state = decryptJson<unknown>(asEncrypted(session), statePurpose(session.id), keyring);
   if (!isPwqe51SessionState(state) || state.sourceRelease !== PWQE51_RELEASE_IDENTITY.questionRelease) throw new AssessmentError("unauthorized", "Assessment session is bound to an unavailable source release.");
   return { session, routingState: state, state: await pwqe51StateView(db, session, state, keyring) };
+}
+
+export async function savePwqe51ReplayBinding(
+  sessionId: string,
+  input: {
+    readonly expectedRevision: number;
+    readonly idempotencyKey: string;
+    readonly outcome: Pwqe51ReplayBindingOutcome;
+    readonly correctionOfBindingRef?: string;
+  },
+  dependencies: AssessmentServiceDependencies = {},
+) {
+  await assertPwqe51Ready();
+  const { db, keyring, now } = deps(dependencies);
+  if (!Number.isSafeInteger(input.expectedRevision) || typeof input.idempotencyKey !== "string"
+    || input.idempotencyKey.length < 8 || input.idempotencyKey.length > 200
+    || !["different", "same", "unknown", "no_event", "skip"].includes(input.outcome)
+    || (input.correctionOfBindingRef !== undefined && typeof input.correctionOfBindingRef !== "string")) {
+    throw new AssessmentError("invalid", "Replay decision is outside the PWQE 5.1 control contract.");
+  }
+  const decisionId = `pwrb_${sha256(`${sessionId}:${input.idempotencyKey}`).slice(0, 40)}`;
+  const requestSha256 = sha256(canonicalize({ outcome: input.outcome, correctionOfBindingRef: input.correctionOfBindingRef ?? null }));
+  return db.$transaction(async (tx) => {
+    const session = await tx.patternworkV31AssessmentSession.findUnique({ where: { id: sessionId } });
+    if (!session || session.assessmentKey !== PWQE51_ASSESSMENT_KEY || !["IN_PROGRESS", "PASS2_IN_PROGRESS", "PAUSED"].includes(session.status)) {
+      throw new AssessmentError("unauthorized", "Assessment session is unavailable.");
+    }
+    const stored = decryptJson<unknown>(asEncrypted(session), statePurpose(session.id), keyring);
+    if (!isPwqe51SessionState(stored) || stored.sourceRelease !== PWQE51_RELEASE_IDENTITY.questionRelease) {
+      throw new AssessmentError("unauthorized", "Assessment session state is unavailable.");
+    }
+    const duplicate = stored.replayBindingHistory?.find((decision) => decision.decisionId === decisionId);
+    if (duplicate) {
+      if (!constantTimeEqual(duplicate.requestSha256, requestSha256)) throw new AssessmentError("conflict", "Idempotency-Key was already used for a different replay decision.");
+      return { state: await pwqe51StateView(tx, session, stored, keyring) };
+    }
+    if (session.optimisticRevision !== input.expectedRevision) throw new AssessmentError("conflict", "Assessment state has changed.");
+    const superseded = new Set((stored.replayBindingHistory ?? []).flatMap((decision) => decision.supersedesDecisionId ? [decision.supersedesDecisionId] : []));
+    const decisionByRef = new Map((stored.replayBindingHistory ?? []).filter((decision) => !superseded.has(decision.decisionId))
+      .map((decision) => [replayBindingRef(sessionId, decision.decisionId), decision.decisionId]));
+    const correctsDecisionId = input.correctionOfBindingRef
+      ? decisionByRef.get(input.correctionOfBindingRef)
+      : undefined;
+    if (input.correctionOfBindingRef && !correctsDecisionId) throw new AssessmentError("invalid", "Replay correction reference is stale or unavailable.");
+    const source = await loadPwqe51SourcePackage();
+    let next: Pwqe51SessionState;
+    try {
+      next = applyPwqe51ReplayBinding(stored, {
+        decisionId,
+        requestSha256,
+        outcome: input.outcome,
+        ...(correctsDecisionId ? { correctsDecisionId } : {}),
+      }, source);
+    } catch {
+      throw new AssessmentError("invalid", "Assessment cannot accept that replay decision right now.");
+    }
+    const encrypted = encryptJson(next, statePurpose(sessionId), keyring);
+    const timestamp = now();
+    const updated = await tx.patternworkV31AssessmentSession.updateMany({
+      where: { id: sessionId, optimisticRevision: input.expectedRevision },
+      data: {
+        status: next.pass === 1 ? "IN_PROGRESS" : "PASS2_IN_PROGRESS",
+        currentPass: next.pass,
+        currentStage: pwqe51Stage(next),
+        safeResumeStage: pwqe51Stage(next),
+        stateCiphertext: prismaBytes(encrypted.ciphertext),
+        stateNonce: prismaBytes(encrypted.nonce),
+        encryptionKeyVersion: encrypted.keyVersion,
+        optimisticRevision: { increment: 1 },
+        expiresAt: abandonedRetentionExpiresAt(timestamp),
+        retentionExpiresAt: abandonedRetentionExpiresAt(timestamp),
+      },
+    });
+    if (updated.count !== 1) throw new AssessmentError("conflict", "Assessment state has changed.");
+    const fresh = await tx.patternworkV31AssessmentSession.findUniqueOrThrow({ where: { id: sessionId } });
+    return { state: await pwqe51StateView(tx, fresh, next, keyring) };
+  }, { isolationLevel: "Serializable" });
 }
 
 export async function savePwqe51AssessmentResponse(

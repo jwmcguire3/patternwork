@@ -83,6 +83,94 @@ test("substantive budgets count selected decision cost, while corrections and st
   assert.equal(budgetStopped.completionReason, "administration_or_decision_limit");
 });
 
+test("the 56-administration ceiling includes Mapping, Deepening, and the confirmed replay root", async () => {
+  const source = await sourcePromise;
+  const ordinaryDeepeningRoots = source.questionBank.items.filter((question) => question.stage === "deepening"
+    && question.id !== "M02"
+    && question.eligibility.requires_answered.length === 0
+    && question.eligibility.topic_opt_in === null
+    && question.selection.mode !== "partial_order"
+    && !["D03", "D05", "D19", "D44", "D48", "D89", "D90", "D99", "M09"].includes(question.id)
+    && question.options.length > 0).slice(0, 30);
+  assert.equal(ordinaryDeepeningRoots.length, 30, "the authored bank supplies enough independent root items for the boundary fixture");
+
+  const mapping = Array.from({ length: 24 }, (_, index) => root(
+    `budget-map-${index}`, "M01", "M01.rest", `budget-map-episode-${index}`,
+  ));
+  const deepening = ordinaryDeepeningRoots.map((question, index) => root(
+    `budget-deep-${index}`, question.id, question.options[0]!.id, `budget-deep-episode-${index}`,
+    { mode: question.selection.mode === "partial_order" ? "ordered" : "single" },
+  ));
+  const replayPair = ["budget-replay-first", "budget-replay-second"] as const;
+  const replayResponses = [
+    root("budget-replay-original", "M02", "M02.rehearse", replayPair[0]),
+    root("budget-replay-confirmed", "M02", "M02.rehearse", replayPair[1], {
+      replayOfOccurrenceId: replayPair[0], targetIds: [`recurrence:${replayPair[0]}:first`],
+    }),
+  ];
+  const result = compilePwqe51Route({ phase: "deepening", responses: [...mapping, ...deepening, ...replayResponses],
+    distinctPairs: [[...replayPair]], episodeLinks: [{ occurrenceId: replayPair[1], linkedFrom: replayPair[0] }] }, source);
+  assert.equal(result.administrationCount, 56);
+  assert.equal(result.decisionCount, 56);
+  assert.equal(result.phase, "finished");
+  assert.equal(result.completionReason, "administration_or_decision_limit");
+  assert.equal(result.next, null);
+  assert.deepEqual(result.candidates, []);
+});
+
+test("the 72-decision ceiling counts 24 authored simultaneous pairs", async () => {
+  const source = await sourcePromise;
+  const pairQuestions = source.questionBank.items.filter((question) => question.stage === "deepening"
+    && question.eligibility.requires_answered.length === 0
+    && question.eligibility.topic_opt_in === null
+    && !["D03", "D05", "D19", "D44", "D48", "D89", "D90", "D99", "M09"].includes(question.id)
+    && question.selection.allow_simultaneous_pair === true
+    && question.options.filter((option) => !option.exclusive).length >= 2).slice(0, 24);
+  assert.equal(pairQuestions.length, 24, "the authored bank supplies 24 independent pair-capable Deepening roots");
+  const responses = pairQuestions.map((question, index) => {
+    const options = question.options.filter((option) => !option.exclusive).slice(0, 2);
+    return root(`budget-pair-${index}`, question.id, options[0]!.id, `budget-pair-episode-${index}`, {
+      selectedOptionIds: [options[0]!.id, options[1]!.id], mode: "simultaneous",
+    });
+  });
+  const result = compilePwqe51Route({ phase: "deepening", responses }, source);
+  assert.equal(result.administrationCount, 24);
+  assert.equal(result.decisionCount, 72);
+  assert.equal(result.phase, "finished");
+  assert.equal(result.completionReason, "administration_or_decision_limit");
+  assert.equal(result.next, null);
+  assert.deepEqual(result.candidates, []);
+});
+
+test("three scoped texture administrations trigger the separate low-value stop only when eligible", async () => {
+  const source = await sourcePromise;
+  const inputs = (targetedItems: readonly { questionId: string; optionId: string; targetId: string }[]) => ({
+    phase: "deepening" as const,
+    optedInTopics: ["body_detail"],
+    responses: [
+      ...targetedItems.map(({ questionId, optionId, targetId }, index) => root(`texture-root-${index}`, questionId, optionId,
+        `texture-episode-${index}`, { targetIds: [`${targetId}:texture-episode-${index}:first`] })),
+      root("texture-body-episode", "M01", "M01.rest", "texture-body-episode"),
+    ],
+  });
+  const highPriorityTargetedAnswers = [
+    { questionId: "D59", optionId: "D59.finished", targetId: "after_stop" },
+    { questionId: "D29", optionId: "D29.narrow", targetId: "attention" },
+    { questionId: "D06", optionId: "D06.energy", targetId: "cost" },
+  ] as const;
+  const two = compilePwqe51Route(inputs(highPriorityTargetedAnswers.slice(0, 2)), source);
+  assert.equal(two.scopeTextureAdministrationCount, 2);
+  assert.equal(two.phase, "deepening");
+  assert.ok(two.candidates.some((candidate) => candidate.questionId === "D41" && candidate.priority >= 5));
+
+  const three = compilePwqe51Route(inputs(highPriorityTargetedAnswers), source);
+  assert.equal(three.scopeTextureAdministrationCount, 3);
+  assert.equal(three.phase, "finished");
+  assert.equal(three.completionReason, "remaining_targets_only_low_incremental_value");
+  assert.equal(three.next, null);
+  assert.deepEqual(three.candidates, []);
+});
+
 test("correction invalidates a dependent question after its authored parent gate changes", async () => {
   const source = await sourcePromise;
   const result = compilePwqe51Route({ responses: [

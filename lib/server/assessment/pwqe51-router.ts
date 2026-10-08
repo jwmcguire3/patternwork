@@ -19,6 +19,8 @@ export interface Pwqe51CanonicalResponse {
   readonly basis?: "actual_recalled" | "reported_typicality";
   /** Server-owned presentation lineage; never accepted from a client answer. */
   readonly targetIds?: readonly string[];
+  /** Server-owned provenance for a confirmed REPLAY administration. */
+  readonly replayOfOccurrenceId?: string;
   readonly supersedesResponseId?: string;
 }
 
@@ -100,12 +102,15 @@ export interface Pwqe51RouteCandidate {
   readonly questionId: string;
   readonly occurrenceId: string | null;
   readonly bindingKey?: string;
-  readonly bindingRequest?: "new_actual_occurrence";
+  readonly bindingRequest?: "new_actual_occurrence" | "confirm_replay_distinctness";
   readonly stepId: string;
   readonly targetIds: readonly string[];
   readonly priority: number;
   readonly stage: "mapping" | "deepening";
   readonly linkedFrom?: string;
+  readonly replayOfOccurrenceId?: string;
+  readonly comparisonIds?: readonly [string, string];
+  readonly variantId?: string;
 }
 export interface Pwqe51CandidateRejection {
   readonly questionId: string;
@@ -147,6 +152,8 @@ const answered = (r: Normalized) => r.status === "answered";
 function normalize(input: Pwqe51RouterInput, source: Pwqe51SourcePackage) {
   const questions = new Map(source.questionBank.items.map((q) => [q.id, q]));
   const variants = new Map(source.questionBank.variants.map((v) => [v.id, v]));
+  const replayOperator = obj(obj(source.routingTargets.operators).REPLAY);
+  const replayRoots = new Set(strings(replayOperator.allowed_roots));
   const ids = new Set<string>();
   const all: Normalized[] = input.responses.map((raw, index) => {
     if (!raw.responseId?.trim() || ids.has(raw.responseId)) throw new Error("Responses require unique nonempty responseId values.");
@@ -205,9 +212,20 @@ function normalize(input: Pwqe51RouterInput, source: Pwqe51SourcePackage) {
   };
   const currentInEpisodeOrder = all.filter((row) => !superseded.has(row.responseId))
     .sort((left, right) => originalPosition(left) - originalPosition(right));
+  const rootPositionByEpisode = new Map<string, number>();
+  for (const row of all) {
+    const position = originalPosition(row);
+    const current = rootPositionByEpisode.get(row.occurrenceId);
+    if (current === undefined || position < current) rootPositionByEpisode.set(row.occurrenceId, position);
+  }
   const active: Normalized[] = [];
+  const validEpisodeRoots = new Set<string>();
   const invalidated: { responseId: string; reason: string }[] = [];
   for (const row of currentInEpisodeOrder) {
+    const isEpisodeRoot = originalPosition(row) === rootPositionByEpisode.get(row.occurrenceId);
+    if (!isEpisodeRoot && !validEpisodeRoots.has(row.occurrenceId)) {
+      invalidated.push({ responseId: row.responseId, reason: "episode_root_removed" }); continue;
+    }
     const q = questions.get(row.questionId)!;
     const earlier = active.filter((r) => r.occurrenceId === row.occurrenceId);
     const missingParent = q.eligibility.requires_answered.find((id) => !earlier.some((r) => r.questionId === id && answered(r)));
@@ -219,7 +237,58 @@ function normalize(input: Pwqe51RouterInput, source: Pwqe51SourcePackage) {
     if (required.some((x) => !parentOptions.includes(x)) || excluded.some((x) => parentOptions.includes(x))) {
       invalidated.push({ responseId: row.responseId, reason: "authored_gate_changed_after_correction" }); continue;
     }
+    if (row.replayOfOccurrenceId) {
+      const replayOfOccurrenceId = row.replayOfOccurrenceId;
+      const sourceRoot = active.find((prior) => prior.occurrenceId === replayOfOccurrenceId
+        && prior.basis === "actual_recalled" && answered(prior));
+      const linked = input.episodeLinks?.some((link) => link.occurrenceId === row.occurrenceId && link.linkedFrom === replayOfOccurrenceId);
+      const pairConfirmed = (input.distinctPairs ?? []).some((pair) => pair.length === 2
+        && pair.includes(row.occurrenceId) && pair.includes(replayOfOccurrenceId));
+      if (!replayRoots.has(row.questionId) || q.eligibility.requires_answered.length > 0) {
+        invalidated.push({ responseId: row.responseId, reason: "replay_root_not_authorized" }); continue;
+      }
+      if (!linked || !sourceRoot) {
+        invalidated.push({ responseId: row.responseId, reason: "replay_binding_or_source_invalidated" }); continue;
+      }
+      if (answered(row) && row.basis === "actual_recalled" && !pairConfirmed) {
+        invalidated.push({ responseId: row.responseId, reason: "replay_distinctness_not_confirmed" }); continue;
+      }
+      if (active.some((prior) => prior.replayOfOccurrenceId === replayOfOccurrenceId && prior.questionId === row.questionId)) {
+        invalidated.push({ responseId: row.responseId, reason: "replay_already_attempted" }); continue;
+      }
+    }
+    if (["D56", "D57", "D77"].includes(row.questionId)) {
+      const pair = input.comparisonIdsByResponseId?.[row.responseId];
+      const pairConfirmed = Boolean(pair && pair.length === 2 && pair[0] !== pair[1]
+        && (input.distinctPairs ?? []).some((candidate) => candidate.length === 2
+          && candidate.includes(pair[0]!) && candidate.includes(pair[1]!)));
+      if (!pairConfirmed || !pair || !active.some((prior) => prior.occurrenceId === pair[0] && prior.basis === "actual_recalled" && answered(prior))
+        || !active.some((prior) => prior.occurrenceId === pair[1] && prior.basis === "actual_recalled" && answered(prior))) {
+        invalidated.push({ responseId: row.responseId, reason: "comparison_distinctness_invalidated" }); continue;
+      }
+      const actionOptions = (occurrenceId: string) => new Set(active.flatMap((prior) => {
+        if (prior.occurrenceId !== occurrenceId || prior.stepId !== "first" || !answered(prior)) return [];
+        const parentQuestion = questions.get(prior.questionId)!;
+        if (!ACTION_CAPTURES.has(parentQuestion.captures ?? "")) return [];
+        return prior.selectedOptionIds.filter((optionId) => !["M02.none", "M13.nothing", "M23.none", "D07.nothing", "D07.changed", "D54.none", "D63.none"].includes(optionId));
+      }));
+      const firstActions = actionOptions(pair![0]);
+      const secondActions = actionOptions(pair![1]);
+      if (!firstActions.size && !secondActions.size) {
+        invalidated.push({ responseId: row.responseId, reason: "comparison_action_evidence_removed" }); continue;
+      }
+      if (row.questionId === "D57" && !matchedBehavior(firstActions, secondActions)) {
+        invalidated.push({ responseId: row.responseId, reason: "comparison_action_match_removed" }); continue;
+      }
+      if (row.questionId === "D77" && !["D56", "D57"].every((questionId) => active.some((prior) => prior.questionId === questionId
+        && prior.status === "answered" && samePair(input.comparisonIdsByResponseId?.[prior.responseId], pair!)))) {
+        invalidated.push({ responseId: row.responseId, reason: "comparison_support_removed" }); continue;
+      }
+    }
     active.push(row);
+    if (isEpisodeRoot && answered(row) && (row.basis === "actual_recalled" || row.basis === "reported_typicality")) {
+      validEpisodeRoots.add(row.occurrenceId);
+    }
   }
   return { all, active, superseded: [...superseded].sort(), invalidated, questions };
 }
@@ -683,47 +752,122 @@ function makeCandidates(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, a
             continue;
           }
         }
-        candidates.push({ questionId: q.id, occurrenceId: boundEpisode, stepId, targetIds: [`coverage:${q.id}`], priority: parents.length ? 1 : 2, stage: "mapping" });
+        const variantId = q.id === "M10" && !topics.has("body_detail")
+          ? source.questionBank.variants.find((variant) => variant.id === "M10.observable")?.id : undefined;
+        candidates.push({ questionId: q.id, occurrenceId: boundEpisode, stepId, targetIds: [`coverage:${q.id}`], priority: parents.length ? 1 : 2, stage: "mapping", ...(variantId ? { variantId } : {}) });
       } else if (!parents.length) {
-        candidates.push({ questionId: q.id, occurrenceId: null, bindingKey, bindingRequest: "new_actual_occurrence", stepId, targetIds: [`coverage:${q.id}`], priority: 2, stage: "mapping" });
+        const variantId = q.id === "M10" && !topics.has("body_detail")
+          ? source.questionBank.variants.find((variant) => variant.id === "M10.observable")?.id : undefined;
+        candidates.push({ questionId: q.id, occurrenceId: null, bindingKey, bindingRequest: "new_actual_occurrence", stepId, targetIds: [`coverage:${q.id}`], priority: 2, stage: "mapping", ...(variantId ? { variantId } : {}) });
       }
     }
   } else {
+    const replayOperator = obj(obj(source.routingTargets.operators).REPLAY);
+    const replayableRoots = new Set(strings(replayOperator.allowed_roots));
+    const replayRows = input.responses.filter((response) => Boolean(response.replayOfOccurrenceId));
+    const replayChildren: Readonly<Record<string, readonly string[]>> = {
+      M02: ["M03"], M04: ["M05", "M06"], M08: ["M09"], M10: ["M11", "M12"], M11: ["M12"],
+      M15: ["M16"], M17: ["M18", "M19"], M20: ["M21"], M26: ["M27"], M28: ["M29", "M30"],
+    };
+    for (const replay of active.filter((response) => response.replayOfOccurrenceId && response.status === "answered" && response.basis === "actual_recalled")) {
+      for (const childId of replayChildren[replay.questionId] ?? []) {
+        const question = source.questionBank.items.find((item) => item.id === childId);
+        if (!question) continue;
+        const targetId = `replay_attached:${replay.responseId}:${childId}`;
+        const reason = candidateRejectionReason(question, replay.occurrenceId, active, source, new Set(input.optedInTopics ?? []), derivedFlags, undefined, "first");
+        if (reason) {
+          if (!new Set(["already_answered", "already_administered"]).has(reason)) {
+            rejected.push({ questionId: childId, occurrenceId: replay.occurrenceId, stepId: candidateStep(childId, question.step_binding), targetIds: [targetId], reason });
+          }
+          continue;
+        }
+        candidates.push({ questionId: childId, occurrenceId: replay.occurrenceId, stepId: candidateStep(childId, question.step_binding),
+          targetIds: [targetId], priority: 1, stage: "deepening", linkedFrom: replay.replayOfOccurrenceId });
+      }
+    }
     for (const target of targets.filter((t) => t.state === "open")) {
       // A target may have several discriminators. Trying only candidateItems[0]
       // silently strands valid follow-ups when the first one is unavailable.
-      // REPLAY is intentionally excluded until explicit second-occurrence
-      // confirmation has an end-to-end trusted session/API implementation.
       for (const itemId of target.candidateItems) {
-        if (itemId.startsWith("REPLAY")) {
-          rejected.push({ questionId: itemId, occurrenceId: target.occurrenceId, stepId: target.stepId, targetIds: [target.id], reason: "replay_operator_not_supported" });
-          continue;
+        const isReplay = itemId.startsWith("REPLAY");
+        const targetEpisode = episodes.find((episode) => episode.id === target.occurrenceId);
+        let resolvedItemId = itemId;
+        if (isReplay) {
+          if (!targetEpisode?.actual) {
+            rejected.push({ questionId: itemId, occurrenceId: target.occurrenceId, stepId: target.stepId, targetIds: [target.id], reason: "replay_requires_actual_source" });
+            continue;
+          }
+          const explicitRoot = itemId.includes(":") ? itemId.split(":", 2)[1] : undefined;
+          const sourceRoot = active.find((response) => response.occurrenceId === target.occurrenceId
+            && response.basis === "actual_recalled" && response.status === "answered"
+            && source.questionBank.items.find((question) => question.id === response.questionId)?.eligibility.requires_answered.length === 0)?.questionId;
+          resolvedItemId = explicitRoot ?? sourceRoot ?? "";
+          if (resolvedItemId === "M11") resolvedItemId = "M10";
+          if (!resolvedItemId || !replayableRoots.has(resolvedItemId)) {
+            rejected.push({ questionId: itemId, occurrenceId: target.occurrenceId, stepId: target.stepId, targetIds: [target.id], reason: "root_not_replayable" });
+            continue;
+          }
+          const sourceRootQuestion = source.questionBank.items.find((question) => question.id === sourceRoot);
+          const sourceTopic = sourceRootQuestion?.eligibility.topic_opt_in;
+          if (sourceTopic && !(input.optedInTopics ?? []).includes(sourceTopic)) {
+            rejected.push({ questionId: itemId, occurrenceId: target.occurrenceId, stepId: target.stepId, targetIds: [target.id], reason: "inherited_topic_declined" });
+            continue;
+          }
+          const priorReplay = replayRows.some((response) => response.replayOfOccurrenceId === target.occurrenceId && response.questionId === resolvedItemId);
+          if (priorReplay) {
+            rejected.push({ questionId: itemId, occurrenceId: target.occurrenceId, stepId: target.stepId, targetIds: [target.id], reason: "replay_already_attempted" });
+            continue;
+          }
+          if (targetEpisode.linkedFrom && replayRows.some((response) => response.occurrenceId === target.occurrenceId)) {
+            rejected.push({ questionId: itemId, occurrenceId: target.occurrenceId, stepId: target.stepId, targetIds: [target.id], reason: "replay_tree_limit" });
+            continue;
+          }
         }
-        const q = source.questionBank.items.find((item) => item.id === itemId);
+        const q = source.questionBank.items.find((item) => item.id === resolvedItemId);
         if (!q) {
-          rejected.push({ questionId: itemId, occurrenceId: target.occurrenceId, stepId: target.stepId, targetIds: [target.id], reason: "unknown_item" });
+          rejected.push({ questionId: resolvedItemId, occurrenceId: target.occurrenceId, stepId: target.stepId, targetIds: [target.id], reason: "unknown_item" });
           continue;
         }
         // The sequence relation is a short identity/order clarification. The
         // active routing contract places it in tier 1 so later effect questions
         // cannot outrank the answer needed to interpret the preceding move.
-        const candidatePriority = itemId === "D08" ? 1 : target.priority;
-        const targetEpisode = episodes.find((episode) => episode.id === target.occurrenceId);
+        const candidatePriority = resolvedItemId === "D08" ? 1 : target.priority;
+        const bindingKey = isReplay ? `replay:${target.id}:${target.occurrenceId}:${resolvedItemId}` : undefined;
+        const occurrenceId = isReplay ? input.occurrenceBindings?.[bindingKey!] : undefined;
+        if (isReplay && !occurrenceId) {
+          const topic = q.eligibility.topic_opt_in;
+          if (topic && !(input.optedInTopics ?? []).includes(topic)) {
+            rejected.push({ questionId: itemId, occurrenceId: target.occurrenceId, stepId: target.stepId, targetIds: [target.id], reason: "topic_declined" });
+            continue;
+          }
+          const variantId = q.id === "M10" && !(input.optedInTopics ?? []).includes("body_detail")
+            ? source.questionBank.variants.find((variant) => variant.id === "M10.observable")?.id : undefined;
+          candidates.push({ questionId: q.id, occurrenceId: null, bindingKey, bindingRequest: "confirm_replay_distinctness",
+            replayOfOccurrenceId: target.occurrenceId, linkedFrom: target.occurrenceId, stepId: "first", targetIds: [target.id],
+            priority: candidatePriority, stage: "deepening", ...(variantId ? { variantId } : {}) });
+          continue;
+        }
         const linkedRoot = !target.comparisonIds && !["bound", "comparison"].includes(q.episode_family) && q.eligibility.requires_answered.length === 0
-          && Boolean(targetEpisode && targetEpisode.family !== q.episode_family);
+          && !isReplay && Boolean(targetEpisode && targetEpisode.family !== q.episode_family);
         if (linkedRoot) {
-          const bindingKey = `target:${target.id}:${itemId}`;
-          const occurrenceId = input.occurrenceBindings?.[bindingKey];
-          candidates.push({ questionId: q.id, occurrenceId: occurrenceId ?? null, ...(occurrenceId ? {} : { bindingKey, bindingRequest: "new_actual_occurrence" as const }), linkedFrom: target.occurrenceId,
-            stepId: candidateStep(q.id, q.step_binding, target.stepId, !occurrenceId), targetIds: [target.id], priority: candidatePriority, stage: "deepening" });
+          const rootBindingKey = `target:${target.id}:${resolvedItemId}`;
+          const rootOccurrenceId = input.occurrenceBindings?.[rootBindingKey];
+          candidates.push({ questionId: q.id, occurrenceId: rootOccurrenceId ?? null, ...(rootOccurrenceId ? {} : { bindingKey: rootBindingKey, bindingRequest: "new_actual_occurrence" as const }), linkedFrom: target.occurrenceId,
+            stepId: candidateStep(q.id, q.step_binding, target.stepId, !rootOccurrenceId), targetIds: [target.id], priority: candidatePriority, stage: "deepening" });
           continue;
         }
-        const reason = candidateRejectionReason(q, target.occurrenceId, active, source, new Set(input.optedInTopics ?? []), derivedFlags, target.comparisonIds, target.stepId);
+        const boundEpisodeId = isReplay ? occurrenceId : target.occurrenceId;
+        const reason = isReplay ? null
+          : candidateRejectionReason(q, target.occurrenceId, active, source, new Set(input.optedInTopics ?? []), derivedFlags, target.comparisonIds, target.stepId);
         if (reason) {
-          rejected.push({ questionId: q.id, occurrenceId: target.occurrenceId, stepId: candidateStep(q.id, q.step_binding, target.stepId), targetIds: [target.id], reason });
+          rejected.push({ questionId: q.id, occurrenceId: boundEpisodeId ?? null, stepId: candidateStep(q.id, q.step_binding, target.stepId), targetIds: [target.id], reason });
           continue;
         }
-        candidates.push({ questionId: q.id, occurrenceId: target.occurrenceId, stepId: candidateStep(q.id, q.step_binding, target.stepId), targetIds: [target.id], priority: candidatePriority, stage: "deepening" });
+        const variantId = q.id === "M10" && !(input.optedInTopics ?? []).includes("body_detail")
+          ? source.questionBank.variants.find((variant) => variant.id === "M10.observable")?.id : undefined;
+        candidates.push({ questionId: q.id, occurrenceId: boundEpisodeId!, stepId: isReplay ? "first" : candidateStep(q.id, q.step_binding, target.stepId), targetIds: [target.id], priority: candidatePriority, stage: "deepening",
+          ...(isReplay ? { replayOfOccurrenceId: target.occurrenceId, linkedFrom: target.occurrenceId } : {}),
+          ...(target.comparisonIds ? { comparisonIds: target.comparisonIds } : {}), ...(variantId ? { variantId } : {}) });
       }
     }
     for (const entry of source.routingTargets.entry_points) {
@@ -792,8 +936,9 @@ function makeCandidates(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, a
   const candidateContext = (candidate: Pwqe51RouteCandidate) => candidate.occurrenceId
     ? episodeById.get(candidate.occurrenceId)?.context ?? questions.get(candidate.questionId)!.context
     : questions.get(candidate.questionId)!.context;
-  const candidateEvidenceRequirements = (candidate: Pwqe51RouteCandidate) => candidate.questionId === "D21"
-    && candidate.targetIds.some((targetId) => targetId.startsWith("need_exposure:")) ? 2 : 1;
+  const candidateEvidenceRequirements = (candidate: Pwqe51RouteCandidate) => candidate.replayOfOccurrenceId
+    ? 2 // PWQE 5.1 runtime_policy.priority_clarifications.replay_requirement_gain
+    : candidate.questionId === "D21" && candidate.targetIds.some((targetId) => targetId.startsWith("need_exposure:")) ? 2 : 1;
   const candidateDecisionBurden = (candidate: Pwqe51RouteCandidate) => candidate.questionId === "D36" ? 2 : 1;
   const candidateOpenedOrder = (candidate: Pwqe51RouteCandidate) => Math.min(...candidate.targetIds.flatMap((targetId) =>
     (targetById.get(targetId)?.sourceObservationIds ?? []).map((observationId) =>

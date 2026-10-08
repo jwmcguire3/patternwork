@@ -28,6 +28,105 @@ test("a server-bound Mapping root is offered before its answer establishes episo
   assert.equal(result.next?.stage, "mapping");
 });
 
+test("REPLAY is a gated binding candidate, then yields a distinct root and generic attached child", async () => {
+  const source = await sourcePromise;
+  const responses = [
+    answer("review-a", "M02", "M02.rehearse", "review-a", undefined, { basis: "actual_recalled" }),
+    answer("aim-a", "M03", "M03.exposure", "review-a"),
+  ];
+  const base = compilePwqe51Route({ phase: "deepening", details: ["recurrence"], responses }, source);
+  const request = base.candidates.find((candidate) => candidate.targetIds.includes("recurrence:review-a:first") && candidate.bindingRequest === "confirm_replay_distinctness");
+  assert.ok(request, "the open authored recurrence target should request an explicit second-occasion decision");
+  assert.equal(request?.questionId, "M02");
+  assert.equal(request?.occurrenceId, null, "no episode is allocated before the respondent confirms a different actual occasion");
+  assert.equal(request?.replayOfOccurrenceId, "review-a");
+  assert.ok(request?.bindingKey?.startsWith("replay:recurrence:review-a:first:review-a:M02"));
+
+  const replayOccurrence = "review-b";
+  const confirmed = compilePwqe51Route({
+    phase: "deepening",
+    details: ["recurrence"],
+    responses: [
+      ...responses,
+      answer("review-b-root", "M02", "M02.rehearse", replayOccurrence, undefined, {
+        basis: "actual_recalled", replayOfOccurrenceId: "review-a", targetIds: ["recurrence:review-a:first"],
+      }),
+    ],
+    distinctPairs: [["review-a", replayOccurrence]],
+    episodeLinks: [{ occurrenceId: replayOccurrence, linkedFrom: "review-a" }],
+  }, source);
+  const second = confirmed.episodes.find((episode) => episode.id === replayOccurrence);
+  assert.equal(second?.actual, true);
+  assert.ok(second?.distinctFrom?.includes("review-a"));
+  const attachedAim = confirmed.candidates.find((candidate) => candidate.questionId === "M03" && candidate.occurrenceId === replayOccurrence);
+  assert.equal(attachedAim?.priority, 1);
+  assert.equal(attachedAim?.linkedFrom, "review-a");
+  assert.equal(attachedAim?.targetIds[0], "replay_attached:review-b-root:M03");
+  assert.ok(confirmed.targets.some((target) => target.targetId === "contrast_context" && target.comparisonIds?.includes(replayOccurrence)));
+  assert.ok(confirmed.targets.some((target) => target.targetId === "contrast_goal" && target.comparisonIds?.includes(replayOccurrence)));
+});
+
+test("replay attempts and replay trees are bounded, and M11 replays its authored M10 prerequisite", async () => {
+  const source = await sourcePromise;
+  const responses = [
+    answer("review-a", "M02", "M02.rehearse", "review-a", undefined, { basis: "actual_recalled" }),
+    answer("aim-a", "M03", "M03.exposure", "review-a"),
+    answer("review-b-root", "M02", "M02.rehearse", "review-b", undefined, {
+      basis: "reported_typicality", replayOfOccurrenceId: "review-a", targetIds: ["recurrence:review-a:first"],
+    }),
+  ];
+  const attempted = compilePwqe51Route({ phase: "deepening", details: ["recurrence"], responses,
+    episodeLinks: [{ occurrenceId: "review-b", linkedFrom: "review-a" }] }, source);
+  assert.ok(attempted.rejectedCandidates.some((candidate) => candidate.questionId === "REPLAY" && candidate.reason === "replay_already_attempted"));
+
+  const replayTree = compilePwqe51Route({ phase: "deepening", details: ["recurrence"], responses: [
+    answer("tree-source", "M02", "M02.rehearse", "tree-source", undefined, { basis: "actual_recalled" }),
+    answer("tree-source-aim", "M03", "M03.exposure", "tree-source"),
+    answer("tree-replay", "M02", "M02.recheck", "tree-replay", undefined, {
+      basis: "actual_recalled", replayOfOccurrenceId: "tree-source", targetIds: ["recurrence:tree-source:first"],
+    }),
+  ], distinctPairs: [["tree-source", "tree-replay"]], episodeLinks: [{ occurrenceId: "tree-replay", linkedFrom: "tree-source" }] }, source);
+  assert.ok(replayTree.rejectedCandidates.some((candidate) => candidate.occurrenceId === "tree-replay" && candidate.reason === "replay_tree_limit"));
+
+  const m11RootSource = {
+    ...source,
+    routingTargets: {
+      ...source.routingTargets,
+      targets: source.routingTargets.targets.map((target) => target.id === "recurrence" ? { ...target, candidate_items: ["REPLAY:M11"] } : target),
+    },
+  };
+  const m11 = compilePwqe51Route({ phase: "deepening", details: ["recurrence"], responses: [
+    answer("m11-source", "M10", "M10.urgent", "m11-source", undefined, { basis: "actual_recalled" }),
+    answer("m11-observation", "M11", "M11.push", "m11-source"),
+  ] }, m11RootSource);
+  const prerequisiteReplay = m11.candidates.find((candidate) => candidate.bindingRequest === "confirm_replay_distinctness");
+  assert.equal(prerequisiteReplay?.questionId, "M10");
+  assert.equal(prerequisiteReplay?.variantId, "M10.observable");
+});
+
+test("replay benefit follows the pinned priority rule and binding cannot create actualness by itself", async () => {
+  const source = await sourcePromise;
+  const policy = JSON.parse(await (await import("node:fs/promises")).readFile("specs/patternwork/question-engine-v5.1/assessment_runtime/implementation/runtime_policy.json", "utf8")) as { priority_clarifications: { replay_requirement_gain: number } };
+  assert.equal(policy.priority_clarifications.replay_requirement_gain, 2);
+  const responses = [
+    answer("review-a", "M02", "M02.rehearse", "review-a", undefined, { basis: "actual_recalled" }),
+    answer("aim-a", "M03", "M03.exposure", "review-a"),
+  ];
+  const route = compilePwqe51Route({ phase: "deepening", details: ["recurrence"], responses }, source);
+  const replayIndex = route.candidates.findIndex((candidate) => candidate.bindingRequest === "confirm_replay_distinctness");
+  const sameTierD05Index = route.candidates.findIndex((candidate) => candidate.questionId === "D05" && candidate.targetIds.includes("recurrence:review-a:first"));
+  assert.ok(replayIndex >= 0 && sameTierD05Index >= 0 && replayIndex < sameTierD05Index, "the replay's two authored requirements precede the one-requirement recurrence discriminator at equal priority");
+
+  const noPair = compilePwqe51Route({ phase: "deepening", details: ["recurrence"], responses: [
+    ...responses,
+    answer("review-b-typical", "M02", "M02.rehearse", "review-b", undefined, {
+      basis: "reported_typicality", replayOfOccurrenceId: "review-a", targetIds: ["recurrence:review-a:first"],
+    }),
+  ], episodeLinks: [{ occurrenceId: "review-b", linkedFrom: "review-a" }] }, source);
+  assert.equal(noPair.episodes.some((episode) => episode.id === "review-b" && episode.actual), false);
+  assert.ok(!noPair.episodes.find((episode) => episode.id === "review-a")?.distinctFrom?.includes("review-b"));
+});
+
 test("mapping tie-breaks use the recalled episode context for attached questions", async () => {
   const source = await sourcePromise;
   const result = compilePwqe51Route({ responses: [

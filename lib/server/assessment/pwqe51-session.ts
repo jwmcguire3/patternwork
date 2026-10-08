@@ -16,12 +16,28 @@ export interface Pwqe51CurrentInteraction {
   readonly stepId: string;
   readonly variantId?: string;
   readonly targetIds?: readonly string[];
+  readonly replayOfOccurrenceId?: string;
+  readonly comparisonIds?: readonly [string, string];
 }
 
 export interface Pwqe51ComparisonDecision {
   readonly firstOccurrenceId: string;
   readonly secondOccurrenceId: string;
   readonly relation: "different" | "same" | "cannot_tell";
+}
+
+export type Pwqe51ReplayBindingOutcome = "different" | "same" | "unknown" | "no_event" | "skip";
+
+export interface Pwqe51ReplayBindingDecision {
+  readonly decisionId: string;
+  readonly requestSha256: string;
+  readonly targetId: string;
+  readonly bindingKey: string;
+  readonly questionId: string;
+  readonly sourceOccurrenceId: string;
+  readonly outcome: Pwqe51ReplayBindingOutcome;
+  readonly replayOccurrenceId?: string;
+  readonly supersedesDecisionId?: string;
 }
 
 export interface Pwqe51SessionState {
@@ -38,6 +54,8 @@ export interface Pwqe51SessionState {
   readonly referentRolesByOccurrenceSlot: Readonly<Record<string, string>>;
   /** Explicit C07 relation for a pair of actual recalled occasions; never inferred from generated IDs. */
   readonly comparisonDecisions?: readonly Pwqe51ComparisonDecision[];
+  /** Encrypted, append-only, correction-safe outcomes for server-issued replay requests. */
+  readonly replayBindingHistory?: readonly Pwqe51ReplayBindingDecision[];
   readonly controls: readonly ("end" | "shorten")[];
   /**
    * Server-owned routing context. In particular, distinctPairs and comparison
@@ -74,14 +92,56 @@ export interface Pwqe51RenderedInteraction {
   readonly options: readonly { readonly id: string; readonly label: string; readonly exclusive: boolean }[];
 }
 
-function routeInput(state: Pick<Pwqe51SessionState, "pass" | "responses" | "phase" | "controls" | "optedInTopics" | "occurrenceBindings" | "routerInput">): Pwqe51RouterInput {
+function routeInput(state: Pick<Pwqe51SessionState, "pass" | "responses" | "phase" | "controls" | "optedInTopics" | "occurrenceBindings" | "routerInput"> & Partial<Pick<Pwqe51SessionState, "replayBindingHistory">>): Pwqe51RouterInput {
+  const history = state.replayBindingHistory ?? [];
+  const supersededDecisions = new Set(history.flatMap((decision) => decision.supersedesDecisionId ? [decision.supersedesDecisionId] : []));
+  const activeDecisions = history.filter((decision) => !supersededDecisions.has(decision.decisionId));
+  const allReplayOccurrences = new Set(history.flatMap((decision) => decision.replayOccurrenceId ? [decision.replayOccurrenceId] : []));
+  const activeByTarget = new Map(activeDecisions.map((decision) => [decision.targetId, decision]));
+  const occurrenceBindings = { ...state.occurrenceBindings };
+  const closedBindings = { ...(state.routerInput.closedBindings ?? {}) };
+  for (const decision of history) {
+    const active = activeByTarget.get(decision.targetId);
+    if (!active || active.outcome === "different") {
+      delete closedBindings[decision.targetId];
+    } else {
+      closedBindings[decision.targetId] = active.outcome;
+    }
+    if (active?.outcome === "different" && active.replayOccurrenceId) occurrenceBindings[active.bindingKey] = active.replayOccurrenceId;
+    else delete occurrenceBindings[decision.bindingKey];
+  }
+  const supersededResponses = new Set(state.responses.flatMap((response) => response.supersedesResponseId ? [response.supersedesResponseId] : []));
+  const replayPairs = activeDecisions.flatMap((decision) => {
+    if (decision.outcome !== "different" || !decision.replayOccurrenceId) return [];
+    const actualRoot = state.responses.some((response) => response.occurrenceId === decision.replayOccurrenceId
+      && response.replayOfOccurrenceId === decision.sourceOccurrenceId && response.status === "answered"
+      && response.basis === "actual_recalled" && !supersededResponses.has(response.responseId));
+    return actualRoot ? [[decision.sourceOccurrenceId, decision.replayOccurrenceId] as const] : [];
+  });
+  const basePairs = (state.routerInput.distinctPairs ?? []).filter((pair) => !pair.some((occurrenceId) => allReplayOccurrences.has(occurrenceId)));
+  const distinctPairs = [...new Map([...basePairs, ...replayPairs].map((pair) => {
+    const canonical = [...pair].sort() as [string, string];
+    return [canonical.join("\u0000"), canonical] as const;
+  })).values()];
+  const episodeLinks = [
+    ...(state.routerInput.episodeLinks ?? []).filter((link) => !allReplayOccurrences.has(link.occurrenceId)),
+    ...activeDecisions.flatMap((decision) => decision.outcome === "different" && decision.replayOccurrenceId
+      ? [{ occurrenceId: decision.replayOccurrenceId, linkedFrom: decision.sourceOccurrenceId }]
+      : []),
+  ];
+  const comparisonIdsByResponseId = Object.fromEntries(Object.entries(state.routerInput.comparisonIdsByResponseId ?? {})
+    .filter(([, pair]) => distinctPairs.some((candidate) => candidate.length === 2 && candidate.includes(pair[0]) && candidate.includes(pair[1]))));
   return {
     ...state.routerInput,
+    occurrenceBindings,
+    closedBindings,
+    distinctPairs,
+    episodeLinks,
+    comparisonIdsByResponseId,
     responses: state.responses,
     phase: state.phase === "finished" ? (state.pass === 1 ? "mapping" : "deepening") : state.phase,
     controls: state.controls,
     optedInTopics: state.optedInTopics,
-    occurrenceBindings: state.occurrenceBindings,
   };
 }
 
@@ -101,6 +161,7 @@ function compileBoundRoute(input: Pwqe51RouterInput, source: Pwqe51SourcePackage
   for (let count = 0; count < bindingLimit; count += 1) {
     const candidate = result.next;
     if (!candidate?.bindingRequest) return { result, occurrenceBindings, episodeLinks };
+    if (candidate.bindingRequest === "confirm_replay_distinctness") return { result, occurrenceBindings, episodeLinks };
     if (candidate.bindingRequest !== "new_actual_occurrence" || !candidate.bindingKey) {
       throw new Error("PWQE 5.1 router requested an invalid occurrence binding.");
     }
@@ -118,17 +179,23 @@ function compileBoundRoute(input: Pwqe51RouterInput, source: Pwqe51SourcePackage
 function currentFor(route: Pwqe51RouterResult, prior: Pwqe51CurrentInteraction | null): Pwqe51CurrentInteraction | null {
   const candidate = route.next;
   if (!candidate) return null;
+  if (candidate.bindingRequest === "confirm_replay_distinctness") return null;
   if (!candidate.occurrenceId || candidate.bindingRequest) {
     throw new Error("PWQE 5.1 candidate was not bound to a server-owned occurrence.");
   }
   const targetIds = candidate.targetIds ?? [];
   if (prior && prior.questionId === candidate.questionId && prior.occurrenceId === candidate.occurrenceId && prior.stepId === candidate.stepId
+    && prior.replayOfOccurrenceId === candidate.replayOfOccurrenceId && prior.variantId === candidate.variantId
+    && canonicalizeTargetIds(prior.comparisonIds ?? []) === canonicalizeTargetIds(candidate.comparisonIds ?? [])
     && canonicalizeTargetIds(prior.targetIds ?? []) === canonicalizeTargetIds(targetIds)) return prior;
   return {
     interactionInstanceId: `pwi_${randomUUID()}`,
     questionId: candidate.questionId,
     occurrenceId: candidate.occurrenceId,
     stepId: candidate.stepId,
+    ...(candidate.replayOfOccurrenceId ? { replayOfOccurrenceId: candidate.replayOfOccurrenceId } : {}),
+    ...(candidate.comparisonIds ? { comparisonIds: candidate.comparisonIds } : {}),
+    ...(candidate.variantId ? { variantId: candidate.variantId } : {}),
     ...(targetIds.length ? { targetIds } : {}),
   };
 }
@@ -346,12 +413,77 @@ export function createPwqe51SessionState(
     responses: [] as Pwqe51CanonicalResponse[],
     occurrenceBindings: {} as Readonly<Record<string, string>>,
     referentRolesByOccurrenceSlot: {} as Readonly<Record<string, string>>,
+    replayBindingHistory: [] as Pwqe51ReplayBindingDecision[],
     optedInTopics: [] as string[],
     controls: [] as ("end" | "shorten")[],
     routerInput,
   };
   const compiled = compileBoundRoute({ ...routerInput, responses: [], phase: "mapping", occurrenceBindings: {} }, source);
   return { ...partial, routerInput: { ...routerInput, episodeLinks: compiled.episodeLinks }, occurrenceBindings: compiled.occurrenceBindings, routerResult: compiled.result, currentInteraction: currentFor(compiled.result, null) };
+}
+
+export function applyPwqe51ReplayBinding(
+  state: Pwqe51SessionState,
+  input: {
+    readonly decisionId: string;
+    readonly requestSha256: string;
+    readonly outcome: Pwqe51ReplayBindingOutcome;
+    readonly correctsDecisionId?: string;
+  },
+  source: Pwqe51SourcePackage,
+): Pwqe51SessionState {
+  if (state.paused || state.phase === "finished") throw new Error("PWQE 5.1 replay binding is not accepting a decision.");
+  assertPinnedSource(state, source);
+  if (!/^pwrb_[a-f0-9]{40}$/u.test(input.decisionId) || !/^[a-f0-9]{64}$/u.test(input.requestSha256)
+    || !["different", "same", "unknown", "no_event", "skip"].includes(input.outcome)) {
+    throw new Error("PWQE 5.1 replay binding decision is malformed.");
+  }
+  if (state.replayBindingHistory?.some((decision) => decision.decisionId === input.decisionId)) {
+    throw new Error("PWQE 5.1 replay binding decision already exists.");
+  }
+  const priorSuperseded = new Set((state.replayBindingHistory ?? []).flatMap((decision) => decision.supersedesDecisionId ? [decision.supersedesDecisionId] : []));
+  let request: { targetId: string; bindingKey: string; questionId: string; sourceOccurrenceId: string; replayOccurrenceId?: string };
+  if (input.correctsDecisionId) {
+    const prior = state.replayBindingHistory?.find((decision) => decision.decisionId === input.correctsDecisionId && !priorSuperseded.has(decision.decisionId));
+    if (!prior) throw new Error("PWQE 5.1 replay binding correction target is not active.");
+    request = prior;
+  } else {
+    const candidate = state.routerResult.next;
+    if (!candidate || candidate.bindingRequest !== "confirm_replay_distinctness" || !candidate.bindingKey || !candidate.replayOfOccurrenceId) {
+      throw new Error("PWQE 5.1 has no current server-issued replay binding request.");
+    }
+    request = {
+      targetId: candidate.targetIds[0]!,
+      bindingKey: candidate.bindingKey,
+      questionId: candidate.questionId,
+      sourceOccurrenceId: candidate.replayOfOccurrenceId,
+    };
+  }
+  const previousReplayOccurrenceId = request.replayOccurrenceId
+    ?? [...(state.replayBindingHistory ?? [])].reverse().find((decision) => decision.bindingKey === request.bindingKey && decision.replayOccurrenceId)?.replayOccurrenceId;
+  const replayOccurrenceId = input.outcome === "different" ? previousReplayOccurrenceId ?? `pwep_${randomUUID()}` : undefined;
+  const decision: Pwqe51ReplayBindingDecision = {
+    decisionId: input.decisionId,
+    requestSha256: input.requestSha256,
+    targetId: request.targetId,
+    bindingKey: request.bindingKey,
+    questionId: request.questionId,
+    sourceOccurrenceId: request.sourceOccurrenceId,
+    outcome: input.outcome,
+    ...(replayOccurrenceId ? { replayOccurrenceId } : {}),
+    ...(input.correctsDecisionId ? { supersedesDecisionId: input.correctsDecisionId } : {}),
+  };
+  const replayBindingHistory = [...(state.replayBindingHistory ?? []), decision];
+  const partial = { ...state, replayBindingHistory };
+  const compiled = compileBoundRoute(routeInput(partial), source);
+  return {
+    ...partial,
+    routerInput: { ...partial.routerInput, episodeLinks: compiled.episodeLinks },
+    occurrenceBindings: compiled.occurrenceBindings,
+    routerResult: compiled.result,
+    phase: compiled.result.phase,
+    currentInteraction: currentFor(compiled.result, null),
+  };
 }
 
 export function isPwqe51SessionState(value: unknown): value is Pwqe51SessionState {
@@ -467,6 +599,7 @@ export function advancePwqe51Session(
     mode,
     ...(basis ? { basis } : {}),
     ...(current.targetIds ? { targetIds: current.targetIds } : {}),
+    ...(current.replayOfOccurrenceId ? { replayOfOccurrenceId: current.replayOfOccurrenceId } : {}),
     ...(current.variantId ? { variantId: current.variantId } : {}),
     ...(correctionId ? { supersedesResponseId: correctionId } : {}),
   };
@@ -474,11 +607,19 @@ export function advancePwqe51Session(
   const referentRolesByOccurrenceSlot = input.referentRole
     ? { ...state.referentRolesByOccurrenceSlot, [roleKey(current.occurrenceId, requiredPersonSlots[0]!)]: input.referentRole }
     : state.referentRolesByOccurrenceSlot;
-  const partial = { ...state, responses, referentRolesByOccurrenceSlot };
+  const comparisonIdsByResponseId = current.comparisonIds
+    ? { ...(state.routerInput.comparisonIdsByResponseId ?? {}), [response.responseId]: [...current.comparisonIds] as [string, string] }
+    : state.routerInput.comparisonIdsByResponseId;
+  const partial = {
+    ...state,
+    responses,
+    referentRolesByOccurrenceSlot,
+    routerInput: { ...state.routerInput, ...(comparisonIdsByResponseId ? { comparisonIdsByResponseId } : {}) },
+  };
   const compiled = compileBoundRoute(routeInput(partial), source);
   return {
     ...partial,
-    routerInput: { ...state.routerInput, episodeLinks: compiled.episodeLinks },
+    routerInput: { ...partial.routerInput, episodeLinks: compiled.episodeLinks },
     occurrenceBindings: compiled.occurrenceBindings,
     routerResult: compiled.result,
     phase: compiled.result.phase,
@@ -503,6 +644,8 @@ export function beginPwqe51Correction(state: Pwqe51SessionState, responseId: str
       occurrenceId: target.occurrenceId,
       stepId: target.stepId ?? questionFor(source, target.questionId).step_binding,
       ...(target.targetIds ? { targetIds: target.targetIds } : {}),
+      ...(target.replayOfOccurrenceId ? { replayOfOccurrenceId: target.replayOfOccurrenceId } : {}),
+      ...(state.routerInput.comparisonIdsByResponseId?.[target.responseId] ? { comparisonIds: state.routerInput.comparisonIdsByResponseId[target.responseId] } : {}),
       ...(target.variantId ? { variantId: target.variantId } : {}),
     },
   };

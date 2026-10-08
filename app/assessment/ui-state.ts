@@ -21,12 +21,15 @@ export type Pwqe51RenderedInteraction = {
   options: { id: string; label: string; exclusive: boolean }[];
 };
 export type Pwqe5ResponseHistoryItem = { responseId:string; questionId:string; title:string; status:string; mode?:string; context?:string; selectedOptions:{id:string;label:string}[]; canCorrect:boolean; prompt?:string; options?:{id:string;label:string;exclusive:boolean}[]; selection?:Record<string,unknown>; responseControls?:{id:string;text:string}[] };
+export type Pwqe51ReplayBindingOutcome = "different"|"same"|"unknown"|"no_event"|"skip";
+export type Pwqe51PendingReplayBinding = { rootTitle:string; prompt:string; sourceLabel:string };
+export type Pwqe51ReplayBindingHistoryItem = { ref:string; rootTitle:string; outcome:Pwqe51ReplayBindingOutcome; canCorrect:boolean };
 export type AssessmentStatus = "needs_consent"|"ready"|"active"|"paused"|"recovery"|"generating_pass1"|"pass1_ready"|"generating_pass2"|"pass2_ready"|"report_ready"|"report_failed";
 export type ReportStatus = "NOT_STARTED"|"QUEUED"|"GENERATING"|"READY"|"FAILED";
 export type DeliveryStatus = "NOT_STARTED"|"PENDING"|"SENT"|"DELIVERED"|"FAILED";
 export type RetryAudience = "USER"|"OPERATOR"|"NONE";
 export type ReportAttempt = { id?: string; attemptNumber?: number; status?: string; startedAt?: string; updatedAt?: string };
-export type AssessmentState = { assessmentId?: string; reportReadyUrl?: string; mappingSummaryUrl?: string; reportStatus?: ReportStatus; deliveryStatus?: DeliveryStatus; resumeNotificationStatus?: DeliveryStatus; reportUnavailable?: boolean; failureCategory?: string; retryAudience?: RetryAudience; canRetry?: boolean; currentAttempt?: ReportAttempt; revision?: string|number; status: AssessmentStatus; engine?: "PWQE5"|"PWQE51"; pass?:number; canCompletePass?:boolean; canPause?:boolean; allowedControls?:string[]; responseHistory?:Pwqe5ResponseHistoryItem[]; availableTopics?: {id:string;label:string;description:string}[]; availableFocuses?: {ref:string;label:string}[]; optedInTopics?:string[]; currentResponse?:unknown; pwqe5Interaction?: Pwqe5RenderedInteraction|null; pwqe51Interaction?: Pwqe51RenderedInteraction|null; email?: string; interaction?: RenderedInteraction|null; draft?: Record<string, unknown>; stageLabel?: string; stageProgress?: number; resumeCue?: string; mode?: string };
+export type AssessmentState = { assessmentId?: string; reportReadyUrl?: string; mappingSummaryUrl?: string; reportStatus?: ReportStatus; deliveryStatus?: DeliveryStatus; resumeNotificationStatus?: DeliveryStatus; reportUnavailable?: boolean; failureCategory?: string; retryAudience?: RetryAudience; canRetry?: boolean; currentAttempt?: ReportAttempt; revision?: string|number; status: AssessmentStatus; engine?: "PWQE5"|"PWQE51"; pass?:number; canCompletePass?:boolean; canPause?:boolean; allowedControls?:string[]; responseHistory?:Pwqe5ResponseHistoryItem[]; replayBindingHistory?:Pwqe51ReplayBindingHistoryItem[]; pendingReplayBinding?:Pwqe51PendingReplayBinding|null; availableTopics?: {id:string;label:string;description:string}[]; availableFocuses?: {ref:string;label:string}[]; optedInTopics?:string[]; currentResponse?:unknown; pwqe5Interaction?: Pwqe5RenderedInteraction|null; pwqe51Interaction?: Pwqe51RenderedInteraction|null; email?: string; interaction?: RenderedInteraction|null; draft?: Record<string, unknown>; stageLabel?: string; stageProgress?: number; resumeCue?: string; mode?: string };
 
 export const PWQE51_DETAIL_PERMISSIONS = [
   { id: "state", label: "Explore what state I was in" },
@@ -348,6 +351,19 @@ export function normaliseAssessmentState(input: unknown): AssessmentState {
       const option = record(entry); return option && typeof option.id === "string" ? [{id:option.id,label:String(option.label ?? option.text ?? option.id),exclusive:option.exclusive===true}] : [];
     }),
   } satisfies Pwqe51RenderedInteraction : null;
+  const pendingBindingRecord = record(candidate.pendingReplayBinding);
+  const pendingReplayBinding = pendingBindingRecord && typeof pendingBindingRecord.rootTitle === "string"
+    && typeof pendingBindingRecord.prompt === "string" && typeof pendingBindingRecord.sourceLabel === "string"
+    ? { rootTitle: pendingBindingRecord.rootTitle, prompt: pendingBindingRecord.prompt, sourceLabel: pendingBindingRecord.sourceLabel }
+    : null;
+  const bindingOutcomes = new Set<Pwqe51ReplayBindingOutcome>(["different", "same", "unknown", "no_event", "skip"]);
+  const replayBindingHistory = Array.isArray(candidate.replayBindingHistory) ? candidate.replayBindingHistory.flatMap((entry) => {
+    const binding = record(entry);
+    return binding && typeof binding.ref === "string" && typeof binding.rootTitle === "string"
+      && bindingOutcomes.has(binding.outcome as Pwqe51ReplayBindingOutcome)
+      ? [{ ref: binding.ref, rootTitle: binding.rootTitle, outcome: binding.outcome as Pwqe51ReplayBindingOutcome, canCorrect: binding.canCorrect === true }]
+      : [];
+  }) : [];
   return {
     assessmentId: (raw.assessmentId ?? raw.assessment_id ?? candidate.assessmentId ?? candidate.assessment_id) as string|undefined,
     reportReadyUrl: (raw.reportReadyUrl ?? raw.report_ready_url ?? candidate.reportReadyUrl ?? candidate.report_ready_url) as string|undefined,
@@ -369,6 +385,8 @@ export function normaliseAssessmentState(input: unknown): AssessmentState {
     availableFocuses: Array.isArray(candidate.availableFocuses) ? candidate.availableFocuses.flatMap((entry) => { const focus=record(entry); return focus&&typeof focus.ref==="string"&&typeof focus.label==="string" ? [{ref:focus.ref,label:focus.label}] : []; }) : undefined,
     allowedControls: Array.isArray(candidate.allowedControls) ? candidate.allowedControls.filter((entry): entry is string => typeof entry === "string") : [],
     responseHistory: normalizePwqe5ResponseHistory(candidate.responseHistory),
+    replayBindingHistory,
+    pendingReplayBinding,
     optedInTopics: Array.isArray(candidate.optedInTopics) ? candidate.optedInTopics.filter((entry): entry is string => typeof entry === "string") : [],
     currentResponse: candidate.currentResponse,
     pwqe5Interaction,
