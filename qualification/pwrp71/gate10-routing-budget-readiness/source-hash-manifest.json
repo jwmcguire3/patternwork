@@ -5,7 +5,7 @@
     "startingCommit": "8dd192a7076ae535b90f340a778d915a8a2338bd",
     "startingBranch": "codex/pwrp71-semantic-evidence-v5",
     "workingBranch": "codex/pwrp71-gate10-routing-budget-readiness",
-    "candidateCommit": "recorded in final release-gate ledger after commit"
+    "candidateCommit": "e5c705578349b9b70257b6f9a87dcec4a0ca1b69"
   },
   "sourcePins": {
     "questionRelease": "PWQE-5.1.0-candidate.1",
