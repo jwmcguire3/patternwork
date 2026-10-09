@@ -1,0 +1,264 @@
+{
+  "schemaVersion": "PWQE51-FOCUSED-ROUTER-CONTRACT-CASES-V1-MANIFEST",
+  "qualificationBoundary": "focused source-bound case specifications; not full assessment transcripts or independent routing qualification",
+  "sourceIdentity": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "sourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "reportRelease": "PWRP-7.1.0-candidate.1"
+  },
+  "profiles": [
+    {
+      "profileId": "P01",
+      "file": "P01.json",
+      "artifactSha256": "967102f09fd04b15e9b52424b3f44ac809413b018002d211c94d9aa45b374e1b",
+      "fullAssessmentTranscript": false,
+      "status": "all_authored_semantic_anchors_issued_in_full_session",
+      "semanticClaim": "A preventive role with a real stopping point",
+      "requiredAnchorCount": 4,
+      "acceptedAnchorCount": 4
+    },
+    {
+      "profileId": "P02",
+      "file": "P02.json",
+      "artifactSha256": "58ccc344a42ea4c806d577875e6e76e03b4bedb097c016ecf182bad6913f403d",
+      "fullAssessmentTranscript": false,
+      "status": "all_authored_semantic_anchors_issued_in_full_session",
+      "semanticClaim": "A manager-to-firefighter handoff in one disagreement",
+      "requiredAnchorCount": 7,
+      "acceptedAnchorCount": 7
+    },
+    {
+      "profileId": "P03",
+      "file": "P03.json",
+      "artifactSha256": "e6460632ec9361491a9a38cf0afde696d164e254feb7234cca7d0d3f050a1d33",
+      "fullAssessmentTranscript": false,
+      "status": "all_authored_semantic_anchors_issued_in_full_session",
+      "semanticClaim": "Uncertainty, not all distance",
+      "requiredAnchorCount": 3,
+      "acceptedAnchorCount": 3
+    },
+    {
+      "profileId": "P04",
+      "file": "P04.json",
+      "artifactSha256": "250058eace05ad516e9d5e0c08208dc648367f02917ae7f5f103afc5bacb25b0",
+      "fullAssessmentTranscript": false,
+      "status": "authored_semantic_anchors_not_fully_issued_in_full_session",
+      "semanticClaim": "A contact pattern that does not support attachment anxiety",
+      "requiredAnchorCount": 2,
+      "acceptedAnchorCount": 0
+    },
+    {
+      "profileId": "P05",
+      "file": "P05.json",
+      "artifactSha256": "cc299af13a37435027de65826464b2567ca435459f3e67589ad2a336f984ecc3",
+      "fullAssessmentTranscript": false,
+      "status": "authored_semantic_anchors_not_fully_issued_in_full_session",
+      "semanticClaim": "Loss of words is not the same as deciding to withdraw",
+      "requiredAnchorCount": 3,
+      "acceptedAnchorCount": 2
+    },
+    {
+      "profileId": "P06",
+      "file": "P06.json",
+      "artifactSha256": "5e7574c7a19056d6ab7306450fb8079f6272f3dedc92df18da990cca8bdc7ea3",
+      "fullAssessmentTranscript": false,
+      "status": "authored_semantic_anchors_not_fully_issued_in_full_session",
+      "semanticClaim": "Different preventive jobs in different settings",
+      "requiredAnchorCount": 4,
+      "acceptedAnchorCount": 3
+    },
+    {
+      "profileId": "P07",
+      "file": "P07.json",
+      "artifactSha256": "cf3638e61375b8fd4bfaa50fb9c1e85d1f3a4feb81690f75e62ad1fc9ad90b9b",
+      "fullAssessmentTranscript": false,
+      "status": "no_authored_deepening_semantic_anchors",
+      "semanticClaim": "A useful map without a problem inventory",
+      "requiredAnchorCount": 0,
+      "acceptedAnchorCount": 0
+    },
+    {
+      "profileId": "P08",
+      "file": "P08.json",
+      "artifactSha256": "45371169cb7b9e6c54f0d6216119a695543b23dd421d755064204baa6055890c",
+      "fullAssessmentTranscript": false,
+      "status": "authored_semantic_anchors_not_fully_issued_in_full_session",
+      "semanticClaim": "The need is present, but its visibility gets managed",
+      "requiredAnchorCount": 5,
+      "acceptedAnchorCount": 4
+    },
+    {
+      "profileId": "P09",
+      "file": "P09.json",
+      "artifactSha256": "2c3b02ad31f3aaf95b8aa30b75ef1bc9afc6cfc3af803d7a4a7354576561ee54",
+      "fullAssessmentTranscript": false,
+      "status": "authored_semantic_anchors_not_fully_issued_in_full_session",
+      "semanticClaim": "Function inferred without pretending the person stated the motive",
+      "requiredAnchorCount": 11,
+      "acceptedAnchorCount": 6
+    },
+    {
+      "profileId": "C01",
+      "file": "C01.json",
+      "artifactSha256": "087a6ff8a139ad359554ec974762d61db4af146680dc60186804fbdadbec7e99",
+      "fullAssessmentTranscript": false,
+      "status": "all_authored_semantic_anchors_issued_in_full_session",
+      "semanticClaim": "Smaller request with difficulty allowing need inside",
+      "requiredAnchorCount": 11,
+      "acceptedAnchorCount": 11
+    },
+    {
+      "profileId": "C02",
+      "file": "C02.json",
+      "artifactSha256": "228973803647cc60d2ffb1ef8a03e1b26060d101d1cc4d93cb8d3a9d54276059",
+      "fullAssessmentTranscript": false,
+      "status": "all_authored_semantic_anchors_issued_in_full_session",
+      "semanticClaim": "Same outward request with internal permission",
+      "requiredAnchorCount": 10,
+      "acceptedAnchorCount": 10
+    },
+    {
+      "profileId": "C03",
+      "file": "C03.json",
+      "artifactSha256": "e0ab43f2e13938eb25a65bbf554d2fa26f4a5fce91c34e8844f86574eba2ee19",
+      "fullAssessmentTranscript": false,
+      "status": "all_authored_semantic_anchors_issued_in_full_session",
+      "semanticClaim": "Pride that is difficult to allow",
+      "requiredAnchorCount": 5,
+      "acceptedAnchorCount": 5
+    },
+    {
+      "profileId": "C04",
+      "file": "C04.json",
+      "artifactSha256": "e9e7f3a9baaed8ce8212e14aea52e9cbdbcb11c5a6bf6dd58e3a76ea1ca5bc7c",
+      "fullAssessmentTranscript": false,
+      "status": "all_authored_semantic_anchors_issued_in_full_session",
+      "semanticClaim": "Private ambition that remains welcome inside",
+      "requiredAnchorCount": 6,
+      "acceptedAnchorCount": 6
+    },
+    {
+      "profileId": "C05",
+      "file": "C05.json",
+      "artifactSha256": "279f941ef7b32dc7113d211e2c51f9171d03839f906aa4944e2bd4ae9a8244d3",
+      "fullAssessmentTranscript": false,
+      "status": "all_authored_semantic_anchors_issued_in_full_session",
+      "semanticClaim": "Force and updating of a current self-conclusion",
+      "requiredAnchorCount": 6,
+      "acceptedAnchorCount": 6
+    },
+    {
+      "profileId": "C06",
+      "file": "C06.json",
+      "artifactSha256": "67f9222b2d8ffeb28fb0aacbb61d5ca6f2beeb881a93dcebb90e1f80e5b01f2b",
+      "fullAssessmentTranscript": false,
+      "status": "all_authored_semantic_anchors_issued_in_full_session",
+      "semanticClaim": "Two concerns without a forced shared exile",
+      "requiredAnchorCount": 5,
+      "acceptedAnchorCount": 5
+    },
+    {
+      "profileId": "C07",
+      "file": "C07.json",
+      "artifactSha256": "9e3982c1d97a14f04955040790792c9581ab796c05e95bc1e831aa534efa02b4",
+      "fullAssessmentTranscript": false,
+      "status": "all_authored_semantic_anchors_issued_in_full_session",
+      "semanticClaim": "Continuity examined after two distinct reviews",
+      "requiredAnchorCount": 7,
+      "acceptedAnchorCount": 7
+    },
+    {
+      "profileId": "C08",
+      "file": "C08.json",
+      "artifactSha256": "4e70c931c46ba46289e9fa1bec0aae07bdbb54261f5f3be40d7d37541406183a",
+      "fullAssessmentTranscript": false,
+      "status": "all_authored_semantic_anchors_issued_in_full_session",
+      "semanticClaim": "An actual return after a change of response",
+      "requiredAnchorCount": 10,
+      "acceptedAnchorCount": 10
+    },
+    {
+      "profileId": "C09",
+      "file": "C09.json",
+      "artifactSha256": "9842f9b6a96971d17ddedccc299c6db745643208b3b0a5d0343db2a2e467fb94",
+      "fullAssessmentTranscript": false,
+      "status": "all_authored_semantic_anchors_issued_in_full_session",
+      "semanticClaim": "The response ends without returning",
+      "requiredAnchorCount": 9,
+      "acceptedAnchorCount": 9
+    },
+    {
+      "profileId": "C10",
+      "file": "C10.json",
+      "artifactSha256": "2cad12c8d46db3dc0f01e5a3819cc0924221bdd0df2a7327bd029e6dc23b412e",
+      "fullAssessmentTranscript": false,
+      "status": "all_authored_semantic_anchors_issued_in_full_session",
+      "semanticClaim": "Functioning, ease, timing and changed interpretation",
+      "requiredAnchorCount": 11,
+      "acceptedAnchorCount": 11
+    },
+    {
+      "profileId": "C11",
+      "file": "C11.json",
+      "artifactSha256": "80404980523ac89a20c01887ddba9792f853d6d6911f682d571e9c0ef7799080",
+      "fullAssessmentTranscript": false,
+      "status": "all_authored_semantic_anchors_issued_in_full_session",
+      "semanticClaim": "Company has an effect and an aftermath",
+      "requiredAnchorCount": 3,
+      "acceptedAnchorCount": 3
+    },
+    {
+      "profileId": "C12",
+      "file": "C12.json",
+      "artifactSha256": "12ca814a82a412b2cf882c0729b0442a1559d819ba8056ac9ad684f5de040800",
+      "fullAssessmentTranscript": false,
+      "status": "authored_semantic_anchors_not_fully_issued_in_full_session",
+      "semanticClaim": "Current expectations around relationship uncertainty",
+      "requiredAnchorCount": 6,
+      "acceptedAnchorCount": 5
+    },
+    {
+      "profileId": "C13",
+      "file": "C13.json",
+      "artifactSha256": "ab7b0845856d1453058147eac626d016e8e37694908bd8971f71541ca7992fde",
+      "fullAssessmentTranscript": false,
+      "status": "all_authored_semantic_anchors_issued_in_full_session",
+      "semanticClaim": "Private importance, desired pace and showing interest",
+      "requiredAnchorCount": 5,
+      "acceptedAnchorCount": 5
+    },
+    {
+      "profileId": "C14",
+      "file": "C14.json",
+      "artifactSha256": "461bf387fde0214bd82fe11fbab9391d02e9ac123aca6ad3e69a8d830d9dff73",
+      "fullAssessmentTranscript": false,
+      "status": "all_authored_semantic_anchors_issued_in_full_session",
+      "semanticClaim": "What remains unfinished after repair",
+      "requiredAnchorCount": 3,
+      "acceptedAnchorCount": 3
+    },
+    {
+      "profileId": "C15",
+      "file": "C15.json",
+      "artifactSha256": "1ffc7606dc020014cd560e4cb22d041ba83c37e8f504b9e9a3636a9c405ab8b2",
+      "fullAssessmentTranscript": false,
+      "status": "all_authored_semantic_anchors_issued_in_full_session",
+      "semanticClaim": "Support for exploration without permission-seeking",
+      "requiredAnchorCount": 2,
+      "acceptedAnchorCount": 2
+    },
+    {
+      "profileId": "C16",
+      "file": "C16.json",
+      "artifactSha256": "b6d0ada60de99daed36153a2073720dfc2ae75fefd81ef87a4c67e2a07cd823c",
+      "fullAssessmentTranscript": false,
+      "status": "all_authored_semantic_anchors_issued_in_full_session",
+      "semanticClaim": "Approval rather than encouragement",
+      "requiredAnchorCount": 2,
+      "acceptedAnchorCount": 2
+    }
+  ]
+}

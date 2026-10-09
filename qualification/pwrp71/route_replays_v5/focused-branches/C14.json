@@ -1,0 +1,391 @@
+{
+  "schemaVersion": "PWQE51-FOCUSED-ROUTER-CONTRACT-CASE-V1",
+  "profileId": "C14",
+  "experimentalFixtureVariant": null,
+  "caseKind": "focused_router_contract_case",
+  "fullAssessmentTranscript": false,
+  "independentlyReviewedRoutingEvidence": false,
+  "semanticClaim": "What remains unfinished after repair",
+  "status": "all_authored_semantic_anchors_issued_in_full_session",
+  "sourcePins": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "authoredFixtureFile": "C14.json",
+    "authoredFixtureSha256": "eb1ad2ee0340645db091009c955228f93feb2c2d27d8fe0b08bea94f8f960797",
+    "routeReplayArtifactFile": "C14.json",
+    "routeReplayArtifactSha256": "5d758338d0e56b1dedde6f9355b86a1360d29752ad6da6b1bd580e0a4fcf632a",
+    "semanticResultSha256": "1830ec7f16da27ec0ee749cd4f2a5b962a5b0fbffba3b3d6e2163818cf25a5cd",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "reportRelease": "PWRP-7.1.0-candidate.1"
+  },
+  "separationRules": {
+    "sourceAnswersRemainUnchanged": true,
+    "syntheticMappingScaffoldIsNotEvidenceForThisSemanticClaim": true,
+    "syntheticDeepeningAnswersAreContextOnly": true,
+    "routerMustIssueEveryQuestion": true,
+    "occurrenceAndBindingMustMatchExactly": true
+  },
+  "authoredCore": {
+    "requiredSourceResponseIds": [
+      "C14-SRC-D50-1",
+      "C14-SRC-D51-1",
+      "C14-SRC-D96-1"
+    ],
+    "acceptedSourceResponseIds": [
+      "C14-SRC-D50-1",
+      "C14-SRC-D51-1",
+      "C14-SRC-D96-1"
+    ],
+    "status": "complete",
+    "exactSourceAnswers": [
+      {
+        "sourceResponse": {
+          "responseId": "C14-SRC-D50-1",
+          "questionId": "D50",
+          "occurrenceId": "fx_C14_mapping_M24",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D50.time"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D50",
+          "stage": "deepening",
+          "prompt": "What, if anything, helped that repair attempt reach you?",
+          "episodeFamily": "repair_received",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D50.name",
+              "text": "They acknowledged the specific thing that hurt.",
+              "reportedValue": "name"
+            },
+            {
+              "id": "D50.explain",
+              "text": "They explained something I had misunderstood.",
+              "reportedValue": "explain"
+            },
+            {
+              "id": "D50.change",
+              "text": "They changed what they were doing.",
+              "reportedValue": "change"
+            },
+            {
+              "id": "D50.time",
+              "text": "They gave me time without pushing.",
+              "reportedValue": "time"
+            },
+            {
+              "id": "D50.warm",
+              "text": "Their warmth helped.",
+              "reportedValue": "warm"
+            },
+            {
+              "id": "D50.none",
+              "text": "Nothing in that attempt helped it land.",
+              "reportedValue": "none"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_81290978b6646270ac99b0982d9d2a159195c58e",
+          "runtimeOccurrenceId": "pwep_e68fe718-dc73-41d3-8c5d-2dc67f8ddb84",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D50.time"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C14-SRC-D51-1",
+          "questionId": "D51",
+          "occurrenceId": "fx_C14_mapping_M24",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D51.mixed"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D51",
+          "stage": "deepening",
+          "prompt": "After that repair attempt, how did contact between you change?",
+          "episodeFamily": "repair_received",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D51.usual",
+              "text": "We returned to ordinary contact.",
+              "reportedValue": "usual"
+            },
+            {
+              "id": "D51.slow",
+              "text": "I wanted contact again, but more slowly.",
+              "reportedValue": "slow"
+            },
+            {
+              "id": "D51.mixed",
+              "text": "I could be in contact and still felt guarded.",
+              "reportedValue": "mixed"
+            },
+            {
+              "id": "D51.later",
+              "text": "I wanted to return, but needed more time.",
+              "reportedValue": "later"
+            },
+            {
+              "id": "D51.less",
+              "text": "I continued to want less contact.",
+              "reportedValue": "less"
+            },
+            {
+              "id": "D51.none",
+              "text": "There was no further contact in the period I am describing.",
+              "reportedValue": "none"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_e9c75df1a3cfa9a1701d646a016b0e76b2108006",
+          "runtimeOccurrenceId": "pwep_e68fe718-dc73-41d3-8c5d-2dc67f8ddb84",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D51.mixed"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C14-SRC-D96-1",
+          "questionId": "D96",
+          "occurrenceId": "fx_C14_mapping_M24",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D96.consistent"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D96",
+          "stage": "deepening",
+          "prompt": "After that repair attempt, what did you still need to see change, if anything?",
+          "episodeFamily": "bound",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D96.practical",
+              "text": "The practical effect of what happened.",
+              "reportedValue": "practical"
+            },
+            {
+              "id": "D96.acknowledge",
+              "text": "Whether they understood the specific thing that hurt.",
+              "reportedValue": "acknowledge"
+            },
+            {
+              "id": "D96.consistent",
+              "text": "Whether their changed behavior would continue.",
+              "reportedValue": "consistent"
+            },
+            {
+              "id": "D96.pressure",
+              "text": "The pressure to act as though everything was already fine.",
+              "reportedValue": "pressure"
+            },
+            {
+              "id": "D96.nothing",
+              "text": "Nothing specific was left for them to put right.",
+              "reportedValue": "nothing"
+            },
+            {
+              "id": "D96.unclear",
+              "text": "I was not sure what was still unfinished.",
+              "reportedValue": "unclear"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_47c2e1e00f61526bad790d72d1c53d641579c71e",
+          "runtimeOccurrenceId": "pwep_e68fe718-dc73-41d3-8c5d-2dc67f8ddb84",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D96.consistent"
+          ]
+        }
+      }
+    ]
+  },
+  "occurrenceConditions": [
+    {
+      "fixtureOccurrenceReference": "fx_C14_mapping_M24",
+      "runtimeOccurrenceId": "pwep_e68fe718-dc73-41d3-8c5d-2dc67f8ddb84",
+      "episodeFamily": "repair_received",
+      "basis": "actual_recalled",
+      "origin": "new_synthetic_mapping_episode",
+      "originalMappingContext": [
+        {
+          "sourceResponse": {
+            "responseId": "C14-SRC-M24-1",
+            "questionId": "M24",
+            "occurrenceId": "fx_C14_mapping_M24",
+            "stepId": "first",
+            "selectedOptionIds": [
+              "M24.outward"
+            ],
+            "status": "answered",
+            "mode": "single",
+            "basis": "actual_recalled"
+          },
+          "provenance": "original_authored_fictional_answer",
+          "questionContract": {
+            "id": "M24",
+            "stage": "mapping",
+            "prompt": "When {repair_person} tried to put something right with you, how did the attempt land?",
+            "episodeFamily": "repair_received",
+            "stepBinding": "first",
+            "selection": {
+              "mode": "single",
+              "max_select": 1,
+              "allow_simultaneous_pair": true,
+              "order_not_implied": true
+            },
+            "optionsInSourceOrder": [
+              {
+                "id": "M24.helped",
+                "text": "It helped, even though there was more to discuss.",
+                "reportedValue": "helped"
+              },
+              {
+                "id": "M24.details",
+                "text": "I needed more information.",
+                "reportedValue": "details"
+              },
+              {
+                "id": "M24.change",
+                "text": "I wanted to see a change in behavior.",
+                "reportedValue": "change"
+              },
+              {
+                "id": "M24.space",
+                "text": "I still wanted space.",
+                "reportedValue": "space"
+              },
+              {
+                "id": "M24.outward",
+                "text": "I accepted it out loud without feeling settled.",
+                "reportedValue": "outward"
+              },
+              {
+                "id": "M24.missed",
+                "text": "It did not address what bothered me.",
+                "reportedValue": "missed"
+              }
+            ],
+            "responseControls": [
+              "none_fit",
+              "not_sure",
+              "no_event",
+              "not_applicable",
+              "skip"
+            ]
+          },
+          "fullSessionRoute": {
+            "status": "issued_and_accepted",
+            "runtimeResponseId": "pwr_ea62519ef4c12dac9b3727a8839a5861d7f96284",
+            "runtimeOccurrenceId": "pwep_e68fe718-dc73-41d3-8c5d-2dc67f8ddb84",
+            "stepId": "first",
+            "phase": "mapping",
+            "selection": [
+              "M24.outward"
+            ]
+          }
+        }
+      ],
+      "syntheticMappingScaffoldContextOnly": [],
+      "referentRoles": [
+        {
+          "occurrenceId": "fx_C14_mapping_M24",
+          "slot": "repair_person",
+          "role": "partner",
+          "origin": "original_authored_role_configuration"
+        }
+      ]
+    }
+  ],
+  "entryAndPermissionContext": {
+    "focusOccurrenceId": "fx_C14_mapping_M24",
+    "focusTopics": [],
+    "permissionOnlyTopics": [
+      "body_detail",
+      "body_detail"
+    ],
+    "actualAppliedFocusTopics": [],
+    "focusTopicsApplied": true,
+    "topicPermissionEvents": [
+      {
+        "topic": "body_detail",
+        "outcome": "opt_in",
+        "provenance": "original_authored_configuration",
+        "sourceRef": "C14.config"
+      }
+    ]
+  },
+  "distinctnessIntents": [],
+  "comparisonBindingIntents": [],
+  "intentionallyForbiddenAnswers": [],
+  "focusedBranchExecution": "not_executed_as_a_separate_transcript; full-session source-answer results are shown per response"
+}

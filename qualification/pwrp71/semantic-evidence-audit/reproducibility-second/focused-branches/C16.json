@@ -1,0 +1,248 @@
+{
+  "schemaVersion": "PWQE51-FOCUSED-ROUTER-CONTRACT-CASE-V1",
+  "profileId": "C16",
+  "experimentalFixtureVariant": null,
+  "caseKind": "focused_router_contract_case",
+  "fullAssessmentTranscript": false,
+  "independentlyReviewedRoutingEvidence": false,
+  "semanticClaim": "Approval rather than encouragement",
+  "status": "all_authored_semantic_anchors_issued_in_full_session",
+  "sourcePins": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "authoredFixtureFile": "C16.json",
+    "authoredFixtureSha256": "a4cc2a8dbb3438772fbc02b6103749011405e884f8e9d32af3d8ad2217bcf813",
+    "routeReplayArtifactFile": "C16.json",
+    "routeReplayArtifactSha256": "ae4922b1632522dabf8c0ca7db6291b51d31a82bce71b6f0aa2691f1860c6b8d",
+    "semanticResultSha256": "c19cd16cd7a856bc92278bc3c87b20cd18aad3879636a47a2656ef4dd24d8363",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "reportRelease": "PWRP-7.1.0-candidate.1"
+  },
+  "separationRules": {
+    "sourceAnswersRemainUnchanged": true,
+    "syntheticMappingScaffoldIsNotEvidenceForThisSemanticClaim": true,
+    "syntheticDeepeningAnswersAreContextOnly": true,
+    "routerMustIssueEveryQuestion": true,
+    "occurrenceAndBindingMustMatchExactly": true
+  },
+  "authoredCore": {
+    "requiredSourceResponseIds": [
+      "C16-SRC-D97-1",
+      "C16-SRC-D98-1"
+    ],
+    "acceptedSourceResponseIds": [
+      "C16-SRC-D97-1",
+      "C16-SRC-D98-1"
+    ],
+    "status": "complete",
+    "exactSourceAnswers": [
+      {
+        "sourceResponse": {
+          "responseId": "C16-SRC-D97-1",
+          "questionId": "D97",
+          "occurrenceId": "fx_C16_deepening_D97",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D97.approval"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "basis": "actual_recalled"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D97",
+          "stage": "deepening",
+          "prompt": "Think of a recent time you tried something unfamiliar. How did you involve {support_person}, if at all?",
+          "episodeFamily": "exploration",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D97.share",
+              "text": "I shared what I was trying.",
+              "reportedValue": "share"
+            },
+            {
+              "id": "D97.think",
+              "text": "I asked them to help me think it through.",
+              "reportedValue": "think"
+            },
+            {
+              "id": "D97.encourage",
+              "text": "I looked for encouragement.",
+              "reportedValue": "encourage"
+            },
+            {
+              "id": "D97.approval",
+              "text": "I waited for their approval before going ahead.",
+              "reportedValue": "approval"
+            },
+            {
+              "id": "D97.private",
+              "text": "I kept it to myself.",
+              "reportedValue": "private"
+            },
+            {
+              "id": "D97.none",
+              "text": "Their involvement was not relevant to what I was doing.",
+              "reportedValue": "none"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_1dba42e055d6796f51f67ac579d9710e23d2550e",
+          "runtimeOccurrenceId": "pwep_4abff0fa-b90d-4d19-8011-92fcea31e39d",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D97.approval"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C16-SRC-D98-1",
+          "questionId": "D98",
+          "occurrenceId": "fx_C16_deepening_D97",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D98.permission"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D98",
+          "stage": "deepening",
+          "prompt": "What part did their response play in going ahead with it?",
+          "episodeFamily": "bound",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D98.encouraged",
+              "text": "It encouraged me while leaving the decision mine.",
+              "reportedValue": "encouraged"
+            },
+            {
+              "id": "D98.practical",
+              "text": "It supplied information or practical help I needed.",
+              "reportedValue": "practical"
+            },
+            {
+              "id": "D98.permission",
+              "text": "I treated it as permission to go ahead.",
+              "reportedValue": "permission"
+            },
+            {
+              "id": "D98.disagree",
+              "text": "I went ahead even though they did not agree.",
+              "reportedValue": "disagree"
+            },
+            {
+              "id": "D98.same",
+              "text": "It made little difference to going ahead.",
+              "reportedValue": "same"
+            },
+            {
+              "id": "D98.no_response",
+              "text": "There was no response I can use for this question.",
+              "reportedValue": "no_response"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_31c4c490783af463b51d724cdb2f4e8aeb3b1086",
+          "runtimeOccurrenceId": "pwep_4abff0fa-b90d-4d19-8011-92fcea31e39d",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D98.permission"
+          ]
+        }
+      }
+    ]
+  },
+  "occurrenceConditions": [
+    {
+      "fixtureOccurrenceReference": "fx_C16_deepening_D97",
+      "runtimeOccurrenceId": "pwep_4abff0fa-b90d-4d19-8011-92fcea31e39d",
+      "episodeFamily": "exploration",
+      "basis": "actual_recalled",
+      "origin": "original_authored_fictional_scenario_episode",
+      "originalMappingContext": [],
+      "syntheticMappingScaffoldContextOnly": [],
+      "referentRoles": [
+        {
+          "occurrenceId": "fx_C16_deepening_D97",
+          "slot": "support_person",
+          "role": "friend",
+          "origin": "original_authored_role_configuration"
+        }
+      ]
+    }
+  ],
+  "entryAndPermissionContext": {
+    "focusOccurrenceId": "fx_C16_deepening_D97",
+    "focusTopics": [
+      "exploration"
+    ],
+    "permissionOnlyTopics": [
+      "body_detail",
+      "exploration",
+      "body_detail",
+      "exploration"
+    ],
+    "actualAppliedFocusTopics": [
+      "exploration"
+    ],
+    "focusTopicsApplied": true,
+    "topicPermissionEvents": [
+      {
+        "topic": "body_detail",
+        "outcome": "opt_in",
+        "provenance": "original_authored_configuration",
+        "sourceRef": "C16.config"
+      },
+      {
+        "topic": "exploration",
+        "outcome": "opt_in",
+        "provenance": "original_authored_configuration",
+        "sourceRef": "C16.config"
+      }
+    ]
+  },
+  "distinctnessIntents": [],
+  "comparisonBindingIntents": [],
+  "intentionallyForbiddenAnswers": [],
+  "focusedBranchExecution": "not_executed_as_a_separate_transcript; full-session source-answer results are shown per response"
+}

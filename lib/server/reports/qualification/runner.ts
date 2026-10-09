@@ -19,10 +19,11 @@ import { PWRP71_SEMANTIC_CASE_SET_SHA256 } from "../pwrp71-readiness.ts";
 export const PWRP71_QUALIFICATION_RUN_SCHEMA = 1 as const;
 export const PWRP71_QUALIFICATION_REPORT_ORDER = ["MAP", "IFS", "PV", "ATT", "SYNTHESIS"] as const satisfies readonly ReportType[];
 export const PWRP71_ROUTER_PARITY_EVIDENCE_VERSION = "pwqe51-routing-qualification-1" as const;
-export type Pwrp71FixtureSet = "legacy-v1" | "route-replays-v3" | "route-replays-v4";
+export type Pwrp71FixtureSet = "legacy-v1" | "route-replays-v3" | "route-replays-v4" | "route-replays-v5";
 type FixtureStatus = Pwrp71FixturePacket["fixtureStatus"]
   | "route_replay_v3_eligible" | "route_replay_v3_partial" | "route_replay_v3_ineligible" | "route_replay_v3_missing"
-  | "route_replay_v4_eligible" | "route_replay_v4_partial" | "route_replay_v4_ineligible" | "route_replay_v4_missing";
+  | "route_replay_v4_eligible" | "route_replay_v4_partial" | "route_replay_v4_ineligible" | "route_replay_v4_missing"
+  | "route_replay_v5_eligible" | "route_replay_v5_partial" | "route_replay_v5_ineligible" | "route_replay_v5_missing";
 
 const ROUTER_IMPLEMENTATION_FILES = [
   "lib/server/assessment/pwqe51-router.ts",
@@ -161,7 +162,7 @@ export interface RunPwrp71QualificationOptions {
 }
 
 interface RouteReplayManifest {
-  readonly schemaVersion: "PWQE51-ROUTE-REPLAY-V3-MANIFEST" | "PWQE51-ROUTE-REPLAY-V4-MANIFEST";
+  readonly schemaVersion: "PWQE51-ROUTE-REPLAY-V3-MANIFEST" | "PWQE51-ROUTE-REPLAY-V4-MANIFEST" | "PWQE51-ROUTE-REPLAY-V5-MANIFEST";
   readonly qualificationStatus: "internal_session_replay_not_independent_qualification";
   readonly inputs: {
     readonly v2ManifestSha256: string;
@@ -187,10 +188,11 @@ interface RouteReplayManifest {
     readonly adapterIssueCodes: readonly string[];
     readonly firstDivergence: string | null;
   }[];
+  readonly fixtureVariant?: { readonly id: string; readonly profiles: readonly string[]; readonly provenance: string; readonly archivedConfigurationDifference: string } | null;
 }
 
 interface RouteReplayCase {
-  readonly schemaVersion: "PWQE51-ROUTE-REPLAY-V3" | "PWQE51-ROUTE-REPLAY-V4";
+  readonly schemaVersion: "PWQE51-ROUTE-REPLAY-V3" | "PWQE51-ROUTE-REPLAY-V4" | "PWQE51-ROUTE-REPLAY-V5";
   readonly profileId: string;
   readonly authoredAnswerDisposition: readonly {
     readonly responseId: string;
@@ -212,7 +214,7 @@ interface RouteReplayCase {
 }
 
 interface RouteReplayFixtureSet {
-  readonly fixtureSet: "route-replays-v3" | "route-replays-v4";
+  readonly fixtureSet: "route-replays-v3" | "route-replays-v4" | "route-replays-v5";
   readonly fixtureSetSha256: string;
   readonly manifestSha256: string;
   readonly inputs: RouteReplayManifest["inputs"];
@@ -258,11 +260,11 @@ function normalizedTextSha256(text: string): string {
 async function loadRouteReplayFixtureSet(input: {
   readonly workspaceRoot: string;
   readonly fixtureRoot?: string;
-  readonly fixtureSet: "route-replays-v3" | "route-replays-v4";
+  readonly fixtureSet: "route-replays-v3" | "route-replays-v4" | "route-replays-v5";
   readonly questionSource: Pwqe51SourcePackage;
   readonly reportSource: Pwrp71SourcePackage;
 }): Promise<RouteReplayFixtureSet> {
-  const version = input.fixtureSet === "route-replays-v4" ? "V4" : "V3";
+  const version = input.fixtureSet === "route-replays-v5" ? "V5" : input.fixtureSet === "route-replays-v4" ? "V4" : "V3";
   const root = path.resolve(input.fixtureRoot ?? path.join(input.workspaceRoot, "qualification", "pwrp71", `route_replays_${version.toLowerCase()}`));
   let manifestText: string;
   try { manifestText = await readFile(path.join(root, "manifest.json"), "utf8"); }
@@ -273,6 +275,12 @@ async function loadRouteReplayFixtureSet(input: {
   if (!isRecord(manifest) || manifest.schemaVersion !== `PWQE51-ROUTE-REPLAY-${version}-MANIFEST`
     || manifest.qualificationStatus !== "internal_session_replay_not_independent_qualification" || !isRecord(manifest.inputs) || !Array.isArray(manifest.profiles)) {
     throw new Error(`Selected route replay manifest does not use the internal PWQE51-ROUTE-REPLAY-${version}-MANIFEST contract.`);
+  }
+  if (version === "V5" && (!isRecord(manifest.fixtureVariant) || manifest.fixtureVariant.id !== "body-detail-opt-in-at-mapping-entry-v1"
+    || manifest.fixtureVariant.provenance !== "new_synthetic_mapping_control"
+    || !Array.isArray(manifest.fixtureVariant.profiles)
+    || JSON.stringify(manifest.fixtureVariant.profiles) !== JSON.stringify(["P05", "C10", "C11"]))) {
+    throw new Error("The v5 fixture must declare its separately simulated body-detail Mapping-entry permission variant for P05, C10, and C11.");
   }
   const source = manifest.inputs;
   if (source.questionRelease !== PWQE51_RELEASE_IDENTITY.questionRelease
@@ -379,7 +387,7 @@ async function loadRouteReplayFixtureSet(input: {
         reason: typeof row.reason === "string" ? normalizeRouteReplayRuntimeIds(row.reason) : "",
       } : {})
       : [];
-    const completenessSemantic = version === "V4"
+    const completenessSemantic = version !== "V3"
       ? [
         completeness.mapping === "complete",
         completeness.deepening !== "not_applicable",
@@ -389,7 +397,7 @@ async function loadRouteReplayFixtureSet(input: {
         isRecord(replay.replay.semanticCore) ? replay.replay.semanticCore.acceptedSourceResponseIds : undefined,
       ]
       : [completeness.mapping === "complete", completeness.deepening !== "not_applicable", completeness.deepening === "complete"];
-    const semanticDigest = version === "V4"
+    const semanticDigest = version !== "V3"
       ? sha256Canonical({
         submitted: submittedSemantic,
         trace: traceSemantic,
@@ -420,6 +428,9 @@ async function loadRouteReplayFixtureSet(input: {
           outcome: entry.outcome,
         }) : {}),
         syntheticRespondentControls: JSON.parse(normalizeRouteReplayRuntimeIds(JSON.stringify(replay.replay.syntheticRespondentControls ?? []))) as unknown,
+        ...(version === "V5" ? { mappingEntryTopicOptIns: JSON.parse(normalizeRouteReplayRuntimeIds(JSON.stringify(
+          isRecord(replay.replay.contextDecisions) ? replay.replay.contextDecisions.mappingEntryTopicOptIns ?? [] : [],
+        ))) as unknown } : {}),
         replayDecisions: (Array.isArray(replay.replay.replayAndDistinctnessDecisions) ? replay.replay.replayAndDistinctnessDecisions : []).map((decision) => isRecord(decision) ? ({
           sourceOccurrenceReference: decision.sourceOccurrenceReference,
           outcome: decision.outcome,
@@ -521,9 +532,9 @@ function routeReplayFixturePacket(input: {
   return {
     ...fallbackPacket,
     fixtureStatus: allStagesComplete && manifestCase.mappingPacketAccepted && manifestCase.deepeningPacketAccepted
-      ? input.set.fixtureSet === "route-replays-v4" ? "route_replay_v4_eligible" : "route_replay_v3_eligible"
-      : anyPacket ? input.set.fixtureSet === "route-replays-v4" ? "route_replay_v4_partial" : "route_replay_v3_partial"
-        : input.set.fixtureSet === "route-replays-v4" ? "route_replay_v4_ineligible" : "route_replay_v3_ineligible",
+      ? input.set.fixtureSet === "route-replays-v5" ? "route_replay_v5_eligible" : input.set.fixtureSet === "route-replays-v4" ? "route_replay_v4_eligible" : "route_replay_v3_eligible"
+      : anyPacket ? input.set.fixtureSet === "route-replays-v5" ? "route_replay_v5_partial" : input.set.fixtureSet === "route-replays-v4" ? "route_replay_v4_partial" : "route_replay_v3_partial"
+        : input.set.fixtureSet === "route-replays-v5" ? "route_replay_v5_ineligible" : input.set.fixtureSet === "route-replays-v4" ? "route_replay_v4_ineligible" : "route_replay_v3_ineligible",
     reportPackets,
     reportIssues,
   };
@@ -680,7 +691,7 @@ export async function runPwrp71Qualification(input: RunPwrp71QualificationOption
   if (!input.profileIds.length || new Set(input.profileIds).size !== input.profileIds.length) throw new Error("Select one or more unique PWRP 7.1 profiles.");
   if (!input.reportTypes.length || new Set(input.reportTypes).size !== input.reportTypes.length || input.reportTypes.some((type) => !PWRP71_QUALIFICATION_REPORT_ORDER.includes(type))) throw new Error("Select one or more unique PWRP 7.1 report types.");
   const fixtureSet = input.fixtureSet ?? "legacy-v1";
-  if (fixtureSet !== "legacy-v1" && fixtureSet !== "route-replays-v3" && fixtureSet !== "route-replays-v4") throw new Error(`Unknown PWRP 7.1 fixture set: ${String(fixtureSet)}.`);
+  if (fixtureSet !== "legacy-v1" && fixtureSet !== "route-replays-v3" && fixtureSet !== "route-replays-v4" && fixtureSet !== "route-replays-v5") throw new Error(`Unknown PWRP 7.1 fixture set: ${String(fixtureSet)}.`);
   if (fixtureSet !== "legacy-v1" && input.fixtures) throw new Error(`The ${fixtureSet} fixture set cannot be combined with injected legacy fixtures.`);
   const reportTypes = PWRP71_QUALIFICATION_REPORT_ORDER.filter((type) => input.reportTypes.includes(type));
 
@@ -689,7 +700,7 @@ export async function runPwrp71Qualification(input: RunPwrp71QualificationOption
     input.questionSource ? Promise.resolve(input.questionSource) : loadPwqe51SourcePackage(workspaceRoot),
     input.reportSource ? Promise.resolve(input.reportSource) : loadPwrp71SourcePackage(workspaceRoot),
   ]);
-  const routeReplaySet = fixtureSet === "route-replays-v3" || fixtureSet === "route-replays-v4"
+  const routeReplaySet = fixtureSet === "route-replays-v3" || fixtureSet === "route-replays-v4" || fixtureSet === "route-replays-v5"
     ? await loadRouteReplayFixtureSet({ workspaceRoot, fixtureRoot: input.fixtureRoot, fixtureSet, questionSource, reportSource })
     : undefined;
   let semanticCaseSetSha256: string;

@@ -1,0 +1,127 @@
+{
+  "schemaVersion": "PWQE51-ROUTE-REPLAY-V5-MANIFEST",
+  "qualificationStatus": "internal_session_replay_not_independent_qualification",
+  "inputs": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "sourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5"
+  },
+  "focusedBranches": {
+    "manifestFile": "focused-branches/manifest.json",
+    "manifestSha256": "ed7332b625cf363ae37dcaddce9b43cbac1efdab2a8fd08727cc0d7111cf1a29",
+    "fullAssessmentTranscript": false
+  },
+  "fixtureVariant": null,
+  "rootCauseLedger": "v5-root-cause-ledger.md",
+  "profiles": [
+    {
+      "profileId": "P05",
+      "profileTitle": "Loss of words is not the same as deciding to withdraw",
+      "file": "P05.json",
+      "artifactSha256": "c6978113b08bd5f1093e9c6e28a30ce2fb2a8ec2ae438917c9495f6684b1ac3a",
+      "semanticResultSha256": "2b10ea61442eb5cf233435ae67a1fefcecaf44c63f3b2e3bc40e091a29e83039",
+      "mapping": "complete",
+      "deepening": "complete",
+      "originalAnswers": {
+        "issuedAndAccepted": 0,
+        "unreached": 8,
+        "intentionallyForbidden": 0
+      },
+      "sourceContractMismatchCount": 1,
+      "implementationDefectCount": 0,
+      "syntheticMappingScaffoldAnswersAdministered": 22,
+      "newSyntheticDeepeningAnswers": 8,
+      "syntheticRespondentControls": 1,
+      "semanticCore": "incomplete",
+      "semanticDistinctionStatus": "partial_or_unverified_exact_original_semantic_anchors",
+      "requiredSemanticCoreResponseIds": [
+        "P05-A04",
+        "P05-A05",
+        "P05-A08"
+      ],
+      "acceptedSemanticCoreResponseIds": [],
+      "replayConfirmed": false,
+      "mappingPacketAccepted": true,
+      "deepeningPacketAccepted": true,
+      "adapterIssueCodes": [],
+      "firstDivergence": null
+    },
+    {
+      "profileId": "C10",
+      "profileTitle": "Functioning, ease, timing and changed interpretation",
+      "file": "C10.json",
+      "artifactSha256": "b1ac657a524661e8919a3d6e7b073ea06da6043b4cc9f7fd2e0807cea1c4b4fa",
+      "semanticResultSha256": "0d5746dae3c74794f40441908cf7514516ec10e2a68b7ac55f70d4ba8e50a48f",
+      "mapping": "complete",
+      "deepening": "complete",
+      "originalAnswers": {
+        "issuedAndAccepted": 0,
+        "unreached": 21,
+        "intentionallyForbidden": 0
+      },
+      "sourceContractMismatchCount": 1,
+      "implementationDefectCount": 0,
+      "syntheticMappingScaffoldAnswersAdministered": 22,
+      "newSyntheticDeepeningAnswers": 9,
+      "syntheticRespondentControls": 1,
+      "semanticCore": "incomplete",
+      "semanticDistinctionStatus": "partial_or_unverified_exact_original_semantic_anchors",
+      "requiredSemanticCoreResponseIds": [
+        "C10-SRC-D34-1",
+        "C10-SRC-D30-1",
+        "C10-SRC-D80-1",
+        "C10-SRC-D81-1",
+        "C10-SRC-D82-1",
+        "C10-SRC-D83-1",
+        "C10-SRC-D84-1",
+        "C10-SRC-D85-1",
+        "C10-SRC-D86-1",
+        "C10-SRC-D100-1",
+        "C10-SRC-D36-1"
+      ],
+      "acceptedSemanticCoreResponseIds": [],
+      "replayConfirmed": false,
+      "mappingPacketAccepted": true,
+      "deepeningPacketAccepted": true,
+      "adapterIssueCodes": [],
+      "firstDivergence": null
+    },
+    {
+      "profileId": "C11",
+      "profileTitle": "Company has an effect and an aftermath",
+      "file": "C11.json",
+      "artifactSha256": "3e23281e5e1d7a672c08700dbd955d4323d9a08876afb0bbfbba4256612bb024",
+      "semanticResultSha256": "469ef074b033cf6b5420fbb4ef220baaf560ec6d9ead6c255a5517e17d7425d5",
+      "mapping": "complete",
+      "deepening": "complete",
+      "originalAnswers": {
+        "issuedAndAccepted": 0,
+        "unreached": 8,
+        "intentionallyForbidden": 0
+      },
+      "sourceContractMismatchCount": 1,
+      "implementationDefectCount": 0,
+      "syntheticMappingScaffoldAnswersAdministered": 22,
+      "newSyntheticDeepeningAnswers": 8,
+      "syntheticRespondentControls": 1,
+      "semanticCore": "incomplete",
+      "semanticDistinctionStatus": "partial_or_unverified_exact_original_semantic_anchors",
+      "requiredSemanticCoreResponseIds": [
+        "C11-SRC-D87-1",
+        "C11-SRC-D88-1",
+        "C11-SRC-D86-1"
+      ],
+      "acceptedSemanticCoreResponseIds": [],
+      "replayConfirmed": false,
+      "mappingPacketAccepted": true,
+      "deepeningPacketAccepted": true,
+      "adapterIssueCodes": [],
+      "firstDivergence": null
+    }
+  ]
+}

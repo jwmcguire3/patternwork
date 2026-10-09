@@ -6,6 +6,7 @@ import type { Pwqe51ComparisonDecision } from "../assessment/pwqe51-session.ts";
 
 type Pwqe51Response = Pwqe51CanonicalResponse;
 type Pwqe51Control = "end" | "shorten";
+type Pwqe51FictionalResponseProvenance = "original_authored_fictional_response" | "new_synthetic_mapping_response" | "new_synthetic_deepening_answer" | "new_fictional_control_outcome";
 
 /** Narrow input boundary so report packet construction does not depend on session storage. */
 export interface BuildPwqe51PacketInput {
@@ -15,6 +16,8 @@ export interface BuildPwqe51PacketInput {
   readonly pass: 1 | 2;
   readonly controls: readonly Pwqe51Control[];
   readonly comparisonDecisions?: readonly Pwqe51ComparisonDecision[];
+  /** Qualification replay provenance keyed by canonical response ID. Omit for ordinary production sessions. */
+  readonly responseProvenanceByResponseId?: Readonly<Record<string, Pwqe51FictionalResponseProvenance>>;
   readonly source: Pwqe51SourcePackage;
 }
 
@@ -27,6 +30,12 @@ function canonicalize(value: unknown): string {
 
 function object(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
+}
+
+function responseSelectionReason(input: BuildPwqe51PacketInput, responseId: string): string {
+  const provenance = input.responseProvenanceByResponseId?.[responseId];
+  if (!provenance) return "respondent-selected authored option";
+  return `source provenance: ${provenance}; fictional qualification evidence, not real participant data`;
 }
 
 function assertCurrentLineage(input: BuildPwqe51PacketInput): void {
@@ -161,7 +170,7 @@ export function buildPwqe51RouterPacket(input: BuildPwqe51PacketInput): Record<s
       basis: observation.basis,
       mode: observation.mode,
       dependence_group: observation.occurrenceId,
-      selection_reason: "respondent-selected authored option",
+      selection_reason: responseSelectionReason(input, response.responseId),
       source_version: observation.version,
       person_id: null,
       signals: observation.candidateSignals,
@@ -387,7 +396,9 @@ export function buildPwqe51RouterPacket(input: BuildPwqe51PacketInput): Record<s
       variant: response.variantId ?? "base",
       occurrence_id: response.occurrenceId,
       phase: question?.stage ?? "unknown",
-      selection_reason: "server-issued authored question",
+      selection_reason: input.responseProvenanceByResponseId?.[response.responseId]
+        ? `server-issued authored question; response ${responseSelectionReason(input, response.responseId)}`
+        : "server-issued authored question",
       option_order: options.map((option) => option.id),
       live_response_id: response.responseId,
     };

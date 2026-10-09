@@ -1,0 +1,1030 @@
+{
+  "schemaVersion": "PWQE51-FOCUSED-ROUTER-CONTRACT-CASE-V1",
+  "profileId": "C02",
+  "experimentalFixtureVariant": null,
+  "caseKind": "focused_router_contract_case",
+  "fullAssessmentTranscript": false,
+  "independentlyReviewedRoutingEvidence": false,
+  "semanticClaim": "Same outward request with internal permission",
+  "status": "all_authored_semantic_anchors_issued_in_full_session",
+  "sourcePins": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "authoredFixtureFile": "C02.json",
+    "authoredFixtureSha256": "09af2a7c6a8d175076283ffdf30a9328e56e789828899a9eee7180f018a4b4af",
+    "routeReplayArtifactFile": "C02.json",
+    "routeReplayArtifactSha256": "1840d101d9fd08b8f5bfaf80a0247843e4ec8589b7fa7f92c3a7a0955e00ab2e",
+    "semanticResultSha256": "330961a3db7e19dfde2954e980f517849435897254d187ea99ee7c77289bf6cd",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "reportRelease": "PWRP-7.1.0-candidate.1"
+  },
+  "separationRules": {
+    "sourceAnswersRemainUnchanged": true,
+    "syntheticMappingScaffoldIsNotEvidenceForThisSemanticClaim": true,
+    "syntheticDeepeningAnswersAreContextOnly": true,
+    "routerMustIssueEveryQuestion": true,
+    "occurrenceAndBindingMustMatchExactly": true
+  },
+  "authoredCore": {
+    "requiredSourceResponseIds": [
+      "C02-SRC-D17-1",
+      "C02-SRC-D21-1",
+      "C02-SRC-D19-1",
+      "C02-SRC-D20-1",
+      "C02-SRC-D65-1",
+      "C02-SRC-D66-1",
+      "C02-SRC-D69-1",
+      "C02-SRC-D91-1",
+      "C02-SRC-D92-1",
+      "C02-SRC-D23-1"
+    ],
+    "acceptedSourceResponseIds": [
+      "C02-SRC-D17-1",
+      "C02-SRC-D21-1",
+      "C02-SRC-D19-1",
+      "C02-SRC-D20-1",
+      "C02-SRC-D65-1",
+      "C02-SRC-D66-1",
+      "C02-SRC-D69-1",
+      "C02-SRC-D91-1",
+      "C02-SRC-D92-1",
+      "C02-SRC-D23-1"
+    ],
+    "status": "complete",
+    "exactSourceAnswers": [
+      {
+        "sourceResponse": {
+          "responseId": "C02-SRC-D17-1",
+          "questionId": "D17",
+          "occurrenceId": "fx_C02_mapping_M20",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D17.care"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D17",
+          "stage": "deepening",
+          "prompt": "In {episode_label}, was there something you wanted that you did not ask for?",
+          "episodeFamily": "bound",
+          "stepBinding": "selected",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D17.help",
+              "text": "Help with what I was carrying.",
+              "reportedValue": "help"
+            },
+            {
+              "id": "D17.care",
+              "text": "Some comfort or care.",
+              "reportedValue": "care"
+            },
+            {
+              "id": "D17.room",
+              "text": "Room to say no or stop.",
+              "reportedValue": "room"
+            },
+            {
+              "id": "D17.understand",
+              "text": "To be understood or taken seriously.",
+              "reportedValue": "understand"
+            },
+            {
+              "id": "D17.privacy",
+              "text": "Privacy rather than a conversation about my feelings.",
+              "reportedValue": "privacy"
+            },
+            {
+              "id": "D17.none",
+              "text": "I did not have an unasked-for want in that moment.",
+              "reportedValue": "none"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_691038c181df1d1fca6040a4108a08716669cd9e",
+          "runtimeOccurrenceId": "pwep_f69a293e-c693-4ff8-a86f-958d3225b5f4",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D17.care"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C02-SRC-D21-1",
+          "questionId": "D21",
+          "occurrenceId": "fx_C02_mapping_M20",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D21.visible"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D21",
+          "stage": "deepening",
+          "prompt": "With that help request, which part was hardest?",
+          "episodeFamily": "help_request",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D21.need",
+              "text": "Knowing I could not manage it alone.",
+              "reportedValue": "need"
+            },
+            {
+              "id": "D21.visible",
+              "text": "Having someone see how much I needed.",
+              "reportedValue": "visible"
+            },
+            {
+              "id": "D21.no",
+              "text": "The possibility of hearing no.",
+              "reportedValue": "no"
+            },
+            {
+              "id": "D21.receive",
+              "text": "Letting them help once they offered.",
+              "reportedValue": "receive"
+            },
+            {
+              "id": "D21.practical",
+              "text": "Working out what help was actually possible.",
+              "reportedValue": "practical"
+            },
+            {
+              "id": "D21.none",
+              "text": "Needing or asking was not difficult in that situation.",
+              "reportedValue": "none"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_6dbd806e1a0e10137f3634ee5bb7762f8e080a25",
+          "runtimeOccurrenceId": "pwep_f69a293e-c693-4ff8-a86f-958d3225b5f4",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D21.visible"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C02-SRC-D19-1",
+          "questionId": "D19",
+          "occurrenceId": "fx_C02_mapping_M20",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D19.burden"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D19",
+          "stage": "deepening",
+          "prompt": "At the time, what did you expect would happen if {exposed_experience} became more visible?",
+          "episodeFamily": "bound",
+          "stepBinding": "selected",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D19.reject",
+              "text": "They would pull away or turn me down.",
+              "reportedValue": "reject"
+            },
+            {
+              "id": "D19.burden",
+              "text": "They would feel responsible for more than they could carry.",
+              "reportedValue": "burden"
+            },
+            {
+              "id": "D19.judge",
+              "text": "They would think less of me.",
+              "reportedValue": "judge"
+            },
+            {
+              "id": "D19.control",
+              "text": "They would have more say over me than I wanted.",
+              "reportedValue": "control"
+            },
+            {
+              "id": "D19.dismiss",
+              "text": "They would dismiss or misunderstand it.",
+              "reportedValue": "dismiss"
+            },
+            {
+              "id": "D19.none",
+              "text": "I had no clear expectation about their response.",
+              "reportedValue": "none"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_8756575c9f4001c5102be79aed41a4f50f9c0ac7",
+          "runtimeOccurrenceId": "pwep_f69a293e-c693-4ff8-a86f-958d3225b5f4",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D19.burden"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C02-SRC-D20-1",
+          "questionId": "D20",
+          "occurrenceId": "fx_C02_mapping_M20",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D20.none"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D20",
+          "stage": "deepening",
+          "prompt": "What was hardest to acknowledge to yourself in {episode_label}?",
+          "episodeFamily": "bound",
+          "stepBinding": "selected",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D20.need",
+              "text": "I needed something I could not provide alone.",
+              "reportedValue": "need"
+            },
+            {
+              "id": "D20.hurt",
+              "text": "It had hurt more than I wanted it to.",
+              "reportedValue": "hurt"
+            },
+            {
+              "id": "D20.want",
+              "text": "I wanted something I might not get.",
+              "reportedValue": "want"
+            },
+            {
+              "id": "D20.limit",
+              "text": "I had reached a limit.",
+              "reportedValue": "limit"
+            },
+            {
+              "id": "D20.anger",
+              "text": "I was angry, even if I wished I were not.",
+              "reportedValue": "anger"
+            },
+            {
+              "id": "D20.none",
+              "text": "I could acknowledge what I felt.",
+              "reportedValue": "none"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_58f7e0c46d9de0399858cacc7c7444585a45df79",
+          "runtimeOccurrenceId": "pwep_f69a293e-c693-4ff8-a86f-958d3225b5f4",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D20.none"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C02-SRC-D65-1",
+          "questionId": "D65",
+          "occurrenceId": "fx_C02_mapping_M20",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D65.patient"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D65",
+          "stage": "deepening",
+          "prompt": "When you noticed your own reaction in {episode_label}, how did you relate to it?",
+          "episodeFamily": "bound",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D65.curious",
+              "text": "I wanted to understand what was happening in me.",
+              "reportedValue": "curious"
+            },
+            {
+              "id": "D65.patient",
+              "text": "I could let the reaction be there without rushing to change it.",
+              "reportedValue": "patient"
+            },
+            {
+              "id": "D65.judge",
+              "text": "I judged myself for reacting that way.",
+              "reportedValue": "judge"
+            },
+            {
+              "id": "D65.remove",
+              "text": "I wanted the reaction gone.",
+              "reportedValue": "remove"
+            },
+            {
+              "id": "D65.caught",
+              "text": "I was caught up in it, rather than noticing it from any distance.",
+              "reportedValue": "caught"
+            },
+            {
+              "id": "D65.late",
+              "text": "I only noticed my reaction afterward.",
+              "reportedValue": "late"
+            },
+            {
+              "id": "D65.not_noticed",
+              "text": "I did not notice a reaction I can describe.",
+              "reportedValue": "not_noticed"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_464241bcd6517ce8f04173f0a84a103c4dc234be",
+          "runtimeOccurrenceId": "pwep_f69a293e-c693-4ff8-a86f-958d3225b5f4",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D65.patient"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C02-SRC-D66-1",
+          "questionId": "D66",
+          "occurrenceId": "fx_C02_mapping_M20",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D66.choice"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D66",
+          "stage": "deepening",
+          "prompt": "While noticing that reaction, how much room did you have to choose what happened next?",
+          "episodeFamily": "bound",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D66.choice",
+              "text": "I could feel the reaction and still consider different responses.",
+              "reportedValue": "choice"
+            },
+            {
+              "id": "D66.compelled",
+              "text": "I noticed it, but still felt driven to act one way.",
+              "reportedValue": "compelled"
+            },
+            {
+              "id": "D66.dismiss",
+              "text": "I got distance by dismissing what I felt.",
+              "reportedValue": "dismiss"
+            },
+            {
+              "id": "D66.far",
+              "text": "I felt detached from the situation, rather than more able to choose.",
+              "reportedValue": "far"
+            },
+            {
+              "id": "D66.later",
+              "text": "I could reflect on it only after the moment had passed.",
+              "reportedValue": "later"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_2e7caff5370a42059ec06186604bee1f9b722abc",
+          "runtimeOccurrenceId": "pwep_f69a293e-c693-4ff8-a86f-958d3225b5f4",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D66.choice"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C02-SRC-D69-1",
+          "questionId": "D69",
+          "occurrenceId": "fx_C02_mapping_M20",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D69.hidden_only"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D69",
+          "stage": "deepening",
+          "prompt": "In {episode_label}, how did {response_label} affect your access to what you were feeling or wanting?",
+          "episodeFamily": "bound",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D69.clearer",
+              "text": "I could tell more clearly what I felt or wanted.",
+              "reportedValue": "clearer"
+            },
+            {
+              "id": "D69.bearable",
+              "text": "I could still feel it, but it was easier to stay with.",
+              "reportedValue": "bearable"
+            },
+            {
+              "id": "D69.less_notice",
+              "text": "I became less aware of it.",
+              "reportedValue": "less_notice"
+            },
+            {
+              "id": "D69.hidden_only",
+              "text": "I still knew what I felt; I was showing less of it.",
+              "reportedValue": "hidden_only"
+            },
+            {
+              "id": "D69.stronger",
+              "text": "It became harder to ignore.",
+              "reportedValue": "stronger"
+            },
+            {
+              "id": "D69.same",
+              "text": "I did not notice a change.",
+              "reportedValue": "same"
+            },
+            {
+              "id": "D69.unclear",
+              "text": "I cannot tell whether that response changed it.",
+              "reportedValue": "unclear"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_5a6e4042a8010490a9aeeeacbae703ebdb7be241",
+          "runtimeOccurrenceId": "pwep_f69a293e-c693-4ff8-a86f-958d3225b5f4",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D69.hidden_only"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C02-SRC-D91-1",
+          "questionId": "D91",
+          "occurrenceId": "fx_C02_mapping_M20",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D91.offered"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D91",
+          "stage": "deepening",
+          "prompt": "How did {support_person} respond to the request you actually made?",
+          "episodeFamily": "bound",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D91.offered",
+              "text": "They offered the help I had asked for.",
+              "reportedValue": "offered"
+            },
+            {
+              "id": "D91.limited",
+              "text": "They said what they could offer, which was less than I asked for.",
+              "reportedValue": "limited"
+            },
+            {
+              "id": "D91.no",
+              "text": "They said no.",
+              "reportedValue": "no"
+            },
+            {
+              "id": "D91.different",
+              "text": "They offered a different kind of help.",
+              "reportedValue": "different"
+            },
+            {
+              "id": "D91.misunderstood",
+              "text": "Their response did not address what I was asking for.",
+              "reportedValue": "misunderstood"
+            },
+            {
+              "id": "D91.pending",
+              "text": "I had not received an answer by that point.",
+              "reportedValue": "pending"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_bda9d49433936a95eb8c72a3d32b2aeb2b979e4c",
+          "runtimeOccurrenceId": "pwep_f69a293e-c693-4ff8-a86f-958d3225b5f4",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D91.offered"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C02-SRC-D92-1",
+          "questionId": "D92",
+          "occurrenceId": "fx_C02_mapping_M20",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D92.more_asked"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D92",
+          "stage": "deepening",
+          "prompt": "After that response, what happened to what you needed?",
+          "episodeFamily": "bound",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D92.met",
+              "text": "The help was enough for what I needed.",
+              "reportedValue": "met"
+            },
+            {
+              "id": "D92.more_asked",
+              "text": "Some need remained, and I said so.",
+              "reportedValue": "more_asked"
+            },
+            {
+              "id": "D92.more_hidden",
+              "text": "Some need remained, but I did not say more.",
+              "reportedValue": "more_hidden"
+            },
+            {
+              "id": "D92.elsewhere",
+              "text": "I looked elsewhere for what I still needed.",
+              "reportedValue": "elsewhere"
+            },
+            {
+              "id": "D92.changed",
+              "text": "The need changed or passed for another reason.",
+              "reportedValue": "changed"
+            },
+            {
+              "id": "D92.unresolved",
+              "text": "It remained unresolved, and I had not decided what to do next.",
+              "reportedValue": "unresolved"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_42f903720bd85e5635c9c64d8003c30992412bb3",
+          "runtimeOccurrenceId": "pwep_f69a293e-c693-4ff8-a86f-958d3225b5f4",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D92.more_asked"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C02-SRC-D23-1",
+          "questionId": "D23",
+          "occurrenceId": "fx_C02_mapping_M20",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D23.stay"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D23",
+          "stage": "deepening",
+          "prompt": "In {episode_label}, what happened when you noticed the feeling rather than immediately doing something about it?",
+          "episodeFamily": "bound",
+          "stepBinding": "selected",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D23.stay",
+              "text": "I could let it be there for a while.",
+              "reportedValue": "stay"
+            },
+            {
+              "id": "D23.shift",
+              "text": "It changed on its own while I stayed with it.",
+              "reportedValue": "shift"
+            },
+            {
+              "id": "D23.act",
+              "text": "I soon felt pulled to do something about it.",
+              "reportedValue": "act"
+            },
+            {
+              "id": "D23.harder",
+              "text": "It became harder to bear.",
+              "reportedValue": "harder"
+            },
+            {
+              "id": "D23.no_trial",
+              "text": "I did not have a moment like that.",
+              "reportedValue": "no_trial"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_27e8ec50cb8a7595f54deaf9b6aeb0dee1c88335",
+          "runtimeOccurrenceId": "pwep_f69a293e-c693-4ff8-a86f-958d3225b5f4",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D23.stay"
+          ]
+        }
+      }
+    ]
+  },
+  "occurrenceConditions": [
+    {
+      "fixtureOccurrenceReference": "fx_C02_mapping_M20",
+      "runtimeOccurrenceId": "pwep_f69a293e-c693-4ff8-a86f-958d3225b5f4",
+      "episodeFamily": "help_request",
+      "basis": "actual_recalled",
+      "origin": "new_synthetic_mapping_episode",
+      "originalMappingContext": [
+        {
+          "sourceResponse": {
+            "responseId": "C02-SRC-M20-1",
+            "questionId": "M20",
+            "occurrenceId": "fx_C02_mapping_M20",
+            "stepId": "first",
+            "selectedOptionIds": [
+              "M20.small"
+            ],
+            "status": "answered",
+            "mode": "single",
+            "basis": "actual_recalled"
+          },
+          "provenance": "original_authored_fictional_answer",
+          "questionContract": {
+            "id": "M20",
+            "stage": "mapping",
+            "prompt": "The last time you needed help from {support_person}, how did you handle asking?",
+            "episodeFamily": "help_request",
+            "stepBinding": "first",
+            "selection": {
+              "mode": "single",
+              "max_select": 1,
+              "allow_simultaneous_pair": true,
+              "order_not_implied": true
+            },
+            "optionsInSourceOrder": [
+              {
+                "id": "M20.ask",
+                "text": "I asked for what I needed.",
+                "reportedValue": "ask"
+              },
+              {
+                "id": "M20.small",
+                "text": "I asked for less than I needed.",
+                "reportedValue": "small"
+              },
+              {
+                "id": "M20.hint",
+                "text": "I hinted at the problem.",
+                "reportedValue": "hint"
+              },
+              {
+                "id": "M20.justify",
+                "text": "I explained why I could not manage alone.",
+                "reportedValue": "justify"
+              },
+              {
+                "id": "M20.wait",
+                "text": "I waited for them to offer.",
+                "reportedValue": "wait"
+              },
+              {
+                "id": "M20.none",
+                "text": "I did not ask.",
+                "reportedValue": "none"
+              }
+            ],
+            "responseControls": [
+              "none_fit",
+              "not_sure",
+              "no_event",
+              "not_applicable",
+              "skip"
+            ]
+          },
+          "fullSessionRoute": {
+            "status": "issued_and_accepted",
+            "runtimeResponseId": "pwr_451e23090a608b0109dd64e3d604e11ffae8163b",
+            "runtimeOccurrenceId": "pwep_f69a293e-c693-4ff8-a86f-958d3225b5f4",
+            "stepId": "first",
+            "phase": "mapping",
+            "selection": [
+              "M20.small"
+            ]
+          }
+        },
+        {
+          "sourceResponse": {
+            "responseId": "C02-SRC-M21-1",
+            "questionId": "M21",
+            "occurrenceId": "fx_C02_mapping_M20",
+            "stepId": "first",
+            "selectedOptionIds": [
+              "M21.burden"
+            ],
+            "status": "answered",
+            "mode": "single"
+          },
+          "provenance": "original_authored_fictional_answer",
+          "questionContract": {
+            "id": "M21",
+            "stage": "mapping",
+            "prompt": "What most shaped how you handled that request?",
+            "episodeFamily": "help_request",
+            "stepBinding": "first",
+            "selection": {
+              "mode": "single",
+              "max_select": 1,
+              "allow_simultaneous_pair": true,
+              "order_not_implied": true
+            },
+            "optionsInSourceOrder": [
+              {
+                "id": "M21.clear",
+                "text": "I expected them to say what they could do.",
+                "reportedValue": "clear"
+              },
+              {
+                "id": "M21.burden",
+                "text": "I did not want to add to what they were carrying.",
+                "reportedValue": "burden"
+              },
+              {
+                "id": "M21.refusal",
+                "text": "I did not want to face a no.",
+                "reportedValue": "refusal"
+              },
+              {
+                "id": "M21.owe",
+                "text": "I did not want to owe them.",
+                "reportedValue": "owe"
+              },
+              {
+                "id": "M21.unclear",
+                "text": "I was not sure what I needed.",
+                "reportedValue": "unclear"
+              },
+              {
+                "id": "M21.practical",
+                "text": "There was a practical reason not to ask them.",
+                "reportedValue": "practical"
+              }
+            ],
+            "responseControls": [
+              "none_fit",
+              "not_sure",
+              "no_event",
+              "not_applicable",
+              "skip"
+            ]
+          },
+          "fullSessionRoute": {
+            "status": "issued_and_accepted",
+            "runtimeResponseId": "pwr_bb7b95ebff034582334a248ad8be4578e4a92ac5",
+            "runtimeOccurrenceId": "pwep_f69a293e-c693-4ff8-a86f-958d3225b5f4",
+            "stepId": "first",
+            "phase": "mapping",
+            "selection": [
+              "M21.burden"
+            ]
+          }
+        }
+      ],
+      "syntheticMappingScaffoldContextOnly": [],
+      "referentRoles": [
+        {
+          "occurrenceId": "fx_C02_mapping_M20",
+          "slot": "support_person",
+          "role": "friend",
+          "origin": "original_authored_role_configuration"
+        }
+      ]
+    }
+  ],
+  "entryAndPermissionContext": {
+    "focusOccurrenceId": "fx_C02_mapping_M20",
+    "focusTopics": [],
+    "permissionOnlyTopics": [
+      "body_detail",
+      "body_detail"
+    ],
+    "actualAppliedFocusTopics": [],
+    "focusTopicsApplied": true,
+    "topicPermissionEvents": [
+      {
+        "topic": "body_detail",
+        "outcome": "opt_in",
+        "provenance": "original_authored_configuration",
+        "sourceRef": "C02.config"
+      }
+    ]
+  },
+  "distinctnessIntents": [],
+  "comparisonBindingIntents": [],
+  "intentionallyForbiddenAnswers": [
+    {
+      "sourceAnswerRef": "C02.D67[0]",
+      "questionId": "D67",
+      "selectedOptionIds": [
+        "D67.not_allowed"
+      ],
+      "reason": "explicit_forbidden_item_in_source_plan_not_administered"
+    },
+    {
+      "sourceAnswerRef": "C02.D68[0]",
+      "questionId": "D68",
+      "selectedOptionIds": [
+        "D68.pushed"
+      ],
+      "reason": "explicit_forbidden_item_in_source_plan_not_administered"
+    }
+  ],
+  "focusedBranchExecution": "not_executed_as_a_separate_transcript; full-session source-answer results are shown per response"
+}

@@ -1,0 +1,760 @@
+{
+  "schemaVersion": "PWQE51-FOCUSED-ROUTER-CONTRACT-CASE-V1",
+  "profileId": "C05",
+  "experimentalFixtureVariant": null,
+  "caseKind": "focused_router_contract_case",
+  "fullAssessmentTranscript": false,
+  "independentlyReviewedRoutingEvidence": false,
+  "semanticClaim": "Force and updating of a current self-conclusion",
+  "status": "all_authored_semantic_anchors_issued_in_full_session",
+  "sourcePins": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "authoredFixtureFile": "C05.json",
+    "authoredFixtureSha256": "f67ce3e7163bbfb6377f78fbe3c08d4dfa8ea4790d644910bcc337d2c3ce0a06",
+    "routeReplayArtifactFile": "C05.json",
+    "routeReplayArtifactSha256": "98e055edd24c600f451243f6e1c60438e537043bebb9a17e827a39bfc2835764",
+    "semanticResultSha256": "cbd35d4a0aefc734c87cda7abc24daeaa1628bd3aff5173b06fd6f31104df319",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "reportRelease": "PWRP-7.1.0-candidate.1"
+  },
+  "separationRules": {
+    "sourceAnswersRemainUnchanged": true,
+    "syntheticMappingScaffoldIsNotEvidenceForThisSemanticClaim": true,
+    "syntheticDeepeningAnswersAreContextOnly": true,
+    "routerMustIssueEveryQuestion": true,
+    "occurrenceAndBindingMustMatchExactly": true
+  },
+  "authoredCore": {
+    "requiredSourceResponseIds": [
+      "C05-SRC-D15-1",
+      "C05-SRC-D22-1",
+      "C05-SRC-D70-1",
+      "C05-SRC-D71-1",
+      "C05-SRC-D65-1",
+      "C05-SRC-D66-1"
+    ],
+    "acceptedSourceResponseIds": [
+      "C05-SRC-D15-1",
+      "C05-SRC-D22-1",
+      "C05-SRC-D70-1",
+      "C05-SRC-D71-1",
+      "C05-SRC-D65-1",
+      "C05-SRC-D66-1"
+    ],
+    "status": "complete",
+    "exactSourceAnswers": [
+      {
+        "sourceResponse": {
+          "responseId": "C05-SRC-D15-1",
+          "questionId": "D15",
+          "occurrenceId": "fx_C05_mapping_M04",
+          "stepId": "self_response",
+          "selectedOptionIds": [
+            "D15.prevent"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D15",
+          "stage": "deepening",
+          "prompt": "When you were hard on yourself after that mistake, what were you trying to do, if anything?",
+          "episodeFamily": "mistake",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D15.prevent",
+              "text": "Make sure I would not repeat it.",
+              "reportedValue": "prevent"
+            },
+            {
+              "id": "D15.pay",
+              "text": "Make myself pay for what happened.",
+              "reportedValue": "pay"
+            },
+            {
+              "id": "D15.push",
+              "text": "Push myself back into action.",
+              "reportedValue": "push"
+            },
+            {
+              "id": "D15.before",
+              "text": "Say the worst before anyone else could.",
+              "reportedValue": "before"
+            },
+            {
+              "id": "D15.none",
+              "text": "I was not trying to achieve anything; the criticism just came.",
+              "reportedValue": "none"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_57bbcaddd153dacab07a9310c9589b80a631847a",
+          "runtimeOccurrenceId": "pwep_7205b484-13b8-474d-a6d8-77a9e936be04",
+          "stepId": "self_response",
+          "phase": "deepening",
+          "selection": [
+            "D15.prevent"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C05-SRC-D22-1",
+          "questionId": "D22",
+          "occurrenceId": "fx_C05_mapping_M04",
+          "stepId": "self_response",
+          "selectedOptionIds": [
+            "D22.not_enough"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D22",
+          "stage": "deepening",
+          "prompt": "In that mistake episode, did you draw a conclusion about yourself?",
+          "episodeFamily": "mistake",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D22.learning",
+              "text": "I had something to learn.",
+              "reportedValue": "learning"
+            },
+            {
+              "id": "D22.careless",
+              "text": "I was careless or unreliable.",
+              "reportedValue": "careless"
+            },
+            {
+              "id": "D22.incapable",
+              "text": "I was not as capable as people thought.",
+              "reportedValue": "incapable"
+            },
+            {
+              "id": "D22.disappoint",
+              "text": "I had let someone down.",
+              "reportedValue": "disappoint"
+            },
+            {
+              "id": "D22.not_enough",
+              "text": "Whatever I did would not be enough.",
+              "reportedValue": "not_enough"
+            },
+            {
+              "id": "D22.none",
+              "text": "I did not turn it into a conclusion about myself.",
+              "reportedValue": "none"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_e8c7daf3e89b276b1bed10483f0122ae5ceaaf43",
+          "runtimeOccurrenceId": "pwep_7205b484-13b8-474d-a6d8-77a9e936be04",
+          "stepId": "self_response",
+          "phase": "deepening",
+          "selection": [
+            "D22.not_enough"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C05-SRC-D70-1",
+          "questionId": "D70",
+          "occurrenceId": "fx_C05_mapping_M04",
+          "stepId": "self_response",
+          "selectedOptionIds": [
+            "D70.certain"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D70",
+          "stage": "deepening",
+          "prompt": "How convincing did that conclusion about yourself feel at the time?",
+          "episodeFamily": "bound",
+          "stepBinding": "self_response",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D70.certain",
+              "text": "It felt like a fact I could not argue with.",
+              "reportedValue": "certain"
+            },
+            {
+              "id": "D70.pulled",
+              "text": "Part of me questioned it, but it still pulled strongly.",
+              "reportedValue": "pulled"
+            },
+            {
+              "id": "D70.possibility",
+              "text": "It was one possible explanation, not a settled truth.",
+              "reportedValue": "possibility"
+            },
+            {
+              "id": "D70.local",
+              "text": "It applied to that mistake, not to me as a whole.",
+              "reportedValue": "local"
+            },
+            {
+              "id": "D70.rejected",
+              "text": "I noticed the thought but did not believe it.",
+              "reportedValue": "rejected"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_71ab744d5b87418b900994a6aa05d2bf34e338b4",
+          "runtimeOccurrenceId": "pwep_7205b484-13b8-474d-a6d8-77a9e936be04",
+          "stepId": "self_response",
+          "phase": "deepening",
+          "selection": [
+            "D70.certain"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C05-SRC-D71-1",
+          "questionId": "D71",
+          "occurrenceId": "fx_C05_mapping_M04",
+          "stepId": "self_response",
+          "selectedOptionIds": [
+            "D71.discounted"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D71",
+          "stage": "deepening",
+          "prompt": "Did anything later in that mistake episode change how you saw yourself?",
+          "episodeFamily": "bound",
+          "stepBinding": "self_response",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D71.revised",
+              "text": "What happened gave me reason to revise the conclusion.",
+              "reportedValue": "revised"
+            },
+            {
+              "id": "D71.discounted",
+              "text": "Something went better, but I treated it as an exception or luck.",
+              "reportedValue": "discounted"
+            },
+            {
+              "id": "D71.mixed",
+              "text": "I could see another interpretation, but the original conclusion still felt true.",
+              "reportedValue": "mixed"
+            },
+            {
+              "id": "D71.held",
+              "text": "The conclusion stayed the same even after the mistake was handled.",
+              "reportedValue": "held"
+            },
+            {
+              "id": "D71.no_new",
+              "text": "Nothing relevant happened that would test it.",
+              "reportedValue": "no_new"
+            },
+            {
+              "id": "D71.unfinished",
+              "text": "The situation was still unfinished when I last thought about it.",
+              "reportedValue": "unfinished"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_65f21620aed231413a4647421c84e7152b4b31b5",
+          "runtimeOccurrenceId": "pwep_7205b484-13b8-474d-a6d8-77a9e936be04",
+          "stepId": "self_response",
+          "phase": "deepening",
+          "selection": [
+            "D71.discounted"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C05-SRC-D65-1",
+          "questionId": "D65",
+          "occurrenceId": "fx_C05_mapping_M04",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D65.remove"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D65",
+          "stage": "deepening",
+          "prompt": "When you noticed your own reaction in {episode_label}, how did you relate to it?",
+          "episodeFamily": "bound",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D65.curious",
+              "text": "I wanted to understand what was happening in me.",
+              "reportedValue": "curious"
+            },
+            {
+              "id": "D65.patient",
+              "text": "I could let the reaction be there without rushing to change it.",
+              "reportedValue": "patient"
+            },
+            {
+              "id": "D65.judge",
+              "text": "I judged myself for reacting that way.",
+              "reportedValue": "judge"
+            },
+            {
+              "id": "D65.remove",
+              "text": "I wanted the reaction gone.",
+              "reportedValue": "remove"
+            },
+            {
+              "id": "D65.caught",
+              "text": "I was caught up in it, rather than noticing it from any distance.",
+              "reportedValue": "caught"
+            },
+            {
+              "id": "D65.late",
+              "text": "I only noticed my reaction afterward.",
+              "reportedValue": "late"
+            },
+            {
+              "id": "D65.not_noticed",
+              "text": "I did not notice a reaction I can describe.",
+              "reportedValue": "not_noticed"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_cbb84fbae6eb46a3cb0dc412867b35d855d48a21",
+          "runtimeOccurrenceId": "pwep_7205b484-13b8-474d-a6d8-77a9e936be04",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D65.remove"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C05-SRC-D66-1",
+          "questionId": "D66",
+          "occurrenceId": "fx_C05_mapping_M04",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D66.compelled"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D66",
+          "stage": "deepening",
+          "prompt": "While noticing that reaction, how much room did you have to choose what happened next?",
+          "episodeFamily": "bound",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D66.choice",
+              "text": "I could feel the reaction and still consider different responses.",
+              "reportedValue": "choice"
+            },
+            {
+              "id": "D66.compelled",
+              "text": "I noticed it, but still felt driven to act one way.",
+              "reportedValue": "compelled"
+            },
+            {
+              "id": "D66.dismiss",
+              "text": "I got distance by dismissing what I felt.",
+              "reportedValue": "dismiss"
+            },
+            {
+              "id": "D66.far",
+              "text": "I felt detached from the situation, rather than more able to choose.",
+              "reportedValue": "far"
+            },
+            {
+              "id": "D66.later",
+              "text": "I could reflect on it only after the moment had passed.",
+              "reportedValue": "later"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_814913fed6db7b5edac8bde520d20cc3b03cc01b",
+          "runtimeOccurrenceId": "pwep_7205b484-13b8-474d-a6d8-77a9e936be04",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D66.compelled"
+          ]
+        }
+      }
+    ]
+  },
+  "occurrenceConditions": [
+    {
+      "fixtureOccurrenceReference": "fx_C05_mapping_M04",
+      "runtimeOccurrenceId": "pwep_7205b484-13b8-474d-a6d8-77a9e936be04",
+      "episodeFamily": "mistake",
+      "basis": "actual_recalled",
+      "origin": "new_synthetic_mapping_episode",
+      "originalMappingContext": [
+        {
+          "sourceResponse": {
+            "responseId": "C05-SRC-M04-1",
+            "questionId": "M04",
+            "occurrenceId": "fx_C05_mapping_M04",
+            "stepId": "first",
+            "selectedOptionIds": [
+              "M04.fix"
+            ],
+            "status": "answered",
+            "mode": "single",
+            "basis": "actual_recalled"
+          },
+          "provenance": "original_authored_fictional_answer",
+          "questionContract": {
+            "id": "M04",
+            "stage": "mapping",
+            "prompt": "You noticed a mistake you had made. What did you do next in that actual situation?",
+            "episodeFamily": "mistake",
+            "stepBinding": "first",
+            "selection": {
+              "mode": "single",
+              "max_select": 1,
+              "allow_simultaneous_pair": true,
+              "order_not_implied": true
+            },
+            "optionsInSourceOrder": [
+              {
+                "id": "M04.fix",
+                "text": "I corrected what I could.",
+                "reportedValue": "fix"
+              },
+              {
+                "id": "M04.check",
+                "text": "I looked for other mistakes.",
+                "reportedValue": "check"
+              },
+              {
+                "id": "M04.tell",
+                "text": "I told whoever needed to know.",
+                "reportedValue": "tell"
+              },
+              {
+                "id": "M04.explain",
+                "text": "I explained how it happened.",
+                "reportedValue": "explain"
+              },
+              {
+                "id": "M04.delay",
+                "text": "I left it alone for a while.",
+                "reportedValue": "delay"
+              },
+              {
+                "id": "M04.continue",
+                "text": "I continued what I was doing.",
+                "reportedValue": "continue"
+              }
+            ],
+            "responseControls": [
+              "none_fit",
+              "not_sure",
+              "no_event",
+              "not_applicable",
+              "skip"
+            ]
+          },
+          "fullSessionRoute": {
+            "status": "issued_and_accepted",
+            "runtimeResponseId": "pwr_2487c37ef105550e667222c88fb9780ad8dfb3af",
+            "runtimeOccurrenceId": "pwep_7205b484-13b8-474d-a6d8-77a9e936be04",
+            "stepId": "first",
+            "phase": "mapping",
+            "selection": [
+              "M04.fix"
+            ]
+          }
+        },
+        {
+          "sourceResponse": {
+            "responseId": "C05-SRC-M05-1",
+            "questionId": "M05",
+            "occurrenceId": "fx_C05_mapping_M04",
+            "stepId": "self_response",
+            "selectedOptionIds": [
+              "M05.attack"
+            ],
+            "status": "answered",
+            "mode": "single"
+          },
+          "provenance": "original_authored_fictional_answer",
+          "questionContract": {
+            "id": "M05",
+            "stage": "mapping",
+            "prompt": "Once you knew about that mistake, how did you respond to yourself?",
+            "episodeFamily": "mistake",
+            "stepBinding": "first",
+            "selection": {
+              "mode": "single",
+              "max_select": 1,
+              "allow_simultaneous_pair": true,
+              "order_not_implied": true
+            },
+            "optionsInSourceOrder": [
+              {
+                "id": "M05.learn",
+                "text": "I tried to work out what I could learn.",
+                "reportedValue": "learn"
+              },
+              {
+                "id": "M05.attack",
+                "text": "I was harsh with myself.",
+                "reportedValue": "attack"
+              },
+              {
+                "id": "M05.rules",
+                "text": "I set stricter rules for myself.",
+                "reportedValue": "rules"
+              },
+              {
+                "id": "M05.dismiss",
+                "text": "I tried to put it out of my mind.",
+                "reportedValue": "dismiss"
+              },
+              {
+                "id": "M05.kind",
+                "text": "I was patient with myself.",
+                "reportedValue": "kind"
+              },
+              {
+                "id": "M05.neutral",
+                "text": "I did not make much of it personally.",
+                "reportedValue": "neutral"
+              }
+            ],
+            "responseControls": [
+              "none_fit",
+              "not_sure",
+              "no_event",
+              "not_applicable",
+              "skip"
+            ]
+          },
+          "fullSessionRoute": {
+            "status": "issued_and_accepted",
+            "runtimeResponseId": "pwr_9837e9c41f46536832fbc0fa6c2f0224e4abb40c",
+            "runtimeOccurrenceId": "pwep_7205b484-13b8-474d-a6d8-77a9e936be04",
+            "stepId": "self_response",
+            "phase": "mapping",
+            "selection": [
+              "M05.attack"
+            ]
+          }
+        },
+        {
+          "sourceResponse": {
+            "responseId": "C05-SRC-M06-1",
+            "questionId": "M06",
+            "occurrenceId": "fx_C05_mapping_M04",
+            "stepId": "self_response",
+            "selectedOptionIds": [
+              "M06.worse"
+            ],
+            "status": "answered",
+            "mode": "single"
+          },
+          "provenance": "original_authored_fictional_answer",
+          "questionContract": {
+            "id": "M06",
+            "stage": "mapping",
+            "prompt": "After responding to yourself that way, what changed?",
+            "episodeFamily": "mistake",
+            "stepBinding": "first",
+            "selection": {
+              "mode": "single",
+              "max_select": 1,
+              "allow_simultaneous_pair": true,
+              "order_not_implied": true
+            },
+            "optionsInSourceOrder": [
+              {
+                "id": "M06.clear",
+                "text": "I could deal with the mistake more clearly.",
+                "reportedValue": "clear"
+              },
+              {
+                "id": "M06.prevent",
+                "text": "I worked harder to prevent another one.",
+                "reportedValue": "prevent"
+              },
+              {
+                "id": "M06.worse",
+                "text": "I felt worse about myself.",
+                "reportedValue": "worse"
+              },
+              {
+                "id": "M06.avoid",
+                "text": "I found it harder to go back to the task.",
+                "reportedValue": "avoid"
+              },
+              {
+                "id": "M06.break",
+                "text": "I got a break from thinking about it.",
+                "reportedValue": "break"
+              },
+              {
+                "id": "M06.same",
+                "text": "Nothing much changed.",
+                "reportedValue": "same"
+              }
+            ],
+            "responseControls": [
+              "none_fit",
+              "not_sure",
+              "no_event",
+              "not_applicable",
+              "skip"
+            ]
+          },
+          "fullSessionRoute": {
+            "status": "issued_and_accepted",
+            "runtimeResponseId": "pwr_bf0d93d66a23a3ddf6f529d86fe25e19bdef78df",
+            "runtimeOccurrenceId": "pwep_7205b484-13b8-474d-a6d8-77a9e936be04",
+            "stepId": "self_response",
+            "phase": "mapping",
+            "selection": [
+              "M06.worse"
+            ]
+          }
+        }
+      ],
+      "syntheticMappingScaffoldContextOnly": [],
+      "referentRoles": []
+    }
+  ],
+  "entryAndPermissionContext": {
+    "focusOccurrenceId": "fx_C05_mapping_M04",
+    "focusTopics": [],
+    "permissionOnlyTopics": [
+      "body_detail",
+      "body_detail"
+    ],
+    "actualAppliedFocusTopics": [],
+    "focusTopicsApplied": true,
+    "topicPermissionEvents": [
+      {
+        "topic": "body_detail",
+        "outcome": "opt_in",
+        "provenance": "original_authored_configuration",
+        "sourceRef": "C05.config"
+      }
+    ]
+  },
+  "distinctnessIntents": [],
+  "comparisonBindingIntents": [],
+  "intentionallyForbiddenAnswers": [],
+  "focusedBranchExecution": "not_executed_as_a_separate_transcript; full-session source-answer results are shown per response"
+}

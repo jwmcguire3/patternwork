@@ -4,10 +4,10 @@ import path from "node:path";
 import { loadPwqe51SourcePackage, PWQE51_RELEASE_IDENTITY, PWQE51_SOURCE_MANIFEST_SHA256 } from "../../lib/question-engine/pwqe51-source.ts";
 import { sha256Canonical } from "../../lib/report-contracts/delivery-validator.ts";
 import { loadPwrp71SourcePackage } from "../../lib/server/reports/pwrp71-source.ts";
-import { replayFictionalPwqe51Session, type FictionalHistoryV2 } from "../../lib/server/reports/qualification/session-replay.ts";
+import { replayFictionalPwqe51Session, type FictionalHistoryV2, type FictionalMappingEntryTopicOptIn } from "../../lib/server/reports/qualification/session-replay.ts";
 
 const V2_DIRECTORY = path.join(process.cwd(), "qualification", "pwrp71", "constructed_histories_v2");
-const DEFAULT_OUTPUT = path.join(process.cwd(), "qualification", "pwrp71", "route_replays_v4");
+const DEFAULT_OUTPUT = path.join(process.cwd(), "qualification", "pwrp71", "route_replays_v5");
 const VALID_PROFILES = [...Array.from({ length: 9 }, (_, index) => `P${String(index + 1).padStart(2, "0")}`), ...Array.from({ length: 16 }, (_, index) => `C${String(index + 1).padStart(2, "0")}`)];
 const DIGEST = /^[a-f0-9]{64}$/u;
 const V2_MANIFEST_SHA256 = "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee";
@@ -46,15 +46,15 @@ interface V2Manifest {
   readonly profiles: readonly { readonly id: string; readonly file: string }[];
 }
 
-function parseArgs(argv: readonly string[]): { profiles: readonly string[]; output: string } {
+function parseArgs(argv: readonly string[]): { profiles: readonly string[]; output: string; mappingEntryConsentProfiles: readonly string[] } {
   const flags = new Map<string, string>();
   for (let index = 0; index < argv.length; index += 1) {
     const flag = argv[index];
     if (flag === "--help" || flag === "-h") {
-      process.stdout.write("Usage: npm run pwqe51:replay:fictional -- [--profiles P01,C01] [--output-dir qualification/pwrp71/route_replays_v4]\n");
+      process.stdout.write("Usage: npm run pwqe51:replay:fictional -- [--profiles P01,C01] [--output-dir qualification/pwrp71/route_replays_v5] [--mapping-entry-body-detail-opt-in-profiles P05,C10,C11]\n");
       process.exit(0);
     }
-    if (flag !== "--profiles" && flag !== "--output-dir") throw new Error(`Unknown argument: ${flag}`);
+    if (flag !== "--profiles" && flag !== "--output-dir" && flag !== "--mapping-entry-body-detail-opt-in-profiles") throw new Error(`Unknown argument: ${flag}`);
     const value = argv[index + 1];
     if (!value || value.startsWith("--") || flags.has(flag)) throw new Error(`${flag} requires one value and may be specified once.`);
     flags.set(flag, value);
@@ -64,7 +64,13 @@ function parseArgs(argv: readonly string[]): { profiles: readonly string[]; outp
   if (!profiles.length || new Set(profiles).size !== profiles.length || profiles.some((id) => !VALID_PROFILES.includes(id))) {
     throw new Error(`--profiles must be unique IDs from ${VALID_PROFILES.join(", ")}.`);
   }
-  return { profiles, output: path.resolve(flags.get("--output-dir") ?? DEFAULT_OUTPUT) };
+  const mappingEntryConsentProfiles = (flags.get("--mapping-entry-body-detail-opt-in-profiles") ?? "").split(",").map((value) => value.trim().toUpperCase()).filter(Boolean);
+  if (new Set(mappingEntryConsentProfiles).size !== mappingEntryConsentProfiles.length
+    || mappingEntryConsentProfiles.some((id) => !["P05", "C10", "C11"].includes(id))) {
+    throw new Error("Mapping-entry body-detail opt-in is an experimental control restricted to P05, C10, and C11.");
+  }
+  if (mappingEntryConsentProfiles.some((id) => !profiles.includes(id))) throw new Error("Every mapping-entry consent profile must also be selected for replay.");
+  return { profiles, output: path.resolve(flags.get("--output-dir") ?? DEFAULT_OUTPUT), mappingEntryConsentProfiles };
 }
 
 function digestText(value: string): string {
@@ -90,7 +96,7 @@ function object(value: unknown): Record<string, unknown> {
 }
 
 async function main(): Promise<void> {
-  const { profiles, output } = parseArgs(process.argv.slice(2));
+  const { profiles, output, mappingEntryConsentProfiles } = parseArgs(process.argv.slice(2));
   const manifest = JSON.parse(await readFile(path.join(V2_DIRECTORY, "manifest.json"), "utf8")) as V2Manifest;
   if (manifest.schemaVersion !== "PWQE51-FICTIONAL-HISTORIES-V2-MANIFEST" || manifest.sourceRelease !== PWQE51_RELEASE_IDENTITY.questionRelease) {
     throw new Error("The authored v2 history manifest does not match the pinned PWQE 5.1 source release.");
@@ -111,7 +117,19 @@ async function main(): Promise<void> {
     if (history.profile?.id !== profileId) throw new Error(`${profileId} source fixture identity mismatch.`);
     const authoredFixtureSha256 = digestText(sourceText);
     if (!DIGEST.test(authoredFixtureSha256) || authoredFixtureSha256 !== V2_PROFILE_SHA256[profileId]) throw new Error(`${profileId} authored fixture digest drifted from the v2 source pin.`);
-    const replay = replayFictionalPwqe51Session({ history, questionSource, reportSource });
+    const archivedPermissionProvenance = history.topicPermissionEvents?.find((event) => event.topic === "body_detail" && event.outcome === "opt_in")?.provenance;
+    if (mappingEntryConsentProfiles.includes(profileId) && archivedPermissionProvenance !== "original_authored_configuration" && archivedPermissionProvenance !== "new_synthetic_mapping_control") {
+      throw new Error(`${profileId} has no source-bound body_detail opt-in provenance to compare with the new Mapping-entry control.`);
+    }
+    const mappingEntryTopicOptIns: FictionalMappingEntryTopicOptIn[] = mappingEntryConsentProfiles.includes(profileId) ? [{
+      controlId: `v5-${profileId}-body-detail-opt-in-at-mapping-entry`,
+      topic: "body_detail",
+      rationale: "Test whether an explicitly simulated Mapping-entry permission allows the unchanged authored base M10 response to be issued under the production route.",
+      provenance: "new_synthetic_mapping_control",
+      archivedPermissionProvenance: archivedPermissionProvenance as FictionalMappingEntryTopicOptIn["archivedPermissionProvenance"],
+      baselineReplayApplicationBoundary: "deepening_start",
+    }] : [];
+    const replay = replayFictionalPwqe51Session({ history, questionSource, reportSource, mappingEntryTopicOptIns });
     const sourceProvenance = Array.isArray(history.responseProvenance) ? history.responseProvenance : [];
     const supersededResponseIds = new Set(replay.state.routerResult.supersededResponseIds);
     const invalidatedResponseIds = new Set(replay.state.routerResult.invalidatedResponses.map((row) => row.responseId));
@@ -190,6 +208,7 @@ async function main(): Promise<void> {
         outcome: entry.outcome,
       })),
       syntheticRespondentControls: JSON.parse(normalizeRuntimeIds(JSON.stringify(replay.syntheticRespondentControls))) as unknown,
+      mappingEntryTopicOptIns,
       replayDecisions: replay.replayDecisions.map(({ sourceOccurrenceReference, outcome }) => ({ sourceOccurrenceReference, outcome })),
       authoredAnswerDisposition: allAuthoredAnswerDisposition.map((value) => {
         const row = object(value);
@@ -202,7 +221,7 @@ async function main(): Promise<void> {
       }),
     });
     const artifact = {
-      schemaVersion: "PWQE51-ROUTE-REPLAY-V4",
+      schemaVersion: "PWQE51-ROUTE-REPLAY-V5",
       profileId,
       sourceIdentity: {
         v2ManifestSha256,
@@ -217,6 +236,12 @@ async function main(): Promise<void> {
         reportSourceManifestSha256: reportSource.manifestSha256,
       },
       originalAuthoredFixtureIdentity: object(history.profile),
+      mappingEntryTopicOptIns,
+      experimentalFixtureVariant: mappingEntryTopicOptIns.length ? {
+        id: "body-detail-opt-in-at-mapping-entry-v1",
+        controls: mappingEntryTopicOptIns,
+        archivedConfigurationDifference: "The v2 archive retains the permission declaration and provenance. Normal replay applies permission when Deepening starts. This variant separately simulates permission before Mapping and does not rewrite the v2 history.",
+      } : null,
       sourceResponseProvenance: sourceProvenance,
       originalAuthoredAnswers: history.originalAuthoredResponses ?? history.mappingResponses.filter((answer) => sourceProvenance.some((entry) => entry.responseId === answer.responseId && entry.origin === "original_authored_fictional_answer")),
       newSyntheticMappingAnswers: history.syntheticMappingResponses ?? history.mappingResponses.filter((answer) => sourceProvenance.some((entry) => entry.responseId === answer.responseId && entry.origin === "new_synthetic_mapping_answer")),
@@ -317,6 +342,7 @@ async function main(): Promise<void> {
     const branch = {
       schemaVersion: "PWQE51-FOCUSED-ROUTER-CONTRACT-CASE-V1",
       profileId,
+      experimentalFixtureVariant: mappingEntryTopicOptIns.length ? "body-detail-opt-in-at-mapping-entry-v1" : null,
       caseKind: "focused_router_contract_case",
       fullAssessmentTranscript: false,
       independentlyReviewedRoutingEvidence: false,
@@ -425,7 +451,7 @@ async function main(): Promise<void> {
   }
 
   const focusedBranchManifest = {
-    schemaVersion: "PWQE51-FOCUSED-ROUTER-CONTRACT-CASES-V1-MANIFEST",
+      schemaVersion: "PWQE51-FOCUSED-ROUTER-CONTRACT-CASES-V1-MANIFEST",
     qualificationBoundary: "focused source-bound case specifications; not full assessment transcripts or independent routing qualification",
     sourceIdentity: {
       v2ManifestSha256,
@@ -441,14 +467,14 @@ async function main(): Promise<void> {
   await atomicWrite(path.join(output, "focused-branches", "manifest.json"), focusedBranchManifestText);
 
   const rootCauseLines = [
-    "# PWQE 5.1 / PWRP 7.1 v4 first-divergence and respondent-resolution ledger",
+    "# PWQE 5.1 / PWRP 7.1 v5 first-divergence and respondent-resolution ledger",
     "",
-    "The exact question-selection causes and pre-response context audit are preserved in `root-cause-ledger.md` (the v3 baseline captured before fictional respondent answers were added). This v4 ledger records how the source-bound policy handled those routes and whether the original authored Deepening anchors survived.",
+    "This v5 ledger records full-session routing against the immutable constructed-history v2 source and identifies the separately simulated Mapping-entry permission experiment where applied.",
     "",
     `- Constructed-history source commit: \`${manifest.sourceCommit}\`.`,
-    "- Implementation branch base commit: `fbc0bf440d3f79668c8987a8ef2f2d1738a82c42`.",
+    "- Verified implementation branch base commit: `9b7095919c99861510be8498b822ae8983eaed87`.",
     `- V2 source manifest SHA-256: \`${v2ManifestSha256}\`.`,
-    "- All new Deepening answers are recorded with `new_synthetic_deepening_answer`; all respondent controls are recorded separately.",
+    "- All new Deepening answers and Mapping-entry consent controls retain explicit synthetic provenance.",
     "- Cohort B cases are in `focused-branches/`; they are source-bound case specifications, not complete assessment transcripts and not independent routing review.",
     "- Packet acceptance below is a source/structure result. It is not semantic approval, reviewer approval, or provider quality.",
     "",
@@ -467,7 +493,7 @@ async function main(): Promise<void> {
     "",
     "## Discrepancy and interpretation notes",
     "",
-    "- `M10.observable` remains distinct from base `M10`. P05, C10, and C11 preserve their authored base-item answers and use the supported skip control for the router-issued variant; no answer was translated between contracts.",
+    "- `M10.observable` remains distinct from base `M10`. The main v5 fixture applies a separately marked Mapping-entry body_detail opt-in for P05, C10, and C11; the no-entry-opt-in comparison is preserved separately. No answer is translated between contracts.",
     "- P03 and C12 answer a real router-issued D42 known-distance prompt on a linked actual `known_delay` occurrence. The question explicitly asks about a different time; the D42 response is accepted with `actual_recalled` basis and the target-resolution observation. Packet construction records the distinct pair only from that route evidence.",
     "- C07's comparison pair requires an explicit replay binding and actual second M02 root. Occurrence IDs alone do not establish distinctness. P01 follows its separately source-authorized controlled replay path.",
     "- C02's D67/D68 and C09's D79 answers remain intentionally forbidden. A router-issued forbidden question produces a discrepancy and supported skip only.",
@@ -475,10 +501,10 @@ async function main(): Promise<void> {
     "- High synthetic response volume, including inherited Mapping scaffold, can make a structurally valid packet a weak test of the original case. The full answer-level audit and focused branch case file preserve that distinction.",
     "",
   );
-  await atomicWrite(path.join(output, "v4-root-cause-ledger.md"), rootCauseLines.join("\n"));
+  await atomicWrite(path.join(output, "v5-root-cause-ledger.md"), rootCauseLines.join("\n"));
 
   const index = {
-      schemaVersion: "PWQE51-ROUTE-REPLAY-V4-MANIFEST",
+      schemaVersion: "PWQE51-ROUTE-REPLAY-V5-MANIFEST",
     qualificationStatus: "internal_session_replay_not_independent_qualification",
     inputs: {
       v2ManifestSha256,
@@ -495,7 +521,13 @@ async function main(): Promise<void> {
       manifestSha256: digestText(focusedBranchManifestText),
       fullAssessmentTranscript: false,
     },
-    rootCauseLedger: "v4-root-cause-ledger.md",
+    fixtureVariant: mappingEntryConsentProfiles.length ? {
+      id: "body-detail-opt-in-at-mapping-entry-v1",
+      profiles: mappingEntryConsentProfiles,
+      provenance: "new_synthetic_mapping_control",
+      archivedConfigurationDifference: "Permission is simulated before Mapping for this experiment; v2 keeps its source provenance, and normal replay applies it when Deepening starts.",
+    } : null,
+    rootCauseLedger: "v5-root-cause-ledger.md",
     profiles: profileIndex,
   };
   const indexText = `${JSON.stringify(index, null, 2)}\n`;

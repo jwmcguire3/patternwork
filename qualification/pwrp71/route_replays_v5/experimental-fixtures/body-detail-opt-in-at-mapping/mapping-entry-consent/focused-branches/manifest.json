@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "PWQE51-FOCUSED-ROUTER-CONTRACT-CASES-V1-MANIFEST",
+  "qualificationBoundary": "focused source-bound case specifications; not full assessment transcripts or independent routing qualification",
+  "sourceIdentity": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "sourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "reportRelease": "PWRP-7.1.0-candidate.1"
+  },
+  "profiles": [
+    {
+      "profileId": "P05",
+      "file": "P05.json",
+      "artifactSha256": "1a5dd8d34b2d0303dfdbe7fc998422fdc5ac67cd811396f5c846bcd7010e6c76",
+      "fullAssessmentTranscript": false,
+      "status": "authored_semantic_anchors_not_fully_issued_in_full_session",
+      "semanticClaim": "Loss of words is not the same as deciding to withdraw",
+      "requiredAnchorCount": 3,
+      "acceptedAnchorCount": 2
+    },
+    {
+      "profileId": "C10",
+      "file": "C10.json",
+      "artifactSha256": "f6cab2d0468fd5e608050193f9112dcd75336abbdc7b86a97f48f9342a8d7c3d",
+      "fullAssessmentTranscript": false,
+      "status": "all_authored_semantic_anchors_issued_in_full_session",
+      "semanticClaim": "Functioning, ease, timing and changed interpretation",
+      "requiredAnchorCount": 11,
+      "acceptedAnchorCount": 11
+    },
+    {
+      "profileId": "C11",
+      "file": "C11.json",
+      "artifactSha256": "f9cc8fcae9246de35f2e32f4ee1f3ea7e478090d3e74b6be556e7905dfb930b8",
+      "fullAssessmentTranscript": false,
+      "status": "all_authored_semantic_anchors_issued_in_full_session",
+      "semanticClaim": "Company has an effect and an aftermath",
+      "requiredAnchorCount": 3,
+      "acceptedAnchorCount": 3
+    }
+  ]
+}
