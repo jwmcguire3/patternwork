@@ -7,6 +7,7 @@
 - Starting revision: `8dd192a7076ae535b90f340a778d915a8a2338bd` (`codex/pwrp71-semantic-evidence-v5`).
 - Working branch: `codex/pwrp71-gate10-routing-budget-readiness`.
 - Implementation candidate: `bbd357322191364d2b2e0306a8b7f9f76ca2c267`.
+- Qualification evidence package: `c298205` (full v5 offline artifacts, final command receipts, parity outputs, no-dispatch preflight, and independent technical review).
 - Question release/source: `PWQE-5.1.0-candidate.1`; source SHA-256 `a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832`; source-manifest SHA-256 `144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc`.
 - Report release/manifest: `PWRP-7.1.0-candidate.1`; manifest SHA-256 `026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5`.
 - Semantic cases: 14 cases; raw file-byte SHA-256 `aadc23bbcd8efb180fbccbe54f127024c7b4ea5593b60ca18afb5d4baaa0c819`; LF-normalized digest `fec1752b4a4892da77fcadbf78688b23fd77e010b845ae6ddcd4523c0547569d`.
