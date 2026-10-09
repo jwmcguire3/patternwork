@@ -1,0 +1,10 @@
+{
+  "normalExitCode": 0,
+  "normalAuditStatus": "completed; not a parity-pass assertion",
+  "strictExitCode": 1,
+  "strictStatus": "incomplete_unsupported_coverage",
+  "unsupportedSurfaces": 893,
+  "unexplainedDifferences": 0,
+  "normalJsonSha256": "a58047a03cd54f908c9704d32333afe6280d1cb1e91d0babceab0808c193c9c0",
+  "strictJsonSha256": "0a276b19ecf6eceff1ce16aa053bee345a204eb1813025dba7840bce41959698"
+}

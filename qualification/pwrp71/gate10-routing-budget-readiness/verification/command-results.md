@@ -1,39 +1,37 @@
 # Gate 10 command results
 
-All outputs and exit codes below are saved alongside this file. The first full-suite run is retained because it exposed the legacy C10 candidate packet mismatch; after the test was changed to require that pending archive to stay rejected, the complete suite passed.
+The table records the latest successful verification against implementation candidate `bbd357322191364d2b2e0306a8b7f9f76ca2c267`, plus expected or diagnosed failures. Logs and exit receipts are retained beside this file or in the linked run folders. No paid request was sent.
 
-| Command | Exit | Result |
+| Command | Exit | Result and receipt |
 |---|---:|---|
-| `npm test` (final) | 0 | 402 passed, 0 failed. |
-| `npm test` (post-review-candidate verification) | 0 | Fresh full-suite rerun after the final focused regressions: 402 passed, 0 failed. |
-| `npm run typecheck` (final) | 0 | Passed. |
-| `npm run build` (default workspace sandbox) | 1 | SWC could not canonicalize the workspace path; Windows returned access denied. This matches the recorded baseline environment restriction. |
-| `npm run build` (workspace-access retry) | 0 | Production build passed. Both attempts are retained. |
-| Changed-file `npx eslint ...` | 0 | Passed without warnings or errors. |
-| `npx tsx scripts/pwqe51-parity/index.ts` | 0 | `completed; not a parity-pass assertion`; strict summary is incomplete with 893 unsupported surfaces and zero unexplained differences. Full 12.8 MB JSON retained. |
-| `npx tsx scripts/pwqe51-parity/index.ts --strict` | 1 | Expected strict gate result: `incomplete_unsupported_coverage`, 893 overlapping unsupported surfaces, zero unexplained differences. Full 12.8 MB JSON retained. |
-| `npm run reports:verify:v5-packets` | 0 | 25/25 profiles; 100/100 MAP/IFS/PV/ATT packets passed current source-to-packet and adapter checks. |
-| `npm run reports:qualify:pwrp71 -- offline --fixture-set route-replays-v5 ... --reports ALL` | 0 | 125/125 structural acceptances; 250 zero-cost mock attempts; 25/25 same-profile synthesis prerequisite sets; `routeParity: pending`. Every report draft is `insufficient_evidence`. |
-| `npm run reports:preflight:pwrp71 -- --run-id gate10-c01-c02-ifs-no-dispatch-current ...` | 0 | `BLOCKED`; two request bodies prepared, dispatch false, provider calls zero, API key not read. |
-| `npx tsx --test` focused budget/OpenRouter cases | 0 | 29 tests passed, including cross-process lock retention, missing usage, unknown billing, interrupted receipt, and exact request fingerprint controls. The full suite also covers session, correction, packet, and adapter regressions. |
-| `npx tsx --test` final focused regression selection | 0 | 66 passed, 0 failed across session replay, source-to-packet evidence, correction/currentness, adapter mutation rejection, budget journal, generator/runner, fixture provenance, and OpenRouter wire compatibility. |
+| `npm test` | 0 | **406 passed, 0 failed**. `npm-test-gate10-final.log` and `.exit-code.txt`. |
+| `npm run typecheck` | 0 | Passed. `typecheck-gate10-post-budget-authorization.log` and `.exit-code.txt`. |
+| `npm run build` (default workspace sandbox) | 1 | SWC could not canonicalize the OneDrive workspace because Windows returned access denied. Retained as `build-gate10-default.log` and `.exit-code.txt`. |
+| `npm run build` (workspace-access retry) | 0 | Production build passed. `build-gate10-escalated.log` and `.exit-code.txt`; only an outdated `baseline-browser-mapping` advisory was printed. |
+| Changed-file `npx eslint ...` | 0 | Passed without diagnostics. `scoped-eslint-gate10-final.log` and `.exit-code.txt`. |
+| Focused routing/packet/budget/OpenRouter test selection | 0 | **57 passed, 0 failed**, including D36 stale-response reinsertion, budget reservation/current attempt identity, dispatch authorization, and request usage serialization. `focused-gate10-post-budget-authorization.log` and `.exit-code.txt`. |
+| `npm run reports:verify:v5-packets -- qualification/pwrp71/gate10-routing-budget-readiness/packet-verification/v5-gate10-final.json` | 0 | **25/25 profiles; 100/100 packets** verified. See `verification/v5-packet-verification-gate10.log`, its exit receipt, and the JSON output. |
+| Full `reports:qualify:pwrp71 offline` run against `route-replays-v5`, all 25 profiles and all report types | 0 | `offline_complete`; **125/125** structurally accepted mock outputs, 250 completed attempts, zero cost, zero unknown-cost reservation, and 25 same-profile synthesis prerequisite sets. `routeParity` remains pending. See `verification/v5-offline-gate10-final.log`, its exit receipt, and `v5-offline-run-gate10-final/gate10-post-budget-current-v5-full-matrix-20261009/`. Drafts are `insufficient_evidence`; this is not report-quality evidence. |
+| `npm run pwqe51:parity` | 0 | `completed; not a parity-pass assertion`. See `routing-parity-gate10-final/normal.result.json`, `normal.exit-code.txt`, and `summary.json`. |
+| `npm run pwqe51:parity:strict` | 1 | Expected incomplete gate: `incomplete_unsupported_coverage`, 893 overlapping unsupported surfaces, zero unexplained differences among compared surfaces. See `strict.result.json`, `strict.exit-code.txt`, and `summary.json`. |
+| `npm run reports:preflight:pwrp71 -- --run-id gate10-c01-c02-ifs-no-dispatch-cap-proposal-1500000-20261009-r2 --max-call-cost-micros 115000 --aggregate-cost-cap-micros 1500000 --output ...` | 0 | Machine-readable result `BLOCKED`; two exact request bodies prepared, `dispatchPerformed=false`, `providerCalls=0`, `apiKeyRead=false`. The cap values are a proposal and do not authorize spend. See `preflight-capped-1500000-post-usage.log`, its exit receipt, and the exact JSON under `provider-preflight/`. |
 
-## Detailed receipts
+## Failure and recovery record
 
-- `npm-test-final.log`, `npm-test-final.exit-code.txt`
-- `npm-test-post-review-final.log`, `npm-test-post-review-final.exit-code.txt` (fresh 402 passed, 0 failed)
-- `npm-test-initial-review-discovery.log`, `npm-test-initial-review-discovery.exit-code.txt` (401 passed, 1 stale candidate expectation; corrected and rerun)
-- `focused-regressions-final.log`, `focused-regressions-final.exit-code.txt` (66 passed, 0 failed)
-- `typecheck-final.log`, `typecheck-final.exit-code.txt`
-- `build-final.log`, `build-final.exit-code.txt` (sandbox path restriction)
-- `build-final-escalated.log`, `build-final-escalated.exit-code.txt` (successful retry)
-- `scoped-eslint-final.log`, `scoped-eslint-final.exit-code.txt`
-- `../routing-parity-current/normal.json`, `normal.exit-code.txt`
-- `../routing-parity-current/strict.json`, `strict.exit-code.txt`
-- `../routing-parity-current/strict-parity-gap-ledger.json`
-- `../packet-verification/verification.log`, `verification.exit-code.txt`, and `v5-current-contract-verification.json`
-- `../provider-preflight/c01-c02-ifs-no-dispatch-current.json`
-- `../v5-offline-run/gate10-v5-offline-full-matrix/run.json`, `attempts.json`, reports, and runner log/exit receipt
-- `../source-hash-manifest.json`
+- An earlier full v5 matrix stopped after 123 outputs when Windows/OneDrive returned `EPERM` during an atomic `attempts.json` rename. The reservation had not reached provider dispatch. That failed run is retained under `v5-offline-run-post-d36/`. Bounded retry and cleanup were added without removing the run lock or weakening reservation semantics; the full matrix then completed in the retained retry run and again in the final run above.
+- A test run during that recovery had 1 failure among 405 tests because the legacy PWQE 5 qualification writer hit the same transient rename failure. The shared atomic-write retry was fixed and covered. The current complete suite is 406/406.
+- The default sandbox build failed for workspace access; the explicitly authorized workspace-access retry passed. Both logs and exit codes remain available.
+- Normal parity success is an audit execution status only. Strict parity remains incomplete; neither result has been rewritten as a parity pass.
 
-The source hash manifest records exact code-file hashes, all 25 normalized v5 artifact hashes, all 100 packet digests, both exact no-dispatch request fingerprints/body digests, current parity outputs, offline run/attempts, and the primary command receipts. The focused regression receipt is retained here alongside the complete 402-test suite receipt.
+## Receipt index
+
+- Full suite: `npm-test-gate10-final.log`, `npm-test-gate10-final.exit-code.txt`.
+- Typecheck: `typecheck-gate10-post-budget-authorization.log`, corresponding exit receipt.
+- Build attempts: `build-gate10-default.log`, `build-gate10-escalated.log`, corresponding exit receipts.
+- Scoped lint: `scoped-eslint-gate10-final.log`, corresponding exit receipt.
+- Focused tests: `focused-gate10-post-budget-authorization.log`, corresponding exit receipt.
+- Packet audit: `v5-packet-verification-gate10.log`, corresponding exit receipt, and `../packet-verification/v5-gate10-final.json`.
+- Offline matrix: `v5-offline-gate10-final.log`, corresponding exit receipt, and `../v5-offline-run-gate10-final/gate10-post-budget-current-v5-full-matrix-20261009/`.
+- Parity: `../routing-parity-gate10-final/normal.result.json`, `strict.result.json`, `summary.json`, and exit receipts.
+- No-dispatch preflight: `preflight-capped-1500000-post-usage.log`, corresponding exit receipt, and `../provider-preflight/gate10-c01-c02-ifs-no-dispatch-cap-proposal-1500000-20261009-r2.json`.
+- Exact source/evidence pins: `../source-hash-manifest.json` (updated after the final evidence snapshot commit).

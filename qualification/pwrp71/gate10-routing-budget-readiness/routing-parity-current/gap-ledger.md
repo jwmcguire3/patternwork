@@ -1,6 +1,6 @@
 # Current strict parity and deduplicated coverage gaps
 
-The current normal parity command exited 0 with `completed; not a parity-pass assertion`. The strict command exited 1 with `incomplete_unsupported_coverage`, **893 overlapping unsupported comparison surfaces**, and zero unexplained differences among compared surfaces. These are additive surface counts, not 893 unique rows or defects. The full outputs and exit receipts are adjacent JSON/log files; the machine summary is `strict-parity-gap-ledger.json`.
+The latest Gate 10 normal parity command exited 0 with `completed; not a parity-pass assertion`. The latest strict command exited 1 with `incomplete_unsupported_coverage`, **893 overlapping unsupported comparison surfaces**, and zero unexplained differences among compared surfaces. These are additive surface counts, not 893 unique rows or defects. The latest full outputs, receipts, and hashes are in `../routing-parity-gate10-final/`; `summary.json` records the exact result digests. The earlier `routing-parity-current/` outputs are retained as historical evidence.
 
 ## Root-cause grouping
 
@@ -29,4 +29,4 @@ The source categories overlap. Their counts sum to the strict audit's 893; they 
 
 ## Independent evidence boundary
 
-The machine source-contract suites and the 25-profile packet verifier were authored within this implementation workstream. A separate agent reviewed the v5 baseline and found material packet defects; the current code fixes are awaiting a fresh isolated review against this runtime. Agent review is technical evidence, not human approval. Strict cross-engine parity remains incomplete; overall routing qualification remains unqualified.
+The machine source-contract suites and the 25-profile packet verifier were authored within this implementation workstream. A separate agent reviewed the v5 baseline and found material packet defects; those code fixes now have candidate commit `bbd357322191364d2b2e0306a8b7f9f76ca2c267`. A fresh reviewer is examining that exact commit in an isolated worktree; the independent review result is not yet recorded here. Agent review is technical evidence, not human spending authorization or activation approval. Strict cross-engine parity remains incomplete; overall routing qualification remains unqualified.
