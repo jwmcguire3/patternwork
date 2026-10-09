@@ -17,6 +17,7 @@ import { loadPwrp71SourcePackage } from "./pwrp71-source.ts";
 import { preparePwrp71Request } from "./pwrp71-adapter.ts";
 import { assertPwrp71ReportActivationReady } from "./pwrp71-readiness.ts";
 import { preparePwrp71ReportInputs } from "./pwrp71-inputs.ts";
+import { pwrp71CanonicalResponseEvidenceFromSnapshot } from "./pwrp71-response-evidence.ts";
 import { claimReportAttempt, failReportAttempt, heartbeatReportAttempt } from "./attempts.ts";
 import type { ClassifiedReportFailure } from "./types.ts";
 import { dispatchReportAttemptNotification } from "../notifications/report-status.ts";
@@ -104,9 +105,18 @@ export async function generateReportStep(
       loadPwqe51SourcePackage(dependencies.workspaceRoot),
       loadPwrp71SourcePackage(dependencies.workspaceRoot),
     ]);
+    const canonicalSnapshot = await dependencies.snapshotBoundary.loadAndDecryptSnapshot(input);
+    const canonicalPacket = objectRecord(canonicalSnapshot.canonicalSnapshot.router_packet);
+    if (canonicalSnapshot.snapshotId !== prepared.snapshot.snapshotId
+      || canonicalSnapshot.snapshotRevision !== prepared.snapshot.snapshotRevision
+      || canonicalSnapshot.evidenceSha256 !== prepared.snapshot.evidenceSha256
+      || canonicalPacket?.content_sha256 !== packet.content_sha256) {
+      throw new FatalError("pwrp71_snapshot_response_source_mismatch");
+    }
+    const canonicalResponseEvidence = pwrp71CanonicalResponseEvidenceFromSnapshot(canonicalSnapshot.canonicalSnapshot);
     const bundle = objectRecord(synthesisBundle);
     const acceptedLayers = objectRecord(bundle?.accepted_layers) as Readonly<Record<string, JsonObject>> | undefined;
-    const preparedRequest = preparePwrp71Request({ packet, reportType, questionSource, reportSource, acceptedLayers });
+    const preparedRequest = preparePwrp71Request({ packet, reportType, questionSource, reportSource, acceptedLayers, canonicalResponseEvidence });
     if (!preparedRequest.ok) throw new FatalError(`pwrp71_request_invalid:${JSON.stringify(preparedRequest.issues)}`);
     pwrp71 = { request: preparedRequest.value, packet, source: reportSource };
   }
@@ -193,9 +203,22 @@ export async function renderReportPdfsStep(input: PassReportWorkflowInput, prepa
   const dependencies = getReportWorkflowDependencies();
   try {
     const { renderAndVerifyCanonicalPdf } = await import("../pdf/index.ts");
+    const canonicalSnapshot = prepared.contractVersion === "v7.1"
+      ? await dependencies.snapshotBoundary.loadAndDecryptSnapshot(input)
+      : undefined;
+    const canonicalPacket = canonicalSnapshot ? objectRecord(canonicalSnapshot.canonicalSnapshot.router_packet) : undefined;
+    if (canonicalSnapshot && (canonicalSnapshot.snapshotId !== prepared.snapshot.snapshotId
+      || canonicalSnapshot.snapshotRevision !== prepared.snapshot.snapshotRevision
+      || canonicalSnapshot.evidenceSha256 !== prepared.snapshot.evidenceSha256
+      || canonicalPacket?.content_sha256 !== prepared.routerPacket?.content_sha256)) {
+      throw new FatalError("pwrp71_snapshot_response_source_mismatch");
+    }
+    const canonicalResponseEvidence = canonicalSnapshot
+      ? pwrp71CanonicalResponseEvidenceFromSnapshot(canonicalSnapshot.canonicalSnapshot)
+      : undefined;
     return await Promise.all(generated.map(async (item) => {
       const acceptedLayers = prepared.contractVersion === "v7.1" ? acceptedLayersForPwrp71Report(item.reportType, generated) : undefined;
-      const pdf = await renderAndVerifyCanonicalPdf({ reportType: item.reportType, artifact: item.artifact, packets: prepared.packets, routerPacket: prepared.routerPacket, acceptedLayers, snapshotId: prepared.snapshot.snapshotId, contractVersion: prepared.contractVersion, workspaceRoot: dependencies.workspaceRoot, verification: dependencies.pdfVerification });
+      const pdf = await renderAndVerifyCanonicalPdf({ reportType: item.reportType, artifact: item.artifact, packets: prepared.packets, routerPacket: prepared.routerPacket, canonicalResponseEvidence, acceptedLayers, snapshotId: prepared.snapshot.snapshotId, contractVersion: prepared.contractVersion, workspaceRoot: dependencies.workspaceRoot, verification: dependencies.pdfVerification });
       return { reportType: item.reportType, filename: pdf.filename, bytesBase64: pdf.bytes.toString("base64"), sha256: pdf.sha256, sourceMarkdownSha256: pdf.sourceMarkdownSha256, pageCount: pdf.pageCount, pngPageCount: pdf.pngPageCount };
     }));
   } catch (error) {

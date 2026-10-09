@@ -3,6 +3,7 @@ import { PWQE51_RELEASE_IDENTITY } from "../../question-engine/pwqe51-source.ts"
 import { sha256Canonical } from "../../report-contracts/delivery-validator.ts";
 import { sha256 } from "../security/crypto.ts";
 import { preparePwrp71Request } from "./pwrp71-adapter.ts";
+import { pwrp71CanonicalResponseEvidenceFromSnapshot } from "./pwrp71-response-evidence.ts";
 import type { DecryptedAssessmentSnapshot, PreparedReportInputs } from "./types.ts";
 import type { Pwrp71ReportActivation } from "./pwrp71-readiness.ts";
 
@@ -54,6 +55,7 @@ export function preparePwrp71ReportInputs(
     reportType: validationReportType,
     questionSource: activation.questionSource,
     reportSource: activation.reportSource,
+    canonicalResponseEvidence: pwrp71CanonicalResponseEvidenceFromSnapshot(canonicalSnapshot),
   });
   if (!adapter.ok) return { ok: false, issues: adapter.issues };
   return {

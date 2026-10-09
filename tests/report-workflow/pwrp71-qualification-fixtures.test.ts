@@ -77,11 +77,12 @@ test("authored histories replay explicit answer lineage and preserve pending rep
     assert.equal(observations.length, authoredAnswers.filter((answer) => answer.status === "answered").reduce((sum, answer) => sum + (answer.selected as unknown[]).length, 0));
     const responseIds = new Set(authoredAnswers.map((answer) => answer.id));
     assert.ok(observations.every((observation) => responseIds.has(String(observation.response_id))));
-    const prepared = preparePwrp71Request({ packet: packet.packet, reportType: "MAP", questionSource, reportSource });
+    const prepared = preparePwrp71Request({ packet: packet.packet, reportType: "MAP", questionSource, reportSource,
+      canonicalResponseEvidence: packet.canonicalResponseEvidence });
     if (!prepared.ok) {
       assert.equal(packet.routerParity, "pending");
       assert.ok(prepared.issues.length > 0);
-      assert.ok(prepared.issues.every((issue) => issue.code === "target_lineage" || issue.code === "sequence_lineage"), JSON.stringify(prepared.issues));
+      assert.ok(prepared.issues.every((issue) => issue.code === "target_lineage" || issue.code === "sequence_lineage" || issue.code === "recovery_sequence_semantics"), JSON.stringify(prepared.issues));
     }
   }
 });
@@ -104,7 +105,9 @@ test("C candidate archives remain unqualified and legacy C10 D36 packet order is
     const prepared = preparePwrp71Request({ packet: profile.packet, reportType: "MAP", questionSource, reportSource });
     if (prepared.ok) structurallyReady += 1;
     else {
-      assert.ok(prepared.issues.every((issue) => issue.code === "target_lineage" || issue.code === "sequence_lineage" || issue.code === "recovery_sequence_semantics"), JSON.stringify(prepared.issues));
+      assert.ok(prepared.issues.every((issue) => issue.code === "target_lineage" || issue.code === "sequence_lineage"
+        || issue.code === "recovery_sequence_semantics" || issue.code === "recovery_sequence_response_source"
+        || issue.code === "recovery_sequence_currentness"), JSON.stringify(prepared.issues));
       if (prepared.issues.some((issue) => issue.code === "recovery_sequence_semantics")) {
         assert.equal(profile.id, "C10", "only the legacy candidate archive with D36 carries the old response/edge ordering mismatch");
       }

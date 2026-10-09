@@ -52,6 +52,7 @@ test("qualification price ceiling and no-cache controls survive exact HTTP seria
     reasoningEffort: "max",
     providerPolicy: GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY,
     promptCacheOptions: { mode: "explicit" },
+    includeUsage: true,
   };
   const expected = buildOpenRouterWirePayload(controlledRequest);
   let capturedBody = "";
@@ -64,7 +65,27 @@ test("qualification price ceiling and no-cache controls survive exact HTTP seria
   const body = JSON.parse(capturedBody) as Record<string, unknown>;
   assert.deepEqual(body.provider, { zdr: true, data_collection: "deny", require_parameters: true, max_price: { prompt: 0.1, completion: 0.5 } });
   assert.deepEqual(body.prompt_cache_options, { mode: "explicit" });
+  assert.deepEqual(body.usage, { include: true });
   assert.deepEqual(body.reasoning, { effort: "max" });
+});
+
+test("PWRP 7.1 direct OpenRouter requests fail before API dispatch without budget controls", async () => {
+  let dispatches = 0;
+  const client = new OpenRouterClient({ apiKey: "test", fetch: async () => {
+    dispatches += 1;
+    return response('{"ok":true}');
+  } });
+  await assert.rejects(client.generate({
+    ...request,
+    model: "openai/gpt-6-luna",
+    schemaName: "patternwork_ifs_pwrp71_candidate_1",
+  }), (error: unknown) => {
+    assert.ok(error instanceof OpenRouterTransportError);
+    assert.equal(error.kind, "client_error");
+    assert.match(error.message, /durable budget-prepared request/u);
+    return true;
+  });
+  assert.equal(dispatches, 0);
 });
 
 test("retains provider finish reason so report contracts can reject truncated structured output", async () => {

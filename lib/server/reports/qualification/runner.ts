@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { JsonObject, ReportType, ValidationIssue } from "../../../question-engine/types.ts";
 import { loadPwqe51SourcePackage, PWQE51_RELEASE_IDENTITY, PWQE51_SOURCE_MANIFEST_SHA256, type Pwqe51SourcePackage } from "../../../question-engine/pwqe51-source.ts";
@@ -11,8 +11,10 @@ import { GPT6_LUNA_BILLING_BASIS_SHA256 } from "../../openrouter/qualification-b
 import { generateCanonicalReport } from "../generator.ts";
 import type { Pwrp71ReportArtifact } from "../pwrp71-validation.ts";
 import { preparePwrp71Request } from "../pwrp71-adapter.ts";
+import { pwrp71CanonicalResponseEvidenceFromSessionState } from "../pwrp71-response-evidence.ts";
 import { loadPwrp71SourcePackage, type Pwrp71SourcePackage } from "../pwrp71-source.ts";
 import { FileQualificationAttemptStore, JournaledPwrp71Transport, type QualificationAttemptRecord } from "./attempt-store.ts";
+import { renameFileWithTransientRetry } from "./atomic-file.ts";
 import { loadPwrp71FixturePacket, type Pwrp71FixturePacket } from "./replay.ts";
 import { loadPwrp71QualificationFixtures, type Pwrp71QualificationFixtures } from "./fixtures.ts";
 import { PWRP71_SEMANTIC_CASE_SET_SHA256 } from "../pwrp71-readiness.ts";
@@ -515,7 +517,8 @@ function routeReplayFixturePacket(input: {
       }
     }
     if (packetEntry && reasons.length === 0) {
-      const validation = preparePwrp71Request({ packet: packetEntry.packet, reportType: reportType === "SYNTHESIS" ? "IFS" : reportType, questionSource: input.questionSource, reportSource: input.reportSource });
+      const canonicalResponseEvidence = packetType === "MAP" ? undefined : pwrp71CanonicalResponseEvidenceFromSessionState(replay.replay.state);
+      const validation = preparePwrp71Request({ packet: packetEntry.packet, reportType: reportType === "SYNTHESIS" ? "IFS" : reportType, questionSource: input.questionSource, reportSource: input.reportSource, canonicalResponseEvidence });
       if (!validation.ok) reasons.push(...validation.issues);
     }
     const packet = packetEntry?.packet ?? {};
@@ -524,6 +527,7 @@ function routeReplayFixturePacket(input: {
       profileId: input.profileId,
       title: `${input.profileId} router-issued ${input.set.fixtureSet} fictional session replay`,
       packet,
+      ...(packetType === "MAP" ? {} : { canonicalResponseEvidence: pwrp71CanonicalResponseEvidenceFromSessionState(replay.replay.state) }),
       packetSha256,
       sourceHistorySha256: replay.sourceIdentity.authoredFixtureSha256,
       routerResultSha256: sha256Canonical(replay.replay.routingDecisionTrace),
@@ -665,7 +669,12 @@ async function atomicWrite(target: string, contents: string): Promise<void> {
   await mkdir(path.dirname(target), { recursive: true });
   const temporary = `${target}.${process.pid}.${randomUUID()}.tmp`;
   await writeFile(temporary, contents, { encoding: "utf8", flag: "wx" });
-  await rename(temporary, target);
+  try {
+    await renameFileWithTransientRetry(temporary, target);
+  } catch (error) {
+    await rm(temporary, { force: true }).catch(() => undefined);
+    throw error;
+  }
 }
 
 async function saveRun(runDirectory: string, run: Pwrp71QualificationRun): Promise<Pwrp71QualificationRun> {
@@ -836,6 +845,9 @@ export async function runPwrp71Qualification(input: RunPwrp71QualificationOption
   const selectedProvider = input.mode === "offline"
     ? undefined
     : input.transport ?? new OpenRouterClient();
+  if (input.mode === "live" && !(selectedProvider instanceof OpenRouterClient)) {
+    throw new Error("Live PWRP 7.1 qualification requires the pinned OpenRouter client so endpoint and one-use budget authorization match the actual dispatch.");
+  }
   const priorResults = new Map(run.results.map((result) => [`${result.profileId}:${result.reportType}`, result]));
   const results = [...run.results];
   for (const fixture of selectedFixtures) {
@@ -885,7 +897,9 @@ export async function runPwrp71Qualification(input: RunPwrp71QualificationOption
         run = await saveRun(runDirectory, { ...run, results });
         continue;
       }
-      const prepared = preparePwrp71Request({ packet: reportFixture.packet, reportType, questionSource, reportSource, ...(acceptedLayers ? { acceptedLayers } : {}) });
+      const prepared = preparePwrp71Request({ packet: reportFixture.packet, reportType, questionSource, reportSource,
+        canonicalResponseEvidence: reportFixture.canonicalResponseEvidence,
+        ...(acceptedLayers ? { acceptedLayers } : {}) });
       if (!prepared.ok) {
         const blocked: Pwrp71QualificationReportResult = {
           profileId: fixture.profileId, reportType, status: "blocked", fixtureStatus: fixture.fixtureStatus,
@@ -915,6 +929,7 @@ export async function runPwrp71Qualification(input: RunPwrp71QualificationOption
       const provider = new JournaledPwrp71Transport({
         store,
         transport: baseTransport,
+        endpoint: input.mode === "live" ? selectedProvider!.endpoint : undefined,
         maxCallCostMicros,
         aggregateCostCapMicros,
         usageStatus: input.mode === "offline" ? "mock" : "reported",

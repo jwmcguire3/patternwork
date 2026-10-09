@@ -17,6 +17,7 @@ import { validatePwrp71ReportDraft } from "../reports/pwrp71-validation.ts";
 import { loadPwqe51SourcePackage } from "../../question-engine/pwqe51-source.ts";
 import { loadPwrp71SourcePackage } from "../reports/pwrp71-source.ts";
 import { preparePwrp71Request } from "../reports/pwrp71-adapter.ts";
+import type { Pwrp71CanonicalResponseEvidence } from "../reports/pwrp71-response-evidence.ts";
 import { sha256Canonical } from "../../report-contracts/delivery-validator.ts";
 import { sha256 } from "../security/index.ts";
 import type { PdfExternalVerification, PdfLayoutMetrics, PdfVerificationBoundary, VerifiedPdf } from "./types.ts";
@@ -192,6 +193,7 @@ export interface RenderCanonicalPdfInput {
   readonly artifact: ReportArtifact | SynthesisAudit | Pwqe6ReportArtifact | Pwrp71ReportArtifact;
   readonly packets?: readonly ReportEvidencePacketV3_1[];
   readonly routerPacket?: JsonObject;
+  readonly canonicalResponseEvidence?: Pwrp71CanonicalResponseEvidence;
   readonly acceptedLayers?: Readonly<Record<string, JsonObject>>;
   readonly bundle?: SynthesisBundle;
   readonly snapshotId?: string;
@@ -209,7 +211,7 @@ export async function renderAndVerifyCanonicalPdf(input: RenderCanonicalPdfInput
       loadPwqe51SourcePackage(input.workspaceRoot),
       loadPwrp71SourcePackage(input.workspaceRoot),
     ]);
-    const prepared = preparePwrp71Request({ packet, reportType: input.reportType, questionSource, reportSource, acceptedLayers: input.acceptedLayers });
+    const prepared = preparePwrp71Request({ packet, reportType: input.reportType, questionSource, reportSource, acceptedLayers: input.acceptedLayers, canonicalResponseEvidence: input.canonicalResponseEvidence });
     const validation = validatePwrp71ReportDraft({ value: artifact.draft, reportType: input.reportType, snapshotId: input.snapshotId, packet, source: reportSource });
     const reconstructed = validation.ok ? validation.value : undefined;
     const artifactDigest = (artifact.digests as JsonObject).artifact_sha256;

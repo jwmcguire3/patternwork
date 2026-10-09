@@ -304,6 +304,37 @@ test("replay binding outcomes remain distinct and never create an episode withou
       assert.equal(next.currentInteraction?.occurrenceId === pending.currentInteraction?.occurrenceId, false);
     }
   }
+  for (const outcome of ["same", "unknown", "no_event", "skip"] as const) {
+    serial += 1;
+    const decisionId = `pwrb_${String(serial).padStart(40, "0")}`;
+    const closed = applyPwqe51ReplayBinding(pending, {
+      decisionId,
+      requestSha256: String(serial).padStart(64, "0"),
+      outcome,
+    }, source);
+    serial += 1;
+    const corrected = applyPwqe51ReplayBinding(closed, {
+      decisionId: `pwrb_${String(serial).padStart(40, "0")}`,
+      requestSha256: String(serial).padStart(64, "0"),
+      outcome: "different",
+      correctsDecisionId: decisionId,
+    }, source);
+    assert.equal(corrected.replayBindingHistory?.at(-1)?.supersedesDecisionId, decisionId, `${outcome} correction must preserve its decision lineage`);
+    assert.equal(corrected.routerResult.episodes.filter((episode) => episode.actual).length, 1, `${outcome} correction may bind a candidate but cannot manufacture an answered occurrence`);
+    const replayOccurrenceId = corrected.replayBindingHistory?.at(-1)?.replayOccurrenceId;
+    assert.ok(replayOccurrenceId);
+    assert.equal(corrected.currentInteraction?.questionId, "M02");
+    assert.equal(corrected.currentInteraction?.occurrenceId, replayOccurrenceId);
+    serial += 1;
+    const answeredReplay = advancePwqe51Session(corrected, {
+      responseId: `replay-root-${serial}`,
+      completionState: "COMPLETED",
+      selectedOptionIds: ["M02.rehearse"],
+      basis: "actual_recalled",
+      referentRole: "supervisor",
+    }, source);
+    assert.equal(answeredReplay.routerResult.episodes.filter((episode) => episode.actual).length, 2, `${outcome} becomes distinct only after a current replay-root answer`);
+  }
   assert.throws(() => applyPwqe51ReplayBinding(createPwqe51SessionState(source), {
     decisionId: `pwrb_${"9".repeat(40)}`, requestSha256: "9".repeat(64), outcome: "different",
   }, source), /no current server-issued replay binding/u, "a client cannot choose a target/source scope without a live router binding");

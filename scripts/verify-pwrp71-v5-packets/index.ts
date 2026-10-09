@@ -6,6 +6,7 @@ import { loadPwrp71SourcePackage } from "../../lib/server/reports/pwrp71-source.
 import { computePwqe51RouterRuntimeSha256 } from "../../lib/server/reports/qualification/runner.ts";
 import { verifyAuthoredResponsePacketBinding, verifySemanticEvidencePacket } from "../../lib/server/reports/qualification/semantic-evidence-verifier.ts";
 import { preparePwrp71Request } from "../../lib/server/reports/pwrp71-adapter.ts";
+import { pwrp71CanonicalResponseEvidenceFromSessionState } from "../../lib/server/reports/pwrp71-response-evidence.ts";
 import { sha256Canonical } from "../../lib/report-contracts/delivery-validator.ts";
 import type { JsonObject } from "../../lib/question-engine/types.ts";
 
@@ -56,11 +57,13 @@ async function main(): Promise<void> {
     const authoredBindingFailures = verifyAuthoredResponsePacketBinding({ artifact, history });
     rowFailures.push(...semantic.failures, ...authoredBindingFailures);
     const packets = object(artifact.packets);
+    const canonicalResponseEvidence = pwrp71CanonicalResponseEvidenceFromSessionState(object(artifact.replay).state);
     const packetResults: Row[] = [];
     for (const reportType of PACKET_TYPES) {
       const packetRecord = object(packets[reportType]);
       const packet = object(packetRecord.packet) as JsonObject;
-      const prepared = preparePwrp71Request({ packet, reportType, questionSource, reportSource });
+      const prepared = preparePwrp71Request({ packet, reportType, questionSource, reportSource,
+        ...(reportType === "MAP" ? {} : { canonicalResponseEvidence }) });
       const issueCodes = prepared.ok ? [] : prepared.issues.map((issue) => issue.code);
       if (!prepared.ok) rowFailures.push(`${reportType}:adapter_rejected:${issueCodes.join(",")}`);
       packetResults.push({

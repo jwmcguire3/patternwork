@@ -70,9 +70,13 @@ export interface OpenRouterGenerationRequest {
   readonly providerPolicy?: OpenRouterProviderPolicy;
   /** Optional provider request cache control included in the serialized body. */
   readonly promptCacheOptions?: OpenRouterPromptCacheOptions;
+  /** Request usage and billing metadata explicitly when supported by OpenRouter. */
+  readonly includeUsage?: boolean;
 }
 
 export interface OpenRouterTransport {
+  /** Exact endpoint used by this transport; live qualification fingerprints require it. */
+  readonly endpoint?: string;
   generate(request: OpenRouterGenerationRequest): Promise<OpenRouterGenerationResult>;
 }
 

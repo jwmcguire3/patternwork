@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { mkdir, mkdtemp, rm } from "node:fs/promises";
+import { access, mkdir, mkdtemp, readFile, readdir, rm } from "node:fs/promises";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 import test from "node:test";
 import type { JsonObject } from "../../lib/question-engine/types.ts";
 import {
@@ -10,6 +11,7 @@ import {
   QualificationAttemptError,
   qualificationAttemptFingerprint,
 } from "../../lib/server/reports/qualification/attempt-store.ts";
+import { renameFileWithTransientRetry } from "../../lib/server/reports/qualification/atomic-file.ts";
 import type {
   OpenRouterGenerationRequest,
   OpenRouterGenerationResult,
@@ -93,6 +95,65 @@ test("replays a completed provider result after restart without another transpor
   });
 });
 
+test("atomic qualification file replacement retries transient Windows locks and bounds the retry", async () => {
+  const delays: number[] = [];
+  let renameCalls = 0;
+  await renameFileWithTransientRetry("from.tmp", "attempts.json", async () => {
+    renameCalls += 1;
+    if (renameCalls <= 2) throw Object.assign(new Error("destination is temporarily busy"), { code: "EPERM" });
+  }, async (milliseconds) => { delays.push(milliseconds); });
+  assert.equal(renameCalls, 3);
+  assert.deepEqual(delays, [15, 30]);
+
+  const boundedDelays: number[] = [];
+  let boundedCalls = 0;
+  await assert.rejects(renameFileWithTransientRetry("from.tmp", "attempts.json", async () => {
+    boundedCalls += 1;
+    throw Object.assign(new Error("destination remains busy"), { code: "EBUSY" });
+  }, async (milliseconds) => { boundedDelays.push(milliseconds); }), /destination remains busy/u);
+  assert.equal(boundedCalls, 9);
+  assert.equal(boundedDelays.length, 8);
+
+  let permanentCalls = 0;
+  await assert.rejects(renameFileWithTransientRetry("from.tmp", "attempts.json", async () => {
+    permanentCalls += 1;
+    throw Object.assign(new Error("invalid destination"), { code: "EINVAL" });
+  }, async () => { assert.fail("permanent rename failures must not be retried"); }), /invalid destination/u);
+  assert.equal(permanentCalls, 1);
+});
+
+test("exhausted journal replacement retries preserve the old ledger and block dispatch", async () => {
+  await withStore(async (store) => {
+    const priorRequest = { ...request, idempotencyKey: "run-prior" };
+    await journal(store, provider(async () => result)).generate(priorRequest);
+    const before = await readFile(store.attemptsPath, "utf8");
+    let replacementAttempts = 0;
+    const failingStore = new FileQualificationAttemptStore(store.runDirectory, (from, to) => renameFileWithTransientRetry(
+      from,
+      to,
+      async () => {
+        replacementAttempts += 1;
+        throw Object.assign(new Error("destination remains busy"), { code: "EPERM" });
+      },
+      async () => undefined,
+    ));
+    let dispatches = 0;
+    const blockedRequest = { ...request, idempotencyKey: "run-write-blocked" };
+
+    await assert.rejects(journal(failingStore, provider(async () => {
+      dispatches += 1;
+      return result;
+    })).generate(blockedRequest), /destination remains busy/u);
+
+    assert.equal(replacementAttempts, 9);
+    assert.equal(dispatches, 0);
+    assert.equal(await readFile(store.attemptsPath, "utf8"), before);
+    assert.deepEqual((await store.list()).map((attempt) => attempt.attemptId), ["run-prior"]);
+    await assert.rejects(access(`${store.attemptsPath}.lock`), { code: "ENOENT" });
+    assert.deepEqual(await readdir(store.runDirectory), ["attempts.json"]);
+  });
+});
+
 test("rejects a reused attempt key when the exact request fingerprint changes", async () => {
   await withStore(async (store) => {
     await journal(store, provider(async () => result)).generate(request);
@@ -117,6 +178,7 @@ test("does not retry an attempt left started or marked unknown", async () => {
       schema: projectOpenRouterStrictSchemaObject(request.schema),
       providerPolicy: GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY,
       promptCacheOptions: { mode: "explicit" as const },
+      includeUsage: true,
     };
     await store.begin({ request, wireRequest, maxCallCostMicros: 1_000_000, aggregateCostCapMicros: 1_000_000, usageStatus: "reported", startedAt: new Date("2026-10-08T12:00:00.000Z") });
     let calls = 0;
@@ -257,6 +319,10 @@ test("a changed published price-basis digest changes the replay fingerprint", ()
     billingBasisSha256: "f".repeat(64),
   });
   assert.notEqual(pinned, changedBasis);
+  assert.notEqual(pinned, qualificationAttemptFingerprint({
+    request, wireRequest, endpoint: "https://openrouter.ai/alternate/chat/completions",
+    maxCallCostMicros: 500_000, aggregateCostCapMicros: 1_000_000,
+  }), "the exact provider endpoint is part of the durable request fingerprint");
 });
 
 test("attempt identity rejects changed model, schema, or provider price envelope without dispatch", async () => {
@@ -484,5 +550,82 @@ test("a cross-process lock contender cannot unlink the active writer lock", asyn
       if (owner.exitCode === null) await new Promise<void>((resolve) => owner.once("exit", () => resolve()));
     }
     assert.equal(owner.exitCode, 0, stderr);
+  });
+});
+
+test("independent journal processes cannot both reserve the same aggregate remainder", async () => {
+  await withStore(async (store) => {
+    const runDirectory = store.runDirectory;
+    const ceiling = maximumQuotedCallCostMicros(request);
+    const storeModule = pathToFileURL(path.join(process.cwd(), "lib/server/reports/qualification/attempt-store.ts")).href;
+    const budgetModule = pathToFileURL(path.join(process.cwd(), "lib/server/openrouter/qualification-budget.ts")).href;
+    const schemaModule = pathToFileURL(path.join(process.cwd(), "lib/server/openrouter/schema-projection.ts")).href;
+    const children = ["race-process-a", "race-process-b"].map((key) => {
+      const childRequest = { ...request, idempotencyKey: key };
+      const code = `
+        const [{ FileQualificationAttemptStore }, { GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY }, { projectOpenRouterStrictSchemaObject }] = await Promise.all([
+          import(${JSON.stringify(storeModule)}), import(${JSON.stringify(budgetModule)}), import(${JSON.stringify(schemaModule)})
+        ]);
+        const store = new FileQualificationAttemptStore(${JSON.stringify(runDirectory)});
+        const request = ${JSON.stringify(childRequest)};
+        const wireRequest = { ...request, schema: projectOpenRouterStrictSchemaObject(request.schema), providerPolicy: GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY, promptCacheOptions: { mode: "explicit" } };
+        process.stdout.write("READY\\n");
+        await new Promise((resolve) => process.stdin.once("data", resolve));
+        let outcome;
+        for (let attempt = 0; attempt < 100; attempt += 1) {
+          try {
+            await store.begin({ request, wireRequest, maxCallCostMicros: ${ceiling}, aggregateCostCapMicros: ${ceiling}, startedAt: new Date() });
+            outcome = "reserved";
+            break;
+          } catch (error) {
+            if (error?.code === "run_locked") { await new Promise((resolve) => setTimeout(resolve, 5)); continue; }
+            outcome = error?.code ?? "unexpected_error";
+            break;
+          }
+        }
+        process.stdout.write("RESULT:" + (outcome ?? "lock_retry_exhausted") + "\\n");
+      `;
+      const child = spawn(process.execPath, ["--import", "tsx", "--input-type=module", "-e", code], { cwd: process.cwd(), stdio: ["pipe", "pipe", "pipe"] });
+      const record = { child, stdout: "", stderr: "" };
+      child.stdout.setEncoding("utf8");
+      child.stderr.setEncoding("utf8");
+      child.stdout.on("data", (chunk: string) => { record.stdout += chunk; });
+      child.stderr.on("data", (chunk: string) => { record.stderr += chunk; });
+      return record;
+    });
+
+    const waitForReady = (record: typeof children[number]) => new Promise<void>((resolve, reject) => {
+      const check = () => { if (record.stdout.includes("READY\n")) { clearTimeout(timer); resolve(); } };
+      const timer = setTimeout(() => reject(new Error(`reservation process did not become ready: ${record.stderr}`)), 10_000);
+      record.child.stdout.on("data", check);
+      record.child.once("exit", (code) => {
+        if (code !== 0) reject(new Error(`reservation process exited before barrier (${code}): ${record.stderr}`));
+      });
+      check();
+    });
+    try {
+      await Promise.all(children.map(waitForReady));
+      for (const record of children) record.child.stdin.end("GO\n");
+      await Promise.all(children.map((record) => new Promise<void>((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error(`reservation process timed out: ${record.stderr}`)), 10_000);
+        record.child.once("exit", (code) => {
+          clearTimeout(timer);
+          if (code === 0) resolve(); else reject(new Error(`reservation process failed (${code}): ${record.stderr}`));
+        });
+      })));
+      const outcomes = children.flatMap((record) => [...record.stdout.matchAll(/RESULT:([^\r\n]+)/gu)].map((match) => match[1]));
+      assert.deepEqual(outcomes.sort(), ["budget_blocked", "reserved"]);
+      const attempts = await store.list();
+      assert.equal(attempts.length, 1);
+      assert.equal(attempts[0]?.reservedCostMicros, ceiling);
+      assert.ok(["race-process-a", "race-process-b"].includes(attempts[0]!.attemptId));
+    } finally {
+      for (const record of children) {
+        if (record.child.exitCode === null) {
+          record.child.stdin.end("STOP\\n");
+          record.child.kill();
+        }
+      }
+    }
   });
 });

@@ -6,6 +6,7 @@ import { sha256Canonical } from "../../../report-contracts/delivery-validator.ts
 import { compilePwqe51Route, type Pwqe51CanonicalResponse } from "../../assessment/pwqe51-router.ts";
 import type { Pwqe51ComparisonDecision } from "../../assessment/pwqe51-session.ts";
 import { preparePwrp71Request } from "../pwrp71-adapter.ts";
+import { pwrp71CanonicalResponseEvidenceFromRoute, type Pwrp71CanonicalResponseEvidence } from "../pwrp71-response-evidence.ts";
 import { buildPwqe51RouterPacket } from "../pwqe51-packet.ts";
 import { loadPwrp71SourcePackage } from "../pwrp71-source.ts";
 import type { Pwrp71AuthoredProfileFixture, Pwrp71QualificationFixtures } from "./fixtures.ts";
@@ -22,6 +23,7 @@ export interface Pwrp71FixturePacket {
   readonly fixtureStatus: QualificationFixtureStatus;
   readonly routerParity: "pending";
   readonly issues: readonly { readonly code: string; readonly path: string; readonly message: string }[];
+  readonly canonicalResponseEvidence?: Pwrp71CanonicalResponseEvidence;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -114,6 +116,7 @@ export function buildPwrp71AuthoredProfilePacket(input: {
     comparisonDecisions,
     source: questionSource,
   }) as JsonObject;
+  const canonicalResponseEvidence = pwrp71CanonicalResponseEvidenceFromRoute(responses, route);
   const validatePacket = new Ajv2020({ allErrors: true, strict: false }).compile(questionSource.schemas.routerPacket as object);
   if (!validatePacket(packet)) {
     return {
@@ -138,6 +141,7 @@ export function buildPwrp71AuthoredProfilePacket(input: {
     fixtureStatus: "pending_router_parity",
     routerParity: "pending",
     issues: [],
+    canonicalResponseEvidence,
   };
 }
 

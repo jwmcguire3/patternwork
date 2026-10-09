@@ -7,6 +7,7 @@ import {
   type OpenRouterUsage,
 } from "./types.ts";
 import { buildOpenRouterWirePayload, OPENROUTER_DEFAULT_ENDPOINT } from "./wire.ts";
+import { consumePwrp71BudgetAuthorization } from "../reports/qualification/budget-authorization.ts";
 
 type FetchLike = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
 
@@ -121,7 +122,7 @@ async function responseError(response: Response): Promise<{ message: string; pro
 
 export class OpenRouterClient implements OpenRouterTransport {
   private readonly apiKey: string;
-  private readonly endpoint: string;
+  readonly endpoint: string;
   private readonly timeoutMs: number;
   private readonly fetchImpl: FetchLike;
   private readonly appUrl?: string;
@@ -137,6 +138,9 @@ export class OpenRouterClient implements OpenRouterTransport {
   }
 
   async generate(request: OpenRouterGenerationRequest): Promise<OpenRouterGenerationResult> {
+    if (request.schemaName.includes("_pwrp71_") && !consumePwrp71BudgetAuthorization(request)) {
+      throw new OpenRouterTransportError("client_error", "PWRP 7.1 OpenRouter dispatch requires a durable budget-prepared request with usage and price controls.", { retryable: false });
+    }
     if (!this.apiKey) {
       throw new OpenRouterTransportError("client_error", "OPENROUTER_API_KEY is not configured; live qualification and generation are disabled.", { retryable: false });
     }

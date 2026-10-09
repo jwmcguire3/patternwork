@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
-import { open, mkdir, readFile, rename, rm } from "node:fs/promises";
+import { open, mkdir, readFile, rm } from "node:fs/promises";
 import path from "node:path";
 import { sha256Canonical } from "../../../report-contracts/delivery-validator.ts";
 import { QUALIFICATION_MODEL_ORDER } from "../../openrouter/policy.ts";
@@ -8,12 +8,15 @@ import { projectOpenRouterStrictSchemaObject } from "../../openrouter/schema-pro
 import { GPT6_LUNA_BILLING_BASIS_SHA256, GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY, maximumQuotedCallCostMicros, validatePositiveMicros } from "../../openrouter/qualification-budget.ts";
 import { buildOpenRouterWirePayload, OPENROUTER_DEFAULT_ENDPOINT } from "../../openrouter/wire.ts";
 import type { Pwrp71GenerationEvent } from "../generator.ts";
+import { renameFileWithTransientRetry } from "./atomic-file.ts";
+import { authorizePwrp71BudgetedRequest, revokePwrp71BudgetAuthorization } from "./budget-authorization.ts";
 
 export type QualificationAttemptStatus = "started" | "completed" | "unknown";
 
 export interface QualificationAttemptRecord {
   readonly attemptId: string;
   readonly requestFingerprint: string;
+  readonly endpoint?: string;
   readonly status: QualificationAttemptStatus;
   readonly startedAt: string;
   readonly completedAt?: string;
@@ -84,7 +87,10 @@ export class FileQualificationAttemptStore {
   private static readonly inProcessLocks = new Set<string>();
   readonly attemptsPath: string;
 
-  constructor(readonly runDirectory: string) {
+  constructor(
+    readonly runDirectory: string,
+    private readonly replaceAtomicFile: typeof renameFileWithTransientRetry = renameFileWithTransientRetry,
+  ) {
     this.attemptsPath = path.join(runDirectory, "attempts.json");
   }
 
@@ -147,6 +153,7 @@ export class FileQualificationAttemptStore {
       const record: QualificationAttemptRecord = {
         attemptId: input.request.idempotencyKey,
         requestFingerprint: fingerprint,
+        endpoint,
         status: "started",
         startedAt: input.startedAt.toISOString(),
         request: {
@@ -280,7 +287,12 @@ export class FileQualificationAttemptStore {
       await handle.writeFile(`${JSON.stringify(value, null, 2)}\n`, "utf8");
       await handle.sync();
     } finally { await handle.close(); }
-    await rename(temporary, this.attemptsPath);
+    try {
+      await this.replaceAtomicFile(temporary, this.attemptsPath);
+    } catch (error) {
+      await rm(temporary, { force: true }).catch(() => undefined);
+      throw error;
+    }
   }
 }
 
@@ -310,6 +322,7 @@ export class JournaledPwrp71Transport implements OpenRouterTransport {
   constructor(input: {
     readonly store: FileQualificationAttemptStore;
     readonly transport: OpenRouterTransport;
+    readonly endpoint?: string;
     readonly maxCallCostMicros?: number;
     readonly aggregateCostCapMicros?: number;
     /** Legacy alias retained for existing offline/test callers. */
@@ -320,6 +333,7 @@ export class JournaledPwrp71Transport implements OpenRouterTransport {
   }) {
     this.store = input.store;
     this.transport = input.transport;
+    this.endpoint = input.endpoint ?? OPENROUTER_DEFAULT_ENDPOINT;
     this.maxCallCostMicros = input.maxCallCostMicros ?? input.costCapMicros ?? 0;
     this.aggregateCostCapMicros = input.aggregateCostCapMicros ?? input.costCapMicros ?? 0;
     this.usageStatus = input.usageStatus ?? "reported";
@@ -329,6 +343,7 @@ export class JournaledPwrp71Transport implements OpenRouterTransport {
 
   private readonly store: FileQualificationAttemptStore;
   private readonly transport: OpenRouterTransport;
+  readonly endpoint: string;
   private readonly maxCallCostMicros: number;
   private readonly aggregateCostCapMicros: number;
   private readonly usageStatus: "reported" | "mock";
@@ -347,6 +362,7 @@ export class JournaledPwrp71Transport implements OpenRouterTransport {
       schema: projectOpenRouterStrictSchemaObject(request.schema),
       providerPolicy: GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY,
       promptCacheOptions: { mode: "explicit" },
+      includeUsage: true,
     };
     const startedAt = this.now();
     const begun = await this.store.begin({
@@ -355,6 +371,7 @@ export class JournaledPwrp71Transport implements OpenRouterTransport {
       maxCallCostMicros: this.maxCallCostMicros,
       aggregateCostCapMicros: this.aggregateCostCapMicros,
       usageStatus: this.usageStatus,
+      endpoint: this.endpoint,
       startedAt,
     });
     if (begun.reused) {
@@ -365,12 +382,15 @@ export class JournaledPwrp71Transport implements OpenRouterTransport {
     }
     const startedMs = Date.now();
     let result: OpenRouterGenerationResult;
+    authorizePwrp71BudgetedRequest(wireRequest);
     try {
       result = await this.transport.generate(wireRequest);
       await this.store.complete(request.idempotencyKey, result, Date.now() - startedMs, this.now(), this.usageStatus);
     } catch (error) {
       await this.store.markUnknown(request.idempotencyKey, error, Date.now() - startedMs, this.now());
       throw error instanceof OpenRouterTransportError ? error : new OpenRouterTransportError("network", "Qualification provider call ended without a durable response.", { retryable: false, cause: error });
+    } finally {
+      revokePwrp71BudgetAuthorization(wireRequest);
     }
     validateProviderResult(request, result, begun.record);
     await this.onResult?.(request, result);

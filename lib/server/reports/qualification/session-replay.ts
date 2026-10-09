@@ -20,6 +20,7 @@ import {
 } from "./fictional-respondent.ts";
 import { buildPwqe51RouterPacket } from "../pwqe51-packet.ts";
 import { preparePwrp71Request } from "../pwrp71-adapter.ts";
+import { pwrp71CanonicalResponseEvidenceFromRoute } from "../pwrp71-response-evidence.ts";
 import type { Pwrp71SourcePackage } from "../pwrp71-source.ts";
 
 export type FictionalAnswerProvenance = "original_authored_fictional_response" | "new_synthetic_mapping_response" | "new_synthetic_deepening_answer" | "new_fictional_control_outcome";
@@ -554,14 +555,16 @@ export function replayFictionalPwqe51Session(input: {
   if (mappingComplete && completedMapping) {
     const packet = buildPwqe51RouterPacket({ snapshotId: `fictional-${history.profile.id}-mapping`, responses: completedMapping.responses, routerResult: completedMapping.routerResult, pass: 1, controls: completedMapping.controls,
       responseProvenanceByResponseId: Object.fromEntries(submitted.map((response) => [response.runtimeResponseId, response.provenance])), source: questionSource });
-    const prepared = input.reportSource ? preparePwrp71Request({ packet: packet as never, reportType: "MAP", questionSource, reportSource: input.reportSource }) : undefined;
+    const prepared = input.reportSource ? preparePwrp71Request({ packet: packet as never, reportType: "MAP", questionSource, reportSource: input.reportSource,
+      canonicalResponseEvidence: pwrp71CanonicalResponseEvidenceFromRoute(completedMapping.responses, completedMapping.routerResult) }) : undefined;
     packets.MAP = { packet, adapterAccepted: prepared?.ok ?? false, issues: prepared?.ok === false ? prepared.issues : [] };
   }
   if (deepeningComplete) {
     const packet = buildPwqe51RouterPacket({ snapshotId: `fictional-${history.profile.id}-deepening`, responses: state.responses, routerResult: state.routerResult, pass: 2, controls: state.controls, comparisonDecisions: state.comparisonDecisions,
       responseProvenanceByResponseId: Object.fromEntries(submitted.map((response) => [response.runtimeResponseId, response.provenance])), source: questionSource });
     for (const type of ["IFS", "PV", "ATT"] as const) {
-      const prepared = input.reportSource ? preparePwrp71Request({ packet: packet as never, reportType: type, questionSource, reportSource: input.reportSource }) : undefined;
+      const prepared = input.reportSource ? preparePwrp71Request({ packet: packet as never, reportType: type, questionSource, reportSource: input.reportSource,
+        canonicalResponseEvidence: pwrp71CanonicalResponseEvidenceFromRoute(state.responses, state.routerResult) }) : undefined;
       packets[type] = { packet, adapterAccepted: prepared?.ok ?? false, issues: prepared?.ok === false ? prepared.issues : [] };
     }
   }

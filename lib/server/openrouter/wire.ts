@@ -22,6 +22,7 @@ export function buildOpenRouterWirePayload(request: OpenRouterGenerationRequest)
     reasoning: { effort: request.reasoningEffort },
     provider,
     ...(request.promptCacheOptions ? { prompt_cache_options: request.promptCacheOptions } : {}),
+    ...(request.includeUsage ? { usage: { include: true } } : {}),
     response_format: {
       type: "json_schema",
       json_schema: {

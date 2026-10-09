@@ -4,6 +4,7 @@ import { sha256Canonical, sha256Text, normalizeLf } from "../../lib/report-contr
 import { loadPwqe51SourcePackage, PWQE51_RELEASE_IDENTITY } from "../../lib/question-engine/pwqe51-source.ts";
 import { loadPwrp71SourcePackage, PWRP71_RELEASE_MANIFEST_SHA256 } from "../../lib/server/reports/pwrp71-source.ts";
 import { preparePwrp71Request } from "../../lib/server/reports/pwrp71-adapter.ts";
+import { pwrp71CanonicalResponseEvidenceFromSessionState } from "../../lib/server/reports/pwrp71-response-evidence.ts";
 import { buildGenerationPrompt } from "../../lib/server/reports/prompts.ts";
 import { QUALIFICATION_MODEL_ORDER, UNQUALIFIED_MOCK_MODEL_POLICY } from "../../lib/server/openrouter/policy.ts";
 import { GPT6_LUNA_BILLING_BASIS, GPT6_LUNA_BILLING_BASIS_SHA256, GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY, maximumQuotedCallCostMicros } from "../../lib/server/openrouter/qualification-budget.ts";
@@ -114,7 +115,8 @@ async function main(): Promise<void> {
     if (!packet) throw new Error(`${profileId} has no retained IFS packet in the selected v5 fixture set.`);
     if (manifestEntry.deepening !== "complete" || !manifestEntry.deepeningPacketAccepted || packetValidation.IFS?.accepted !== true) blockers.push(`${profileId} is not marked as a complete, accepted v5 IFS Deepening fixture.`);
 
-    const prepared = preparePwrp71Request({ packet, reportType: REPORT_TYPE, questionSource, reportSource });
+    const canonicalResponseEvidence = pwrp71CanonicalResponseEvidenceFromSessionState((artifact.replay as Record<string, unknown> | undefined)?.state);
+    const prepared = preparePwrp71Request({ packet, reportType: REPORT_TYPE, questionSource, reportSource, canonicalResponseEvidence });
     if (!prepared.ok) {
       blockers.push(`${profileId} IFS packet did not prepare: ${prepared.issues.map((issue) => issue.code).join(", ")}.`);
       preflightRequestRows.push({ profileId, status: "blocked", packetSha256: sha256Canonical(packet), issues: prepared.issues });
@@ -130,6 +132,7 @@ async function main(): Promise<void> {
       schema: prepared.value.response_schema,
       maxOutputTokens: modelPin.maxOutputTokens,
       idempotencyKey: `pwrp71-qualification:${runId}:${profileId}:${REPORT_TYPE}:initial:${pinnedTierName}:attempt-1`,
+      includeUsage: true,
     } as const;
     const wireRequest = {
       ...request,
@@ -166,7 +169,7 @@ async function main(): Promise<void> {
         localSchemaSha256: sha256Canonical(request.schema),
         wireSchemaSha256: sha256Canonical((body.response_format as Record<string, unknown>).json_schema),
         maxOutputTokens: request.maxOutputTokens,
-        idempotencyHeader: request.idempotencyKey,
+        requestCorrelationHeader: { name: "x-request-id", value: request.idempotencyKey, remoteIdempotencySemantics: "not_assumed" },
         endpoint: OPENROUTER_DEFAULT_ENDPOINT,
         finalWirePayloadSha256: sha256Text(serializedBody),
         wireRequestFingerprint: sha256Canonical({
@@ -194,7 +197,7 @@ async function main(): Promise<void> {
         maxCallCostMicros,
         aggregateCostCapMicros,
         conservativeMaximumQuotedCostMicros: maxQuotedCostMicros,
-        reservationSemantics: "Use full model context at published prompt price plus maxOutputTokens at published completion price; aggregate reservation is atomic before dispatch.",
+        reservationSemantics: "Use full model context at published prompt price plus maxOutputTokens at published completion price; aggregate reservation is atomic before dispatch. This pair cap proposal reserves up to twelve maximum-sized generation/review/repair attempts at 115000 micros each; it is not authorization.",
         enforcementClass: "provider-dependent",
       },
       schemaCompatibility: {
