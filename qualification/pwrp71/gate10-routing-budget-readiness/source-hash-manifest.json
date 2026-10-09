@@ -1,11 +1,14 @@
 {
   "schemaVersion": "PWRP71-GATE10-SOURCE-HASH-MANIFEST-V1",
-  "generatedAt": "2026-10-09T13:32:01Z",
+  "generatedAt": "2026-10-09T13:40:52Z",
   "git": {
     "startingCommit": "8dd192a7076ae535b90f340a778d915a8a2338bd",
     "startingBranch": "codex/pwrp71-semantic-evidence-v5",
     "workingBranch": "codex/pwrp71-gate10-routing-budget-readiness",
-    "candidateCommit": "e5c705578349b9b70257b6f9a87dcec4a0ca1b69"
+    "candidateCommit": "e5c705578349b9b70257b6f9a87dcec4a0ca1b69",
+    "evidenceCommit": "5381558f1af9edb4ed2b5a005a610a0ecd70ed60",
+    "candidateTreeSha1": "76e9974e9b66141c0933ea2a44ac199611a9fd13",
+    "evidenceTreeSha1": "05520121fc9838ad274ae635dce6b6db81a10ae1"
   },
   "sourcePins": {
     "questionRelease": "PWQE-5.1.0-candidate.1",
@@ -650,9 +653,9 @@
     ]
   },
   "parity": {
-    "normalOutputSha256": "a58047a03cd54f908c9704d32333afe6280d1cb1e91d0babceab0808c193c9c0",
+    "normalOutputSha256": "cf4f785a96c1859b7022001f3bc3722527bd0bdecd8b4ff4afa5980c79af82b7",
     "normalExitCode": 0,
-    "strictOutputSha256": "0a276b19ecf6eceff1ce16aa053bee345a204eb1813025dba7840bce41959698",
+    "strictOutputSha256": "aa22282f9552d6c95b7c7eb004172bb2971b48a8a99a65f38b062c7073457508",
     "strictExitCode": 1,
     "strictStatus": "incomplete_unsupported_coverage",
     "unsupportedSurfaceCount": 893,
@@ -661,7 +664,7 @@
   "sourceFileDigests": [
     {
       "path": "lib/server/assessment/pwqe51-router.ts",
-      "sha256": "2cbf4baf46763aa45111e7e9b306b0f2888bdd8e3745aaace93d33d7ec81799c"
+      "sha256": "4c1c3970532a9bcd0825d090fab209e1f0981f2e9dda83220c0115e550f344a0"
     },
     {
       "path": "lib/server/assessment/pwqe51-coverage.ts",
@@ -673,23 +676,23 @@
     },
     {
       "path": "lib/server/reports/pwqe51-packet.ts",
-      "sha256": "b56b00b0d0ed6eb0e0efdf5bde6da8d71319891690bd3668a5ef6e847162d02d"
+      "sha256": "40973e98bd6d25bb40ffdb33a0dd8fb20660ddeccd45cf7f8b7b457f1143ca7c"
     },
     {
       "path": "lib/server/reports/pwrp71-adapter.ts",
-      "sha256": "79da7e50a11ba450489e782aaa9dbc14b7ce78f83a7cf17f52f7142c1fabea4d"
+      "sha256": "e519bd3653be87db8c786a3f1d70368fa2bf5b18da9b20504d461066f6fb674f"
     },
     {
       "path": "lib/server/reports/generator.ts",
-      "sha256": "942e29ef667b85abd8b37f8fa9868065ed073cd668d4ca88f1b11ffa64bd81cf"
+      "sha256": "46db678ded2cdd91f4d0853cfea601bf0d340f1c056b2a68241f9c642db32d3a"
     },
     {
       "path": "lib/server/reports/qualification/attempt-store.ts",
-      "sha256": "a503229c22c110a182208dc6b8272bd32063dcc97fdfd4357ade3650edb42578"
+      "sha256": "18f0a48f7fcd88f2f1e48aa81729b05eb39616db62090a020226ea194d09a814"
     },
     {
       "path": "lib/server/reports/qualification/runner.ts",
-      "sha256": "96a3126dd9724e2f1366cdf447ce38ad0102c9d76e89bcbe017d5553bf697f74"
+      "sha256": "6170a46a9bd16461c30668aefcccdbbcc68d477227d5260f162beebbea7057eb"
     },
     {
       "path": "lib/server/reports/qualification/semantic-evidence-verifier.ts",
@@ -713,7 +716,7 @@
     },
     {
       "path": "scripts/qualify-pwrp71/index.ts",
-      "sha256": "c5f981bf90bee27991e4b14e366d7f074d30e31d32baa3bc42e699d97b69ee5c"
+      "sha256": "d975c7b01bb5674dadf5fb403ad41a92662e20f85e9a349f9f7deb7de3bf35d0"
     },
     {
       "path": "scripts/preflight-pwrp71/index.ts",
@@ -725,7 +728,7 @@
     },
     {
       "path": "package.json",
-      "sha256": "e0a754dff1dfe295f2feb05b853f758243d9bc11d48d12534ca843615b08e29c"
+      "sha256": "7a19ce92bae550f48863c4b0c8009d248837a82c11efdedd6b8cbca7b26b2280"
     },
     {
       "path": "tests/report-workflow/openrouter-client.test.ts",
@@ -733,7 +736,7 @@
     },
     {
       "path": "tests/report-workflow/pwqe51-packet.test.ts",
-      "sha256": "7ba2e9deb8a2bcdf4fbc77bbb6edc231184ef64c4cfa991c3b03fb4eb23baf11"
+      "sha256": "ab720a1791fa31fa886fcf47b0ea780943e88beb259ff8fb0478b0a8414b8a90"
     },
     {
       "path": "tests/report-workflow/pwrp71-generation.test.ts",
@@ -741,15 +744,15 @@
     },
     {
       "path": "tests/report-workflow/pwrp71-qualification-attempts.test.ts",
-      "sha256": "dde23e7e7af6d484b2d7c9cc41d87985113a099ae17f21385fa716015a9023f2"
+      "sha256": "6bb5ace2f9890ef35b38d6ae3a6465d0d61e3335e45957401e814abf7a176863"
     },
     {
       "path": "tests/report-workflow/pwrp71-qualification-fixtures.test.ts",
-      "sha256": "bb5b92ec5df06643dbd429b72ae335c92acac51b1fec4574817a315eb578eea1"
+      "sha256": "524138a74ef1e7449f39ee12c8f6e4cb00d357d2b03144d0f9825315a64b10dd"
     },
     {
       "path": "tests/report-workflow/pwrp71-qualification-runner.test.ts",
-      "sha256": "0f12a4ec9d38d0d7e6548d1c818e40112a1dca42293a3d3984fa4ca96f5570ee"
+      "sha256": "b3ccaef69577d005c028e364fb7d620308d60d9bddb27cc9ea4fef16d1e5bdf7"
     },
     {
       "path": "tests/report-workflow/pwrp71-semantic-evidence.test.ts",
@@ -759,8 +762,8 @@
   "evidenceFileDigests": [
     {
       "path": "qualification/pwrp71/gate10-routing-budget-readiness/routing-parity-current/normal.json",
-      "sha256": "a58047a03cd54f908c9704d32333afe6280d1cb1e91d0babceab0808c193c9c0",
-      "bytes": 12791064
+      "sha256": "cf4f785a96c1859b7022001f3bc3722527bd0bdecd8b4ff4afa5980c79af82b7",
+      "bytes": 12432350
     },
     {
       "path": "qualification/pwrp71/gate10-routing-budget-readiness/routing-parity-current/normal.exit-code.txt",
@@ -769,8 +772,8 @@
     },
     {
       "path": "qualification/pwrp71/gate10-routing-budget-readiness/routing-parity-current/strict.json",
-      "sha256": "0a276b19ecf6eceff1ce16aa053bee345a204eb1813025dba7840bce41959698",
-      "bytes": 12791063
+      "sha256": "aa22282f9552d6c95b7c7eb004172bb2971b48a8a99a65f38b062c7073457508",
+      "bytes": 12432349
     },
     {
       "path": "qualification/pwrp71/gate10-routing-budget-readiness/routing-parity-current/strict.exit-code.txt",
@@ -779,8 +782,8 @@
     },
     {
       "path": "qualification/pwrp71/gate10-routing-budget-readiness/routing-parity-current/strict-parity-gap-ledger.json",
-      "sha256": "583ce98d40e6cb3ce4de163b870df8cb4088bdb66801f956980b4ca0a3d4feb9",
-      "bytes": 6318
+      "sha256": "50ae5120062fac01ec5114c21dd3b50da8d99cf4b41c4ad7e423a8deb541b0b1",
+      "bytes": 6165
     },
     {
       "path": "qualification/pwrp71/gate10-routing-budget-readiness/provider-preflight/c01-c02-ifs-no-dispatch-current.json",
@@ -804,8 +807,8 @@
     },
     {
       "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/npm-test-final.log",
-      "sha256": "409ce325b32c5bc20519b1634d6afe27a0a4edd187d7c66ad6a51646eecd93b2",
-      "bytes": 37834
+      "sha256": "1a5c6672d8382063c7c9a0acb997d47a038e4bd35b76313dc778e53107fed8c0",
+      "bytes": 37420
     },
     {
       "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/npm-test-final.exit-code.txt",
@@ -814,8 +817,8 @@
     },
     {
       "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/typecheck-final.log",
-      "sha256": "c554e4ffd45739d4e9dcd7e8aa2031654ee438285f9b6da2f65b8fe7cce3b24c",
-      "bytes": 51
+      "sha256": "c8964fe883df7f352d556eddeaeb960fac9b946d1919ab1778de65af0b6d83c6",
+      "bytes": 47
     },
     {
       "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/typecheck-final.exit-code.txt",
@@ -824,8 +827,8 @@
     },
     {
       "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/build-final-escalated.log",
-      "sha256": "fbb6b26ebade9184e3568188b3a93351464b447952128a99f2cf39aa084a7e2e",
-      "bytes": 10848
+      "sha256": "74f81ffc42d947100f23c10547212231a1d59e9edb24481131368c9ebf4e3267",
+      "bytes": 10689
     },
     {
       "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/build-final-escalated.exit-code.txt",
@@ -844,8 +847,8 @@
     },
     {
       "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/focused-regressions-final.log",
-      "sha256": "cb53d88a0597bf517f6552449f5eb60a711539cc89c1687f0baadd31fbd8a427",
-      "bytes": 6498
+      "sha256": "441b07381b58e28815bdd530927980fe35e13f04875e2635b1ebd8fa8fa7bf99",
+      "bytes": 6424
     },
     {
       "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/focused-regressions-final.exit-code.txt",
@@ -854,8 +857,8 @@
     },
     {
       "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/npm-test-post-review-final.log",
-      "sha256": "02364508fbd51bf24b5de03dbb428c0cbb007b3976198aed1611010ce1a8a631",
-      "bytes": 37854
+      "sha256": "d817cfbe6d407496e05b247b2dfcf948bd9d259c499a6a17d36f1132a0c200e4",
+      "bytes": 37440
     },
     {
       "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/npm-test-post-review-final.exit-code.txt",
@@ -902,5 +905,9 @@
       "sha256": "1cd9a4db34e467551aa8cf1027e4966300ad4497a189531ec5bf0f8e56b461e6",
       "bytes": 2905
     }
-  ]
+  ],
+  "digestBasis": {
+    "sourceFileDigests": "sha256 of exact committed Git blob bytes at git.candidateCommit",
+    "evidenceFileDigests": "sha256 of exact committed Git blob bytes at git.evidenceCommit"
+  }
 }
