@@ -1,11 +1,26 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import test from "node:test";
 import Ajv2020 from "ajv/dist/2020.js";
 import { loadPwqe51SourcePackage } from "@/lib/question-engine";
 import { compilePwqe51Route, type Pwqe51CanonicalResponse } from "@/lib/server/assessment/pwqe51-router";
 import { buildPwqe51RouterPacket, verifyPwqe51PacketDigest } from "@/lib/server/reports/pwqe51-packet";
 import { preparePwrp71Request } from "@/lib/server/reports/pwrp71-adapter";
+import { pwrp71CanonicalResponseEvidenceFromRoute } from "@/lib/server/reports/pwrp71-response-evidence";
 import { loadPwrp71SourcePackage } from "@/lib/server/reports/pwrp71-source";
+
+function canonical(value: unknown): string {
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(canonical).join(",")}]`;
+  const record = value as Record<string, unknown>;
+  return `{${Object.keys(record).sort().map((key) => `${JSON.stringify(key)}:${canonical(record[key])}`).join(",")}}`;
+}
+
+function resign(packet: Record<string, unknown>): void {
+  const contents = { ...packet };
+  delete contents.content_sha256;
+  packet.content_sha256 = createHash("sha256").update(canonical(contents), "utf8").digest("hex");
+}
 
 test("builds a source-bound PWQE 5.1 packet with schema-valid evidence and a stable digest", async () => {
   const source = await loadPwqe51SourcePackage();
@@ -177,4 +192,152 @@ test("current replay-derived distinctness survives packet construction and 7.1 a
     && row.basis === "respondent_confirmed_distinctness" && row.distinct_from.includes("review-one")));
   const result = preparePwrp71Request({ packet: packet as never, reportType: "MAP", questionSource: source, reportSource });
   assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify(result.issues));
+});
+
+test("confirmed recurrence evidence carries only the router-confirmed pair into target lineage", async () => {
+  const source = await loadPwqe51SourcePackage();
+  const reportSource = await loadPwrp71SourcePackage();
+  const pair = ["review-one", "review-two"] as const;
+  const responses: Pwqe51CanonicalResponse[] = [
+    { responseId: "review-one-root", questionId: "M02", occurrenceId: pair[0], stepId: "first", selectedOptionIds: ["M02.rehearse"], status: "answered", mode: "single", basis: "actual_recalled" },
+    { responseId: "review-one-aim", questionId: "M03", occurrenceId: pair[0], stepId: "first", selectedOptionIds: ["M03.exposure"], status: "answered", mode: "single" },
+    { responseId: "review-two-root", questionId: "M02", occurrenceId: pair[1], stepId: "first", selectedOptionIds: ["M02.rehearse"], status: "answered", mode: "single", basis: "actual_recalled", replayOfOccurrenceId: pair[0] },
+    { responseId: "review-two-aim", questionId: "M03", occurrenceId: pair[1], stepId: "first", selectedOptionIds: ["M03.exposure"], status: "answered", mode: "single" },
+  ];
+  const routerResult = compilePwqe51Route({
+    responses,
+    phase: "deepening",
+    details: ["recurrence"],
+    distinctPairs: [pair],
+    episodeLinks: [{ occurrenceId: pair[1], linkedFrom: pair[0] }],
+  }, source);
+  const packet = buildPwqe51RouterPacket({ snapshotId: "confirmed-recurrence", responses, routerResult, pass: 2, controls: [], source });
+  const recurrence = (packet.target_resolutions as Array<{ target_id: string; occurrence_id: string; comparison_ids: string[] }>).find((target) => target.target_id === "recurrence");
+  assert.ok(recurrence);
+  assert.deepEqual(recurrence.comparison_ids, pair);
+  const result = preparePwrp71Request({ packet: packet as never, reportType: "IFS", questionSource: source, reportSource });
+  assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify(result.issues));
+
+});
+
+test("packet target attempt counts exclude superseded candidate answers", async () => {
+  const source = await loadPwqe51SourcePackage();
+  const responses: Pwqe51CanonicalResponse[] = [
+    { responseId: "wait-root", questionId: "M17", occurrenceId: "wait-event", stepId: "first", selectedOptionIds: ["M17.check"], status: "answered", mode: "single", basis: "actual_recalled" },
+    { responseId: "wait-aim", questionId: "D43", occurrenceId: "wait-event", stepId: "first", selectedOptionIds: ["D43.okay"], status: "answered", mode: "single" },
+    { responseId: "history-old", questionId: "D44", occurrenceId: "wait-event", stepId: "first", selectedOptionIds: ["D44.reliable"], status: "answered", mode: "single" },
+    { responseId: "history-corrected", questionId: "D44", occurrenceId: "wait-event", stepId: "first", selectedOptionIds: ["D44.variable"], status: "answered", mode: "single", supersedesResponseId: "history-old" },
+  ];
+  const routerResult = compilePwqe51Route({ responses, phase: "deepening" }, source);
+  const packet = buildPwqe51RouterPacket({ snapshotId: "corrected-history", responses, routerResult, pass: 2, controls: [], source });
+  const target = (packet.target_resolutions as Array<Record<string, unknown>>).find((entry) => entry.target_id === "availability_history");
+  assert.ok(target);
+  assert.equal(target.attempts, 1);
+  assert.deepEqual(packet.superseded_response_ids, ["history-old"]);
+});
+
+test("ordered D36 recovery details project to the real router sequence sub-steps", async () => {
+  const source = await loadPwqe51SourcePackage();
+  const reportSource = await loadPwrp71SourcePackage();
+  const responses: Pwqe51CanonicalResponse[] = [
+    { responseId: "recovery-root", questionId: "M02", occurrenceId: "recovery-event", stepId: "first", selectedOptionIds: ["M02.rehearse"], status: "answered", mode: "single", basis: "actual_recalled" },
+    { responseId: "recovery-order-old", questionId: "D36", occurrenceId: "recovery-event", stepId: "recovery", selectedOptionIds: ["D36.input", "D36.think", "D36.words"], status: "answered", mode: "ordered" },
+    { responseId: "recovery-order", questionId: "D36", occurrenceId: "recovery-event", stepId: "recovery", selectedOptionIds: ["D36.input", "D36.words", "D36.think"], status: "answered", mode: "ordered", supersedesResponseId: "recovery-order-old" },
+  ];
+  const routerResult = compilePwqe51Route({ responses, phase: "deepening" }, source);
+  const packet = buildPwqe51RouterPacket({ snapshotId: "ordered-recovery", responses, routerResult, pass: 2, controls: [], source });
+  const canonicalResponseEvidence = pwrp71CanonicalResponseEvidenceFromRoute(responses, routerResult);
+  assert.deepEqual(packet.superseded_response_ids, ["recovery-order-old"]);
+  assert.equal((packet.observations as Array<{ response_id: string }>).some((observation) => observation.response_id === "recovery-order-old"), false);
+  const steps = packet.steps as Array<{ occurrence_id: string; step_id: string; observation_ids: string[] }>;
+  const edges = packet.sequence_edges as Array<{ occurrence_id: string; from_step: string; to_step: string; evidence_ids: string[] }>;
+  assert.deepEqual(edges.map(({ from_step, to_step }) => [from_step, to_step]), [
+    ["recovery/D36.input", "recovery/D36.words"],
+    ["recovery/D36.words", "recovery/D36.think"],
+  ]);
+  for (const edge of edges) {
+    assert.ok(steps.some((step) => step.occurrence_id === edge.occurrence_id && step.step_id === edge.from_step));
+    assert.ok(steps.some((step) => step.occurrence_id === edge.occurrence_id && step.step_id === edge.to_step));
+    assert.equal(edge.evidence_ids.length, 2);
+  }
+  const result = preparePwrp71Request({ packet: packet as never, reportType: "IFS", questionSource: source, reportSource, canonicalResponseEvidence });
+  assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify(result.issues));
+
+  const missingResponseSource = preparePwrp71Request({ packet: packet as never, reportType: "IFS", questionSource: source, reportSource });
+  assert.equal(missingResponseSource.ok, false);
+  if (!missingResponseSource.ok) assert.ok(missingResponseSource.issues.some((entry) => entry.code === "recovery_sequence_response_source"));
+
+  const staleMetadataTamper = structuredClone(packet);
+  staleMetadataTamper.superseded_response_ids = [];
+  resign(staleMetadataTamper);
+  const rejectedStaleMetadata = preparePwrp71Request({ packet: staleMetadataTamper as never, reportType: "IFS", questionSource: source, reportSource, canonicalResponseEvidence });
+  assert.equal(rejectedStaleMetadata.ok, false);
+  if (!rejectedStaleMetadata.ok) assert.ok(rejectedStaleMetadata.issues.some((entry) => entry.code === "recovery_sequence_currentness"));
+
+  const staleObservationTamper = structuredClone(packet);
+  const packetObservations = staleObservationTamper.observations as Array<Record<string, unknown>>;
+  const currentRows = packetObservations.filter((observation) => observation.item_id === "D36");
+  const staleOrder = ["D36.input", "D36.think", "D36.words"];
+  const staleRows: Array<Record<string, unknown>> = staleOrder.map((optionId, index) => {
+    const current = currentRows.find((observation) => observation.option_id === optionId);
+    assert.ok(current, `current packet must contain ${optionId}`);
+    return { ...current, id: `stale-recovery-observation-${index + 1}`, response_id: "recovery-order-old" };
+  });
+  packetObservations.push(...staleRows);
+  const staleEdges = staleRows.slice(0, -1).map((from, index) => ({
+    id: `recovery:recovery-order-old:${String(from.option_id)}:${String(staleRows[index + 1]!.option_id)}`,
+    occurrence_id: from.occurrence_id,
+    from_step: from.step_id,
+    to_step: staleRows[index + 1]!.step_id,
+    relation: "before",
+    meaning: "reported_recovery_order",
+    evidence_ids: [from.id, staleRows[index + 1]!.id],
+    first_not_helping: false,
+  }));
+  (staleObservationTamper.sequence_edges as Array<Record<string, unknown>>).push(...staleEdges);
+  resign(staleObservationTamper);
+  const rejectedStaleObservation = preparePwrp71Request({ packet: staleObservationTamper as never, reportType: "IFS", questionSource: source, reportSource, canonicalResponseEvidence });
+  assert.equal(rejectedStaleObservation.ok, false);
+  if (!rejectedStaleObservation.ok) assert.ok(rejectedStaleObservation.issues.some((entry) => entry.code === "recovery_sequence_response_binding"), JSON.stringify(rejectedStaleObservation.issues));
+
+  const relationTamper = structuredClone(packet);
+  (relationTamper.sequence_edges as Array<Record<string, unknown>>)[0]!.relation = "simultaneous";
+  resign(relationTamper);
+  const rejectedRelation = preparePwrp71Request({ packet: relationTamper as never, reportType: "IFS", questionSource: source, reportSource, canonicalResponseEvidence });
+  assert.equal(rejectedRelation.ok, false);
+  if (!rejectedRelation.ok) assert.ok(rejectedRelation.issues.some((issue) => issue.code === "recovery_sequence_semantics"));
+
+  const directionTamper = structuredClone(packet);
+  const firstEdge = (directionTamper.sequence_edges as Array<Record<string, unknown>>)[0]!;
+  [firstEdge.from_step, firstEdge.to_step] = [firstEdge.to_step, firstEdge.from_step];
+  resign(directionTamper);
+  const rejectedDirection = preparePwrp71Request({ packet: directionTamper as never, reportType: "IFS", questionSource: source, reportSource, canonicalResponseEvidence });
+  assert.equal(rejectedDirection.ok, false);
+  if (!rejectedDirection.ok) assert.ok(rejectedDirection.issues.some((issue) => issue.code === "recovery_sequence_semantics"));
+
+  const orderTamper = structuredClone(packet);
+  const observations = orderTamper.observations as Array<Record<string, unknown>>;
+  const d36Indexes = observations.flatMap((observation, index) => observation.item_id === "D36" ? [index] : []);
+  const selectedRows = d36Indexes.map((index) => observations[index]!);
+  observations[d36Indexes[0]!] = selectedRows[0]!;
+  observations[d36Indexes[1]!] = selectedRows[2]!;
+  observations[d36Indexes[2]!] = selectedRows[1]!;
+  const reordered = d36Indexes.map((index) => observations[index]!);
+  const responseId = String(reordered[0]!.response_id);
+  const sequenceEdges = orderTamper.sequence_edges as Array<Record<string, unknown>>;
+  const d36Edges = sequenceEdges.filter((edge) => edge.meaning === "reported_recovery_order");
+  for (const [index, edge] of d36Edges.entries()) {
+    const from = reordered[index]!;
+    const to = reordered[index + 1]!;
+    edge.id = `recovery:${responseId}:${String(from.option_id)}:${String(to.option_id)}`;
+    edge.occurrence_id = from.occurrence_id;
+    edge.from_step = from.step_id;
+    edge.to_step = to.step_id;
+    edge.relation = "before";
+    edge.evidence_ids = [from.id, to.id];
+  }
+  resign(orderTamper);
+  const rejectedOrder = preparePwrp71Request({ packet: orderTamper as never, reportType: "IFS", questionSource: source, reportSource, canonicalResponseEvidence });
+  assert.equal(rejectedOrder.ok, false);
+  if (!rejectedOrder.ok) assert.ok(rejectedOrder.issues.some((issue) => issue.code === "recovery_sequence_response_binding"));
 });

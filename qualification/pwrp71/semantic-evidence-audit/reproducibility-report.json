@@ -1,0 +1,186 @@
+{
+  "schemaVersion": "PWQE51-V5-REPRODUCIBILITY-REPORT-V1",
+  "firstManifestSha256": "17b1c8cd9e43f0d647733e0408e5e663490da52e261e8124df9243181512b19f",
+  "secondManifestSha256": "11b6c10dce80481525f7b3f4ecf0cae5df1bd2eb863ca0c239296dbe70cf60b9",
+  "profileCount": 25,
+  "matchedSemanticResults": 25,
+  "allSemanticResultsMatched": true,
+  "physicalArtifactHashesDifferDueToRuntimeOccurrenceAndResponseIds": 25,
+  "profiles": [
+    {
+      "profileId": "P01",
+      "firstSemanticResultSha256": "bea40a3455450a012e0bce32a83923eb8d5a194d1899f68e4d887bc2ec23427f",
+      "secondSemanticResultSha256": "bea40a3455450a012e0bce32a83923eb8d5a194d1899f68e4d887bc2ec23427f",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "P02",
+      "firstSemanticResultSha256": "42d4ba306081bd2c96787fb714767148b572323e44725647321a9c551bbaf62a",
+      "secondSemanticResultSha256": "42d4ba306081bd2c96787fb714767148b572323e44725647321a9c551bbaf62a",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "P03",
+      "firstSemanticResultSha256": "599b42e87ad70289044171774d4a409141fa3b786603a1f37e220f5ab1172e7a",
+      "secondSemanticResultSha256": "599b42e87ad70289044171774d4a409141fa3b786603a1f37e220f5ab1172e7a",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "P04",
+      "firstSemanticResultSha256": "03b150c478ccd733e6b6cedb1f53e964fe1713ad3ce8e8ea35bc876f30e488ae",
+      "secondSemanticResultSha256": "03b150c478ccd733e6b6cedb1f53e964fe1713ad3ce8e8ea35bc876f30e488ae",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "P05",
+      "firstSemanticResultSha256": "94fc3354434ea91a5b9ee2f1140fa6707d643fe6c6509915600d49ffc97a21ae",
+      "secondSemanticResultSha256": "94fc3354434ea91a5b9ee2f1140fa6707d643fe6c6509915600d49ffc97a21ae",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "P06",
+      "firstSemanticResultSha256": "2fc731291b8cec56e219b9139a5652b85a77102c3c23aa9953c272cc2a2c9b28",
+      "secondSemanticResultSha256": "2fc731291b8cec56e219b9139a5652b85a77102c3c23aa9953c272cc2a2c9b28",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "P07",
+      "firstSemanticResultSha256": "c41a3e0ded0c381e1fe161e0aad768c2d749bf7f51970fe171d2ffe5a96a294b",
+      "secondSemanticResultSha256": "c41a3e0ded0c381e1fe161e0aad768c2d749bf7f51970fe171d2ffe5a96a294b",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "P08",
+      "firstSemanticResultSha256": "cb7843b0b493589210b389fdafaf2fef300279d2083117029275604be67786ab",
+      "secondSemanticResultSha256": "cb7843b0b493589210b389fdafaf2fef300279d2083117029275604be67786ab",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "P09",
+      "firstSemanticResultSha256": "ec4a34a94072c69c2e8c8d6a4638a11ce36aca7a43a2f7f6b3111d068670082e",
+      "secondSemanticResultSha256": "ec4a34a94072c69c2e8c8d6a4638a11ce36aca7a43a2f7f6b3111d068670082e",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "C01",
+      "firstSemanticResultSha256": "58d3babab97c3fcf928030c980c375832740e9294ed08bf7e5f5bdf2e8918a98",
+      "secondSemanticResultSha256": "58d3babab97c3fcf928030c980c375832740e9294ed08bf7e5f5bdf2e8918a98",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "C02",
+      "firstSemanticResultSha256": "330961a3db7e19dfde2954e980f517849435897254d187ea99ee7c77289bf6cd",
+      "secondSemanticResultSha256": "330961a3db7e19dfde2954e980f517849435897254d187ea99ee7c77289bf6cd",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "C03",
+      "firstSemanticResultSha256": "adb0c130c20e03a83845887e4a9021f548820fe96233e0d812c39ec7d4c63d59",
+      "secondSemanticResultSha256": "adb0c130c20e03a83845887e4a9021f548820fe96233e0d812c39ec7d4c63d59",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "C04",
+      "firstSemanticResultSha256": "7bc99cd37244fab04e9548c9274f07e5d2ff63667fbf8f833387243d62fe8a65",
+      "secondSemanticResultSha256": "7bc99cd37244fab04e9548c9274f07e5d2ff63667fbf8f833387243d62fe8a65",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "C05",
+      "firstSemanticResultSha256": "cbd35d4a0aefc734c87cda7abc24daeaa1628bd3aff5173b06fd6f31104df319",
+      "secondSemanticResultSha256": "cbd35d4a0aefc734c87cda7abc24daeaa1628bd3aff5173b06fd6f31104df319",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "C06",
+      "firstSemanticResultSha256": "a39e0c0e359ba86339f246f590d870af675fc2988f9f170eff4fde11917b1e33",
+      "secondSemanticResultSha256": "a39e0c0e359ba86339f246f590d870af675fc2988f9f170eff4fde11917b1e33",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "C07",
+      "firstSemanticResultSha256": "ceec8d3455a176d4d05d7911bc3022a8dc320ebeffe242e0db12f2f0f759a524",
+      "secondSemanticResultSha256": "ceec8d3455a176d4d05d7911bc3022a8dc320ebeffe242e0db12f2f0f759a524",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "C08",
+      "firstSemanticResultSha256": "882da4b1fb6d265b5f78256d0695f469be08ac9e234ec1fbd095aed9a7d5ebf7",
+      "secondSemanticResultSha256": "882da4b1fb6d265b5f78256d0695f469be08ac9e234ec1fbd095aed9a7d5ebf7",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "C09",
+      "firstSemanticResultSha256": "fac216f73d3fb08362c6b264f876ac37229dbc4c6dfa660657ff105deb44575c",
+      "secondSemanticResultSha256": "fac216f73d3fb08362c6b264f876ac37229dbc4c6dfa660657ff105deb44575c",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "C10",
+      "firstSemanticResultSha256": "be7a1f569ba29a96b7e1bc193078c2991decb282461d832ed08949ba0c353125",
+      "secondSemanticResultSha256": "be7a1f569ba29a96b7e1bc193078c2991decb282461d832ed08949ba0c353125",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "C11",
+      "firstSemanticResultSha256": "e197600c675f16d295d12872fa7063631c320bfa9833419174af48a0d4c54bf1",
+      "secondSemanticResultSha256": "e197600c675f16d295d12872fa7063631c320bfa9833419174af48a0d4c54bf1",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "C12",
+      "firstSemanticResultSha256": "46e07e962deea877f89db02ea87ddd92db2b8493ce6b93971082cd61b8aa33ad",
+      "secondSemanticResultSha256": "46e07e962deea877f89db02ea87ddd92db2b8493ce6b93971082cd61b8aa33ad",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "C13",
+      "firstSemanticResultSha256": "b17834b980e9762e5fe7ab0c6e219bfb9b1fbe63675841e0317ea967f2da9a4f",
+      "secondSemanticResultSha256": "b17834b980e9762e5fe7ab0c6e219bfb9b1fbe63675841e0317ea967f2da9a4f",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "C14",
+      "firstSemanticResultSha256": "1830ec7f16da27ec0ee749cd4f2a5b962a5b0fbffba3b3d6e2163818cf25a5cd",
+      "secondSemanticResultSha256": "1830ec7f16da27ec0ee749cd4f2a5b962a5b0fbffba3b3d6e2163818cf25a5cd",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "C15",
+      "firstSemanticResultSha256": "18d8cbdf50a7f09c6d88e192a51be1f77a82d2445b9abadd7c9790a70ec6ecaf",
+      "secondSemanticResultSha256": "18d8cbdf50a7f09c6d88e192a51be1f77a82d2445b9abadd7c9790a70ec6ecaf",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    },
+    {
+      "profileId": "C16",
+      "firstSemanticResultSha256": "c19cd16cd7a856bc92278bc3c87b20cd18aad3879636a47a2656ef4dd24d8363",
+      "secondSemanticResultSha256": "c19cd16cd7a856bc92278bc3c87b20cd18aad3879636a47a2656ef4dd24d8363",
+      "matched": true,
+      "physicalArtifactHashMatched": false
+    }
+  ]
+}

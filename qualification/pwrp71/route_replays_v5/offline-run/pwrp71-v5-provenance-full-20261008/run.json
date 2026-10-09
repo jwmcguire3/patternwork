@@ -1,0 +1,2381 @@
+{
+  "schemaVersion": 1,
+  "runId": "pwrp71-v5-provenance-full-20261008",
+  "mode": "offline",
+  "fixtureSet": "route-replays-v5",
+  "status": "failed",
+  "createdAt": "2026-10-09T02:54:08.420Z",
+  "updatedAt": "2026-10-09T02:54:10.324Z",
+  "runFingerprint": "f1f79848e68822243fff5ae560108b6792fc69359574b5941aaf26b1ca981e89",
+  "outputDirectory": "C:\\Users\\jwmcg\\OneDrive\\Documents\\AI Projects\\Live Envirnments\\patternwork\\qualification\\pwrp71\\route_replays_v5\\offline-run\\pwrp71-v5-provenance-full-20261008",
+  "attemptsFile": "qualification/pwrp71/route_replays_v5/offline-run/pwrp71-v5-provenance-full-20261008/attempts.json",
+  "sourcePins": {
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+    "routerPacketSchemaSha256": "0e4e62a10ca14841b0c90f22465761f33fc0975c874dc045a6cda3f242bdb24a",
+    "reportDraftSchemaSha256": "14e880841aab064593b777b9d113376a30338968e4b0375a38955b174e55b4ba",
+    "reportReviewSchemaSha256": "cfbb62aea8cc00ab3b1858f0ccdcb0b8dd46066ad1a52b64f9140156edc90194",
+    "semanticCaseSetSha256": "fec1752b4a4892da77fcadbf78688b23fd77e010b845ae6ddcd4523c0547569d",
+    "semanticCasesCanonicalJsonSha256": "ad48886eb708871933674f95f008edc08871be0a68d8b887571e430e174201e2",
+    "fixtureSetSha256": "5f3471d13a54a9e1a7f5e6cd87a7ac5102bba695c29cc3bfaeb04af69a190170",
+    "fixtureManifestSha256": "17b1c8cd9e43f0d647733e0408e5e663490da52e261e8124df9243181512b19f",
+    "fixtureSourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb",
+    "fixtureSourceSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "fixtureSet": "route-replays-v5",
+    "routerRuntimeSha256": "e7937399a9c5fd96bc0fbe7413e0dc26452a33b11a92d653a968f0b76abb7ac6"
+  },
+  "candidatePolicy": {
+    "candidates": [
+      {
+        "name": "luna-low",
+        "model": "openai/gpt-6-luna",
+        "reasoningEffort": "max",
+        "estimatedInputMicrosPerMillion": 100000,
+        "estimatedOutputMicrosPerMillion": 500000
+      },
+      {
+        "name": "luna-medium",
+        "model": "openai/gpt-6-luna",
+        "reasoningEffort": "max",
+        "estimatedInputMicrosPerMillion": 100000,
+        "estimatedOutputMicrosPerMillion": 500000
+      },
+      {
+        "name": "terra-medium",
+        "model": "openai/gpt-6-luna",
+        "reasoningEffort": "max",
+        "estimatedInputMicrosPerMillion": 100000,
+        "estimatedOutputMicrosPerMillion": 500000
+      },
+      {
+        "name": "sol-high",
+        "model": "openai/gpt-6-luna",
+        "reasoningEffort": "max",
+        "estimatedInputMicrosPerMillion": 100000,
+        "estimatedOutputMicrosPerMillion": 500000
+      }
+    ],
+    "candidatesSha256": "cafb5e380c2b46f2b094cbc5f49bccce34db1534579fa846b1394cb58c4d3b93",
+    "reportModelPolicy": {
+      "MAP": {
+        "pinnedTier": 0,
+        "model": "openai/gpt-6-luna",
+        "reasoningEffort": "max",
+        "escalationTier": 1,
+        "escalationModel": "openai/gpt-6-luna",
+        "escalationReasoningEffort": "max",
+        "maxOutputTokens": 16000
+      },
+      "IFS": {
+        "pinnedTier": 1,
+        "model": "openai/gpt-6-luna",
+        "reasoningEffort": "max",
+        "escalationTier": 2,
+        "escalationModel": "openai/gpt-6-luna",
+        "escalationReasoningEffort": "max",
+        "maxOutputTokens": 20000
+      },
+      "PV": {
+        "pinnedTier": 1,
+        "model": "openai/gpt-6-luna",
+        "reasoningEffort": "max",
+        "escalationTier": 2,
+        "escalationModel": "openai/gpt-6-luna",
+        "escalationReasoningEffort": "max",
+        "maxOutputTokens": 20000
+      },
+      "ATT": {
+        "pinnedTier": 2,
+        "model": "openai/gpt-6-luna",
+        "reasoningEffort": "max",
+        "escalationTier": 3,
+        "escalationModel": "openai/gpt-6-luna",
+        "escalationReasoningEffort": "max",
+        "maxOutputTokens": 20000
+      },
+      "SYNTHESIS": {
+        "pinnedTier": 2,
+        "model": "openai/gpt-6-luna",
+        "reasoningEffort": "max",
+        "escalationTier": 3,
+        "escalationModel": "openai/gpt-6-luna",
+        "escalationReasoningEffort": "max",
+        "maxOutputTokens": 16000
+      }
+    },
+    "reportModelPolicySha256": "f18d6512fbf586927d7d9f91d1dd50ea1a084a189c9b21b124d36449cc5f8e8c"
+  },
+  "costCapMicros": 1,
+  "totalReportedCostMicros": 0,
+  "reservedUnknownCostMicros": 0,
+  "selectedProfiles": [
+    "P01",
+    "P02",
+    "P03",
+    "P04",
+    "P05",
+    "P06",
+    "P07",
+    "P08",
+    "P09",
+    "C01",
+    "C02",
+    "C03",
+    "C04",
+    "C05",
+    "C06",
+    "C07",
+    "C08",
+    "C09",
+    "C10",
+    "C11",
+    "C12",
+    "C13",
+    "C14",
+    "C15",
+    "C16"
+  ],
+  "selectedReports": [
+    "MAP",
+    "IFS",
+    "PV",
+    "ATT",
+    "SYNTHESIS"
+  ],
+  "fixtureStatuses": {
+    "P01": "route_replay_v5_eligible",
+    "P02": "route_replay_v5_eligible",
+    "P03": "route_replay_v5_eligible",
+    "P04": "route_replay_v5_eligible",
+    "P05": "route_replay_v5_eligible",
+    "P06": "route_replay_v5_eligible",
+    "P07": "route_replay_v5_eligible",
+    "P08": "route_replay_v5_eligible",
+    "P09": "route_replay_v5_eligible",
+    "C01": "route_replay_v5_eligible",
+    "C02": "route_replay_v5_eligible",
+    "C03": "route_replay_v5_eligible",
+    "C04": "route_replay_v5_eligible",
+    "C05": "route_replay_v5_eligible",
+    "C06": "route_replay_v5_eligible",
+    "C07": "route_replay_v5_eligible",
+    "C08": "route_replay_v5_eligible",
+    "C09": "route_replay_v5_eligible",
+    "C10": "route_replay_v5_eligible",
+    "C11": "route_replay_v5_eligible",
+    "C12": "route_replay_v5_eligible",
+    "C13": "route_replay_v5_eligible",
+    "C14": "route_replay_v5_eligible",
+    "C15": "route_replay_v5_eligible",
+    "C16": "route_replay_v5_eligible"
+  },
+  "routeParity": "pending",
+  "blockers": [],
+  "results": [
+    {
+      "profileId": "P01",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "c77e49f56aefa302f12d342a3e719dbaab4d460ab8e3197bea78c90a01efb324",
+      "evidenceSha256": "2ff59d511a5dabf19b13ed3cdfb208c26ed1677323d5d328089a0ac3c09342ae",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 9121 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P01",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "375f0dcfabc3029d051d621bbf53fb0d069a5d3ef84e77c47b408fd5fcb5e6eb",
+      "evidenceSha256": "61c96997e1148ac171550fa0ce8d616d7433bbf52f1a67befdac51e8f3dd52a2",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11465 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P01",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "375f0dcfabc3029d051d621bbf53fb0d069a5d3ef84e77c47b408fd5fcb5e6eb",
+      "evidenceSha256": "61c96997e1148ac171550fa0ce8d616d7433bbf52f1a67befdac51e8f3dd52a2",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11465 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P01",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "375f0dcfabc3029d051d621bbf53fb0d069a5d3ef84e77c47b408fd5fcb5e6eb",
+      "evidenceSha256": "61c96997e1148ac171550fa0ce8d616d7433bbf52f1a67befdac51e8f3dd52a2",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11465 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P01",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "375f0dcfabc3029d051d621bbf53fb0d069a5d3ef84e77c47b408fd5fcb5e6eb",
+      "evidenceSha256": "61c96997e1148ac171550fa0ce8d616d7433bbf52f1a67befdac51e8f3dd52a2",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P02",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "aeb9ed3363e06ba8ad13027d8788e6c9eea46d65d6aa51f50f00d0148fbfa9a9",
+      "evidenceSha256": "0d04305697e394c6f634553996c1833bf2c6726804aa82721f676a88d897a8df",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 9084 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P02",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "f02e65f3adc4b5b1bbbac5c1835085969865887292ff376de8c4af8b6c050d87",
+      "evidenceSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11441 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P02",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "f02e65f3adc4b5b1bbbac5c1835085969865887292ff376de8c4af8b6c050d87",
+      "evidenceSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11441 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P02",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "f02e65f3adc4b5b1bbbac5c1835085969865887292ff376de8c4af8b6c050d87",
+      "evidenceSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11441 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P02",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "f02e65f3adc4b5b1bbbac5c1835085969865887292ff376de8c4af8b6c050d87",
+      "evidenceSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P03",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "e49238d7c8b820933d4cb8f322fec3976a8b2d621599555455df6e4d339a1b2e",
+      "evidenceSha256": "323947114b16047590587b19ccbbe05a5319a1d316173ebf5cdd30d9aa44075c",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 9149 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P03",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "6fd4735121bbc820c19e0c7f4e6e273f1f49f0e9beb2eed0c97872508a8d7f17",
+      "evidenceSha256": "73821447dd18ab42f8f44a49727c623bdb98d2de6becfb149aa5b1e1cfb17872",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11239 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P03",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "6fd4735121bbc820c19e0c7f4e6e273f1f49f0e9beb2eed0c97872508a8d7f17",
+      "evidenceSha256": "73821447dd18ab42f8f44a49727c623bdb98d2de6becfb149aa5b1e1cfb17872",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11239 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P03",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "6fd4735121bbc820c19e0c7f4e6e273f1f49f0e9beb2eed0c97872508a8d7f17",
+      "evidenceSha256": "73821447dd18ab42f8f44a49727c623bdb98d2de6becfb149aa5b1e1cfb17872",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11239 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P03",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "6fd4735121bbc820c19e0c7f4e6e273f1f49f0e9beb2eed0c97872508a8d7f17",
+      "evidenceSha256": "73821447dd18ab42f8f44a49727c623bdb98d2de6becfb149aa5b1e1cfb17872",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P04",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "f7d10b7da36887bea067672f2e73f55323c6c5933cae4a28e030b91e61f4102f",
+      "evidenceSha256": "58e2add1fbc41291df63ea2a4d78d4a8dda95c243b236e1c91d6ea4c6064945a",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 9095 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P04",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "d6a454f003b26847ac764367525e2c7ad8933095aa063c16a161b38ee8b8bb2d",
+      "evidenceSha256": "144c3de3a21d89d8c5c34ab7dbc8e6ed52b059d523199a640e9043dadd31818c",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11212 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P04",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "d6a454f003b26847ac764367525e2c7ad8933095aa063c16a161b38ee8b8bb2d",
+      "evidenceSha256": "144c3de3a21d89d8c5c34ab7dbc8e6ed52b059d523199a640e9043dadd31818c",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11212 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P04",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "d6a454f003b26847ac764367525e2c7ad8933095aa063c16a161b38ee8b8bb2d",
+      "evidenceSha256": "144c3de3a21d89d8c5c34ab7dbc8e6ed52b059d523199a640e9043dadd31818c",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11212 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P04",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "d6a454f003b26847ac764367525e2c7ad8933095aa063c16a161b38ee8b8bb2d",
+      "evidenceSha256": "144c3de3a21d89d8c5c34ab7dbc8e6ed52b059d523199a640e9043dadd31818c",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P05",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "cd75bdac504c1063abc0470cc575315505430b336506220629a5c99774b71dd9",
+      "evidenceSha256": "6119f3f04a8b3e826fd3b19ae95be0cb19b67668436770ef7238f24a807dba5f",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 9124 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P05",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "14d8865876ed1e9d38400e94e589399e2cc4ccabb03ade2c186c9b031906be88",
+      "evidenceSha256": "2a06593c7613f3a0f7d25071c6b9de5762e36f87ce3524c770dc0d229cc26aa9",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11242 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P05",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "14d8865876ed1e9d38400e94e589399e2cc4ccabb03ade2c186c9b031906be88",
+      "evidenceSha256": "2a06593c7613f3a0f7d25071c6b9de5762e36f87ce3524c770dc0d229cc26aa9",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11242 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P05",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "14d8865876ed1e9d38400e94e589399e2cc4ccabb03ade2c186c9b031906be88",
+      "evidenceSha256": "2a06593c7613f3a0f7d25071c6b9de5762e36f87ce3524c770dc0d229cc26aa9",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11242 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P05",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "14d8865876ed1e9d38400e94e589399e2cc4ccabb03ade2c186c9b031906be88",
+      "evidenceSha256": "2a06593c7613f3a0f7d25071c6b9de5762e36f87ce3524c770dc0d229cc26aa9",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P06",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "1d3785dbfd2f6157f5c75eab7bb6545fbc49221033f6d216c931a2f0fcde5a57",
+      "evidenceSha256": "00176c684cc05d78dc042518f195ee084347a621ce07c5aae251e9872361222a",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 9121 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P06",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "1ebbcfac7c7e4979d0c738b1272076744893621b97ce7d13b24c7e52caaef8bc",
+      "evidenceSha256": "2df176b791cbc8f2c00fd75612006156225ad9c5759f61d2edb033d6b1297a6f",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11359 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P06",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "1ebbcfac7c7e4979d0c738b1272076744893621b97ce7d13b24c7e52caaef8bc",
+      "evidenceSha256": "2df176b791cbc8f2c00fd75612006156225ad9c5759f61d2edb033d6b1297a6f",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11359 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P06",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "1ebbcfac7c7e4979d0c738b1272076744893621b97ce7d13b24c7e52caaef8bc",
+      "evidenceSha256": "2df176b791cbc8f2c00fd75612006156225ad9c5759f61d2edb033d6b1297a6f",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11359 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P06",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "1ebbcfac7c7e4979d0c738b1272076744893621b97ce7d13b24c7e52caaef8bc",
+      "evidenceSha256": "2df176b791cbc8f2c00fd75612006156225ad9c5759f61d2edb033d6b1297a6f",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P07",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "d9d8e8a1b4201294702de06a0d807fb141b8522da90b4f3fbd78216f15ae4513",
+      "evidenceSha256": "d0113d4e2b6a42126b6204a6abd03ccc29213d3cbe537812a98e7c3433912edd",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 9085 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P07",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "730cd86f1492c16bd3c9a452347545610bfef8809ae9478456b41526e3b50dbe",
+      "evidenceSha256": "af828d7fecb3c7d61a1e6a91ff4b65a8f12b96eac0cc6b0a0d68010cebd0319c",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11326 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P07",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "730cd86f1492c16bd3c9a452347545610bfef8809ae9478456b41526e3b50dbe",
+      "evidenceSha256": "af828d7fecb3c7d61a1e6a91ff4b65a8f12b96eac0cc6b0a0d68010cebd0319c",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11326 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P07",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "730cd86f1492c16bd3c9a452347545610bfef8809ae9478456b41526e3b50dbe",
+      "evidenceSha256": "af828d7fecb3c7d61a1e6a91ff4b65a8f12b96eac0cc6b0a0d68010cebd0319c",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11326 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P07",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "730cd86f1492c16bd3c9a452347545610bfef8809ae9478456b41526e3b50dbe",
+      "evidenceSha256": "af828d7fecb3c7d61a1e6a91ff4b65a8f12b96eac0cc6b0a0d68010cebd0319c",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P08",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "dae66423377554e4689f40007b8983c127060cb762a66f797acebdd884d02602",
+      "evidenceSha256": "f0d95784b81fca6beb954e7074372add16842d7c65ac441d65ab72487b94d40c",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 9122 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P08",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "34434c0219bd7f577d7cc118c806b5fcb4472d5b11b76cf09badeff7efc79bff",
+      "evidenceSha256": "06f1f0f161878fe6b79ba7f6050dd163c3ac1f606e19a8fa708af30548711daa",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11475 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P08",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "34434c0219bd7f577d7cc118c806b5fcb4472d5b11b76cf09badeff7efc79bff",
+      "evidenceSha256": "06f1f0f161878fe6b79ba7f6050dd163c3ac1f606e19a8fa708af30548711daa",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11475 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P08",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "34434c0219bd7f577d7cc118c806b5fcb4472d5b11b76cf09badeff7efc79bff",
+      "evidenceSha256": "06f1f0f161878fe6b79ba7f6050dd163c3ac1f606e19a8fa708af30548711daa",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11475 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P08",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "34434c0219bd7f577d7cc118c806b5fcb4472d5b11b76cf09badeff7efc79bff",
+      "evidenceSha256": "06f1f0f161878fe6b79ba7f6050dd163c3ac1f606e19a8fa708af30548711daa",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P09",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "26e76d64bdd1b0721a7b2b20225355dba54501ec02234d0d14ef87fa801747d3",
+      "evidenceSha256": "1efb101a1f460e044525e26ebfb0b632d2cb807d13ff85d7e1b143df46e6568c",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 9084 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P09",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "f60e0ebe61eac05a2a84122634907d0f3e253538420508b5361291e386a8fb80",
+      "evidenceSha256": "b7e8f30f1abd2a27b2957ccacf7e6dfc0afddb75fe206e0d792c707cf04a2975",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11397 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P09",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "f60e0ebe61eac05a2a84122634907d0f3e253538420508b5361291e386a8fb80",
+      "evidenceSha256": "b7e8f30f1abd2a27b2957ccacf7e6dfc0afddb75fe206e0d792c707cf04a2975",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11397 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P09",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "f60e0ebe61eac05a2a84122634907d0f3e253538420508b5361291e386a8fb80",
+      "evidenceSha256": "b7e8f30f1abd2a27b2957ccacf7e6dfc0afddb75fe206e0d792c707cf04a2975",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11397 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "P09",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "f60e0ebe61eac05a2a84122634907d0f3e253538420508b5361291e386a8fb80",
+      "evidenceSha256": "b7e8f30f1abd2a27b2957ccacf7e6dfc0afddb75fe206e0d792c707cf04a2975",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C01",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "b9c45b374c86ba38115f5491f8caf4435228a9e3dbf47fdfa3bf841d36431c2f",
+      "evidenceSha256": "412887c320da4185259c7630fca8fb564cddf098bd46cac199493ea6dc914a55",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 8814 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C01",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "c4b8363436f22b34b28095b155158cb5716bc397d6231a284b5c6d710df4e036",
+      "evidenceSha256": "7171b823f3be7044eeeb33d2779fc3fe66c235535807c8771d0b96e7c4c75b3d",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11199 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C01",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "c4b8363436f22b34b28095b155158cb5716bc397d6231a284b5c6d710df4e036",
+      "evidenceSha256": "7171b823f3be7044eeeb33d2779fc3fe66c235535807c8771d0b96e7c4c75b3d",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11199 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C01",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "c4b8363436f22b34b28095b155158cb5716bc397d6231a284b5c6d710df4e036",
+      "evidenceSha256": "7171b823f3be7044eeeb33d2779fc3fe66c235535807c8771d0b96e7c4c75b3d",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11199 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C01",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "c4b8363436f22b34b28095b155158cb5716bc397d6231a284b5c6d710df4e036",
+      "evidenceSha256": "7171b823f3be7044eeeb33d2779fc3fe66c235535807c8771d0b96e7c4c75b3d",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C02",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "721e3bb5131d8a6a7fd5dd85f8527d204cfb4725606ebbed8ec66aed9ccfd33e",
+      "evidenceSha256": "e59ab6f5d315f8d11babdc8db3f3d3a586e55ebbec66259e202ff1e215bf261b",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 8814 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C02",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "c14bbcbd4ff8b6f69c1074b12a15d9132be9d3373d5d825257ff5dcf8ad61055",
+      "evidenceSha256": "3dac1972a62b994a969c5cb2f65154c1d388b471c67ed5ac6f43c991417e2333",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11133 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C02",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "c14bbcbd4ff8b6f69c1074b12a15d9132be9d3373d5d825257ff5dcf8ad61055",
+      "evidenceSha256": "3dac1972a62b994a969c5cb2f65154c1d388b471c67ed5ac6f43c991417e2333",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11133 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C02",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "c14bbcbd4ff8b6f69c1074b12a15d9132be9d3373d5d825257ff5dcf8ad61055",
+      "evidenceSha256": "3dac1972a62b994a969c5cb2f65154c1d388b471c67ed5ac6f43c991417e2333",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11133 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C02",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "c14bbcbd4ff8b6f69c1074b12a15d9132be9d3373d5d825257ff5dcf8ad61055",
+      "evidenceSha256": "3dac1972a62b994a969c5cb2f65154c1d388b471c67ed5ac6f43c991417e2333",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C03",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "be640410c033a9b6ab5c58e6538299ce71cbf9e81daf712ab8e5e7f059c2c810",
+      "evidenceSha256": "5e0a2969ad755003d40fd3daa3ce80bfb31f5bf7b1251f4e4e50be9896049777",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 8776 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C03",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "2b0304adbc13fcccd38444b26e9ca4581b9c960295639cb42abfa2cd88abf534",
+      "evidenceSha256": "55f0b5c910e9f56794e4887895e9995ee306b5c0533124d5110496bb86961d6e",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 10976 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C03",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "2b0304adbc13fcccd38444b26e9ca4581b9c960295639cb42abfa2cd88abf534",
+      "evidenceSha256": "55f0b5c910e9f56794e4887895e9995ee306b5c0533124d5110496bb86961d6e",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 10976 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C03",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "2b0304adbc13fcccd38444b26e9ca4581b9c960295639cb42abfa2cd88abf534",
+      "evidenceSha256": "55f0b5c910e9f56794e4887895e9995ee306b5c0533124d5110496bb86961d6e",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 10976 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C03",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "2b0304adbc13fcccd38444b26e9ca4581b9c960295639cb42abfa2cd88abf534",
+      "evidenceSha256": "55f0b5c910e9f56794e4887895e9995ee306b5c0533124d5110496bb86961d6e",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C04",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "ad3de2562b52e9a490b250d293915b4cbd0240124b9dba5d4c441e838b50cefc",
+      "evidenceSha256": "ed40f1029d4050e7ac8db8028cacd324aab5921ff960d16bf4db38e9d8c9b7bb",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 8776 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C04",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "7372101aedb4ef8afa89dfcfea0fd611990979353b68eb3b03f7dda8589f743a",
+      "evidenceSha256": "1a04c49c2b132104918f42b012f511dc65ae2bb207a50b1accb6c3c9ee0a192c",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11008 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C04",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "7372101aedb4ef8afa89dfcfea0fd611990979353b68eb3b03f7dda8589f743a",
+      "evidenceSha256": "1a04c49c2b132104918f42b012f511dc65ae2bb207a50b1accb6c3c9ee0a192c",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11008 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C04",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "7372101aedb4ef8afa89dfcfea0fd611990979353b68eb3b03f7dda8589f743a",
+      "evidenceSha256": "1a04c49c2b132104918f42b012f511dc65ae2bb207a50b1accb6c3c9ee0a192c",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11008 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C04",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "7372101aedb4ef8afa89dfcfea0fd611990979353b68eb3b03f7dda8589f743a",
+      "evidenceSha256": "1a04c49c2b132104918f42b012f511dc65ae2bb207a50b1accb6c3c9ee0a192c",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C05",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "b0367654be395640444ebebd0981ea3e9c624eea1ddf7dfac51678dab84b0b1d",
+      "evidenceSha256": "b642b55c1af7555a8139b16fd483ff81d1ac3dab4ece0e4a56587d55490e8663",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 8827 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C05",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "0adff918f8faa8c0fa0e373435af59aa6699e924df24ea2063efb91860a1be5b",
+      "evidenceSha256": "dd1c20e7da33bb5d8fcc7ebb562f4c52e45077dcf192f1d2f2193a47889d32e9",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11052 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C05",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "0adff918f8faa8c0fa0e373435af59aa6699e924df24ea2063efb91860a1be5b",
+      "evidenceSha256": "dd1c20e7da33bb5d8fcc7ebb562f4c52e45077dcf192f1d2f2193a47889d32e9",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11052 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C05",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "0adff918f8faa8c0fa0e373435af59aa6699e924df24ea2063efb91860a1be5b",
+      "evidenceSha256": "dd1c20e7da33bb5d8fcc7ebb562f4c52e45077dcf192f1d2f2193a47889d32e9",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11052 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C05",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "0adff918f8faa8c0fa0e373435af59aa6699e924df24ea2063efb91860a1be5b",
+      "evidenceSha256": "dd1c20e7da33bb5d8fcc7ebb562f4c52e45077dcf192f1d2f2193a47889d32e9",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C06",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "0c5b9e92d61d7d1a2cdf95935bdcab025d90c8f843e17bd3721f196179ffa32f",
+      "evidenceSha256": "1de5e0bdee7ab1034ef415d8a6df2c1b23666f118a8dc2452b02ab263be88e54",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 8775 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C06",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "5c6932b8cbe227b089da7825515edfaa73f354c07ed587c9a17681e053e96cde",
+      "evidenceSha256": "122b9173c9993be89980c9275a6a0750ff2b3aa584e89546e26da6e22fc48cfb",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11040 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C06",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "5c6932b8cbe227b089da7825515edfaa73f354c07ed587c9a17681e053e96cde",
+      "evidenceSha256": "122b9173c9993be89980c9275a6a0750ff2b3aa584e89546e26da6e22fc48cfb",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11040 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C06",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "5c6932b8cbe227b089da7825515edfaa73f354c07ed587c9a17681e053e96cde",
+      "evidenceSha256": "122b9173c9993be89980c9275a6a0750ff2b3aa584e89546e26da6e22fc48cfb",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11040 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C06",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "5c6932b8cbe227b089da7825515edfaa73f354c07ed587c9a17681e053e96cde",
+      "evidenceSha256": "122b9173c9993be89980c9275a6a0750ff2b3aa584e89546e26da6e22fc48cfb",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C07",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "1852bfe18e42f1b6c10cb5d8ba3ee08b8d5ada0272722cd7764d03590d90c750",
+      "evidenceSha256": "0c39dc31f88dbe5d1fca550aff6556916157e2d91341b1b12ce3401e9c59ef63",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 8812 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C07",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "4e48607b3d9b901d00b722e75d87710a2eed33d3834fc591c251def4228e848a",
+      "evidenceSha256": "4160fe48f9ed94f4b0bdc4ddd320c4706538c0b548982bfcf3b90be88ad3b156",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11253 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C07",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "4e48607b3d9b901d00b722e75d87710a2eed33d3834fc591c251def4228e848a",
+      "evidenceSha256": "4160fe48f9ed94f4b0bdc4ddd320c4706538c0b548982bfcf3b90be88ad3b156",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11253 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C07",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "4e48607b3d9b901d00b722e75d87710a2eed33d3834fc591c251def4228e848a",
+      "evidenceSha256": "4160fe48f9ed94f4b0bdc4ddd320c4706538c0b548982bfcf3b90be88ad3b156",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11253 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C07",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "4e48607b3d9b901d00b722e75d87710a2eed33d3834fc591c251def4228e848a",
+      "evidenceSha256": "4160fe48f9ed94f4b0bdc4ddd320c4706538c0b548982bfcf3b90be88ad3b156",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C08",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "fff0770586590f9b2a21ea4625644e5a5020da534171f4aab55f9f8177d845f5",
+      "evidenceSha256": "4d79a03c94c7828cf47d6e25d8df3cfe4beaf246d1c911f2a9cb5afdcf8c423c",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 8776 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C08",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "353a047e89ab7b1cc191816c027123fc7d9f470cc729658e60bc02d2bcc193d1",
+      "evidenceSha256": "bdb8f33738f3a0f12f6592fadc12d13b1b16aa2fcc57871b835708d2bd64d5f9",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11335 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C08",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "353a047e89ab7b1cc191816c027123fc7d9f470cc729658e60bc02d2bcc193d1",
+      "evidenceSha256": "bdb8f33738f3a0f12f6592fadc12d13b1b16aa2fcc57871b835708d2bd64d5f9",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11335 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C08",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "353a047e89ab7b1cc191816c027123fc7d9f470cc729658e60bc02d2bcc193d1",
+      "evidenceSha256": "bdb8f33738f3a0f12f6592fadc12d13b1b16aa2fcc57871b835708d2bd64d5f9",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11335 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C08",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "353a047e89ab7b1cc191816c027123fc7d9f470cc729658e60bc02d2bcc193d1",
+      "evidenceSha256": "bdb8f33738f3a0f12f6592fadc12d13b1b16aa2fcc57871b835708d2bd64d5f9",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C09",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "029111f0c99264774fc4e2f15e8b81a3b640ed780b0fbf4374def2a159370438",
+      "evidenceSha256": "25e32195b4fb7a9838d7d0481f2508571a45d616234f28c2e40598b200c8f96c",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 8776 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C09",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "d591f2235f2b1d1891322be4e5f37aafd278ac20df4df28960f9cdc49f10a235",
+      "evidenceSha256": "761d09dab598902ce0bfc6db1d3f9156cd0d853f51ddcf521d7de65d84c57a58",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11147 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C09",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "d591f2235f2b1d1891322be4e5f37aafd278ac20df4df28960f9cdc49f10a235",
+      "evidenceSha256": "761d09dab598902ce0bfc6db1d3f9156cd0d853f51ddcf521d7de65d84c57a58",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11147 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C09",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "d591f2235f2b1d1891322be4e5f37aafd278ac20df4df28960f9cdc49f10a235",
+      "evidenceSha256": "761d09dab598902ce0bfc6db1d3f9156cd0d853f51ddcf521d7de65d84c57a58",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11147 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C09",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "d591f2235f2b1d1891322be4e5f37aafd278ac20df4df28960f9cdc49f10a235",
+      "evidenceSha256": "761d09dab598902ce0bfc6db1d3f9156cd0d853f51ddcf521d7de65d84c57a58",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C10",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "0e86e963bf859836896fd54fb7e81aa9c273caf387479822dde4072d68dbbdf1",
+      "evidenceSha256": "49f0fc44783d6c88bd87d49197d9dac3d36753248c3a0850151c057e904a7923",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 9140 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C10",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "708397f35a5ba798d3ed6bccd9a2f4059d912751a91e2a123cb9aadf5dc43e47",
+      "evidenceSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11741 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C10",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "708397f35a5ba798d3ed6bccd9a2f4059d912751a91e2a123cb9aadf5dc43e47",
+      "evidenceSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11741 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C10",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "708397f35a5ba798d3ed6bccd9a2f4059d912751a91e2a123cb9aadf5dc43e47",
+      "evidenceSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11741 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C10",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "708397f35a5ba798d3ed6bccd9a2f4059d912751a91e2a123cb9aadf5dc43e47",
+      "evidenceSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C11",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "d33d183b8a8693431bd68798574ca0540a092e1f4225177f6ca32486014986ef",
+      "evidenceSha256": "c254a864128805acbf9563d9ad9353e50edbcbfc0b01d2198f8f1e16647348ce",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 9126 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C11",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "cf4e81f62092c8f979b96ae44864b66b2bc0c77563a6cd6266e1383df374b1e3",
+      "evidenceSha256": "886c8117ce9e2106a5ee60a9909d21fd16f5b985642089a06a7833f5b45b6177",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11327 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C11",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "cf4e81f62092c8f979b96ae44864b66b2bc0c77563a6cd6266e1383df374b1e3",
+      "evidenceSha256": "886c8117ce9e2106a5ee60a9909d21fd16f5b985642089a06a7833f5b45b6177",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11327 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C11",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "cf4e81f62092c8f979b96ae44864b66b2bc0c77563a6cd6266e1383df374b1e3",
+      "evidenceSha256": "886c8117ce9e2106a5ee60a9909d21fd16f5b985642089a06a7833f5b45b6177",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11327 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C11",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "cf4e81f62092c8f979b96ae44864b66b2bc0c77563a6cd6266e1383df374b1e3",
+      "evidenceSha256": "886c8117ce9e2106a5ee60a9909d21fd16f5b985642089a06a7833f5b45b6177",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C12",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "70a28a69936635d56b83b2757538516da48e62a7555567078e7b98b49f10df59",
+      "evidenceSha256": "cf74a7de815caac52380e2eae54ef87869d5058dc08956dae82d680b52678063",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 8841 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C12",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "2ebab90691ba07e702426126e66cf6dffbb905eb25d522e5d1ab66472876c3b8",
+      "evidenceSha256": "57fdf0b4be110c2240f17bc1593ab654f7228c690d2b0ed94097276f8cb00faa",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11013 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C12",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "2ebab90691ba07e702426126e66cf6dffbb905eb25d522e5d1ab66472876c3b8",
+      "evidenceSha256": "57fdf0b4be110c2240f17bc1593ab654f7228c690d2b0ed94097276f8cb00faa",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11013 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C12",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "2ebab90691ba07e702426126e66cf6dffbb905eb25d522e5d1ab66472876c3b8",
+      "evidenceSha256": "57fdf0b4be110c2240f17bc1593ab654f7228c690d2b0ed94097276f8cb00faa",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 11013 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C12",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "2ebab90691ba07e702426126e66cf6dffbb905eb25d522e5d1ab66472876c3b8",
+      "evidenceSha256": "57fdf0b4be110c2240f17bc1593ab654f7228c690d2b0ed94097276f8cb00faa",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C13",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "b9f9ea8605c2a4d7cd2c8686f219adc0fd67edd244ffd961c11f944ac9c82b26",
+      "evidenceSha256": "be2a32ed24bd068a6a23f0cd6168a5bad3ddc57c42d5916ba3c7b4c675bab58e",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 8776 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C13",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "f6f14a3b26e460d1375f4c8b767dd17472a4b2be2cfe1a4ef60006b16c4e379d",
+      "evidenceSha256": "0abb89c73e65a404992d8ca13c395a0dc9a6a1bcd0c75518c9c91d42d8992583",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 10964 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C13",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "f6f14a3b26e460d1375f4c8b767dd17472a4b2be2cfe1a4ef60006b16c4e379d",
+      "evidenceSha256": "0abb89c73e65a404992d8ca13c395a0dc9a6a1bcd0c75518c9c91d42d8992583",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 10964 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C13",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "f6f14a3b26e460d1375f4c8b767dd17472a4b2be2cfe1a4ef60006b16c4e379d",
+      "evidenceSha256": "0abb89c73e65a404992d8ca13c395a0dc9a6a1bcd0c75518c9c91d42d8992583",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 10964 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C13",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "f6f14a3b26e460d1375f4c8b767dd17472a4b2be2cfe1a4ef60006b16c4e379d",
+      "evidenceSha256": "0abb89c73e65a404992d8ca13c395a0dc9a6a1bcd0c75518c9c91d42d8992583",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C14",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "4f591b56fc8154d1f48ffbdd9b60218bcfbbbe4dcfae1449b1260d907ec6c5d1",
+      "evidenceSha256": "9f227978f3d5649090d02dc73ec83da1c1a69be268f77ac2e03321b01e8f6733",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 8801 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C14",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "75ee966b29ddf2e59c47550ca04f7209f6b784390540f58fc8b8cfd3c0d82127",
+      "evidenceSha256": "88e188483e152b2df9178b07eec81cf6596a691b816dfc058f8d957e450a2b8a",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 10893 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C14",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "75ee966b29ddf2e59c47550ca04f7209f6b784390540f58fc8b8cfd3c0d82127",
+      "evidenceSha256": "88e188483e152b2df9178b07eec81cf6596a691b816dfc058f8d957e450a2b8a",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 10893 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C14",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "75ee966b29ddf2e59c47550ca04f7209f6b784390540f58fc8b8cfd3c0d82127",
+      "evidenceSha256": "88e188483e152b2df9178b07eec81cf6596a691b816dfc058f8d957e450a2b8a",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 10893 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C14",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "75ee966b29ddf2e59c47550ca04f7209f6b784390540f58fc8b8cfd3c0d82127",
+      "evidenceSha256": "88e188483e152b2df9178b07eec81cf6596a691b816dfc058f8d957e450a2b8a",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C15",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "70fcaac500560489b3a209f26f9ba25b958654e69df9bbb1a975ec5a166f061b",
+      "evidenceSha256": "c47cc48e0f65fbbf2ebfdb1b1a8d864d88bab06a99fff8d97726edaa2948963d",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 8776 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C15",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "1f887a322c2a450cee104dbbdf816abc0bb422f090e6e0101ce666aa5ec94aac",
+      "evidenceSha256": "9ea8c6810c91ce196fea6b8500b01e1cf7c46df162ffc6d9afe2c48c50a43fa2",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 10883 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C15",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "1f887a322c2a450cee104dbbdf816abc0bb422f090e6e0101ce666aa5ec94aac",
+      "evidenceSha256": "9ea8c6810c91ce196fea6b8500b01e1cf7c46df162ffc6d9afe2c48c50a43fa2",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 10883 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C15",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "1f887a322c2a450cee104dbbdf816abc0bb422f090e6e0101ce666aa5ec94aac",
+      "evidenceSha256": "9ea8c6810c91ce196fea6b8500b01e1cf7c46df162ffc6d9afe2c48c50a43fa2",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 10883 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C15",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "1f887a322c2a450cee104dbbdf816abc0bb422f090e6e0101ce666aa5ec94aac",
+      "evidenceSha256": "9ea8c6810c91ce196fea6b8500b01e1cf7c46df162ffc6d9afe2c48c50a43fa2",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C16",
+      "reportType": "MAP",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "3a9dd64be1a9eb0def8b14287c10ce93698a3e10bb0e611523100fdae1a45d59",
+      "evidenceSha256": "e70e4edbf72e195614ae7b1c1b4e0f8fdc328aa618168e81416f54fdbdc8d05a",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 8776 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C16",
+      "reportType": "IFS",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "512ccce864b4fe9af9da102e0965a7732c9b0faae426ead3b71000fcd5985db1",
+      "evidenceSha256": "859c21a04f48832de5d647095292e023be0a82b3c97937c63dcaa32676c5872f",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 10884 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C16",
+      "reportType": "PV",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "512ccce864b4fe9af9da102e0965a7732c9b0faae426ead3b71000fcd5985db1",
+      "evidenceSha256": "859c21a04f48832de5d647095292e023be0a82b3c97937c63dcaa32676c5872f",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 10884 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C16",
+      "reportType": "ATT",
+      "status": "failed",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "512ccce864b4fe9af9da102e0965a7732c9b0faae426ead3b71000fcd5985db1",
+      "evidenceSha256": "859c21a04f48832de5d647095292e023be0a82b3c97937c63dcaa32676c5872f",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "validationIssues": [],
+      "reviewerReceipts": [],
+      "failure": {
+        "code": "cost_cap_exceeded",
+        "message": "Report generation cost cap would be exceeded (0 + 10884 > 1 micros).",
+        "issues": []
+      }
+    },
+    {
+      "profileId": "C16",
+      "reportType": "SYNTHESIS",
+      "status": "blocked",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "512ccce864b4fe9af9da102e0965a7732c9b0faae426ead3b71000fcd5985db1",
+      "evidenceSha256": "859c21a04f48832de5d647095292e023be0a82b3c97937c63dcaa32676c5872f",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "failure": {
+        "code": "synthesis_layer_dependency",
+        "message": "Synthesis requires accepted same-profile IFS, PV, and ATT outputs.",
+        "issues": []
+      }
+    }
+  ],
+  "qualificationRunSha256": "14faedb1dc2c0df51b57a9018cf36a56ff06a3792ab2aa595a3c39ee1e368929"
+}

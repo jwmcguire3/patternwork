@@ -5,7 +5,9 @@ import {
   PWQE51_RELEASE_IDENTITY,
   type Pwqe51SourcePackage,
 } from "../../question-engine/pwqe51-source.ts";
+import type { Pwqe51CanonicalResponse } from "../assessment/pwqe51-router.ts";
 import type { Pwrp71SourcePackage } from "./pwrp71-source.ts";
+import type { Pwrp71CanonicalResponseEvidence } from "./pwrp71-response-evidence.ts";
 import { validatePwrp71ReportDraft } from "./pwrp71-validation.ts";
 
 const PROVIDER_PACKET_FIELDS = [
@@ -38,6 +40,8 @@ export interface PreparePwrp71RequestInput {
   readonly reportType: ReportType;
   readonly questionSource: Pwqe51SourcePackage;
   readonly reportSource: Pwrp71SourcePackage;
+  /** Trusted response/currentness source from the same immutable snapshot when D36 evidence is present. */
+  readonly canonicalResponseEvidence?: Pwrp71CanonicalResponseEvidence;
   /** Accepted, structurally validated layer drafts from the trusted artifact store; never client input. */
   readonly acceptedLayers?: Readonly<Record<string, JsonObject>>;
 }
@@ -75,6 +79,113 @@ function addUniqueIndex(items: readonly Record<string, unknown>[], key: string, 
   return index;
 }
 
+function validateD36SequenceEvidence(
+  packet: JsonObject,
+  observations: readonly Record<string, unknown>[],
+  edges: readonly Record<string, unknown>[],
+  source: Pwqe51SourcePackage,
+  canonicalResponseEvidence: Pwrp71CanonicalResponseEvidence | undefined,
+  issues: ValidationIssue[],
+): void {
+  const byResponse = new Map<string, Record<string, unknown>[]>();
+  for (const observation of observations) {
+    if (observation.item_id !== "D36" || typeof observation.response_id !== "string") continue;
+    byResponse.set(observation.response_id, [...(byResponse.get(observation.response_id) ?? []), observation]);
+  }
+
+  if (byResponse.size > 0 && !canonicalResponseEvidence) {
+    issues.push(issue("recovery_sequence_response_source", "$.canonicalResponseEvidence", "D36 evidence requires current canonical responses and routing state from the same immutable snapshot."));
+  }
+  if (canonicalResponseEvidence) {
+    const responseById = new Map<string, Pwqe51CanonicalResponse>();
+    for (const response of canonicalResponseEvidence.responses) {
+      if (!response.responseId || responseById.has(response.responseId)) {
+        issues.push(issue("recovery_sequence_response_source", "$.canonicalResponseEvidence.responses", "Canonical response IDs must be present and unique."));
+        continue;
+      }
+      responseById.set(response.responseId, response);
+    }
+    const stale = new Set([
+      ...canonicalResponseEvidence.supersededResponseIds,
+      ...canonicalResponseEvidence.invalidatedResponseIds,
+    ]);
+    const packetSuperseded = Array.isArray(packet.superseded_response_ids) ? packet.superseded_response_ids : [];
+    const packetInvalidated = Array.isArray(packet.invalidated_response_ids) ? packet.invalidated_response_ids : [];
+    const sameIdSet = (left: readonly unknown[], right: readonly string[]) => left.length === right.length
+      && new Set(left).size === left.length
+      && left.every((id) => typeof id === "string" && right.includes(id));
+    if (!sameIdSet(packetSuperseded, canonicalResponseEvidence.supersededResponseIds)
+      || !sameIdSet(packetInvalidated, canonicalResponseEvidence.invalidatedResponseIds)) {
+      issues.push(issue("recovery_sequence_currentness", "$.packet", "D36 packet stale-response metadata must match the same snapshot's trusted routing state."));
+    }
+
+    const currentD36 = canonicalResponseEvidence.responses.filter((response) => response.questionId === "D36"
+      && (response.status ?? "answered") === "answered" && !stale.has(response.responseId)
+      && (response.selectedOptionIds?.length ?? 0) > 0);
+    if (currentD36.length !== byResponse.size) {
+      issues.push(issue("recovery_sequence_response_binding", "$.packet.observations", "D36 observations must correspond one-to-one with active answered D36 canonical responses."));
+    }
+    for (const [responseId, selected] of byResponse) {
+      const response = responseById.get(responseId);
+      const selection = response?.selectedOptionIds ?? [];
+      const selectedOrder = response?.mode === "ordered" ? selection : [...selection].sort();
+      const packetOrder = selected.map((observation) => observation.option_id);
+      const baseStep = response?.stepId ?? source.questionBank.items.find((question) => question.id === "D36")?.step_binding ?? "first";
+      if (!response || response.questionId !== "D36" || stale.has(responseId)
+        || (response.status ?? "answered") !== "answered"
+        || selectedOrder.length !== packetOrder.length
+        || selectedOrder.some((optionId, index) => optionId !== packetOrder[index])
+        || selected.some((observation) => observation.occurrence_id !== response.occurrenceId
+          || observation.mode !== (response.mode ?? "single")
+          || observation.step_id !== (selected.length > 1 ? `${baseStep}/${String(observation.option_id)}` : baseStep))) {
+        issues.push(issue("recovery_sequence_response_binding", `$.packet.observations[${String(selected[0]?.id ?? responseId)}]`, "D36 packet observations must preserve the current canonical selected option order, response mode, occurrence, and step."));
+      }
+    }
+  }
+  const expected: { id: string; occurrenceId: string; fromStep: string; toStep: string; relation: string; evidenceIds: string[] }[] = [];
+  for (const [responseId, selected] of byResponse) {
+    if (selected.length < 2) continue;
+    const first = selected[0]!;
+    const mode = first.mode;
+    const relation = mode === "ordered" ? "before"
+      : mode === "simultaneous" ? "simultaneous"
+        : mode === "order_unknown" ? "order_unknown" : undefined;
+    if (!relation || selected.some((observation) => observation.mode !== mode || observation.occurrence_id !== first.occurrence_id)) {
+      issues.push(issue("recovery_sequence_mode", "$.packet.sequence_edges", `D36 response ${responseId} does not retain one supported selection mode and occurrence.`));
+      continue;
+    }
+    for (let index = 0; index < selected.length - 1; index += 1) {
+      const from = selected[index]!;
+      const to = selected[index + 1]!;
+      if (typeof from.option_id !== "string" || typeof to.option_id !== "string"
+        || typeof from.step_id !== "string" || typeof to.step_id !== "string") continue;
+      expected.push({
+        id: `recovery:${responseId}:${from.option_id}:${to.option_id}`,
+        occurrenceId: String(first.occurrence_id),
+        fromStep: from.step_id,
+        toStep: to.step_id,
+        relation,
+        evidenceIds: [String(from.id), String(to.id)],
+      });
+    }
+  }
+  const recoveryEdges = edges.filter((edge) => edge.meaning === "reported_recovery_order");
+  const d36ObservationIds = new Set(observations.filter((observation) => observation.item_id === "D36")
+    .map((observation) => observation.id).filter((id): id is string => typeof id === "string"));
+  const edgesTouchingD36 = edges.filter((edge) => Array.isArray(edge.evidence_ids)
+    && (edge.evidence_ids as unknown[]).some((id) => typeof id === "string" && d36ObservationIds.has(id)));
+  if (recoveryEdges.length !== expected.length || edgesTouchingD36.length !== expected.length
+    || recoveryEdges.some((edge, index) => {
+      const row = expected[index];
+      const evidence = Array.isArray(edge.evidence_ids) ? edge.evidence_ids : [];
+      return !row || edge.id !== row.id || edge.occurrence_id !== row.occurrenceId
+        || edge.from_step !== row.fromStep || edge.to_step !== row.toStep || edge.relation !== row.relation
+        || evidence.length !== row.evidenceIds.length || evidence.some((id, evidenceIndex) => id !== row.evidenceIds[evidenceIndex]);
+    })) {
+    issues.push(issue("recovery_sequence_semantics", "$.packet.sequence_edges", "D36 sequence edges must preserve the selected adjacent option order, response mode, occurrence, and exact observations."));
+  }
+}
+
 function validateSourceBindings(input: PreparePwrp71RequestInput, issues: ValidationIssue[]): void {
   const { questionSource, reportSource } = input;
   if (questionSource.manifest.source_binding.question_release !== PWQE51_RELEASE_IDENTITY.questionRelease
@@ -91,7 +202,12 @@ function validateSourceBindings(input: PreparePwrp71RequestInput, issues: Valida
   }
 }
 
-function validatePacket(packet: JsonObject, source: Pwqe51SourcePackage, issues: ValidationIssue[]): void {
+function validatePacket(
+  packet: JsonObject,
+  source: Pwqe51SourcePackage,
+  canonicalResponseEvidence: Pwrp71CanonicalResponseEvidence | undefined,
+  issues: ValidationIssue[],
+): void {
   const ajv = new Ajv2020({ allErrors: true, strict: false });
   let validate: ReturnType<typeof ajv.compile>;
   try {
@@ -155,6 +271,7 @@ function validatePacket(packet: JsonObject, source: Pwqe51SourcePackage, issues:
       issues.push(issue("observation_lineage", path, "Observation identity or current response/occurrence lineage is invalid."));
     }
   }
+  validateD36SequenceEvidence(packet, observations, edges, source, canonicalResponseEvidence, issues);
 
   const observationIds = new Set(observationIndex.keys());
   const episodeIds = new Set(episodeIndex.keys());
@@ -339,7 +456,7 @@ export function preparePwrp71Request(input: PreparePwrp71RequestInput): Validati
   const layers = input.acceptedLayers ?? {};
   if (input.reportType !== "SYNTHESIS" && Object.keys(layers).length > 0) issues.push(issue("accepted_layers_scope", "$.accepted_layers", "Accepted layer claims may only be supplied to synthesis."));
   if (input.reportType === "SYNTHESIS" && Object.keys(layers).length === 0) issues.push(issue("synthesis_layers_missing", "$.accepted_layers", "Synthesis requires accepted layer artifacts from trusted storage."));
-  validatePacket(input.packet, input.questionSource, issues);
+  validatePacket(input.packet, input.questionSource, input.canonicalResponseEvidence, issues);
   if (input.reportType === "SYNTHESIS" && Object.keys(layers).length > 0) validateAcceptedLayers(layers, input.packet, input.reportSource, issues);
   if (issues.length > 0) return { ok: false, issues };
 

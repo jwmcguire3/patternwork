@@ -1,0 +1,1100 @@
+{
+  "schemaVersion": "PWRP71-PROFILE-POSITIVE-NEGATIVE-CONTROL-COMPARISON-V1",
+  "comparisonBasis": "v2 source selections, v4/v5 current packet observations, source-only withheld answers, and explicit semantic contrast pairs",
+  "profiles": [
+    {
+      "profileId": "P01",
+      "sourceAuthoredAnswerCount": 6,
+      "v4AcceptedOriginalAnswerCount": 6,
+      "v5AcceptedOriginalAnswerCount": 6,
+      "v4SyntheticMappingResponseCount": 28,
+      "v5SyntheticMappingResponseCount": 28,
+      "v4SemanticCore": "complete",
+      "v5SemanticCore": "complete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "P02",
+      "sourceAuthoredAnswerCount": 8,
+      "v4AcceptedOriginalAnswerCount": 7,
+      "v5AcceptedOriginalAnswerCount": 7,
+      "v4SyntheticMappingResponseCount": 30,
+      "v5SyntheticMappingResponseCount": 30,
+      "v4SemanticCore": "complete",
+      "v5SemanticCore": "complete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "P03",
+      "sourceAuthoredAnswerCount": 6,
+      "v4AcceptedOriginalAnswerCount": 6,
+      "v5AcceptedOriginalAnswerCount": 6,
+      "v4SyntheticMappingResponseCount": 27,
+      "v5SyntheticMappingResponseCount": 27,
+      "v4SemanticCore": "complete",
+      "v5SemanticCore": "complete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "P04",
+      "sourceAuthoredAnswerCount": 7,
+      "v4AcceptedOriginalAnswerCount": 5,
+      "v5AcceptedOriginalAnswerCount": 5,
+      "v4SyntheticMappingResponseCount": 25,
+      "v5SyntheticMappingResponseCount": 25,
+      "v4SemanticCore": "incomplete",
+      "v5SemanticCore": "incomplete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "P05",
+      "sourceAuthoredAnswerCount": 8,
+      "v4AcceptedOriginalAnswerCount": 0,
+      "v5AcceptedOriginalAnswerCount": 7,
+      "v4SyntheticMappingResponseCount": 22,
+      "v5SyntheticMappingResponseCount": 25,
+      "v4SemanticCore": "incomplete",
+      "v5SemanticCore": "incomplete",
+      "mappingEntryConsentVariant": {
+        "id": "body-detail-opt-in-at-mapping-entry-v1",
+        "controls": [
+          {
+            "controlId": "v5-P05-body-detail-opt-in-at-mapping-entry",
+            "topic": "body_detail",
+            "rationale": "Test whether an explicitly simulated Mapping-entry permission allows the unchanged authored base M10 response to be issued under the production route.",
+            "provenance": "new_synthetic_mapping_control",
+            "archivedPermissionProvenance": "new_synthetic_mapping_control",
+            "baselineReplayApplicationBoundary": "deepening_start"
+          }
+        ],
+        "archivedConfigurationDifference": "The v2 archive retains the permission declaration and provenance. Normal replay applies permission when Deepening starts. This variant separately simulates permission before Mapping and does not rewrite the v2 history."
+      },
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "P06",
+      "sourceAuthoredAnswerCount": 6,
+      "v4AcceptedOriginalAnswerCount": 5,
+      "v5AcceptedOriginalAnswerCount": 5,
+      "v4SyntheticMappingResponseCount": 28,
+      "v5SyntheticMappingResponseCount": 28,
+      "v4SemanticCore": "incomplete",
+      "v5SemanticCore": "incomplete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "P07",
+      "sourceAuthoredAnswerCount": 8,
+      "v4AcceptedOriginalAnswerCount": 8,
+      "v5AcceptedOriginalAnswerCount": 8,
+      "v4SyntheticMappingResponseCount": 22,
+      "v5SyntheticMappingResponseCount": 22,
+      "v4SemanticCore": "unavailable",
+      "v5SemanticCore": "unavailable",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "P08",
+      "sourceAuthoredAnswerCount": 7,
+      "v4AcceptedOriginalAnswerCount": 6,
+      "v5AcceptedOriginalAnswerCount": 6,
+      "v4SyntheticMappingResponseCount": 28,
+      "v5SyntheticMappingResponseCount": 28,
+      "v4SemanticCore": "incomplete",
+      "v5SemanticCore": "incomplete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "P09",
+      "sourceAuthoredAnswerCount": 11,
+      "v4AcceptedOriginalAnswerCount": 6,
+      "v5AcceptedOriginalAnswerCount": 6,
+      "v4SyntheticMappingResponseCount": 30,
+      "v5SyntheticMappingResponseCount": 30,
+      "v4SemanticCore": "incomplete",
+      "v5SemanticCore": "incomplete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "C01",
+      "sourceAuthoredAnswerCount": 14,
+      "v4AcceptedOriginalAnswerCount": 13,
+      "v5AcceptedOriginalAnswerCount": 13,
+      "v4SyntheticMappingResponseCount": 20,
+      "v5SyntheticMappingResponseCount": 20,
+      "v4SemanticCore": "complete",
+      "v5SemanticCore": "complete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "C02",
+      "sourceAuthoredAnswerCount": 13,
+      "v4AcceptedOriginalAnswerCount": 12,
+      "v5AcceptedOriginalAnswerCount": 12,
+      "v4SyntheticMappingResponseCount": 20,
+      "v5SyntheticMappingResponseCount": 20,
+      "v4SemanticCore": "complete",
+      "v5SemanticCore": "complete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [
+        {
+          "sourceAnswerRef": "C02.D67[0]",
+          "questionId": "D67",
+          "selectedOptionIds": [
+            "D67.not_allowed"
+          ],
+          "reason": "explicit_forbidden_item_in_source_plan_not_administered",
+          "baselinePacketObservations": [],
+          "revisedPacketObservations": [],
+          "preservedAsSourceOnly": true
+        },
+        {
+          "sourceAnswerRef": "C02.D68[0]",
+          "questionId": "D68",
+          "selectedOptionIds": [
+            "D68.pushed"
+          ],
+          "reason": "explicit_forbidden_item_in_source_plan_not_administered",
+          "baselinePacketObservations": [],
+          "revisedPacketObservations": [],
+          "preservedAsSourceOnly": true
+        }
+      ],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "C03",
+      "sourceAuthoredAnswerCount": 5,
+      "v4AcceptedOriginalAnswerCount": 5,
+      "v5AcceptedOriginalAnswerCount": 5,
+      "v4SyntheticMappingResponseCount": 22,
+      "v5SyntheticMappingResponseCount": 22,
+      "v4SemanticCore": "complete",
+      "v5SemanticCore": "complete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "C04",
+      "sourceAuthoredAnswerCount": 6,
+      "v4AcceptedOriginalAnswerCount": 6,
+      "v5AcceptedOriginalAnswerCount": 6,
+      "v4SyntheticMappingResponseCount": 22,
+      "v5SyntheticMappingResponseCount": 22,
+      "v4SemanticCore": "complete",
+      "v5SemanticCore": "complete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "C05",
+      "sourceAuthoredAnswerCount": 9,
+      "v4AcceptedOriginalAnswerCount": 9,
+      "v5AcceptedOriginalAnswerCount": 9,
+      "v4SyntheticMappingResponseCount": 19,
+      "v5SyntheticMappingResponseCount": 19,
+      "v4SemanticCore": "complete",
+      "v5SemanticCore": "complete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "C06",
+      "sourceAuthoredAnswerCount": 9,
+      "v4AcceptedOriginalAnswerCount": 9,
+      "v5AcceptedOriginalAnswerCount": 9,
+      "v4SyntheticMappingResponseCount": 20,
+      "v5SyntheticMappingResponseCount": 20,
+      "v4SemanticCore": "complete",
+      "v5SemanticCore": "complete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "C07",
+      "sourceAuthoredAnswerCount": 11,
+      "v4AcceptedOriginalAnswerCount": 9,
+      "v5AcceptedOriginalAnswerCount": 9,
+      "v4SyntheticMappingResponseCount": 20,
+      "v5SyntheticMappingResponseCount": 20,
+      "v4SemanticCore": "complete",
+      "v5SemanticCore": "complete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "C08",
+      "sourceAuthoredAnswerCount": 11,
+      "v4AcceptedOriginalAnswerCount": 10,
+      "v5AcceptedOriginalAnswerCount": 10,
+      "v4SyntheticMappingResponseCount": 22,
+      "v5SyntheticMappingResponseCount": 22,
+      "v4SemanticCore": "complete",
+      "v5SemanticCore": "complete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "C09",
+      "sourceAuthoredAnswerCount": 10,
+      "v4AcceptedOriginalAnswerCount": 9,
+      "v5AcceptedOriginalAnswerCount": 9,
+      "v4SyntheticMappingResponseCount": 22,
+      "v5SyntheticMappingResponseCount": 22,
+      "v4SemanticCore": "complete",
+      "v5SemanticCore": "complete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [
+        {
+          "sourceAnswerRef": "C09.D79[0]",
+          "questionId": "D79",
+          "selectedOptionIds": [
+            "D79.reaction"
+          ],
+          "reason": "explicit_forbidden_item_in_source_plan_not_administered",
+          "baselinePacketObservations": [],
+          "revisedPacketObservations": [],
+          "preservedAsSourceOnly": true
+        }
+      ],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "C10",
+      "sourceAuthoredAnswerCount": 21,
+      "v4AcceptedOriginalAnswerCount": 0,
+      "v5AcceptedOriginalAnswerCount": 21,
+      "v4SyntheticMappingResponseCount": 22,
+      "v5SyntheticMappingResponseCount": 25,
+      "v4SemanticCore": "incomplete",
+      "v5SemanticCore": "complete",
+      "mappingEntryConsentVariant": {
+        "id": "body-detail-opt-in-at-mapping-entry-v1",
+        "controls": [
+          {
+            "controlId": "v5-C10-body-detail-opt-in-at-mapping-entry",
+            "topic": "body_detail",
+            "rationale": "Test whether an explicitly simulated Mapping-entry permission allows the unchanged authored base M10 response to be issued under the production route.",
+            "provenance": "new_synthetic_mapping_control",
+            "archivedPermissionProvenance": "original_authored_configuration",
+            "baselineReplayApplicationBoundary": "deepening_start"
+          }
+        ],
+        "archivedConfigurationDifference": "The v2 archive retains the permission declaration and provenance. Normal replay applies permission when Deepening starts. This variant separately simulates permission before Mapping and does not rewrite the v2 history."
+      },
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "C11",
+      "sourceAuthoredAnswerCount": 8,
+      "v4AcceptedOriginalAnswerCount": 0,
+      "v5AcceptedOriginalAnswerCount": 8,
+      "v4SyntheticMappingResponseCount": 22,
+      "v5SyntheticMappingResponseCount": 25,
+      "v4SemanticCore": "incomplete",
+      "v5SemanticCore": "complete",
+      "mappingEntryConsentVariant": {
+        "id": "body-detail-opt-in-at-mapping-entry-v1",
+        "controls": [
+          {
+            "controlId": "v5-C11-body-detail-opt-in-at-mapping-entry",
+            "topic": "body_detail",
+            "rationale": "Test whether an explicitly simulated Mapping-entry permission allows the unchanged authored base M10 response to be issued under the production route.",
+            "provenance": "new_synthetic_mapping_control",
+            "archivedPermissionProvenance": "original_authored_configuration",
+            "baselineReplayApplicationBoundary": "deepening_start"
+          }
+        ],
+        "archivedConfigurationDifference": "The v2 archive retains the permission declaration and provenance. Normal replay applies permission when Deepening starts. This variant separately simulates permission before Mapping and does not rewrite the v2 history."
+      },
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "C12",
+      "sourceAuthoredAnswerCount": 9,
+      "v4AcceptedOriginalAnswerCount": 8,
+      "v5AcceptedOriginalAnswerCount": 8,
+      "v4SyntheticMappingResponseCount": 19,
+      "v5SyntheticMappingResponseCount": 19,
+      "v4SemanticCore": "incomplete",
+      "v5SemanticCore": "incomplete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "C13",
+      "sourceAuthoredAnswerCount": 5,
+      "v4AcceptedOriginalAnswerCount": 5,
+      "v5AcceptedOriginalAnswerCount": 5,
+      "v4SyntheticMappingResponseCount": 22,
+      "v5SyntheticMappingResponseCount": 22,
+      "v4SemanticCore": "complete",
+      "v5SemanticCore": "complete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "C14",
+      "sourceAuthoredAnswerCount": 4,
+      "v4AcceptedOriginalAnswerCount": 4,
+      "v5AcceptedOriginalAnswerCount": 4,
+      "v4SyntheticMappingResponseCount": 21,
+      "v5SyntheticMappingResponseCount": 21,
+      "v4SemanticCore": "complete",
+      "v5SemanticCore": "complete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "C15",
+      "sourceAuthoredAnswerCount": 2,
+      "v4AcceptedOriginalAnswerCount": 2,
+      "v5AcceptedOriginalAnswerCount": 2,
+      "v4SyntheticMappingResponseCount": 22,
+      "v5SyntheticMappingResponseCount": 22,
+      "v4SemanticCore": "complete",
+      "v5SemanticCore": "complete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    },
+    {
+      "profileId": "C16",
+      "sourceAuthoredAnswerCount": 2,
+      "v4AcceptedOriginalAnswerCount": 2,
+      "v5AcceptedOriginalAnswerCount": 2,
+      "v4SyntheticMappingResponseCount": 22,
+      "v5SyntheticMappingResponseCount": 22,
+      "v4SemanticCore": "complete",
+      "v5SemanticCore": "complete",
+      "mappingEntryConsentVariant": null,
+      "intentionallyWithheldAnswers": [],
+      "negativeControlsPreserved": true
+    }
+  ],
+  "contrastPairs": [
+    {
+      "contrastId": "C01-vs-C02",
+      "intendedDistinction": "internal exclusion versus permission/privacy",
+      "profiles": [
+        {
+          "profileId": "C01",
+          "sourceOptionSelections": [
+            {
+              "itemId": "D20",
+              "optionIds": [
+                "D20.need"
+              ]
+            },
+            {
+              "itemId": "D65",
+              "optionIds": [
+                "D65.judge"
+              ]
+            },
+            {
+              "itemId": "D66",
+              "optionIds": [
+                "D66.compelled"
+              ]
+            },
+            {
+              "itemId": "D67",
+              "optionIds": [
+                "D67.not_allowed"
+              ]
+            },
+            {
+              "itemId": "D68",
+              "optionIds": [
+                "D68.pushed"
+              ]
+            }
+          ],
+          "v4": [
+            {
+              "sourceResponseId": "C01-SRC-D20-1",
+              "itemId": "D20",
+              "optionIds": [
+                "D20.need"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O859932bac378c71185d0"
+              ]
+            },
+            {
+              "sourceResponseId": "C01-SRC-D65-1",
+              "itemId": "D65",
+              "optionIds": [
+                "D65.judge"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O6c1c84d62ac3bfc4ec3d"
+              ]
+            },
+            {
+              "sourceResponseId": "C01-SRC-D66-1",
+              "itemId": "D66",
+              "optionIds": [
+                "D66.compelled"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "Oe2fc94510a8539d1f614"
+              ]
+            },
+            {
+              "sourceResponseId": "C01-SRC-D67-1",
+              "itemId": "D67",
+              "optionIds": [
+                "D67.not_allowed"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O0d8b88f84c7f39152484"
+              ]
+            },
+            {
+              "sourceResponseId": "C01-SRC-D68-1",
+              "itemId": "D68",
+              "optionIds": [
+                "D68.pushed"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O9d281581c907d1fe57a7"
+              ]
+            }
+          ],
+          "v5": [
+            {
+              "sourceResponseId": "C01-SRC-D20-1",
+              "itemId": "D20",
+              "optionIds": [
+                "D20.need"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O4cecd56526bdb6c20645"
+              ]
+            },
+            {
+              "sourceResponseId": "C01-SRC-D65-1",
+              "itemId": "D65",
+              "optionIds": [
+                "D65.judge"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O34b33020127869263c07"
+              ]
+            },
+            {
+              "sourceResponseId": "C01-SRC-D66-1",
+              "itemId": "D66",
+              "optionIds": [
+                "D66.compelled"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O01655ad79d9c10d210dc"
+              ]
+            },
+            {
+              "sourceResponseId": "C01-SRC-D67-1",
+              "itemId": "D67",
+              "optionIds": [
+                "D67.not_allowed"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "Oe362438f0da7e64b9154"
+              ]
+            },
+            {
+              "sourceResponseId": "C01-SRC-D68-1",
+              "itemId": "D68",
+              "optionIds": [
+                "D68.pushed"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O247dfc0175eee139cd14"
+              ]
+            }
+          ],
+          "v5AllOriginalSelectionsBound": true
+        },
+        {
+          "profileId": "C02",
+          "sourceOptionSelections": [
+            {
+              "itemId": "D20",
+              "optionIds": [
+                "D20.none"
+              ]
+            },
+            {
+              "itemId": "D65",
+              "optionIds": [
+                "D65.patient"
+              ]
+            },
+            {
+              "itemId": "D66",
+              "optionIds": [
+                "D66.choice"
+              ]
+            }
+          ],
+          "v4": [
+            {
+              "sourceResponseId": "C02-SRC-D20-1",
+              "itemId": "D20",
+              "optionIds": [
+                "D20.none"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "Oa89cb87594b7d60fba6b"
+              ]
+            },
+            {
+              "sourceResponseId": "C02-SRC-D65-1",
+              "itemId": "D65",
+              "optionIds": [
+                "D65.patient"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O536661d716c270aac3a0"
+              ]
+            },
+            {
+              "sourceResponseId": "C02-SRC-D66-1",
+              "itemId": "D66",
+              "optionIds": [
+                "D66.choice"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "Odfdbdc786f65fc341dd3"
+              ]
+            }
+          ],
+          "v5": [
+            {
+              "sourceResponseId": "C02-SRC-D20-1",
+              "itemId": "D20",
+              "optionIds": [
+                "D20.none"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "Ob7b22dee1237d506900d"
+              ]
+            },
+            {
+              "sourceResponseId": "C02-SRC-D65-1",
+              "itemId": "D65",
+              "optionIds": [
+                "D65.patient"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "Oea2905d770692fd464bb"
+              ]
+            },
+            {
+              "sourceResponseId": "C02-SRC-D66-1",
+              "itemId": "D66",
+              "optionIds": [
+                "D66.choice"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O292f9bea129c568e8a80"
+              ]
+            }
+          ],
+          "v5AllOriginalSelectionsBound": true
+        }
+      ]
+    },
+    {
+      "contrastId": "C03-vs-C04",
+      "intendedDistinction": "pride disallowed versus ambition privately allowed",
+      "profiles": [
+        {
+          "profileId": "C03",
+          "sourceOptionSelections": [
+            {
+              "itemId": "D72",
+              "optionIds": [
+                "D72.pride"
+              ]
+            },
+            {
+              "itemId": "D73",
+              "optionIds": [
+                "D73.wrong"
+              ]
+            },
+            {
+              "itemId": "D74",
+              "optionIds": [
+                "D74.push"
+              ]
+            }
+          ],
+          "v4": [
+            {
+              "sourceResponseId": "C03-SRC-D72-1",
+              "itemId": "D72",
+              "optionIds": [
+                "D72.pride"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O00066933d120d96ade07"
+              ]
+            },
+            {
+              "sourceResponseId": "C03-SRC-D73-1",
+              "itemId": "D73",
+              "optionIds": [
+                "D73.wrong"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "Ofa4d3eb9d1f8dc2af592"
+              ]
+            },
+            {
+              "sourceResponseId": "C03-SRC-D74-1",
+              "itemId": "D74",
+              "optionIds": [
+                "D74.push"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O4f03b618510fa3557c92"
+              ]
+            }
+          ],
+          "v5": [
+            {
+              "sourceResponseId": "C03-SRC-D72-1",
+              "itemId": "D72",
+              "optionIds": [
+                "D72.pride"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O0016d4181a3747596c79"
+              ]
+            },
+            {
+              "sourceResponseId": "C03-SRC-D73-1",
+              "itemId": "D73",
+              "optionIds": [
+                "D73.wrong"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "Od32a349118d808fc2a6b"
+              ]
+            },
+            {
+              "sourceResponseId": "C03-SRC-D74-1",
+              "itemId": "D74",
+              "optionIds": [
+                "D74.push"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O52449259b26f44cd3e6e"
+              ]
+            }
+          ],
+          "v5AllOriginalSelectionsBound": true
+        },
+        {
+          "profileId": "C04",
+          "sourceOptionSelections": [
+            {
+              "itemId": "D72",
+              "optionIds": [
+                "D72.interest"
+              ]
+            },
+            {
+              "itemId": "D73",
+              "optionIds": [
+                "D73.privacy"
+              ]
+            },
+            {
+              "itemId": "D74",
+              "optionIds": [
+                "D74.allow"
+              ]
+            }
+          ],
+          "v4": [
+            {
+              "sourceResponseId": "C04-SRC-D72-1",
+              "itemId": "D72",
+              "optionIds": [
+                "D72.interest"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O68c0535c6c093afaac4e"
+              ]
+            },
+            {
+              "sourceResponseId": "C04-SRC-D73-1",
+              "itemId": "D73",
+              "optionIds": [
+                "D73.privacy"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O0a6286ba3e278d91e28b"
+              ]
+            },
+            {
+              "sourceResponseId": "C04-SRC-D74-1",
+              "itemId": "D74",
+              "optionIds": [
+                "D74.allow"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "Od4715388b72a9c13c39c"
+              ]
+            }
+          ],
+          "v5": [
+            {
+              "sourceResponseId": "C04-SRC-D72-1",
+              "itemId": "D72",
+              "optionIds": [
+                "D72.interest"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O204ae19d9744797b99c6"
+              ]
+            },
+            {
+              "sourceResponseId": "C04-SRC-D73-1",
+              "itemId": "D73",
+              "optionIds": [
+                "D73.privacy"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "Oce9342e6800942e60480"
+              ]
+            },
+            {
+              "sourceResponseId": "C04-SRC-D74-1",
+              "itemId": "D74",
+              "optionIds": [
+                "D74.allow"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O932d10cce38ba94f0fa2"
+              ]
+            }
+          ],
+          "v5AllOriginalSelectionsBound": true
+        }
+      ]
+    },
+    {
+      "contrastId": "C08-vs-C09",
+      "intendedDistinction": "later return versus no return",
+      "profiles": [
+        {
+          "profileId": "C08",
+          "sourceOptionSelections": [
+            {
+              "itemId": "D78",
+              "optionIds": [
+                "D78.returned"
+              ]
+            },
+            {
+              "itemId": "D79",
+              "optionIds": [
+                "D79.reaction"
+              ]
+            }
+          ],
+          "v4": [
+            {
+              "sourceResponseId": "C08-SRC-D78-1",
+              "itemId": "D78",
+              "optionIds": [
+                "D78.returned"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O53fcd384c2eb6c35d8e0"
+              ]
+            },
+            {
+              "sourceResponseId": "C08-SRC-D79-1",
+              "itemId": "D79",
+              "optionIds": [
+                "D79.reaction"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "Of0acf43c37531c6eb973"
+              ]
+            }
+          ],
+          "v5": [
+            {
+              "sourceResponseId": "C08-SRC-D78-1",
+              "itemId": "D78",
+              "optionIds": [
+                "D78.returned"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O25d158026dc1b4ae581f"
+              ]
+            },
+            {
+              "sourceResponseId": "C08-SRC-D79-1",
+              "itemId": "D79",
+              "optionIds": [
+                "D79.reaction"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "Ob6eec0e082db750ed204"
+              ]
+            }
+          ],
+          "v5AllOriginalSelectionsBound": true
+        },
+        {
+          "profileId": "C09",
+          "sourceOptionSelections": [
+            {
+              "itemId": "D78",
+              "optionIds": [
+                "D78.no"
+              ]
+            }
+          ],
+          "v4": [
+            {
+              "sourceResponseId": "C09-SRC-D78-1",
+              "itemId": "D78",
+              "optionIds": [
+                "D78.no"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O234a40f663ba79cea50f"
+              ]
+            }
+          ],
+          "v5": [
+            {
+              "sourceResponseId": "C09-SRC-D78-1",
+              "itemId": "D78",
+              "optionIds": [
+                "D78.no"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O7f1f4b2ad3b99dd1d7dc"
+              ]
+            }
+          ],
+          "v5AllOriginalSelectionsBound": true
+        }
+      ]
+    },
+    {
+      "contrastId": "C15-vs-C16",
+      "intendedDistinction": "encouragement versus permission",
+      "profiles": [
+        {
+          "profileId": "C15",
+          "sourceOptionSelections": [
+            {
+              "itemId": "D97",
+              "optionIds": [
+                "D97.encourage"
+              ]
+            },
+            {
+              "itemId": "D98",
+              "optionIds": [
+                "D98.encouraged"
+              ]
+            }
+          ],
+          "v4": [
+            {
+              "sourceResponseId": "C15-SRC-D97-1",
+              "itemId": "D97",
+              "optionIds": [
+                "D97.encourage"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O5873d5b76ccac76aa581"
+              ]
+            },
+            {
+              "sourceResponseId": "C15-SRC-D98-1",
+              "itemId": "D98",
+              "optionIds": [
+                "D98.encouraged"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O4e2c987d184f16821850"
+              ]
+            }
+          ],
+          "v5": [
+            {
+              "sourceResponseId": "C15-SRC-D97-1",
+              "itemId": "D97",
+              "optionIds": [
+                "D97.encourage"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O905d74ae2e04de1d67fc"
+              ]
+            },
+            {
+              "sourceResponseId": "C15-SRC-D98-1",
+              "itemId": "D98",
+              "optionIds": [
+                "D98.encouraged"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O920dc480bd773c1b2b20"
+              ]
+            }
+          ],
+          "v5AllOriginalSelectionsBound": true
+        },
+        {
+          "profileId": "C16",
+          "sourceOptionSelections": [
+            {
+              "itemId": "D97",
+              "optionIds": [
+                "D97.approval"
+              ]
+            },
+            {
+              "itemId": "D98",
+              "optionIds": [
+                "D98.permission"
+              ]
+            }
+          ],
+          "v4": [
+            {
+              "sourceResponseId": "C16-SRC-D97-1",
+              "itemId": "D97",
+              "optionIds": [
+                "D97.approval"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O997fd4310d8fe2fa1cde"
+              ]
+            },
+            {
+              "sourceResponseId": "C16-SRC-D98-1",
+              "itemId": "D98",
+              "optionIds": [
+                "D98.permission"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O27c41a18d51e01f0f902"
+              ]
+            }
+          ],
+          "v5": [
+            {
+              "sourceResponseId": "C16-SRC-D97-1",
+              "itemId": "D97",
+              "optionIds": [
+                "D97.approval"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O6fd236d6f826b18ef3e4"
+              ]
+            },
+            {
+              "sourceResponseId": "C16-SRC-D98-1",
+              "itemId": "D98",
+              "optionIds": [
+                "D98.permission"
+              ],
+              "currentPacketBound": true,
+              "observationIds": [
+                "O080819c478f14f178de1"
+              ]
+            }
+          ],
+          "v5AllOriginalSelectionsBound": true
+        }
+      ]
+    }
+  ],
+  "allOriginalNegativeControlsPreserved": true
+}

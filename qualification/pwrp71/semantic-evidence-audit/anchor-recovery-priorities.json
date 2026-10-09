@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "PWRP71-AUTHORED-ANCHOR-RECOVERY-PRIORITIES-V1",
+  "judgments": [
+    {
+      "profile": "C10",
+      "missing": [
+        "D36 ordered recovery answer in v4"
+      ],
+      "materiality": "Its exact partial order is useful but not required to distinguish continued task function from ease or changed recovery conditions/meaning. The Mapping-entry opt-in experiment legitimately made this source answer available and retained its exact order in v5.",
+      "disposition": "recovered as optional authored branch evidence in v5"
+    },
+    {
+      "profile": "C11",
+      "missing": [
+        "M13.company",
+        "D87.settled",
+        "D88.held",
+        "D86.support"
+      ],
+      "materiality": "These are material to CQ10 because they separate company, internal effect, shared practical support, and aftermath. v4 did not preserve them in the packet.",
+      "disposition": "recovered through separately marked Mapping-entry opt-in in v5"
+    },
+    {
+      "profile": "C12",
+      "missing": [
+        "D45.return"
+      ],
+      "materiality": "Optional to CQ11: D43/D89/D90 plus the actual D42 different-known-delay event preserve the intended wanted-versus-expected distinction.",
+      "disposition": "not needed for the authored semantic case; retain as optional branch observation"
+    },
+    {
+      "profile": "P05",
+      "missing": [
+        "M10.words and some downstream authored answers in v4"
+      ],
+      "materiality": "Source-contract mismatch caused by M10.observable. The experiment shows the exact authored base M10 answer is issued if explicit body_detail permission exists at Mapping entry. No option translation; P05's unrelated authored anchor completeness remains separately assessed.",
+      "disposition": "recovered only in the separately labeled variant; original consent timing retained"
+    },
+    {
+      "profile": "P04",
+      "missing": [
+        "D43",
+        "D16"
+      ],
+      "materiality": "Not required by CQ01-CQ14; optional focused branch evidence.",
+      "disposition": "preserve as focused branch; do not synthesize"
+    },
+    {
+      "profile": "P06",
+      "missing": [
+        "D01"
+      ],
+      "materiality": "Not required by CQ01-CQ14; optional focused branch evidence.",
+      "disposition": "preserve as focused branch; do not synthesize"
+    },
+    {
+      "profile": "P08",
+      "missing": [
+        "D18"
+      ],
+      "materiality": "Not required by CQ01-CQ14; optional focused branch evidence.",
+      "disposition": "preserve as focused branch; do not synthesize"
+    },
+    {
+      "profile": "P09",
+      "missing": [
+        "D61",
+        "D07",
+        "D08",
+        "D11",
+        "D10"
+      ],
+      "materiality": "Not required by CQ01-CQ14; preserve the legitimate route branch and do not force these items.",
+      "disposition": "preserve as focused branch; do not synthesize"
+    },
+    {
+      "profile": "P07",
+      "missing": [
+        "no authored Deepening anchors"
+      ],
+      "materiality": "Absence is not a failure. An ordinary bounded packet can be useful; invented protectors or psychological problems would overreach.",
+      "disposition": "retain as positive restraint case; no recovery required"
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "PWRP71-GATE9-COMMAND-RESULTS-V1",
+  "verifiedStartingBranch": "codex/pwqe51-fictional-session-replay-pwrp71-v4",
+  "verifiedStartingCommit": "9b7095919c99861510be8498b822ae8983eaed87",
+  "workingBranch": "codex/pwrp71-semantic-evidence-v5",
+  "commands": [
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "result": "380 passed; 0 failed; rerun against pushed revision 1b6225dec8124074e278a521a3652925c7d64551",
+      "outputFile": "npm-test-pushed-commit.log"
+    },
+    {
+      "command": "npx tsx --test [15 session, routing-contract, replay, packet, adapter, validation, runner, readiness, review, and semantic-evidence test files]",
+      "exitCode": 0,
+      "result": "103 passed; 0 failed",
+      "outputFile": "session-packet-regressions.log"
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "result": "TypeScript check passed",
+      "outputFile": "typecheck.log"
+    },
+    {
+      "command": "npx eslint [scoped changed assessment, report, replay, audit, and test files]",
+      "exitCode": 0,
+      "result": "Scoped ESLint passed",
+      "outputFile": "scoped-eslint.log"
+    },
+    {
+      "command": "npm run build (sandboxed)",
+      "exitCode": 1,
+      "result": "SWC could not canonicalize the OneDrive-backed workspace path; Windows returned access denied before application compilation",
+      "outputFile": "build.log"
+    },
+    {
+      "command": "npm run build (workspace-access retry)",
+      "exitCode": 0,
+      "result": "Production build completed",
+      "outputFile": "build-escalated.log"
+    },
+    {
+      "command": "npm run pwqe51:parity",
+      "exitCode": 0,
+      "result": "Audit completed; this is not a parity-pass assertion. Strict coverage remains incomplete with 893 overlapping unsupported surfaces and zero unexplained differences",
+      "outputFile": "../routing-parity/normal-parity-output.txt",
+      "outputSha256": "79dc018f98964cf36c8c73dd7c04a46be9444548a0254708393d7a1cd1941e79"
+    },
+    {
+      "command": "npm run pwqe51:parity:strict",
+      "exitCode": 1,
+      "result": "incomplete_unsupported_coverage; 893 overlapping unsupported surfaces; zero unexplained differences",
+      "outputFile": "../routing-parity/strict-parity-output.txt",
+      "outputSha256": "aa0cf3dfd3ee2146ad1a57373d8c136e7a14e515f8c20d4dda1105085f2fad67"
+    },
+    {
+      "command": "npx tsx scripts/audit-pwrp71-semantic-evidence/index.ts",
+      "exitCode": 0,
+      "result": "14 cases audited; 25/25 v5 independent packet verifiers passed; 0 verifier failures; 25/25 normalized replay hashes matched",
+      "outputFile": "semantic-audit.log"
+    },
+    {
+      "command": "npm run pwqe51:replay:fictional -- [25 v5 profiles, Mapping-entry opt-in P05/C10/C11]",
+      "exitCode": 0,
+      "result": "25/25 Mapping and Deepening complete; all profile packets adapter-accepted",
+      "fixtureManifestSha256": "17b1c8cd9e43f0d647733e0408e5e663490da52e261e8124df9243181512b19f"
+    },
+    {
+      "command": "npm run pwqe51:replay:fictional -- [three-profile unmodified and Mapping-entry consent arms]",
+      "exitCode": 0,
+      "result": "P05, C10, and C11 both replayed successfully in each consent configuration; exact original M10 options retained",
+      "unmodifiedConsentManifestSha256": "7524fb6a516e833f53f8a9c073a22108ff49f71c86274df4112ef2486527afd9",
+      "mappingEntryConsentManifestSha256": "08305681ea5765de45201e49bc937f5504e2edbe5c647c9ac791218a62bdbbf9"
+    },
+    {
+      "command": "npm run pwqe51:replay:fictional -- [independent second 25-profile v5 replay]",
+      "exitCode": 0,
+      "result": "25/25 normalized semantic result hashes matched; physical packet artifacts contain newly generated runtime IDs",
+      "secondManifestSha256": "11b6c10dce80481525f7b3f4ecf0cae5df1bd2eb863ca0c239296dbe70cf60b9"
+    },
+    {
+      "command": "npm run reports:qualify:pwrp71 -- offline --fixture-set route-replays-v5 --profiles [all 25] --reports ALL",
+      "exitCode": 0,
+      "result": "offline_complete; 125/125 structural mock results accepted; 250 completed attempts; 0 validation issues; 0 provider cost and tokens; semantic report quality not established",
+      "runId": "pwrp71-v5-provenance-full-20261008-cap5usd",
+      "qualificationRunSha256": "8157fe09b0d4d73f5ce4dca47e26f5a73951f24f75a710f4e076e485c0c34ec8"
+    },
+    {
+      "command": "npm run reports:qualify:pwrp71 -- offline [initial one-microdollar preflight cap]",
+      "exitCode": 0,
+      "result": "Run object failed safely at estimated cost reservation; no mock generation, provider calls, or cost. Retained as a superseded cap-sizing preflight.",
+      "runId": "pwrp71-v5-provenance-full-20261008"
+    },
+    {
+      "command": "npm run reports:qualify:pwrp71 -- resume pwrp71-v5-provenance-full-20261008-cap5usd",
+      "exitCode": 0,
+      "result": "Recovered transient OneDrive atomic-rename failure and completed the 125-result run; no fallback fixture set was used"
+    },
+    {
+      "command": "npm run typecheck (after branch-outcome ledger update)",
+      "exitCode": 0,
+      "result": "TypeScript check passed",
+      "outputFile": "post-ledger-patch-checks.md"
+    },
+    {
+      "command": "npx eslint scripts/audit-pwrp71-semantic-evidence/index.ts (after branch-outcome ledger update)",
+      "exitCode": 0,
+      "result": "Scoped audit-script lint passed",
+      "outputFile": "post-ledger-patch-checks.md"
+    },
+    {
+      "command": "npx tsx scripts/audit-pwrp71-semantic-evidence/index.ts (after branch-outcome ledger update)",
+      "exitCode": 0,
+      "result": "14 cases audited; 25/25 v5 packet verifiers passed; 0 verifier failures; v4/v5 offline summaries each retained 125 accepted results; explicit consent-arm dropped outcomes regenerated",
+      "outputFile": "post-ledger-patch-checks.md"
+    }
+  ],
+  "liveProviderGeneration": "not_run; no monetary cap was authorized and reviewed routing evidence is missing",
+  "productionActivation": "unchanged"
+}

@@ -1,0 +1,30 @@
+{
+  "artifact_type": "pwrp71_report",
+  "report_release": "PWRP-7.1.0-candidate.1",
+  "source_manifest_sha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+  "report_id": "pwrp71_dfec85d5a129fb07dfd8a1808be4",
+  "report_type": "MAP",
+  "release_id": "PWQE-5.1.0-candidate.1",
+  "snapshot_id": "fictional-C03-mapping",
+  "evidence_sha256": "579e4ccb4dfa7463b6dfe32081d73841167cbe18e837c30f2b3db074f764dc11",
+  "report_markdown": "# Offline structural fixture for MAP\n\n*Patternwork is nonclinical self-reflection. Parts and state names are working interpretations, not diagnoses or physiological measurements.*\n",
+  "draft": {
+    "report_release": "PWRP-7.1.0-candidate.1",
+    "release_id": "PWQE-5.1.0-candidate.1",
+    "snapshot_id": "fictional-C03-mapping",
+    "evidence_sha256": "579e4ccb4dfa7463b6dfe32081d73841167cbe18e837c30f2b3db074f764dc11",
+    "report_type": "MAP",
+    "title": "Offline structural fixture for MAP",
+    "title_claim_ids": [],
+    "content_status": "insufficient_evidence",
+    "sections": [],
+    "claims": [],
+    "name_registry": [],
+    "relationships": [],
+    "reflection_questions": []
+  },
+  "digests": {
+    "artifact_sha256": "158c26ffca108f1027bd347929295b55269c0173083ab3c21738869864cd1d31",
+    "report_markdown_sha256": "205c73b3055018d450013027e44aacb906e5063eb2c6fc7a8a2f32d18114ea20"
+  }
+}

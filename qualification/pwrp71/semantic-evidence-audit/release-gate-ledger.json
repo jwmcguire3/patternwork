@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "PWRP71-GATE9-RELEASE-LEDGER-V1",
+  "sourceRevision": {
+    "verifiedStartingBranch": "codex/pwqe51-fictional-session-replay-pwrp71-v4",
+    "verifiedStartingCommit": "9b7095919c99861510be8498b822ae8983eaed87",
+    "startingBranchPushedToOrigin": true,
+    "workingBranch": "codex/pwrp71-semantic-evidence-v5",
+    "originMainAtGate0": "69d3edaa63bfef08b1adc99c76263cb23672b9fe",
+    "mainContainedNoLaterRelevantChanges": true
+  },
+  "protectedSources": {
+    "semanticCasesRawSha256": "aadc23bbcd8efb180fbccbe54f127024c7b4ea5593b60ca18afb5d4baaa0c819",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+    "routerPacketSchemaSha256": "0e4e62a10ca14841b0c90f22465761f33fc0975c874dc045a6cda3f242bdb24a",
+    "reportDraftSchemaSha256": "14e880841aab064593b777b9d113376a30338968e4b0375a38955b174e55b4ba",
+    "reportReviewSchemaSha256": "cfbb62aea8cc00ab3b1858f0ccdcb0b8dd46066ad1a52b64f9140156edc90194",
+    "v2NormalizedManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "v2RawManifestSha256": "3abd66592c840f3719cf4636fd283be6e8ab6d0cc931c1418eba24f072b5e7b3",
+    "v3ManifestSha256": "da699629a1fa13e81f07259a06e4a4dbcbed4de0afa94274f10aca36bccf98ad",
+    "v4ManifestSha256": "58503be292f08becb16403ff2be8b14b0b48c4da57acdfe2c8e92184c39605a2",
+    "v5ManifestSha256": "17b1c8cd9e43f0d647733e0408e5e663490da52e261e8124df9243181512b19f",
+    "v5RouterRuntimeSha256": "e7937399a9c5fd96bc0fbe7413e0dc26452a33b11a92d653a968f0b76abb7ac6",
+    "v5OfflineRunSha256": "8157fe09b0d4d73f5ce4dca47e26f5a73951f24f75a710f4e076e485c0c34ec8"
+  },
+  "gates": {
+    "fixtureSourceValidity": { "status": "pass", "evidence": "v2/v3/v4 protected source hashes verified; v5 manifest and selected provenance validated" },
+    "fullSessionExecution": { "status": "pass", "evidence": "25/25 v5 profiles completed Mapping and Deepening through the production session lifecycle" },
+    "semanticEvidenceCoverage": { "status": "full", "evidence": "all CQ01-CQ14 current v5 packets satisfy their material source-bound requirements; v4 CQ08-CQ10 were unreachable due the M10 permission variant" },
+    "packetAndAdapterValidation": { "status": "pass", "evidence": "25/25 v5 profile MAP and Deepening packets/adapters pass; independent verifier reports zero failures" },
+    "independentRoutingQualification": { "status": "incomplete", "evidence": "strict parity remains incomplete with 893 unsupported surfaces; no reviewed runner qualification manifest is pinned" },
+    "offlineReportStructure": { "status": "pass", "evidence": "125/125 structural mock results accepted; zero issues/cost; empty drafts do not establish report quality" },
+    "realProviderGeneration": { "status": "not_run", "evidence": "no monetary cap authorization and routing qualification evidence is outstanding" },
+    "independentSemanticReview": { "status": "pending", "evidence": "no live report output or independent report reviewer receipt" },
+    "humanApproval": { "status": "pending", "evidence": "approval manifest not created" },
+    "productionActivation": { "status": "unchanged", "evidence": "no production activation control or deployment changed" }
+  },
+  "v4OfflineReceiptCaveat": "The v4 ledger reports a full offline qualification run, but the supplied v4 directory does not retain the claimed run/attempt receipts. A prior reproduction was performed during Gate 0; v5 now retains exact run.json, attempts.json, and report artifacts.",
+  "finalCommandResultsFile": "final-verification/command-results.json",
+  "productionActivation": "unchanged"
+}

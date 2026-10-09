@@ -120,8 +120,8 @@ function routeInput(state: Pick<Pwqe51SessionState, "pass" | "responses" | "phas
   });
   const basePairs = (state.routerInput.distinctPairs ?? []).filter((pair) => !pair.some((occurrenceId) => allReplayOccurrences.has(occurrenceId)));
   const distinctPairs = [...new Map([...basePairs, ...replayPairs].map((pair) => {
-    const canonical = [...pair].sort() as [string, string];
-    return [canonical.join("\u0000"), canonical] as const;
+    const identity = [...pair].sort().join("\u0000");
+    return [identity, pair] as const;
   })).values()];
   const episodeLinks = [
     ...(state.routerInput.episodeLinks ?? []).filter((link) => !allReplayOccurrences.has(link.occurrenceId)),
@@ -403,7 +403,13 @@ function rootBasisFor(state: Pwqe51SessionState, current: Pwqe51CurrentInteracti
 export function createPwqe51SessionState(
   source: Pwqe51SourcePackage,
   routerInput: Pwqe51SessionState["routerInput"] = {},
+  options: { readonly initialOptedInTopics?: readonly string[] } = {},
 ): Pwqe51SessionState {
+  const initialOptedInTopics = [...new Set(options.initialOptedInTopics ?? [])];
+  const availableTopics = new Set(source.routingTargets.entry_points.map((entry) => entry.id));
+  if (initialOptedInTopics.some((topic) => !availableTopics.has(topic))) {
+    throw new Error("PWQE 5.1 initial topic opt-in must name an authored entry topic.");
+  }
   const partial = {
     schemaVersion: PWQE51_SESSION_SCHEMA,
     sourceRelease: source.questionBank.release,
@@ -414,11 +420,11 @@ export function createPwqe51SessionState(
     occurrenceBindings: {} as Readonly<Record<string, string>>,
     referentRolesByOccurrenceSlot: {} as Readonly<Record<string, string>>,
     replayBindingHistory: [] as Pwqe51ReplayBindingDecision[],
-    optedInTopics: [] as string[],
+    optedInTopics: initialOptedInTopics,
     controls: [] as ("end" | "shorten")[],
     routerInput,
   };
-  const compiled = compileBoundRoute({ ...routerInput, responses: [], phase: "mapping", occurrenceBindings: {} }, source);
+  const compiled = compileBoundRoute({ ...routerInput, responses: [], phase: "mapping", occurrenceBindings: {}, optedInTopics: initialOptedInTopics }, source);
   return { ...partial, routerInput: { ...routerInput, episodeLinks: compiled.episodeLinks }, occurrenceBindings: compiled.occurrenceBindings, routerResult: compiled.result, currentInteraction: currentFor(compiled.result, null) };
 }
 

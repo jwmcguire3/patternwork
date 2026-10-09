@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
-import os from "node:os";
+import { mkdir, mkdtemp, rm } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
 import {
@@ -13,9 +12,11 @@ import {
 import { runPwrp71Qualification } from "../../lib/server/reports/qualification/runner.ts";
 
 const timestamp = "2026-10-08T12:00:00.000Z";
+const TEST_SCRATCH = path.join(process.cwd(), ".codex-temp", "test-runs");
 
 async function withOfflineRun(run: (input: { readonly runId: string; readonly outputRoot: string }) => Promise<void>): Promise<void> {
-  const outputRoot = await mkdtemp(path.join(os.tmpdir(), "pwrp71-approval-offline-"));
+  await mkdir(TEST_SCRATCH, { recursive: true });
+  const outputRoot = await mkdtemp(path.join(TEST_SCRATCH, "pwrp71-approval-offline-"));
   const runId = `offline-${process.pid}-${Date.now()}`;
   try {
     await runPwrp71Qualification({

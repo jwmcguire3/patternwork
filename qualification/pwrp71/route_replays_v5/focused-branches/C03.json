@@ -1,0 +1,475 @@
+{
+  "schemaVersion": "PWQE51-FOCUSED-ROUTER-CONTRACT-CASE-V1",
+  "profileId": "C03",
+  "experimentalFixtureVariant": null,
+  "caseKind": "focused_router_contract_case",
+  "fullAssessmentTranscript": false,
+  "independentlyReviewedRoutingEvidence": false,
+  "semanticClaim": "Pride that is difficult to allow",
+  "status": "all_authored_semantic_anchors_issued_in_full_session",
+  "sourcePins": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "authoredFixtureFile": "C03.json",
+    "authoredFixtureSha256": "94ca2e529c05dd0b13e8d5c2bd71ed54ac501dfdd44811b5e0dffa7ccc047d42",
+    "routeReplayArtifactFile": "C03.json",
+    "routeReplayArtifactSha256": "fa64330d99bf065c7551ab347cf913484c11ce12a6a5d442b744ed3200a546cd",
+    "semanticResultSha256": "adb0c130c20e03a83845887e4a9021f548820fe96233e0d812c39ec7d4c63d59",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "reportRelease": "PWRP-7.1.0-candidate.1"
+  },
+  "separationRules": {
+    "sourceAnswersRemainUnchanged": true,
+    "syntheticMappingScaffoldIsNotEvidenceForThisSemanticClaim": true,
+    "syntheticDeepeningAnswersAreContextOnly": true,
+    "routerMustIssueEveryQuestion": true,
+    "occurrenceAndBindingMustMatchExactly": true
+  },
+  "authoredCore": {
+    "requiredSourceResponseIds": [
+      "C03-SRC-D72-1",
+      "C03-SRC-D73-1",
+      "C03-SRC-D74-1",
+      "C03-SRC-D65-1",
+      "C03-SRC-D66-1"
+    ],
+    "acceptedSourceResponseIds": [
+      "C03-SRC-D72-1",
+      "C03-SRC-D73-1",
+      "C03-SRC-D74-1",
+      "C03-SRC-D65-1",
+      "C03-SRC-D66-1"
+    ],
+    "status": "complete",
+    "exactSourceAnswers": [
+      {
+        "sourceResponse": {
+          "responseId": "C03-SRC-D72-1",
+          "questionId": "D72",
+          "occurrenceId": "fx_C03_deepening_D72",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D72.pride"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "basis": "actual_recalled"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D72",
+          "stage": "deepening",
+          "prompt": "Think of a recent moment when you kept a reaction or wish to yourself. What did you hold back?",
+          "episodeFamily": "self_expression",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D72.anger",
+              "text": "Anger or a wish to push back.",
+              "reportedValue": "anger"
+            },
+            {
+              "id": "D72.hurt",
+              "text": "Hurt or sadness.",
+              "reportedValue": "hurt"
+            },
+            {
+              "id": "D72.care",
+              "text": "A wish for help or care.",
+              "reportedValue": "care"
+            },
+            {
+              "id": "D72.pride",
+              "text": "Excitement or pride in something.",
+              "reportedValue": "pride"
+            },
+            {
+              "id": "D72.interest",
+              "text": "An interest or ambition I wanted to pursue.",
+              "reportedValue": "interest"
+            },
+            {
+              "id": "D72.opinion",
+              "text": "An opinion I wanted to express.",
+              "reportedValue": "opinion"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_62fc37072dac9ba7c918bbc0c7a99a1a6204ce5a",
+          "runtimeOccurrenceId": "pwep_1f20b0a9-6c7a-4e02-a11f-d59a530b6d94",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D72.pride"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C03-SRC-D73-1",
+          "questionId": "D73",
+          "occurrenceId": "fx_C03_deepening_D72",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D73.wrong"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D73",
+          "stage": "deepening",
+          "prompt": "What most shaped keeping that reaction or wish to yourself?",
+          "episodeFamily": "bound",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D73.privacy",
+              "text": "I wanted to keep it private.",
+              "reportedValue": "privacy"
+            },
+            {
+              "id": "D73.timing",
+              "text": "There was a better time or place for it.",
+              "reportedValue": "timing"
+            },
+            {
+              "id": "D73.consequences",
+              "text": "There were practical consequences to showing it.",
+              "reportedValue": "consequences"
+            },
+            {
+              "id": "D73.response",
+              "text": "I expected a response I did not want.",
+              "reportedValue": "response"
+            },
+            {
+              "id": "D73.wrong",
+              "text": "It felt wrong for me to have that feeling or wish.",
+              "reportedValue": "wrong"
+            },
+            {
+              "id": "D73.overwhelm",
+              "text": "Letting myself feel it fully seemed too much.",
+              "reportedValue": "overwhelm"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_f207d9af27b31522628332e6d9208be0a863af45",
+          "runtimeOccurrenceId": "pwep_1f20b0a9-6c7a-4e02-a11f-d59a530b6d94",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D73.wrong"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C03-SRC-D74-1",
+          "questionId": "D74",
+          "occurrenceId": "fx_C03_deepening_D72",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D74.push"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D74",
+          "stage": "deepening",
+          "prompt": "Even without showing it, how much room did you give that reaction or wish inside?",
+          "episodeFamily": "bound",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D74.allow",
+              "text": "I could acknowledge it and let myself feel it.",
+              "reportedValue": "allow"
+            },
+            {
+              "id": "D74.later",
+              "text": "I intended to return to it when I had room.",
+              "reportedValue": "later"
+            },
+            {
+              "id": "D74.push",
+              "text": "I tried not to let myself feel it.",
+              "reportedValue": "push"
+            },
+            {
+              "id": "D74.attack",
+              "text": "I was hard on myself for having it.",
+              "reportedValue": "attack"
+            },
+            {
+              "id": "D74.hard_locate",
+              "text": "I found it difficult to tell what I actually felt.",
+              "reportedValue": "hard_locate"
+            },
+            {
+              "id": "D74.changed",
+              "text": "It changed or faded without my trying to push it away.",
+              "reportedValue": "changed"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_8c75a8c0c754d9487c1f4ec94c46e19b0037cf1b",
+          "runtimeOccurrenceId": "pwep_1f20b0a9-6c7a-4e02-a11f-d59a530b6d94",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D74.push"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C03-SRC-D65-1",
+          "questionId": "D65",
+          "occurrenceId": "fx_C03_deepening_D72",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D65.judge"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D65",
+          "stage": "deepening",
+          "prompt": "When you noticed your own reaction in {episode_label}, how did you relate to it?",
+          "episodeFamily": "bound",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D65.curious",
+              "text": "I wanted to understand what was happening in me.",
+              "reportedValue": "curious"
+            },
+            {
+              "id": "D65.patient",
+              "text": "I could let the reaction be there without rushing to change it.",
+              "reportedValue": "patient"
+            },
+            {
+              "id": "D65.judge",
+              "text": "I judged myself for reacting that way.",
+              "reportedValue": "judge"
+            },
+            {
+              "id": "D65.remove",
+              "text": "I wanted the reaction gone.",
+              "reportedValue": "remove"
+            },
+            {
+              "id": "D65.caught",
+              "text": "I was caught up in it, rather than noticing it from any distance.",
+              "reportedValue": "caught"
+            },
+            {
+              "id": "D65.late",
+              "text": "I only noticed my reaction afterward.",
+              "reportedValue": "late"
+            },
+            {
+              "id": "D65.not_noticed",
+              "text": "I did not notice a reaction I can describe.",
+              "reportedValue": "not_noticed"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_0a76ad819a3d1d5adfcfbbd705aa190211aca167",
+          "runtimeOccurrenceId": "pwep_1f20b0a9-6c7a-4e02-a11f-d59a530b6d94",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D65.judge"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C03-SRC-D66-1",
+          "questionId": "D66",
+          "occurrenceId": "fx_C03_deepening_D72",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D66.compelled"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D66",
+          "stage": "deepening",
+          "prompt": "While noticing that reaction, how much room did you have to choose what happened next?",
+          "episodeFamily": "bound",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D66.choice",
+              "text": "I could feel the reaction and still consider different responses.",
+              "reportedValue": "choice"
+            },
+            {
+              "id": "D66.compelled",
+              "text": "I noticed it, but still felt driven to act one way.",
+              "reportedValue": "compelled"
+            },
+            {
+              "id": "D66.dismiss",
+              "text": "I got distance by dismissing what I felt.",
+              "reportedValue": "dismiss"
+            },
+            {
+              "id": "D66.far",
+              "text": "I felt detached from the situation, rather than more able to choose.",
+              "reportedValue": "far"
+            },
+            {
+              "id": "D66.later",
+              "text": "I could reflect on it only after the moment had passed.",
+              "reportedValue": "later"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_2b039baaa8abdd5792a74277ab98f3715b37c669",
+          "runtimeOccurrenceId": "pwep_1f20b0a9-6c7a-4e02-a11f-d59a530b6d94",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D66.compelled"
+          ]
+        }
+      }
+    ]
+  },
+  "occurrenceConditions": [
+    {
+      "fixtureOccurrenceReference": "fx_C03_deepening_D72",
+      "runtimeOccurrenceId": "pwep_1f20b0a9-6c7a-4e02-a11f-d59a530b6d94",
+      "episodeFamily": "self_expression",
+      "basis": "actual_recalled",
+      "origin": "original_authored_fictional_scenario_episode",
+      "originalMappingContext": [],
+      "syntheticMappingScaffoldContextOnly": [],
+      "referentRoles": []
+    }
+  ],
+  "entryAndPermissionContext": {
+    "focusOccurrenceId": "fx_C03_deepening_D72",
+    "focusTopics": [
+      "self_expression"
+    ],
+    "permissionOnlyTopics": [
+      "body_detail",
+      "self_expression",
+      "body_detail",
+      "self_expression"
+    ],
+    "actualAppliedFocusTopics": [
+      "self_expression"
+    ],
+    "focusTopicsApplied": true,
+    "topicPermissionEvents": [
+      {
+        "topic": "body_detail",
+        "outcome": "opt_in",
+        "provenance": "original_authored_configuration",
+        "sourceRef": "C03.config"
+      },
+      {
+        "topic": "self_expression",
+        "outcome": "opt_in",
+        "provenance": "original_authored_configuration",
+        "sourceRef": "C03.config"
+      }
+    ]
+  },
+  "distinctnessIntents": [],
+  "comparisonBindingIntents": [],
+  "intentionallyForbiddenAnswers": [],
+  "focusedBranchExecution": "not_executed_as_a_separate_transcript; full-session source-answer results are shown per response"
+}

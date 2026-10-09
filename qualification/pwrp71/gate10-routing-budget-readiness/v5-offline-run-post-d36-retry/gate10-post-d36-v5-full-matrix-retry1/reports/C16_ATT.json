@@ -1,0 +1,30 @@
+{
+  "artifact_type": "pwrp71_report",
+  "report_release": "PWRP-7.1.0-candidate.1",
+  "source_manifest_sha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+  "report_id": "pwrp71_de3ca1e3522d418ceb9a656faa32",
+  "report_type": "ATT",
+  "release_id": "PWQE-5.1.0-candidate.1",
+  "snapshot_id": "fictional-C16-deepening",
+  "evidence_sha256": "859c21a04f48832de5d647095292e023be0a82b3c97937c63dcaa32676c5872f",
+  "report_markdown": "# Offline structural fixture for ATT\n\n*Patternwork is nonclinical self-reflection. Parts and state names are working interpretations, not diagnoses or physiological measurements.*\n",
+  "draft": {
+    "report_release": "PWRP-7.1.0-candidate.1",
+    "release_id": "PWQE-5.1.0-candidate.1",
+    "snapshot_id": "fictional-C16-deepening",
+    "evidence_sha256": "859c21a04f48832de5d647095292e023be0a82b3c97937c63dcaa32676c5872f",
+    "report_type": "ATT",
+    "title": "Offline structural fixture for ATT",
+    "title_claim_ids": [],
+    "content_status": "insufficient_evidence",
+    "sections": [],
+    "claims": [],
+    "name_registry": [],
+    "relationships": [],
+    "reflection_questions": []
+  },
+  "digests": {
+    "artifact_sha256": "27db08c4472bf46fc17f3fadc04e0e963f180de509925823fa82b5a80aeb4057",
+    "report_markdown_sha256": "66781e9ebecf8ce95af9b96d4566d16dc616fc1fc851bdce81f5024100fa072b"
+  }
+}

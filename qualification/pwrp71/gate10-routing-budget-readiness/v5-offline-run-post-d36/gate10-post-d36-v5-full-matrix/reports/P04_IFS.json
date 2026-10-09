@@ -1,0 +1,30 @@
+{
+  "artifact_type": "pwrp71_report",
+  "report_release": "PWRP-7.1.0-candidate.1",
+  "source_manifest_sha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+  "report_id": "pwrp71_3e25df3ae165c74c0cd67e766be5",
+  "report_type": "IFS",
+  "release_id": "PWQE-5.1.0-candidate.1",
+  "snapshot_id": "fictional-P04-deepening",
+  "evidence_sha256": "144c3de3a21d89d8c5c34ab7dbc8e6ed52b059d523199a640e9043dadd31818c",
+  "report_markdown": "# Offline structural fixture for IFS\n\n*Patternwork is nonclinical self-reflection. Parts and state names are working interpretations, not diagnoses or physiological measurements.*\n",
+  "draft": {
+    "report_release": "PWRP-7.1.0-candidate.1",
+    "release_id": "PWQE-5.1.0-candidate.1",
+    "snapshot_id": "fictional-P04-deepening",
+    "evidence_sha256": "144c3de3a21d89d8c5c34ab7dbc8e6ed52b059d523199a640e9043dadd31818c",
+    "report_type": "IFS",
+    "title": "Offline structural fixture for IFS",
+    "title_claim_ids": [],
+    "content_status": "insufficient_evidence",
+    "sections": [],
+    "claims": [],
+    "name_registry": [],
+    "relationships": [],
+    "reflection_questions": []
+  },
+  "digests": {
+    "artifact_sha256": "fc2e55eba12af69c00bad948515ad94e236a07ed664ac74db0e76b9d70e4c654",
+    "report_markdown_sha256": "72ef86412d4f20ffbfcd1626d580c814aab0def05b8d54cf2bb2cb8d4726241f"
+  }
+}

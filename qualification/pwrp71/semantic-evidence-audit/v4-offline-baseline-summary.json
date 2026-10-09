@@ -1,0 +1,391 @@
+{
+  "schemaVersion": "PWRP71-OFFLINE-RUN-SUMMARY-V1",
+  "runId": "pwrp71-v4-gate0-reproduction-20261008",
+  "status": "offline_complete",
+  "routeParity": "pending",
+  "fixtureSet": "route-replays-v4",
+  "fixtureManifestSha256": "58503be292f08becb16403ff2be8b14b0b48c4da57acdfe2c8e92184c39605a2",
+  "qualificationRunSha256": "7bdf032c26d05e535c71acc25c6630e80d5db98bb161aa94f8f8264f1a6d3085",
+  "runJsonSha256": "055edf48488d3c7fc39af9688bda4ad2a6a3a2802d53954076a9bb9720d1e8f3",
+  "attemptsJsonSha256": "672ae106901f865ff7367cb3ad4ae7a2df64bd2cbcbe301e070ce3f276a70d78",
+  "reportFileInventorySha256": "1a37e0583ae53c446c2925cf77217b2d4f810d89416fa106b4bace19c45d8930",
+  "reportFileCount": 250,
+  "selectedProfiles": 25,
+  "selectedReports": [
+    "MAP",
+    "IFS",
+    "PV",
+    "ATT",
+    "SYNTHESIS"
+  ],
+  "resultCount": 125,
+  "acceptedResultCount": 125,
+  "resultsByType": {
+    "MAP": 25,
+    "IFS": 25,
+    "PV": 25,
+    "ATT": 25,
+    "SYNTHESIS": 25
+  },
+  "validationIssueCount": 0,
+  "structuralReviewerReceipts": 125,
+  "reviewerVerdicts": [
+    "accept"
+  ],
+  "attemptCount": 250,
+  "attemptStatuses": [
+    "completed"
+  ],
+  "usageStatus": [
+    "mock"
+  ],
+  "requestedModel": [
+    "openai/gpt-6-luna"
+  ],
+  "reasoningEffort": [
+    "max"
+  ],
+  "reportModelPolicySha256": "f18d6512fbf586927d7d9f91d1dd50ea1a084a189c9b21b124d36449cc5f8e8c",
+  "costCapMicros": 5000000,
+  "totalReportedCostMicros": 0,
+  "reservedUnknownCostMicros": 0,
+  "tokenUsage": {
+    "input": 0,
+    "output": 0,
+    "reasoning": 0,
+    "total": 0
+  },
+  "synthesisDependencyIntegrity": {
+    "acceptedSameProfileIfsPvAttPreconditions": 25,
+    "profiles": 25,
+    "runnerEnforcesAcceptedSameProfileLayers": true,
+    "serializedDependencyReceiptIds": false
+  },
+  "resultArtifactDigestsMatchReceipts": true,
+  "totalDraftClaimCount": 0,
+  "allDraftsInsufficientEvidence": true,
+  "semanticReportQualityEstablished": false,
+  "liveProviderUsed": false,
+  "profiles": [
+    {
+      "profileId": "P01",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "P02",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "P03",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "P04",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "P05",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "P06",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "P07",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "P08",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "P09",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "C01",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "C02",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "C03",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "C04",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "C05",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "C06",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "C07",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "C08",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "C09",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "C10",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "C11",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "C12",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "C13",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "C14",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "C15",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    },
+    {
+      "profileId": "C16",
+      "layers": {
+        "MAP": "accepted",
+        "IFS": "accepted",
+        "PV": "accepted",
+        "ATT": "accepted",
+        "SYNTHESIS": "accepted"
+      },
+      "allAccepted": true,
+      "synthesisDependenciesAcceptedSameProfile": true
+    }
+  ],
+  "sourcePins": {
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+    "routerPacketSchemaSha256": "0e4e62a10ca14841b0c90f22465761f33fc0975c874dc045a6cda3f242bdb24a",
+    "reportDraftSchemaSha256": "14e880841aab064593b777b9d113376a30338968e4b0375a38955b174e55b4ba",
+    "reportReviewSchemaSha256": "cfbb62aea8cc00ab3b1858f0ccdcb0b8dd46066ad1a52b64f9140156edc90194",
+    "semanticCaseSetSha256": "fec1752b4a4892da77fcadbf78688b23fd77e010b845ae6ddcd4523c0547569d",
+    "semanticCasesCanonicalJsonSha256": "ad48886eb708871933674f95f008edc08871be0a68d8b887571e430e174201e2",
+    "fixtureSetSha256": "57d591b5915eca831f688acf40729567eb654330b40a551c18e107ada70e902d",
+    "fixtureManifestSha256": "58503be292f08becb16403ff2be8b14b0b48c4da57acdfe2c8e92184c39605a2",
+    "fixtureSourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb",
+    "fixtureSourceSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "fixtureSet": "route-replays-v4",
+    "routerRuntimeSha256": "d5ff00208237805bc4bdbb6023004a164e8fac2f479dedbea61a9740e12a5390"
+  },
+  "qualificationNote": "Deterministic mock structure and validation only. Empty insufficient-evidence drafts do not establish semantic accuracy, report quality, or human approval."
+}

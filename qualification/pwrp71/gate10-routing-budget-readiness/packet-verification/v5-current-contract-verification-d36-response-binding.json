@@ -1,0 +1,981 @@
+{
+  "schemaVersion": "PWRP71-GATE10-V5-CURRENT-PACKET-CONTRACT-VERIFICATION-V1",
+  "generatedAt": "2026-10-09T13:54:32.986Z",
+  "status": "pass",
+  "sourcePins": {
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+    "currentRouterRuntimeSha256": "d08a7da2c6e3119c75e3e60917da42a60bbe6615024f901ac5b11ed26fa06d7d",
+    "semanticCaseSetSha256": "fec1752b4a4892da77fcadbf78688b23fd77e010b845ae6ddcd4523c0547569d",
+    "authoredHistoryManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "fixtureManifestSha256": "17b1c8cd9e43f0d647733e0408e5e663490da52e261e8124df9243181512b19f",
+    "fixtureSourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb"
+  },
+  "checkedProfileCount": 25,
+  "passedProfileCount": 25,
+  "checkedPacketCount": 100,
+  "passedPacketCount": 100,
+  "checks": [
+    "manifest-to-fixture content digests",
+    "current response and authored source-option binding",
+    "packet observation lineage, provenance, targets, sequences, distinctness, stale-response exclusion, and privacy fields",
+    "PWRP 7.1 request preparation for MAP, IFS, PV, and ATT using current source contracts"
+  ],
+  "qualificationBoundary": "Contract verifier and adapter self-tests over retained fictional packets. This is not Python/TypeScript parity, independent human review, real-session evidence, report-quality evaluation, or approval.",
+  "failures": [],
+  "profiles": [
+    {
+      "profileId": "P01",
+      "fixtureArtifactSha256": "09aafe7c0b90fe1ae0af2289acfaebe80bcbfb51be9e9caad3a54b41b0f2e32f",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 45,
+      "packetObservationsChecked": 141,
+      "targetsChecked": 126,
+      "sequenceEdgesChecked": 0,
+      "distinctnessDecisionsChecked": 1,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "c77e49f56aefa302f12d342a3e719dbaab4d460ab8e3197bea78c90a01efb324",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "375f0dcfabc3029d051d621bbf53fb0d069a5d3ef84e77c47b408fd5fcb5e6eb",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "375f0dcfabc3029d051d621bbf53fb0d069a5d3ef84e77c47b408fd5fcb5e6eb",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "375f0dcfabc3029d051d621bbf53fb0d069a5d3ef84e77c47b408fd5fcb5e6eb",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "P02",
+      "fixtureArtifactSha256": "47611cccd841a7598daa9b88ebbb715872c10c1242fcc48be8923443710b229c",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 46,
+      "packetObservationsChecked": 144,
+      "targetsChecked": 117,
+      "sequenceEdgesChecked": 3,
+      "distinctnessDecisionsChecked": 0,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "aeb9ed3363e06ba8ad13027d8788e6c9eea46d65d6aa51f50f00d0148fbfa9a9",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "f02e65f3adc4b5b1bbbac5c1835085969865887292ff376de8c4af8b6c050d87",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "f02e65f3adc4b5b1bbbac5c1835085969865887292ff376de8c4af8b6c050d87",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "f02e65f3adc4b5b1bbbac5c1835085969865887292ff376de8c4af8b6c050d87",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "P03",
+      "fixtureArtifactSha256": "6e17a0bf4ba8abae2aea60cf1249ecaa116acf5c38eb4915873eef826265fb6d",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 33,
+      "packetObservationsChecked": 129,
+      "targetsChecked": 107,
+      "sequenceEdgesChecked": 0,
+      "distinctnessDecisionsChecked": 1,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "e49238d7c8b820933d4cb8f322fec3976a8b2d621599555455df6e4d339a1b2e",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "6fd4735121bbc820c19e0c7f4e6e273f1f49f0e9beb2eed0c97872508a8d7f17",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "6fd4735121bbc820c19e0c7f4e6e273f1f49f0e9beb2eed0c97872508a8d7f17",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "6fd4735121bbc820c19e0c7f4e6e273f1f49f0e9beb2eed0c97872508a8d7f17",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "P04",
+      "fixtureArtifactSha256": "cf2bcb9d2b2c72595dcf984a672c167edab83b8280a6d4f0664ba6316cac4951",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 40,
+      "packetObservationsChecked": 123,
+      "targetsChecked": 94,
+      "sequenceEdgesChecked": 0,
+      "distinctnessDecisionsChecked": 1,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "f7d10b7da36887bea067672f2e73f55323c6c5933cae4a28e030b91e61f4102f",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "d6a454f003b26847ac764367525e2c7ad8933095aa063c16a161b38ee8b8bb2d",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "d6a454f003b26847ac764367525e2c7ad8933095aa063c16a161b38ee8b8bb2d",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "d6a454f003b26847ac764367525e2c7ad8933095aa063c16a161b38ee8b8bb2d",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "P05",
+      "fixtureArtifactSha256": "99ead569d4e93c8865fd3f07c42a4f0175b5b225c9e3d69fa650472b2684ea4f",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 44,
+      "packetObservationsChecked": 126,
+      "targetsChecked": 96,
+      "sequenceEdgesChecked": 0,
+      "distinctnessDecisionsChecked": 0,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "cd75bdac504c1063abc0470cc575315505430b336506220629a5c99774b71dd9",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "14d8865876ed1e9d38400e94e589399e2cc4ccabb03ade2c186c9b031906be88",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "14d8865876ed1e9d38400e94e589399e2cc4ccabb03ade2c186c9b031906be88",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "14d8865876ed1e9d38400e94e589399e2cc4ccabb03ade2c186c9b031906be88",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "P06",
+      "fixtureArtifactSha256": "75b1887c0e70cc630b47f2b4787fa32154465e48d1bd33188bf6609879259c52",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 48,
+      "packetObservationsChecked": 132,
+      "targetsChecked": 111,
+      "sequenceEdgesChecked": 0,
+      "distinctnessDecisionsChecked": 0,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "1d3785dbfd2f6157f5c75eab7bb6545fbc49221033f6d216c931a2f0fcde5a57",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "1ebbcfac7c7e4979d0c738b1272076744893621b97ce7d13b24c7e52caaef8bc",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "1ebbcfac7c7e4979d0c738b1272076744893621b97ce7d13b24c7e52caaef8bc",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "1ebbcfac7c7e4979d0c738b1272076744893621b97ce7d13b24c7e52caaef8bc",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "P07",
+      "fixtureArtifactSha256": "f74ca56083b894d224eebe2efac3862adfe1ab81e92e4acd352586de9499d7b5",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 40,
+      "packetObservationsChecked": 123,
+      "targetsChecked": 102,
+      "sequenceEdgesChecked": 0,
+      "distinctnessDecisionsChecked": 6,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "d9d8e8a1b4201294702de06a0d807fb141b8522da90b4f3fbd78216f15ae4513",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "730cd86f1492c16bd3c9a452347545610bfef8809ae9478456b41526e3b50dbe",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "730cd86f1492c16bd3c9a452347545610bfef8809ae9478456b41526e3b50dbe",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "730cd86f1492c16bd3c9a452347545610bfef8809ae9478456b41526e3b50dbe",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "P08",
+      "fixtureArtifactSha256": "411c59800445ccbcc2264bbee3eafb52ed2a2e42978a08d0b9a2c24ab44284a6",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 50,
+      "packetObservationsChecked": 147,
+      "targetsChecked": 120,
+      "sequenceEdgesChecked": 0,
+      "distinctnessDecisionsChecked": 0,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "dae66423377554e4689f40007b8983c127060cb762a66f797acebdd884d02602",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "34434c0219bd7f577d7cc118c806b5fcb4472d5b11b76cf09badeff7efc79bff",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "34434c0219bd7f577d7cc118c806b5fcb4472d5b11b76cf09badeff7efc79bff",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "34434c0219bd7f577d7cc118c806b5fcb4472d5b11b76cf09badeff7efc79bff",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "P09",
+      "fixtureArtifactSha256": "3fb5a20d80689d1430600dd6463e809ef09e2a317b83c345792f7099f13c3108",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 47,
+      "packetObservationsChecked": 141,
+      "targetsChecked": 108,
+      "sequenceEdgesChecked": 3,
+      "distinctnessDecisionsChecked": 0,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "26e76d64bdd1b0721a7b2b20225355dba54501ec02234d0d14ef87fa801747d3",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "f60e0ebe61eac05a2a84122634907d0f3e253538420508b5361291e386a8fb80",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "f60e0ebe61eac05a2a84122634907d0f3e253538420508b5361291e386a8fb80",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "f60e0ebe61eac05a2a84122634907d0f3e253538420508b5361291e386a8fb80",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "C01",
+      "fixtureArtifactSha256": "87096b8f1381866954c3fbbd299530da34865850d2d1e22ae988a18154896d11",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 39,
+      "packetObservationsChecked": 124,
+      "targetsChecked": 89,
+      "sequenceEdgesChecked": 0,
+      "distinctnessDecisionsChecked": 0,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "b9c45b374c86ba38115f5491f8caf4435228a9e3dbf47fdfa3bf841d36431c2f",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "c4b8363436f22b34b28095b155158cb5716bc397d6231a284b5c6d710df4e036",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "c4b8363436f22b34b28095b155158cb5716bc397d6231a284b5c6d710df4e036",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "c4b8363436f22b34b28095b155158cb5716bc397d6231a284b5c6d710df4e036",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "C02",
+      "fixtureArtifactSha256": "1840d101d9fd08b8f5bfaf80a0247843e4ec8589b7fa7f92c3a7a0955e00ab2e",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 34,
+      "packetObservationsChecked": 121,
+      "targetsChecked": 83,
+      "sequenceEdgesChecked": 0,
+      "distinctnessDecisionsChecked": 0,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "721e3bb5131d8a6a7fd5dd85f8527d204cfb4725606ebbed8ec66aed9ccfd33e",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "c14bbcbd4ff8b6f69c1074b12a15d9132be9d3373d5d825257ff5dcf8ad61055",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "c14bbcbd4ff8b6f69c1074b12a15d9132be9d3373d5d825257ff5dcf8ad61055",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "c14bbcbd4ff8b6f69c1074b12a15d9132be9d3373d5d825257ff5dcf8ad61055",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "C03",
+      "fixtureArtifactSha256": "fa64330d99bf065c7551ab347cf913484c11ce12a6a5d442b744ed3200a546cd",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 33,
+      "packetObservationsChecked": 103,
+      "targetsChecked": 59,
+      "sequenceEdgesChecked": 0,
+      "distinctnessDecisionsChecked": 0,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "be640410c033a9b6ab5c58e6538299ce71cbf9e81daf712ab8e5e7f059c2c810",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "2b0304adbc13fcccd38444b26e9ca4581b9c960295639cb42abfa2cd88abf534",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "2b0304adbc13fcccd38444b26e9ca4581b9c960295639cb42abfa2cd88abf534",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "2b0304adbc13fcccd38444b26e9ca4581b9c960295639cb42abfa2cd88abf534",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "C04",
+      "fixtureArtifactSha256": "1d1d3cc75f2b259a5b3a9317632dd6a9d0e91dd6401b05f82493235923f970a7",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 34,
+      "packetObservationsChecked": 106,
+      "targetsChecked": 62,
+      "sequenceEdgesChecked": 0,
+      "distinctnessDecisionsChecked": 0,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "ad3de2562b52e9a490b250d293915b4cbd0240124b9dba5d4c441e838b50cefc",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "7372101aedb4ef8afa89dfcfea0fd611990979353b68eb3b03f7dda8589f743a",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "7372101aedb4ef8afa89dfcfea0fd611990979353b68eb3b03f7dda8589f743a",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "7372101aedb4ef8afa89dfcfea0fd611990979353b68eb3b03f7dda8589f743a",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "C05",
+      "fixtureArtifactSha256": "98e055edd24c600f451243f6e1c60438e537043bebb9a17e827a39bfc2835764",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 35,
+      "packetObservationsChecked": 106,
+      "targetsChecked": 78,
+      "sequenceEdgesChecked": 0,
+      "distinctnessDecisionsChecked": 0,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "b0367654be395640444ebebd0981ea3e9c624eea1ddf7dfac51678dab84b0b1d",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "0adff918f8faa8c0fa0e373435af59aa6699e924df24ea2063efb91860a1be5b",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "0adff918f8faa8c0fa0e373435af59aa6699e924df24ea2063efb91860a1be5b",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "0adff918f8faa8c0fa0e373435af59aa6699e924df24ea2063efb91860a1be5b",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "C06",
+      "fixtureArtifactSha256": "7fad10e46a817ce002a09a471b12c8b9cfb3069c00b96040bae9f13597dcb4d8",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 35,
+      "packetObservationsChecked": 109,
+      "targetsChecked": 68,
+      "sequenceEdgesChecked": 0,
+      "distinctnessDecisionsChecked": 0,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "0c5b9e92d61d7d1a2cdf95935bdcab025d90c8f843e17bd3721f196179ffa32f",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "5c6932b8cbe227b089da7825515edfaa73f354c07ed587c9a17681e053e96cde",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "5c6932b8cbe227b089da7825515edfaa73f354c07ed587c9a17681e053e96cde",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "5c6932b8cbe227b089da7825515edfaa73f354c07ed587c9a17681e053e96cde",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "C07",
+      "fixtureArtifactSha256": "0ed7896150d3cc9078dc3276164689d50024ceeaf2459cb9b5f46a2dc5692331",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 37,
+      "packetObservationsChecked": 109,
+      "targetsChecked": 113,
+      "sequenceEdgesChecked": 0,
+      "distinctnessDecisionsChecked": 1,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "1852bfe18e42f1b6c10cb5d8ba3ee08b8d5ada0272722cd7764d03590d90c750",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "4e48607b3d9b901d00b722e75d87710a2eed33d3834fc591c251def4228e848a",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "4e48607b3d9b901d00b722e75d87710a2eed33d3834fc591c251def4228e848a",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "4e48607b3d9b901d00b722e75d87710a2eed33d3834fc591c251def4228e848a",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "C08",
+      "fixtureArtifactSha256": "b9af661405c0e53c08a23e626ec8b98063548f2412e3e25f0a77b88712d4d45f",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 41,
+      "packetObservationsChecked": 118,
+      "targetsChecked": 113,
+      "sequenceEdgesChecked": 6,
+      "distinctnessDecisionsChecked": 0,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "fff0770586590f9b2a21ea4625644e5a5020da534171f4aab55f9f8177d845f5",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "353a047e89ab7b1cc191816c027123fc7d9f470cc729658e60bc02d2bcc193d1",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "353a047e89ab7b1cc191816c027123fc7d9f470cc729658e60bc02d2bcc193d1",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "353a047e89ab7b1cc191816c027123fc7d9f470cc729658e60bc02d2bcc193d1",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "C09",
+      "fixtureArtifactSha256": "4eca8f83a04eab5536b06cccef41c4a6897b2197b4dd49e3a6bd733d31db591b",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 39,
+      "packetObservationsChecked": 115,
+      "targetsChecked": 77,
+      "sequenceEdgesChecked": 3,
+      "distinctnessDecisionsChecked": 0,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "029111f0c99264774fc4e2f15e8b81a3b640ed780b0fbf4374def2a159370438",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "d591f2235f2b1d1891322be4e5f37aafd278ac20df4df28960f9cdc49f10a235",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "d591f2235f2b1d1891322be4e5f37aafd278ac20df4df28960f9cdc49f10a235",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "d591f2235f2b1d1891322be4e5f37aafd278ac20df4df28960f9cdc49f10a235",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "C10",
+      "fixtureArtifactSha256": "6591fd1aae22a887b213958412813376b9ab6102581e487357b6319459d90afe",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 56,
+      "packetObservationsChecked": 180,
+      "targetsChecked": 133,
+      "sequenceEdgesChecked": 6,
+      "distinctnessDecisionsChecked": 0,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "0e86e963bf859836896fd54fb7e81aa9c273caf387479822dde4072d68dbbdf1",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "708397f35a5ba798d3ed6bccd9a2f4059d912751a91e2a123cb9aadf5dc43e47",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "708397f35a5ba798d3ed6bccd9a2f4059d912751a91e2a123cb9aadf5dc43e47",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "708397f35a5ba798d3ed6bccd9a2f4059d912751a91e2a123cb9aadf5dc43e47",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "C11",
+      "fixtureArtifactSha256": "ebf9b4787970ec80f69843609230e62e1093f21e11499544ed5097c03c7c1e80",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 47,
+      "packetObservationsChecked": 132,
+      "targetsChecked": 105,
+      "sequenceEdgesChecked": 0,
+      "distinctnessDecisionsChecked": 0,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "d33d183b8a8693431bd68798574ca0540a092e1f4225177f6ca32486014986ef",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "cf4e81f62092c8f979b96ae44864b66b2bc0c77563a6cd6266e1383df374b1e3",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "cf4e81f62092c8f979b96ae44864b66b2bc0c77563a6cd6266e1383df374b1e3",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "cf4e81f62092c8f979b96ae44864b66b2bc0c77563a6cd6266e1383df374b1e3",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "C12",
+      "fixtureArtifactSha256": "a7a2fee9449d2079992a0559422be15d93af97d723358b3c7d2b9b8d942cdf19",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 35,
+      "packetObservationsChecked": 103,
+      "targetsChecked": 67,
+      "sequenceEdgesChecked": 0,
+      "distinctnessDecisionsChecked": 1,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "70a28a69936635d56b83b2757538516da48e62a7555567078e7b98b49f10df59",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "2ebab90691ba07e702426126e66cf6dffbb905eb25d522e5d1ab66472876c3b8",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "2ebab90691ba07e702426126e66cf6dffbb905eb25d522e5d1ab66472876c3b8",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "2ebab90691ba07e702426126e66cf6dffbb905eb25d522e5d1ab66472876c3b8",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "C13",
+      "fixtureArtifactSha256": "ad5da676f74a93a5470fc2fd7db072a1962e9812cc097805222fbecc6dba2fd6",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 33,
+      "packetObservationsChecked": 103,
+      "targetsChecked": 56,
+      "sequenceEdgesChecked": 0,
+      "distinctnessDecisionsChecked": 0,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "b9f9ea8605c2a4d7cd2c8686f219adc0fd67edd244ffd961c11f944ac9c82b26",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "f6f14a3b26e460d1375f4c8b767dd17472a4b2be2cfe1a4ef60006b16c4e379d",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "f6f14a3b26e460d1375f4c8b767dd17472a4b2be2cfe1a4ef60006b16c4e379d",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "f6f14a3b26e460d1375f4c8b767dd17472a4b2be2cfe1a4ef60006b16c4e379d",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "C14",
+      "fixtureArtifactSha256": "5d758338d0e56b1dedde6f9355b86a1360d29752ad6da6b1bd580e0a4fcf632a",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 30,
+      "packetObservationsChecked": 97,
+      "targetsChecked": 55,
+      "sequenceEdgesChecked": 0,
+      "distinctnessDecisionsChecked": 0,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "4f591b56fc8154d1f48ffbdd9b60218bcfbbbe4dcfae1449b1260d907ec6c5d1",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "75ee966b29ddf2e59c47550ca04f7209f6b784390540f58fc8b8cfd3c0d82127",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "75ee966b29ddf2e59c47550ca04f7209f6b784390540f58fc8b8cfd3c0d82127",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "75ee966b29ddf2e59c47550ca04f7209f6b784390540f58fc8b8cfd3c0d82127",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "C15",
+      "fixtureArtifactSha256": "af9ae3b515a2bf51e07ff931126394e3db3ba8abbede8c21d1b6accc22c9a369",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 30,
+      "packetObservationsChecked": 94,
+      "targetsChecked": 50,
+      "sequenceEdgesChecked": 0,
+      "distinctnessDecisionsChecked": 0,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "70fcaac500560489b3a209f26f9ba25b958654e69df9bbb1a975ec5a166f061b",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "1f887a322c2a450cee104dbbdf816abc0bb422f090e6e0101ce666aa5ec94aac",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "1f887a322c2a450cee104dbbdf816abc0bb422f090e6e0101ce666aa5ec94aac",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "1f887a322c2a450cee104dbbdf816abc0bb422f090e6e0101ce666aa5ec94aac",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    },
+    {
+      "profileId": "C16",
+      "fixtureArtifactSha256": "c2259919021afbaf4157da2bd17ed140facf61a761a2d5872698bf3e2ccca0ad",
+      "semanticVerifierStatus": "pass",
+      "currentResponsesChecked": 30,
+      "packetObservationsChecked": 94,
+      "targetsChecked": 50,
+      "sequenceEdgesChecked": 0,
+      "distinctnessDecisionsChecked": 0,
+      "packetResults": [
+        {
+          "reportType": "MAP",
+          "packetDigest": "3a9dd64be1a9eb0def8b14287c10ce93698a3e10bb0e611523100fdae1a45d59",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "IFS",
+          "packetDigest": "512ccce864b4fe9af9da102e0965a7732c9b0faae426ead3b71000fcd5985db1",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "PV",
+          "packetDigest": "512ccce864b4fe9af9da102e0965a7732c9b0faae426ead3b71000fcd5985db1",
+          "adapterAccepted": true,
+          "issueCodes": []
+        },
+        {
+          "reportType": "ATT",
+          "packetDigest": "512ccce864b4fe9af9da102e0965a7732c9b0faae426ead3b71000fcd5985db1",
+          "adapterAccepted": true,
+          "issueCodes": []
+        }
+      ],
+      "failures": [],
+      "status": "pass"
+    }
+  ]
+}

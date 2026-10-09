@@ -1,0 +1,159 @@
+
+> patternwork@0.1.0 build
+> next build
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+workflows build complete (23 steps, 3 workflows, time 69ms)
+   ▲ Next.js 16.0.7 (Turbopack)
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Turbopack build encountered 2 warnings:
+./lib/server/debug/report-runner.ts:99:66
+The file pattern (<dynamic> '/lib/server/assessment/pwqe51-router.ts' | <dynamic> 'lib/server/assessment/pwqe51-router.ts' | <dynamic> '/lib/server/assessment/pwqe51-coverage.ts' | <dynamic> 'lib/server/assessment/pwqe51-coverage.ts' | <dynamic> '/lib/server/assessment/pwqe51-flags.ts' | <dynamic> 'lib/server/assessment/pwqe51-flags.ts' | <dynamic> '/lib/server/reports/pwqe51-packet.ts' | <dynamic> 'lib/server/reports/pwqe51-packet.ts' | <dynamic> '/' <dynamic> | <dynamic>) matches 10660 files in [project]/
+   97 |   const files: Record<string, string> = {};
+   98 |   for (const relative of ROUTER_IMPLEMENTATION_FILES) {
+>  99 |     files[relative] = createHash("sha256").update(await readFile(path.join(workspaceRoot, relative))).digest("hex");
+      |                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  100 |   }
+  101 |   return sha256Canonical(files);
+  102 | }
+
+Overly broad patterns can lead to build performance issues and over bundling.
+
+Import traces:
+  #1 [App Route]:
+    ./lib/server/debug/report-runner.ts
+    ./app/.well-known/workflow/v1/step/route.js
+
+  #2 [App Route]:
+    ./lib/server/debug/report-runner.ts
+    ./app/api/debug/reports/route.ts
+
+  #3 [App Route]:
+    ./lib/server/debug/report-runner.ts
+    ./lib/server/debug/report-runner.ts
+    ./app/api/debug/reports/[runId]/route.ts
+
+
+./lib/question-engine/source-integrity.ts:179:41
+The file pattern (<dynamic> '/specs/patternwork/question-engine-v3.1' | <dynamic> 'specs/patternwork/question-engine-v3.1' | <dynamic> '/specs/patternwork/report-prompts-v4.1' | <dynamic> 'specs/patternwork/report-prompts-v4.1' | <dynamic> '/' <dynamic> | <dynamic>) matches 10660 files in [project]/
+  177 |   for (const directory of CANONICAL_DIRECTORIES) {
+  178 |     try {
+> 179 |       for (const entry of await readdir(path.join(workspaceRoot, directory), { withFileTypes: true })) {
+      |                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  180 |         if (entry.isFile()) observed.add(`${directory}/${entry.name}`);
+  181 |       }
+  182 |     } catch (error) {
+
+Overly broad patterns can lead to build performance issues and over bundling.
+
+Import traces:
+  #1 [App Route]:
+    ./lib/question-engine/source-integrity.ts
+    ./lib/server/debug/report-runner.ts
+    ./app/api/debug/reports/[runId]/route.ts
+
+  #2 [App Route]:
+    ./lib/question-engine/source-integrity.ts
+    ./lib/server/exports/service.ts
+    ./app/api/response-exports/[assessmentId]/responses.pdf/route.ts
+
+  #3 [Server Component]:
+    ./lib/question-engine/source-integrity.ts
+    ./lib/server/exports/service.ts
+    ./app/response-exports/[assessmentId]/page.tsx
+
+
+ ✓ Compiled successfully in 4.3s
+   Running TypeScript ...
+   Collecting page data using 31 workers ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Generating static pages using 31 workers (0/31) ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Generating static pages using 31 workers (7/31) 
+   Generating static pages using 31 workers (15/31) 
+   Generating static pages using 31 workers (23/31) 
+ ✓ Generating static pages using 31 workers (31/31) in 819.0ms
+   Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /.well-known/workflow/v1/flow
+├ ƒ /.well-known/workflow/v1/step
+├ ƒ /.well-known/workflow/v1/webhook/[token]
+├ ƒ /api/assessment
+├ ƒ /api/assessment/complete-pass
+├ ƒ /api/assessment/control
+├ ƒ /api/assessment/pause
+├ ƒ /api/assessment/replay-binding
+├ ƒ /api/assessment/resend-resume
+├ ƒ /api/assessment/response
+├ ƒ /api/assessment/resume
+├ ƒ /api/assessment/start
+├ ƒ /api/assessment/state
+├ ƒ /api/cron/assessment-retention
+├ ƒ /api/debug/overview
+├ ƒ /api/debug/reports
+├ ƒ /api/debug/reports/[runId]
+├ ƒ /api/reports/artifacts/[assessmentId]/[reportId]
+├ ƒ /api/reports/download/[assessmentId]/[reportId]
+├ ƒ /api/reports/request-link
+├ ƒ /api/reports/retry
+├ ƒ /api/reports/status
+├ ƒ /api/resend-webhook
+├ ƒ /api/response-exports/[assessmentId]
+├ ƒ /api/response-exports/[assessmentId]/responses.json
+├ ƒ /api/response-exports/[assessmentId]/responses.pdf
+├ ƒ /api/response-exports/request-link
+├ ƒ /api/save-assessment
+├ ƒ /api/selfmap-progress
+├ ○ /assessment
+├ ○ /cannawithdrawl
+├ ○ /companion
+├ ○ /debug
+├ ○ /method
+├ ƒ /reports
+├ ƒ /reports/[assessmentId]
+├ ƒ /reports/consume
+├ ƒ /response-exports/[assessmentId]
+├ ƒ /response-exports/consume
+└ ○ /selfmap
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

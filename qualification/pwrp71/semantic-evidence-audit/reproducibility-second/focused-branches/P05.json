@@ -1,0 +1,689 @@
+{
+  "schemaVersion": "PWQE51-FOCUSED-ROUTER-CONTRACT-CASE-V1",
+  "profileId": "P05",
+  "experimentalFixtureVariant": "body-detail-opt-in-at-mapping-entry-v1",
+  "caseKind": "focused_router_contract_case",
+  "fullAssessmentTranscript": false,
+  "independentlyReviewedRoutingEvidence": false,
+  "semanticClaim": "Loss of words is not the same as deciding to withdraw",
+  "status": "authored_semantic_anchors_not_fully_issued_in_full_session",
+  "sourcePins": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "authoredFixtureFile": "P05.json",
+    "authoredFixtureSha256": "636ce9b29dae9aac1f59799616bb489ece1a0683249811016de0e6446f69ed72",
+    "routeReplayArtifactFile": "P05.json",
+    "routeReplayArtifactSha256": "decc808db0e55976ceaa88bc03cbbbc440690776436637ce720f23fa1ee15ab6",
+    "semanticResultSha256": "94fc3354434ea91a5b9ee2f1140fa6707d643fe6c6509915600d49ffc97a21ae",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "reportRelease": "PWRP-7.1.0-candidate.1"
+  },
+  "separationRules": {
+    "sourceAnswersRemainUnchanged": true,
+    "syntheticMappingScaffoldIsNotEvidenceForThisSemanticClaim": true,
+    "syntheticDeepeningAnswersAreContextOnly": true,
+    "routerMustIssueEveryQuestion": true,
+    "occurrenceAndBindingMustMatchExactly": true
+  },
+  "authoredCore": {
+    "requiredSourceResponseIds": [
+      "P05-A04",
+      "P05-A05",
+      "P05-A08"
+    ],
+    "acceptedSourceResponseIds": [
+      "P05-A04",
+      "P05-A05"
+    ],
+    "status": "incomplete",
+    "reason": "2 of 3 exact source-bound semantic-core responses were accepted.",
+    "exactSourceAnswers": [
+      {
+        "sourceResponse": {
+          "responseId": "P05-A04",
+          "questionId": "D34",
+          "occurrenceId": "fx_P05_E1",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D34.words"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D34",
+          "stage": "deepening",
+          "prompt": "When you became quieter or less responsive in {episode_label}, which description fits best?",
+          "episodeFamily": "bound",
+          "stepBinding": "selected",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D34.choice",
+              "text": "I could respond; I was choosing not to yet.",
+              "reportedValue": "choice"
+            },
+            {
+              "id": "D34.organize",
+              "text": "I needed time to organize a response.",
+              "reportedValue": "organize"
+            },
+            {
+              "id": "D34.words",
+              "text": "I wanted to speak but could not get words out.",
+              "reportedValue": "words"
+            },
+            {
+              "id": "D34.tired",
+              "text": "I did not have the energy to keep responding.",
+              "reportedValue": "tired"
+            },
+            {
+              "id": "D34.far",
+              "text": "I felt far away from what was happening.",
+              "reportedValue": "far"
+            },
+            {
+              "id": "D34.unsafe",
+              "text": "Responding did not feel like a workable option with that person.",
+              "reportedValue": "unsafe"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_d75792c4ba8b952d9dd3fa87fa275502972a5bd3",
+          "runtimeOccurrenceId": "pwep_4c55b723-56d5-4583-b85d-df01654ad75d",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D34.words"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "P05-A05",
+          "questionId": "D30",
+          "occurrenceId": "fx_P05_E1",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D30.stuck"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D30",
+          "stage": "deepening",
+          "prompt": "What was it like to speak in {episode_label}?",
+          "episodeFamily": "bound",
+          "stepBinding": "selected",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D30.normal",
+              "text": "I could say what I meant.",
+              "reportedValue": "normal"
+            },
+            {
+              "id": "D30.faster",
+              "text": "Words came faster than I could choose them.",
+              "reportedValue": "faster"
+            },
+            {
+              "id": "D30.stuck",
+              "text": "I knew what I meant but could not get it out.",
+              "reportedValue": "stuck"
+            },
+            {
+              "id": "D30.form",
+              "text": "I needed longer to work out what to say.",
+              "reportedValue": "form"
+            },
+            {
+              "id": "D30.choose",
+              "text": "I chose not to speak yet.",
+              "reportedValue": "choose"
+            },
+            {
+              "id": "D30.tired",
+              "text": "Talking felt like more effort than I had.",
+              "reportedValue": "tired"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_98d249acd670d79fcaadcfafd3c41d546497b7de",
+          "runtimeOccurrenceId": "pwep_4c55b723-56d5-4583-b85d-df01654ad75d",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D30.stuck"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "P05-A08",
+          "questionId": "D36",
+          "occurrenceId": "fx_P05_E1",
+          "stepId": "recovery",
+          "selectedOptionIds": [
+            "D36.input",
+            "D36.words",
+            "D36.think"
+          ],
+          "status": "answered",
+          "mode": "ordered"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D36",
+          "stage": "deepening",
+          "prompt": "After {episode_label}, which changes do you remember on the way back? Put them in order only where you remember the order.",
+          "episodeFamily": "bound",
+          "stepBinding": "recovery",
+          "selection": {
+            "mode": "partial_order",
+            "max_select": 3,
+            "allow_simultaneous_pair": false,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D36.input",
+              "text": "There was less input or demand.",
+              "reportedValue": "input"
+            },
+            {
+              "id": "D36.notice",
+              "text": "I could notice how I felt.",
+              "reportedValue": "notice"
+            },
+            {
+              "id": "D36.think",
+              "text": "I could think more clearly.",
+              "reportedValue": "think"
+            },
+            {
+              "id": "D36.words",
+              "text": "Words came more easily.",
+              "reportedValue": "words"
+            },
+            {
+              "id": "D36.contact",
+              "text": "I wanted contact.",
+              "reportedValue": "contact"
+            },
+            {
+              "id": "D36.task",
+              "text": "I could start a task again.",
+              "reportedValue": "task"
+            },
+            {
+              "id": "D36.energy",
+              "text": "I had more energy.",
+              "reportedValue": "energy"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "ineligible_in_current_context",
+          "reason": "No route-issued candidate or explicit eligible decision supports administering this authored response in the current context."
+        }
+      }
+    ]
+  },
+  "occurrenceConditions": [
+    {
+      "fixtureOccurrenceReference": "fx_P05_E1",
+      "runtimeOccurrenceId": "pwep_4c55b723-56d5-4583-b85d-df01654ad75d",
+      "episodeFamily": "overload",
+      "basis": "actual_recalled",
+      "origin": "original_authored_scenario_episode",
+      "originalMappingContext": [
+        {
+          "sourceResponse": {
+            "responseId": "P05-A01",
+            "questionId": "M10",
+            "occurrenceId": "fx_P05_E1",
+            "stepId": "first",
+            "selectedOptionIds": [
+              "M10.words"
+            ],
+            "status": "answered",
+            "mode": "single",
+            "basis": "actual_recalled"
+          },
+          "provenance": "original_authored_fictional_answer",
+          "questionContract": {
+            "id": "M10",
+            "stage": "mapping",
+            "prompt": "Think of a day when demands built up. What first told you it was becoming too much?",
+            "episodeFamily": "overload",
+            "stepBinding": "first",
+            "selection": {
+              "mode": "single",
+              "max_select": 1,
+              "allow_simultaneous_pair": true,
+              "order_not_implied": true
+            },
+            "optionsInSourceOrder": [
+              {
+                "id": "M10.urgent",
+                "text": "Everything started to feel urgent.",
+                "reportedValue": "urgent"
+              },
+              {
+                "id": "M10.attention",
+                "text": "I kept losing track of what I was doing.",
+                "reportedValue": "attention"
+              },
+              {
+                "id": "M10.words",
+                "text": "It became harder to answer people.",
+                "reportedValue": "words"
+              },
+              {
+                "id": "M10.tension",
+                "text": "I noticed tension in my body.",
+                "reportedValue": "tension"
+              },
+              {
+                "id": "M10.slowing",
+                "text": "I became slower or heavier.",
+                "reportedValue": "slowing"
+              },
+              {
+                "id": "M10.late",
+                "text": "I only recognized it afterward.",
+                "reportedValue": "late"
+              }
+            ],
+            "responseControls": [
+              "none_fit",
+              "not_sure",
+              "no_event",
+              "not_applicable",
+              "skip"
+            ]
+          },
+          "fullSessionRoute": {
+            "status": "issued_and_accepted",
+            "runtimeResponseId": "pwr_8154129b72d64eb17a0a05110215982ddd0c64b3",
+            "runtimeOccurrenceId": "pwep_4c55b723-56d5-4583-b85d-df01654ad75d",
+            "stepId": "first",
+            "phase": "mapping",
+            "selection": [
+              "M10.words"
+            ]
+          }
+        },
+        {
+          "sourceResponse": {
+            "responseId": "P05-A02",
+            "questionId": "M11",
+            "occurrenceId": "fx_P05_E1",
+            "stepId": "first",
+            "selectedOptionIds": [
+              "M11.stop"
+            ],
+            "status": "answered",
+            "mode": "single"
+          },
+          "provenance": "original_authored_fictional_answer",
+          "questionContract": {
+            "id": "M11",
+            "stage": "mapping",
+            "prompt": "On that day, what did you do first once the demands felt like too much?",
+            "episodeFamily": "overload",
+            "stepBinding": "first",
+            "selection": {
+              "mode": "single",
+              "max_select": 1,
+              "allow_simultaneous_pair": true,
+              "order_not_implied": true
+            },
+            "optionsInSourceOrder": [
+              {
+                "id": "M11.push",
+                "text": "I pushed on with what I was doing.",
+                "reportedValue": "push"
+              },
+              {
+                "id": "M11.reduce",
+                "text": "I reduced what I was trying to do.",
+                "reportedValue": "reduce"
+              },
+              {
+                "id": "M11.quiet",
+                "text": "I went somewhere with less input.",
+                "reportedValue": "quiet"
+              },
+              {
+                "id": "M11.help",
+                "text": "I asked for help or company.",
+                "reportedValue": "help"
+              },
+              {
+                "id": "M11.absorb",
+                "text": "I turned to something that held my attention.",
+                "reportedValue": "absorb"
+              },
+              {
+                "id": "M11.stop",
+                "text": "I stopped doing much.",
+                "reportedValue": "stop"
+              }
+            ],
+            "responseControls": [
+              "none_fit",
+              "not_sure",
+              "no_event",
+              "not_applicable",
+              "skip"
+            ]
+          },
+          "fullSessionRoute": {
+            "status": "issued_and_accepted",
+            "runtimeResponseId": "pwr_94138d6d9154d14f9ce4706989cbea3600c55e65",
+            "runtimeOccurrenceId": "pwep_4c55b723-56d5-4583-b85d-df01654ad75d",
+            "stepId": "first",
+            "phase": "mapping",
+            "selection": [
+              "M11.stop"
+            ]
+          }
+        },
+        {
+          "sourceResponse": {
+            "responseId": "P05-A03",
+            "questionId": "M12",
+            "occurrenceId": "fx_P05_E1",
+            "stepId": "first",
+            "selectedOptionIds": [
+              "M12.same"
+            ],
+            "status": "answered",
+            "mode": "single"
+          },
+          "provenance": "original_authored_fictional_answer",
+          "questionContract": {
+            "id": "M12",
+            "stage": "mapping",
+            "prompt": "Right after that first response, what changed for you?",
+            "episodeFamily": "overload",
+            "stepBinding": "first",
+            "selection": {
+              "mode": "single",
+              "max_select": 1,
+              "allow_simultaneous_pair": true,
+              "order_not_implied": true
+            },
+            "optionsInSourceOrder": [
+              {
+                "id": "M12.relief",
+                "text": "The pressure eased.",
+                "reportedValue": "relief"
+              },
+              {
+                "id": "M12.clear",
+                "text": "I could think more clearly.",
+                "reportedValue": "clear"
+              },
+              {
+                "id": "M12.function",
+                "text": "I could carry on, but did not feel better.",
+                "reportedValue": "function"
+              },
+              {
+                "id": "M12.away",
+                "text": "I stopped paying attention to how I felt.",
+                "reportedValue": "away"
+              },
+              {
+                "id": "M12.same",
+                "text": "Nothing much changed.",
+                "reportedValue": "same"
+              },
+              {
+                "id": "M12.worse",
+                "text": "It felt harder.",
+                "reportedValue": "worse"
+              }
+            ],
+            "responseControls": [
+              "none_fit",
+              "not_sure",
+              "no_event",
+              "not_applicable",
+              "skip"
+            ]
+          },
+          "fullSessionRoute": {
+            "status": "issued_and_accepted",
+            "runtimeResponseId": "pwr_ca801a1ffc36f161ec0a05902af69807607c1248",
+            "runtimeOccurrenceId": "pwep_4c55b723-56d5-4583-b85d-df01654ad75d",
+            "stepId": "first",
+            "phase": "mapping",
+            "selection": [
+              "M12.same"
+            ]
+          }
+        },
+        {
+          "sourceResponse": {
+            "responseId": "P05-A06",
+            "questionId": "M13",
+            "occurrenceId": "fx_P05_E1",
+            "stepId": "later",
+            "selectedOptionIds": [
+              "M13.quiet"
+            ],
+            "status": "answered",
+            "mode": "single"
+          },
+          "provenance": "original_authored_fictional_answer",
+          "questionContract": {
+            "id": "M13",
+            "stage": "mapping",
+            "prompt": "Later that day, what did you actually try to get some room back?",
+            "episodeFamily": "overload",
+            "stepBinding": "later",
+            "selection": {
+              "mode": "single",
+              "max_select": 1,
+              "allow_simultaneous_pair": true,
+              "order_not_implied": true
+            },
+            "optionsInSourceOrder": [
+              {
+                "id": "M13.quiet",
+                "text": "I spent time with less noise or fewer demands.",
+                "reportedValue": "quiet"
+              },
+              {
+                "id": "M13.rest",
+                "text": "I rested or slept.",
+                "reportedValue": "rest"
+              },
+              {
+                "id": "M13.move",
+                "text": "I moved around.",
+                "reportedValue": "move"
+              },
+              {
+                "id": "M13.company",
+                "text": "I spent time with someone I wanted to be with.",
+                "reportedValue": "company"
+              },
+              {
+                "id": "M13.absorb",
+                "text": "I did something absorbing or familiar.",
+                "reportedValue": "absorb"
+              },
+              {
+                "id": "M13.nothing",
+                "text": "I did not get to try anything.",
+                "reportedValue": "nothing"
+              }
+            ],
+            "responseControls": [
+              "none_fit",
+              "not_sure",
+              "no_event",
+              "not_applicable",
+              "skip"
+            ]
+          },
+          "fullSessionRoute": {
+            "status": "issued_and_accepted",
+            "runtimeResponseId": "pwr_5ee90ae3cfbd28dc680c159634efbff8c089ca55",
+            "runtimeOccurrenceId": "pwep_4c55b723-56d5-4583-b85d-df01654ad75d",
+            "stepId": "later",
+            "phase": "mapping",
+            "selection": [
+              "M13.quiet"
+            ]
+          }
+        },
+        {
+          "sourceResponse": {
+            "responseId": "P05-A07",
+            "questionId": "M14",
+            "occurrenceId": "fx_P05_E1",
+            "stepId": "later",
+            "selectedOptionIds": [
+              "M14.choice"
+            ],
+            "status": "answered",
+            "mode": "single"
+          },
+          "provenance": "original_authored_fictional_answer",
+          "questionContract": {
+            "id": "M14",
+            "stage": "mapping",
+            "prompt": "After that later attempt, what was different?",
+            "episodeFamily": "overload",
+            "stepBinding": "later",
+            "selection": {
+              "mode": "single",
+              "max_select": 1,
+              "allow_simultaneous_pair": true,
+              "order_not_implied": true
+            },
+            "optionsInSourceOrder": [
+              {
+                "id": "M14.choice",
+                "text": "I had more room to think and choose.",
+                "reportedValue": "choice"
+              },
+              {
+                "id": "M14.energy",
+                "text": "I had more energy.",
+                "reportedValue": "energy"
+              },
+              {
+                "id": "M14.settled",
+                "text": "I felt less wound up.",
+                "reportedValue": "settled"
+              },
+              {
+                "id": "M14.brief",
+                "text": "I got a break, but it faded when I stopped.",
+                "reportedValue": "brief"
+              },
+              {
+                "id": "M14.same",
+                "text": "I did not notice a change.",
+                "reportedValue": "same"
+              },
+              {
+                "id": "M14.worse",
+                "text": "It made things harder.",
+                "reportedValue": "worse"
+              }
+            ],
+            "responseControls": [
+              "none_fit",
+              "not_sure",
+              "no_event",
+              "not_applicable",
+              "skip"
+            ]
+          },
+          "fullSessionRoute": {
+            "status": "issued_and_accepted",
+            "runtimeResponseId": "pwr_0e73401b169634375162f8dc80aee20dfac42619",
+            "runtimeOccurrenceId": "pwep_4c55b723-56d5-4583-b85d-df01654ad75d",
+            "stepId": "later",
+            "phase": "mapping",
+            "selection": [
+              "M14.choice"
+            ]
+          }
+        }
+      ],
+      "syntheticMappingScaffoldContextOnly": [],
+      "referentRoles": []
+    }
+  ],
+  "entryAndPermissionContext": {
+    "focusOccurrenceId": "fx_P05_mapping_M02",
+    "focusTopics": [],
+    "permissionOnlyTopics": [
+      "body_detail",
+      "body_detail"
+    ],
+    "actualAppliedFocusTopics": [],
+    "focusTopicsApplied": true,
+    "topicPermissionEvents": [
+      {
+        "topic": "body_detail",
+        "outcome": "opt_in",
+        "provenance": "new_synthetic_mapping_control",
+        "reason": "Preserve archived authored M10 body-detail selection under the current consented presentation contract."
+      }
+    ]
+  },
+  "distinctnessIntents": [],
+  "comparisonBindingIntents": [],
+  "intentionallyForbiddenAnswers": [],
+  "focusedBranchExecution": "not_executed_as_a_separate_transcript; full-session source-answer results are shown per response"
+}

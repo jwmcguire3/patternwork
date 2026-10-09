@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "PWRP71-ROUTING-QUALIFICATION-GAP-LEDGER-V1",
+  "sourceBinding": {
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "routerRuntimeSha256": "e7937399a9c5fd96bc0fbe7413e0dc26452a33b11a92d653a968f0b76abb7ac6"
+  },
+  "auditResults": {
+    "normalParityCommandExitCode": 0,
+    "normalParityStatus": "completed; not a parity-pass assertion",
+    "strictParityCommandExitCode": 1,
+    "strictParityStatus": "incomplete_unsupported_coverage",
+    "strictUnexplainedDifferenceCount": 0,
+    "strictUnsupportedComparisonSurfaces": 893,
+    "normalParityOutputSha256": "79dc018f98964cf36c8c73dd7c04a46be9444548a0254708393d7a1cd1941e79",
+    "strictParityOutputSha256": "aa0cf3dfd3ee2146ad1a57373d8c136e7a14e515f8c20d4dda1105085f2fad67",
+    "unsupportedCountIsUniqueRows": false,
+    "strictBreakdown": [
+      { "surface": "replay_candidate_rows_not_cross_engine_compared", "count": 88 },
+      { "surface": "typescript_entry_point_candidates_without_python_equivalent", "count": 189 },
+      { "surface": "typescript_entry_point_choices_without_python_equivalent", "count": 28 },
+      { "surface": "typescript_entry_point_finishes_without_python_equivalent", "count": 23 },
+      { "surface": "other_finish_rows_after_divergence_or_outside_policy", "count": 25 },
+      { "surface": "python_binding_controls_not_normalized_with_typescript_session_decisions", "count": 32 },
+      { "surface": "python_mapping_ready_controls_not_normalized_with_typescript_pass_transitions", "count": 25 },
+      { "surface": "python_replay_rejection_rows_not_cross_engine_compared", "count": 17 },
+      { "surface": "typescript_replay_rejection_rows_not_cross_engine_compared", "count": 17 },
+      { "surface": "opt_out_cohort_replay_and_control_surfaces_not_cross_engine_compared", "count": 144 },
+      { "surface": "post_target_rows_without_accepted_response_transition", "count": 50 },
+      { "surface": "post_target_entry_point_pseudo_rows", "count": 255 }
+    ],
+    "countNote": "The additive surface counts can overlap and are not a count of unique rows. No categories were removed or reclassified as successful to reach this result."
+  },
+  "capabilities": [
+    {
+      "capability": "Occurrence creation and binding",
+      "pythonReferenceParity": "partial; shared comparisons are exercised, but 32 Python binding-control surfaces are not normalized against TypeScript session decisions",
+      "independentSourceContractQualification": "passed for explicit server binding, different/same/unknown/no-event/skip outcomes, and forged-scope rejection in the control contract cases",
+      "productionImplementationSelfTests": "passed; occurrences are server-bound and current packet observations are bound to canonical responses in 25 v5 profiles",
+      "remainingGap": "No complete cross-engine qualification of every binding transition or live authenticated database/browser path."
+    },
+    {
+      "capability": "Explicit replay confirmation and attached child episodes",
+      "pythonReferenceParity": "unavailable for the authored REPLAY operator; 88 replay candidates and 17 replay rejection surfaces per engine are unsupported comparisons",
+      "independentSourceContractQualification": "passed for the source-bound original C07 controlled replay lifecycle, including a router-issued request and confirmed-different binding",
+      "productionImplementationSelfTests": "passed for C07 replay issuance, server-bound child occurrence, and continuation; v5 full-session routes complete 25/25",
+      "remainingGap": "The C07/source-contract evidence is scoped; it does not qualify every replay candidate, rejection, or live-session integration."
+    },
+    {
+      "capability": "Distinctness and same/unknown/no-event alternatives",
+      "pythonReferenceParity": "partial; Python binding controls are not normalized, so the 32 control surfaces do not establish cross-engine parity",
+      "independentSourceContractQualification": "passed for different, same, unknown, no_event, and skip outcomes; only explicit different creates a distinct pair",
+      "productionImplementationSelfTests": "passed, including C07 distinctness lineage and C09/C02 source-only negative controls",
+      "remainingGap": "No broad independent cross-engine exercise of all same/unknown/no-event paths through persistence, packet creation, and correction."
+    },
+    {
+      "capability": "Target transitions and post-target behavior",
+      "pythonReferenceParity": "partial; 50 post-target rows without an accepted response transition and 255 post-target entry pseudo-rows remain unsupported; 240 entry point candidates/choices/finishes lack Python equivalents, plus 25 other finish rows",
+      "independentSourceContractQualification": "partial; pinned source-contract cases cover selected gate/target semantics, not the full entry-point space",
+      "productionImplementationSelfTests": "passed for selected transitions, target closure and response-linked observations; all applicable v5 fixture routes replay",
+      "remainingGap": "Most Python entry-point behavior and unsupported post-target surfaces lack independent reference behavior. Counts overlap with the strict total."
+    },
+    {
+      "capability": "Correction and stale-evidence invalidation",
+      "pythonReferenceParity": "incomplete; reference transitions after divergence are not a complete comparator",
+      "independentSourceContractQualification": "passed for correction-sensitive guards and dependency invalidation cases in the source-bound contract suite",
+      "productionImplementationSelfTests": "passed for correction supersession, rerouting, and stale packet evidence rejection",
+      "remainingGap": "No independent human or separate executable reference review of the complete persistence-to-report correction lifecycle."
+    },
+    {
+      "capability": "Step, sequence, and occurrence lineage",
+      "pythonReferenceParity": "not adequate for report-packet sequence evidence; packet sequence edges are outside the Python router's parity surface",
+      "independentSourceContractQualification": "partial; ordered-answer contract tests and source-bound C07 episode comparisons cover selected cases",
+      "productionImplementationSelfTests": "passed; the independent packet verifier checks source options, current response, occurrence, step, target, and order for all v5 profiles; C10 D36 retains only two authored before-edges",
+      "remainingGap": "Verifier and contract suite were authored in this workstream and have not received independent human review."
+    },
+    {
+      "capability": "Mapping/Deepening completion",
+      "pythonReferenceParity": "incomplete; 25 Python mapping_ready control surfaces are unnormalized, alongside finish behavior outside shared routes",
+      "independentSourceContractQualification": "partial; budget/stop and selected completion boundaries are covered by source contract tests",
+      "productionImplementationSelfTests": "passed; complete session execution achieved for 25/25 v5 fictional profiles using the lifecycle and canCompletePwqe51Pass",
+      "remainingGap": "Full parity of terminal completion and all optional-entry behavior is not established."
+    },
+    {
+      "capability": "Report packet currentness and adapter evidence",
+      "pythonReferenceParity": "not applicable; the Python router is not a PWRP packet/adapter implementation",
+      "independentSourceContractQualification": "passed as a separate contract-based v5 source-to-packet verification over retained responses and authored options; this is machine qualification, not human review",
+      "productionImplementationSelfTests": "passed; source binding, superseded-response exclusion, sequence/target lineage, privacy/identity field checks, and adapters pass across 25 v5 profiles",
+      "remainingGap": "No independently reviewed routing qualification evidence is pinned to the report run; live report generation remains blocked by the existing readiness contract."
+    }
+  ],
+  "separateStatuses": {
+    "productionRoutingCompleteness": "selected full-session v5 fictional cohort passed 25/25; broader production integration remains unqualified",
+    "crossEngineParity": "incomplete_unsupported_coverage; zero unexplained differences across currently comparable strict surfaces",
+    "independentContractCoverage": "passed for declared source-bound contracts and v5 response-to-packet invariants; broader capability coverage partial",
+    "reportPacketReadiness": "passed for v5 fictional packets and adapters; semantic report quality not evaluated",
+    "externalReviewReadiness": "evidence package prepared; independent external review outstanding"
+  },
+  "qualificationEvidenceBoundary": "These are machine-run source-contract checks and implementation tests. They are not independent human approval or full Python/TypeScript parity."
+}

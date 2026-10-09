@@ -1,0 +1,794 @@
+{
+  "schemaVersion": "PWQE51-FOCUSED-ROUTER-CONTRACT-CASE-V1",
+  "profileId": "C12",
+  "experimentalFixtureVariant": null,
+  "caseKind": "focused_router_contract_case",
+  "fullAssessmentTranscript": false,
+  "independentlyReviewedRoutingEvidence": false,
+  "semanticClaim": "Current expectations around relationship uncertainty",
+  "status": "authored_semantic_anchors_not_fully_issued_in_full_session",
+  "sourcePins": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "authoredFixtureFile": "C12.json",
+    "authoredFixtureSha256": "639c2cc1b57a9b9e87eeedac21a488ed24fcac4dc994d97039ffe9b2f88d62c2",
+    "routeReplayArtifactFile": "C12.json",
+    "routeReplayArtifactSha256": "a7a2fee9449d2079992a0559422be15d93af97d723358b3c7d2b9b8d942cdf19",
+    "semanticResultSha256": "46e07e962deea877f89db02ea87ddd92db2b8493ce6b93971082cd61b8aa33ad",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "reportRelease": "PWRP-7.1.0-candidate.1"
+  },
+  "separationRules": {
+    "sourceAnswersRemainUnchanged": true,
+    "syntheticMappingScaffoldIsNotEvidenceForThisSemanticClaim": true,
+    "syntheticDeepeningAnswersAreContextOnly": true,
+    "routerMustIssueEveryQuestion": true,
+    "occurrenceAndBindingMustMatchExactly": true
+  },
+  "authoredCore": {
+    "requiredSourceResponseIds": [
+      "C12-SRC-D43-1",
+      "C12-SRC-D44-1",
+      "C12-SRC-D45-1",
+      "C12-SRC-D89-1",
+      "C12-SRC-D90-1",
+      "C12-SRC-D42-1"
+    ],
+    "acceptedSourceResponseIds": [
+      "C12-SRC-D43-1",
+      "C12-SRC-D44-1",
+      "C12-SRC-D89-1",
+      "C12-SRC-D90-1",
+      "C12-SRC-D42-1"
+    ],
+    "status": "incomplete",
+    "reason": "5 of 6 exact source-bound semantic-core responses were accepted.",
+    "exactSourceAnswers": [
+      {
+        "sourceResponse": {
+          "responseId": "C12-SRC-D43-1",
+          "questionId": "D43",
+          "occurrenceId": "fx_C12_mapping_M17",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D43.okay"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D43",
+          "stage": "deepening",
+          "prompt": "What were you hoping {contact_response_label} would change during that wait?",
+          "episodeFamily": "reply_wait",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D43.information",
+              "text": "I wanted the practical information.",
+              "reportedValue": "information"
+            },
+            {
+              "id": "D43.okay",
+              "text": "I wanted to know we were okay.",
+              "reportedValue": "okay"
+            },
+            {
+              "id": "D43.notice",
+              "text": "I wanted them to notice that I was affected.",
+              "reportedValue": "notice"
+            },
+            {
+              "id": "D43.reply",
+              "text": "I wanted an answer, without a clearer aim than that.",
+              "reportedValue": "reply"
+            },
+            {
+              "id": "D43.automatic",
+              "text": "It was more automatic than purposeful.",
+              "reportedValue": "automatic"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_ec0f92f67e3e645e6f738f9efe2a94e6a328a3f0",
+          "runtimeOccurrenceId": "pwep_5e2df422-0d39-45ef-910e-61f66a653ce2",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D43.okay"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C12-SRC-D44-1",
+          "questionId": "D44",
+          "occurrenceId": "fx_C12_mapping_M17",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D44.reliable"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D44",
+          "stage": "deepening",
+          "prompt": "Before that wait, what had contact with {close_person} been like in similar situations?",
+          "episodeFamily": "reply_wait",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D44.reliable",
+              "text": "Usually reliable, even when replies took time.",
+              "reportedValue": "reliable"
+            },
+            {
+              "id": "D44.variable",
+              "text": "It varied and was hard to predict.",
+              "reportedValue": "variable"
+            },
+            {
+              "id": "D44.known",
+              "text": "There was a known reason they could not respond.",
+              "reportedValue": "known"
+            },
+            {
+              "id": "D44.strained",
+              "text": "There had been a real unresolved difficulty between us.",
+              "reportedValue": "strained"
+            },
+            {
+              "id": "D44.new",
+              "text": "I did not have much history to go on.",
+              "reportedValue": "new"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_c9fb4974d237a42a872a20c777c7fd899417b377",
+          "runtimeOccurrenceId": "pwep_5e2df422-0d39-45ef-910e-61f66a653ce2",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D44.reliable"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C12-SRC-D45-1",
+          "questionId": "D45",
+          "occurrenceId": "fx_C12_mapping_M17",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D45.return"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D45",
+          "stage": "deepening",
+          "prompt": "The last time {close_person} reassured you about the relationship, what happened after the conversation?",
+          "episodeFamily": "reassurance",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D45.held",
+              "text": "The reassurance stayed with me.",
+              "reportedValue": "held"
+            },
+            {
+              "id": "D45.return",
+              "text": "Doubt returned without anything new happening.",
+              "reportedValue": "return"
+            },
+            {
+              "id": "D45.new",
+              "text": "It helped until something new happened between us.",
+              "reportedValue": "new"
+            },
+            {
+              "id": "D45.words",
+              "text": "I understood the words but did not feel reassured.",
+              "reportedValue": "words"
+            },
+            {
+              "id": "D45.disbelieve",
+              "text": "I did not believe what they were saying.",
+              "reportedValue": "disbelieve"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "ineligible_in_current_context",
+          "reason": "No route-issued candidate or explicit eligible decision supports administering this authored response in the current context."
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C12-SRC-D89-1",
+          "questionId": "D89",
+          "occurrenceId": "fx_C12_mapping_M17",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D89.not_need"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D89",
+          "stage": "deepening",
+          "prompt": "During that wait for {close_person}, what did you expect of yourself?",
+          "episodeFamily": "bound",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D89.repair",
+              "text": "To work out whether I had done something wrong and put it right.",
+              "reportedValue": "repair"
+            },
+            {
+              "id": "D89.not_need",
+              "text": "To manage without showing that I needed an answer.",
+              "reportedValue": "not_need"
+            },
+            {
+              "id": "D89.patient",
+              "text": "To wait patiently because their time mattered too.",
+              "reportedValue": "patient"
+            },
+            {
+              "id": "D89.direct",
+              "text": "To ask plainly for what I needed.",
+              "reportedValue": "direct"
+            },
+            {
+              "id": "D89.practical",
+              "text": "To make the practical decision once I had the information.",
+              "reportedValue": "practical"
+            },
+            {
+              "id": "D89.none",
+              "text": "I did not have a particular expectation of myself.",
+              "reportedValue": "none"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_c17ab43a61356a423ff662829446070a6bb46699",
+          "runtimeOccurrenceId": "pwep_5e2df422-0d39-45ef-910e-61f66a653ce2",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D89.not_need"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C12-SRC-D90-1",
+          "questionId": "D90",
+          "occurrenceId": "fx_C12_mapping_M17",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D90.dismiss"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D90",
+          "stage": "deepening",
+          "prompt": "At that point in the wait, what did you expect {close_person} would do?",
+          "episodeFamily": "bound",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D90.reply",
+              "text": "They would reply when they were able.",
+              "reportedValue": "reply"
+            },
+            {
+              "id": "D90.acknowledge",
+              "text": "They would notice the wait had mattered to me.",
+              "reportedValue": "acknowledge"
+            },
+            {
+              "id": "D90.prompt",
+              "text": "I would need to ask again to get a response.",
+              "reportedValue": "prompt"
+            },
+            {
+              "id": "D90.dismiss",
+              "text": "They would treat my concern as unnecessary.",
+              "reportedValue": "dismiss"
+            },
+            {
+              "id": "D90.defensive",
+              "text": "They would become defensive if I raised it.",
+              "reportedValue": "defensive"
+            },
+            {
+              "id": "D90.undecided",
+              "text": "I did not know what to expect.",
+              "reportedValue": "undecided"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_71513ef207407478865e9773248b14264b313de9",
+          "runtimeOccurrenceId": "pwep_5e2df422-0d39-45ef-910e-61f66a653ce2",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D90.dismiss"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C12-SRC-D42-1",
+          "questionId": "D42",
+          "occurrenceId": "fx_C12_known_delay_2",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D42.fine"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "basis": "actual_recalled"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D42",
+          "stage": "deepening",
+          "prompt": "Think of a different time {close_person} could not respond, but you knew why. What was that wait like?",
+          "episodeFamily": "known_delay",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D42.fine",
+              "text": "I could leave it alone.",
+              "reportedValue": "fine"
+            },
+            {
+              "id": "D42.miss",
+              "text": "I missed them without wondering where I stood.",
+              "reportedValue": "miss"
+            },
+            {
+              "id": "D42.uncertain",
+              "text": "I still worried about where I stood.",
+              "reportedValue": "uncertain"
+            },
+            {
+              "id": "D42.practical",
+              "text": "I was mainly concerned about practical information.",
+              "reportedValue": "practical"
+            },
+            {
+              "id": "D42.irritated",
+              "text": "I knew why and still felt annoyed.",
+              "reportedValue": "irritated"
+            },
+            {
+              "id": "D42.unbelieved",
+              "text": "I did not believe the explanation.",
+              "reportedValue": "unbelieved"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_a5007cedbbeadd17a2887131ddbfc2fef06af4ba",
+          "runtimeOccurrenceId": "pwep_ef82f1b3-a64d-46b9-b53e-696429494e89",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D42.fine"
+          ]
+        }
+      }
+    ]
+  },
+  "occurrenceConditions": [
+    {
+      "fixtureOccurrenceReference": "fx_C12_mapping_M17",
+      "runtimeOccurrenceId": "pwep_5e2df422-0d39-45ef-910e-61f66a653ce2",
+      "episodeFamily": "reply_wait",
+      "basis": "actual_recalled",
+      "origin": "new_synthetic_mapping_episode",
+      "originalMappingContext": [
+        {
+          "sourceResponse": {
+            "responseId": "C12-SRC-M17-1",
+            "questionId": "M17",
+            "occurrenceId": "fx_C12_mapping_M17",
+            "stepId": "first",
+            "selectedOptionIds": [
+              "M17.send"
+            ],
+            "status": "answered",
+            "mode": "single",
+            "basis": "actual_recalled"
+          },
+          "provenance": "original_authored_fictional_answer",
+          "questionContract": {
+            "id": "M17",
+            "stage": "mapping",
+            "prompt": "{close_person} took longer than usual to answer a message that mattered to you. What did you do first?",
+            "episodeFamily": "reply_wait",
+            "stepBinding": "first",
+            "selection": {
+              "mode": "single",
+              "max_select": 1,
+              "allow_simultaneous_pair": true,
+              "order_not_implied": true
+            },
+            "optionsInSourceOrder": [
+              {
+                "id": "M17.check",
+                "text": "I checked my phone again.",
+                "reportedValue": "check"
+              },
+              {
+                "id": "M17.send",
+                "text": "I sent another message.",
+                "reportedValue": "send"
+              },
+              {
+                "id": "M17.reread",
+                "text": "I reread the conversation.",
+                "reportedValue": "reread"
+              },
+              {
+                "id": "M17.stop",
+                "text": "I stopped looking at the conversation.",
+                "reportedValue": "stop"
+              },
+              {
+                "id": "M17.other",
+                "text": "I got on with something else.",
+                "reportedValue": "other"
+              },
+              {
+                "id": "M17.wait",
+                "text": "I waited without changing what I was doing.",
+                "reportedValue": "wait"
+              }
+            ],
+            "responseControls": [
+              "none_fit",
+              "not_sure",
+              "no_event",
+              "not_applicable",
+              "skip"
+            ]
+          },
+          "fullSessionRoute": {
+            "status": "issued_and_accepted",
+            "runtimeResponseId": "pwr_195e034de5cc149e2d290a15ecb63f2386ffda2d",
+            "runtimeOccurrenceId": "pwep_5e2df422-0d39-45ef-910e-61f66a653ce2",
+            "stepId": "first",
+            "phase": "mapping",
+            "selection": [
+              "M17.send"
+            ]
+          }
+        },
+        {
+          "sourceResponse": {
+            "responseId": "C12-SRC-M18-1",
+            "questionId": "M18",
+            "occurrenceId": "fx_C12_mapping_M17",
+            "stepId": "first",
+            "selectedOptionIds": [
+              "M18.upset"
+            ],
+            "status": "answered",
+            "mode": "single"
+          },
+          "provenance": "original_authored_fictional_answer",
+          "questionContract": {
+            "id": "M18",
+            "stage": "mapping",
+            "prompt": "During that wait, what did the delay mean to you?",
+            "episodeFamily": "reply_wait",
+            "stepBinding": "first",
+            "selection": {
+              "mode": "single",
+              "max_select": 1,
+              "allow_simultaneous_pair": true,
+              "order_not_implied": true
+            },
+            "optionsInSourceOrder": [
+              {
+                "id": "M18.busy",
+                "text": "They were probably busy.",
+                "reportedValue": "busy"
+              },
+              {
+                "id": "M18.upset",
+                "text": "I might have upset them.",
+                "reportedValue": "upset"
+              },
+              {
+                "id": "M18.matter",
+                "text": "I mattered less to them than I wanted to.",
+                "reportedValue": "matter"
+              },
+              {
+                "id": "M18.depend",
+                "text": "I did not like having to depend on their answer.",
+                "reportedValue": "depend"
+              },
+              {
+                "id": "M18.info",
+                "text": "I needed the information, not a sign about us.",
+                "reportedValue": "info"
+              },
+              {
+                "id": "M18.open",
+                "text": "I had not decided what it meant.",
+                "reportedValue": "open"
+              }
+            ],
+            "responseControls": [
+              "none_fit",
+              "not_sure",
+              "no_event",
+              "not_applicable",
+              "skip"
+            ]
+          },
+          "fullSessionRoute": {
+            "status": "issued_and_accepted",
+            "runtimeResponseId": "pwr_fefb9fdc98f531230644916e40ca02ac3666fbd9",
+            "runtimeOccurrenceId": "pwep_5e2df422-0d39-45ef-910e-61f66a653ce2",
+            "stepId": "first",
+            "phase": "mapping",
+            "selection": [
+              "M18.upset"
+            ]
+          }
+        },
+        {
+          "sourceResponse": {
+            "responseId": "C12-SRC-M19-1",
+            "questionId": "M19",
+            "occurrenceId": "fx_C12_mapping_M17",
+            "stepId": "first",
+            "selectedOptionIds": [
+              "M19.ease"
+            ],
+            "status": "answered",
+            "mode": "single"
+          },
+          "provenance": "original_authored_fictional_answer",
+          "questionContract": {
+            "id": "M19",
+            "stage": "mapping",
+            "prompt": "When {close_person} replied, what changed first?",
+            "episodeFamily": "reply_wait",
+            "stepBinding": "first",
+            "selection": {
+              "mode": "single",
+              "max_select": 1,
+              "allow_simultaneous_pair": true,
+              "order_not_implied": true
+            },
+            "optionsInSourceOrder": [
+              {
+                "id": "M19.ease",
+                "text": "I felt less uncertain about us.",
+                "reportedValue": "ease"
+              },
+              {
+                "id": "M19.inspect",
+                "text": "I kept looking for what the reply really meant.",
+                "reportedValue": "inspect"
+              },
+              {
+                "id": "M19.anger",
+                "text": "I still felt annoyed.",
+                "reportedValue": "anger"
+              },
+              {
+                "id": "M19.distance",
+                "text": "I still did not feel like replying.",
+                "reportedValue": "distance"
+              },
+              {
+                "id": "M19.information",
+                "text": "I had the information and moved on.",
+                "reportedValue": "information"
+              },
+              {
+                "id": "M19.no_reply",
+                "text": "They had not replied by the time I am describing.",
+                "reportedValue": "no_reply"
+              }
+            ],
+            "responseControls": [
+              "none_fit",
+              "not_sure",
+              "no_event",
+              "not_applicable",
+              "skip"
+            ]
+          },
+          "fullSessionRoute": {
+            "status": "issued_and_accepted",
+            "runtimeResponseId": "pwr_70b461e1530c577b539ab02020b3695a725cece9",
+            "runtimeOccurrenceId": "pwep_5e2df422-0d39-45ef-910e-61f66a653ce2",
+            "stepId": "first",
+            "phase": "mapping",
+            "selection": [
+              "M19.ease"
+            ]
+          }
+        }
+      ],
+      "syntheticMappingScaffoldContextOnly": [],
+      "referentRoles": [
+        {
+          "occurrenceId": "fx_C12_mapping_M17",
+          "slot": "close_person",
+          "role": "partner",
+          "origin": "original_authored_role_configuration"
+        }
+      ]
+    },
+    {
+      "fixtureOccurrenceReference": "fx_C12_known_delay_2",
+      "runtimeOccurrenceId": "pwep_ef82f1b3-a64d-46b9-b53e-696429494e89",
+      "episodeFamily": "known_delay",
+      "basis": "actual_recalled",
+      "origin": "authored_confirmed_distinct_linked_episode",
+      "originalMappingContext": [],
+      "syntheticMappingScaffoldContextOnly": [],
+      "referentRoles": [
+        {
+          "occurrenceId": "fx_C12_known_delay_2",
+          "slot": "close_person",
+          "role": "partner",
+          "origin": "original_authored_role_configuration"
+        }
+      ]
+    }
+  ],
+  "entryAndPermissionContext": {
+    "focusOccurrenceId": "fx_C12_mapping_M17",
+    "focusTopics": [],
+    "permissionOnlyTopics": [
+      "body_detail",
+      "body_detail"
+    ],
+    "actualAppliedFocusTopics": [],
+    "focusTopicsApplied": true,
+    "topicPermissionEvents": [
+      {
+        "topic": "body_detail",
+        "outcome": "opt_in",
+        "provenance": "original_authored_configuration",
+        "sourceRef": "C12.config"
+      }
+    ]
+  },
+  "distinctnessIntents": [
+    {
+      "sourceOccurrenceId": "fx_C12_mapping_M17",
+      "otherOccurrenceId": "fx_C12_known_delay_2",
+      "outcome": "different",
+      "kind": "linked_distinct_actual_occurrence",
+      "provenance": "original_authored_fictional_binding",
+      "sourceRef": "C12.episode_bindings",
+      "requiresTrustedSimulatedConfirmation": true,
+      "reason": "D42 asks about a different wait with a known reason for the same close person.",
+      "runtimeDecision": {
+        "sourceReference": "fx_C12_mapping_M17",
+        "otherReference": "fx_C12_known_delay_2",
+        "outcome": "different",
+        "status": "applied",
+        "basis": "router_explicit_different_event_prompt",
+        "sourceOccurrenceId": "pwep_5e2df422-0d39-45ef-910e-61f66a653ce2",
+        "otherOccurrenceId": "pwep_ef82f1b3-a64d-46b9-b53e-696429494e89"
+      }
+    }
+  ],
+  "comparisonBindingIntents": [],
+  "intentionallyForbiddenAnswers": [],
+  "focusedBranchExecution": "not_executed_as_a_separate_transcript; full-session source-answer results are shown per response"
+}

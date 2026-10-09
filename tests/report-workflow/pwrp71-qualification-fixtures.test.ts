@@ -45,6 +45,24 @@ test("PWRP 7.1 fixture identities retain authored lineage and pending router sta
   assert.ok(fixtures.coverageCandidates.every((candidate) => candidate.packet.release_id === "PWQE-5.1.0-candidate.1"));
 });
 
+test("PWRP 7.1 fixture pins tolerate Git's Windows CRLF checkout without weakening content checks", async () => {
+  const copied = await copiedFixtureRoot();
+  try {
+    const file = path.join(copied.root, "authored_worked_paths.json");
+    const original = await readFile(file, "utf8");
+    const crlf = original.replace(/\r\n/gu, "\n").replace(/\n/gu, "\r\n");
+    await writeFile(file, crlf);
+    const fixtures = await loadPwrp71QualificationFixtures({ fixtureRoot: copied.root });
+    assert.equal(fixtures.profiles.length, 9);
+    assert.equal(fixtures.coverageCandidates.length, 16);
+
+    await writeFile(file, crlf.replace("A preventive role", "A changed role"));
+    await assert.rejects(loadPwrp71QualificationFixtures({ fixtureRoot: copied.root }), /authored P01–P09 answer-history asset digest drifted/u);
+  } finally {
+    await copied.cleanup();
+  }
+});
+
 test("authored histories replay explicit answer lineage and preserve pending report-adapter findings", async () => {
   const fixtures = await loadPwrp71QualificationFixtures();
   const questionSource = await loadPwqe51SourcePackage();
@@ -59,11 +77,12 @@ test("authored histories replay explicit answer lineage and preserve pending rep
     assert.equal(observations.length, authoredAnswers.filter((answer) => answer.status === "answered").reduce((sum, answer) => sum + (answer.selected as unknown[]).length, 0));
     const responseIds = new Set(authoredAnswers.map((answer) => answer.id));
     assert.ok(observations.every((observation) => responseIds.has(String(observation.response_id))));
-    const prepared = preparePwrp71Request({ packet: packet.packet, reportType: "MAP", questionSource, reportSource });
+    const prepared = preparePwrp71Request({ packet: packet.packet, reportType: "MAP", questionSource, reportSource,
+      canonicalResponseEvidence: packet.canonicalResponseEvidence });
     if (!prepared.ok) {
       assert.equal(packet.routerParity, "pending");
       assert.ok(prepared.issues.length > 0);
-      assert.ok(prepared.issues.every((issue) => issue.code === "target_lineage" || issue.code === "sequence_lineage"), JSON.stringify(prepared.issues));
+      assert.ok(prepared.issues.every((issue) => issue.code === "target_lineage" || issue.code === "sequence_lineage" || issue.code === "recovery_sequence_semantics"), JSON.stringify(prepared.issues));
     }
   }
 });
@@ -77,7 +96,7 @@ test("C01–C16 remain exact candidate packet archives pending router qualificat
   assert.deepEqual(candidate.issues, []);
 });
 
-test("C candidate archives may be structurally report-ready while remaining unqualified routing inputs", async () => {
+test("C candidate archives remain unqualified and legacy C10 D36 packet order is rejected", async () => {
   const fixtures = await loadPwrp71QualificationFixtures();
   const questionSource = await loadPwqe51SourcePackage();
   const reportSource = await loadPwrp71SourcePackage();
@@ -85,7 +104,14 @@ test("C candidate archives may be structurally report-ready while remaining unqu
   for (const profile of fixtures.coverageCandidates) {
     const prepared = preparePwrp71Request({ packet: profile.packet, reportType: "MAP", questionSource, reportSource });
     if (prepared.ok) structurallyReady += 1;
-    else assert.ok(prepared.issues.every((issue) => issue.code === "target_lineage" || issue.code === "sequence_lineage"), JSON.stringify(prepared.issues));
+    else {
+      assert.ok(prepared.issues.every((issue) => issue.code === "target_lineage" || issue.code === "sequence_lineage"
+        || issue.code === "recovery_sequence_semantics" || issue.code === "recovery_sequence_response_source"
+        || issue.code === "recovery_sequence_currentness"), JSON.stringify(prepared.issues));
+      if (prepared.issues.some((issue) => issue.code === "recovery_sequence_semantics")) {
+        assert.equal(profile.id, "C10", "only the legacy candidate archive with D36 carries the old response/edge ordering mismatch");
+      }
+    }
     assert.equal(profile.routerParity, "pending");
   }
   assert.ok(structurallyReady > 0);

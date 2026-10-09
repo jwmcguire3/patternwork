@@ -309,7 +309,7 @@ test("confirmed actual comparison allows pair-wide observations but not an unrel
   const value = await fixture();
   const packet = structuredClone(value.packet) as Record<string, unknown>;
   const oldObs = packet.observations as Record<string, unknown>[];
-  const newObservation = {
+  const newObservation: Record<string, unknown> = {
     ...oldObs[0], id: `O${digest(["other-response", oldObs[0]!.option_id]).slice(0, 20)}`,
     response_id: "other-response", administration_id: "other-response",
     occurrence_id: "occurrence-2", dependence_group: "occurrence-2",

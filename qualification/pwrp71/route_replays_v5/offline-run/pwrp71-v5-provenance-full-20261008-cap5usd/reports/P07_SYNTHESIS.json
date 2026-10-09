@@ -1,0 +1,30 @@
+{
+  "artifact_type": "pwrp71_report",
+  "report_release": "PWRP-7.1.0-candidate.1",
+  "source_manifest_sha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+  "report_id": "pwrp71_12ca9fd8c1da4ef23fddd8b7321d",
+  "report_type": "SYNTHESIS",
+  "release_id": "PWQE-5.1.0-candidate.1",
+  "snapshot_id": "fictional-P07-deepening",
+  "evidence_sha256": "af828d7fecb3c7d61a1e6a91ff4b65a8f12b96eac0cc6b0a0d68010cebd0319c",
+  "report_markdown": "# Offline structural fixture for SYNTHESIS\n\n*Patternwork is nonclinical self-reflection. Parts and state names are working interpretations, not diagnoses or physiological measurements.*\n",
+  "draft": {
+    "report_release": "PWRP-7.1.0-candidate.1",
+    "release_id": "PWQE-5.1.0-candidate.1",
+    "snapshot_id": "fictional-P07-deepening",
+    "evidence_sha256": "af828d7fecb3c7d61a1e6a91ff4b65a8f12b96eac0cc6b0a0d68010cebd0319c",
+    "report_type": "SYNTHESIS",
+    "title": "Offline structural fixture for SYNTHESIS",
+    "title_claim_ids": [],
+    "content_status": "insufficient_evidence",
+    "sections": [],
+    "claims": [],
+    "name_registry": [],
+    "relationships": [],
+    "reflection_questions": []
+  },
+  "digests": {
+    "artifact_sha256": "2590cd62f58a74d7f06c9729bd845824b3c1f5d7c98caac6b38d12400f2f15bb",
+    "report_markdown_sha256": "6beb90659fee46448df99149282cfcbfe4c55808f7fde48151296b79a0b15cdc"
+  }
+}

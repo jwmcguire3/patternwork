@@ -1,0 +1,22 @@
+✔ builds a source-bound PWQE 5.1 packet with schema-valid evidence and a stable digest (151.4478ms)
+✔ packet retains current response lineage and excludes superseded answers from provider evidence (28.3604ms)
+✔ packet preserves every respondent C07 outcome and counts only confirmed-independent pair support (95.6771ms)
+✔ packet rejects C07 comparisons outside the current actual episode pair (0.9616ms)
+✔ rejects router results from stale question source lineage (0.4825ms)
+✔ rejects observation evidence that no longer matches the canonical response log (0.4846ms)
+✔ current replay-derived distinctness survives packet construction and 7.1 adapter (28.7344ms)
+✔ confirmed recurrence evidence carries only the router-confirmed pair into target lineage (25.0407ms)
+✔ packet target attempt counts exclude superseded candidate answers (12.1897ms)
+✔ ordered D36 recovery details project to the real router sequence sub-steps (48.3309ms)
+✔ Mapping-entry body_detail permission preserves the unchanged M10 source answer through the production route (545.2702ms)
+✔ C11 retains the actual company, effect, practical support, and aftermath answers in distinct packet lineage (202.1597ms)
+✔ the independent v5 verifier qualifies retained source-to-packet bindings and rejects tampered options or private fields (90.2891ms)
+✔ the authored negative controls remain source-only and P07 remains a non-pathologizing sparse case (6.1947ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1267.9058

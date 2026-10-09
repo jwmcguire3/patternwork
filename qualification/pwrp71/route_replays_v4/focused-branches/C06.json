@@ -1,0 +1,595 @@
+{
+  "schemaVersion": "PWQE51-FOCUSED-ROUTER-CONTRACT-CASE-V1",
+  "profileId": "C06",
+  "caseKind": "focused_router_contract_case",
+  "fullAssessmentTranscript": false,
+  "independentlyReviewedRoutingEvidence": false,
+  "semanticClaim": "Two concerns without a forced shared exile",
+  "status": "all_authored_semantic_anchors_issued_in_full_session",
+  "sourcePins": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "authoredFixtureFile": "C06.json",
+    "authoredFixtureSha256": "f2baee9ec9b9971c51d2fd2ad9b91bf8af51586dc51dc93c8686c40795940d0a",
+    "routeReplayArtifactFile": "C06.json",
+    "routeReplayArtifactSha256": "c2e2029309109458571a5b9d7a88081759a4deb90955dae280f2b1498d2ba7ca",
+    "semanticResultSha256": "320c1ed7876940b7c96beaa79c70d62f476c09d6a27d8d6d2fb2dcaff6d1fcd1",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "reportRelease": "PWRP-7.1.0-candidate.1"
+  },
+  "separationRules": {
+    "sourceAnswersRemainUnchanged": true,
+    "syntheticMappingScaffoldIsNotEvidenceForThisSemanticClaim": true,
+    "syntheticDeepeningAnswersAreContextOnly": true,
+    "routerMustIssueEveryQuestion": true,
+    "occurrenceAndBindingMustMatchExactly": true
+  },
+  "authoredCore": {
+    "requiredSourceResponseIds": [
+      "C06-SRC-D12-1",
+      "C06-SRC-D13-1",
+      "C06-SRC-D14-1",
+      "C06-SRC-D75-1",
+      "C06-SRC-D76-1"
+    ],
+    "acceptedSourceResponseIds": [
+      "C06-SRC-D12-1",
+      "C06-SRC-D13-1",
+      "C06-SRC-D14-1",
+      "C06-SRC-D75-1",
+      "C06-SRC-D76-1"
+    ],
+    "status": "complete",
+    "exactSourceAnswers": [
+      {
+        "sourceResponse": {
+          "responseId": "C06-SRC-D12-1",
+          "questionId": "D12",
+          "occurrenceId": "fx_C06_mapping_M26",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D12.cost"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D12",
+          "stage": "deepening",
+          "prompt": "In that moment of wanting {first_want} and {second_want}, what happened between the two pulls?",
+          "episodeFamily": "two_pulls",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D12.cost",
+              "text": "Acting on either made the other harder to ignore.",
+              "reportedValue": "cost"
+            },
+            {
+              "id": "D12.switch",
+              "text": "As soon as I moved one way, I wanted to switch.",
+              "reportedValue": "switch"
+            },
+            {
+              "id": "D12.both",
+              "text": "I could keep both in mind without getting stuck.",
+              "reportedValue": "both"
+            },
+            {
+              "id": "D12.change",
+              "text": "One became less important as the situation changed.",
+              "reportedValue": "change"
+            },
+            {
+              "id": "D12.ordinary",
+              "text": "It felt like an ordinary decision, not an inner struggle.",
+              "reportedValue": "ordinary"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_f0217af9f6a528cb9aca7166f3b3a021bf984407",
+          "runtimeOccurrenceId": "pwep_7a544a81-8112-4d13-8b59-2aef82416d80",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D12.cost"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C06-SRC-D13-1",
+          "questionId": "D13",
+          "occurrenceId": "fx_C06_mapping_M26",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D13.failure"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D13",
+          "stage": "deepening",
+          "prompt": "At that time, what concern came with not allowing yourself {first_want}?",
+          "episodeFamily": "two_pulls",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D13.failure",
+              "text": "I would get something wrong or leave it unfinished.",
+              "reportedValue": "failure"
+            },
+            {
+              "id": "D13.loss",
+              "text": "I would lose something that mattered to me.",
+              "reportedValue": "loss"
+            },
+            {
+              "id": "D13.feeling",
+              "text": "I would be left with a feeling I did not want.",
+              "reportedValue": "feeling"
+            },
+            {
+              "id": "D13.demand",
+              "text": "I would have to keep carrying too much.",
+              "reportedValue": "demand"
+            },
+            {
+              "id": "D13.none",
+              "text": "There was no particular concern; I simply wanted it.",
+              "reportedValue": "none"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_c01b21759167f6ddb25957eb8a945d829d9f8b51",
+          "runtimeOccurrenceId": "pwep_7a544a81-8112-4d13-8b59-2aef82416d80",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D13.failure"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C06-SRC-D14-1",
+          "questionId": "D14",
+          "occurrenceId": "fx_C06_mapping_M26",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D14.demand"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D14",
+          "stage": "deepening",
+          "prompt": "And what concern came with not allowing yourself {second_want}?",
+          "episodeFamily": "two_pulls",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D14.failure",
+              "text": "I would get something wrong or leave it unfinished.",
+              "reportedValue": "failure"
+            },
+            {
+              "id": "D14.loss",
+              "text": "I would lose something that mattered to me.",
+              "reportedValue": "loss"
+            },
+            {
+              "id": "D14.feeling",
+              "text": "I would be left with a feeling I did not want.",
+              "reportedValue": "feeling"
+            },
+            {
+              "id": "D14.demand",
+              "text": "I would have to keep carrying too much.",
+              "reportedValue": "demand"
+            },
+            {
+              "id": "D14.none",
+              "text": "There was no particular concern; I simply wanted it.",
+              "reportedValue": "none"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_909aaad99c502382e523b7318d6c5eff146f33e9",
+          "runtimeOccurrenceId": "pwep_7a544a81-8112-4d13-8b59-2aef82416d80",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D14.demand"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C06-SRC-D75-1",
+          "questionId": "D75",
+          "occurrenceId": "fx_C06_mapping_M26",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D75.clearer"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D75",
+          "stage": "deepening",
+          "prompt": "In that moment of wanting {first_want} and {second_want}, what happened when you tried to listen to both?",
+          "episodeFamily": "bound",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D75.clearer",
+              "text": "Both concerns became clearer without my having to choose immediately.",
+              "reportedValue": "clearer"
+            },
+            {
+              "id": "D75.negotiate",
+              "text": "I could find room for some of each.",
+              "reportedValue": "negotiate"
+            },
+            {
+              "id": "D75.louder",
+              "text": "One pull became louder when I attended to the other.",
+              "reportedValue": "louder"
+            },
+            {
+              "id": "D75.dismiss",
+              "text": "I dismissed one so I could get on with the other.",
+              "reportedValue": "dismiss"
+            },
+            {
+              "id": "D75.unable",
+              "text": "I could not keep both in mind.",
+              "reportedValue": "unable"
+            },
+            {
+              "id": "D75.not_tried",
+              "text": "I did not try to listen to both in that moment.",
+              "reportedValue": "not_tried"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_b7d73cf90332b402d8916cfb2aff56d6f19f2988",
+          "runtimeOccurrenceId": "pwep_7a544a81-8112-4d13-8b59-2aef82416d80",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D75.clearer"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C06-SRC-D76-1",
+          "questionId": "D76",
+          "occurrenceId": "fx_C06_mapping_M26",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D76.different"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D76",
+          "stage": "deepening",
+          "prompt": "Looking back at those two pulls, how did their concerns fit together?",
+          "episodeFamily": "bound",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": false,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D76.same",
+              "text": "They were trying to avoid the same thing in different ways.",
+              "reportedValue": "same"
+            },
+            {
+              "id": "D76.different",
+              "text": "They were concerned about different outcomes.",
+              "reportedValue": "different"
+            },
+            {
+              "id": "D76.one",
+              "text": "One was about avoiding something; the other was simply something I wanted.",
+              "reportedValue": "one"
+            },
+            {
+              "id": "D76.neither",
+              "text": "Neither felt like an attempt to avoid something.",
+              "reportedValue": "neither"
+            },
+            {
+              "id": "D76.unclear",
+              "text": "I could not tell how the concerns related.",
+              "reportedValue": "unclear"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_ac0ab9b3e42d0452a73fea5a51a93d5d229a66a0",
+          "runtimeOccurrenceId": "pwep_7a544a81-8112-4d13-8b59-2aef82416d80",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D76.different"
+          ]
+        }
+      }
+    ]
+  },
+  "occurrenceConditions": [
+    {
+      "fixtureOccurrenceReference": "fx_C06_mapping_M26",
+      "runtimeOccurrenceId": "pwep_7a544a81-8112-4d13-8b59-2aef82416d80",
+      "episodeFamily": "two_pulls",
+      "basis": "actual_recalled",
+      "origin": "new_synthetic_mapping_episode",
+      "originalMappingContext": [
+        {
+          "sourceResponse": {
+            "responseId": "C06-SRC-M26-1",
+            "questionId": "M26",
+            "occurrenceId": "fx_C06_mapping_M26",
+            "stepId": "first",
+            "selectedOptionIds": [
+              "M26.rest"
+            ],
+            "status": "answered",
+            "mode": "single",
+            "basis": "actual_recalled"
+          },
+          "provenance": "original_authored_fictional_answer",
+          "questionContract": {
+            "id": "M26",
+            "stage": "mapping",
+            "prompt": "Think of a moment when you wanted two different things at once. Which pair comes closest?",
+            "episodeFamily": "two_pulls",
+            "stepBinding": "first",
+            "selection": {
+              "mode": "single",
+              "max_select": 1,
+              "allow_simultaneous_pair": true,
+              "order_not_implied": true
+            },
+            "optionsInSourceOrder": [
+              {
+                "id": "M26.finish",
+                "text": "I wanted to get it right, and I wanted to be done.",
+                "reportedValue": "finish"
+              },
+              {
+                "id": "M26.contact",
+                "text": "I wanted contact, and I wanted space.",
+                "reportedValue": "contact"
+              },
+              {
+                "id": "M26.speak",
+                "text": "I wanted to speak plainly, and I wanted to keep the peace.",
+                "reportedValue": "speak"
+              },
+              {
+                "id": "M26.help",
+                "text": "I wanted help, and I wanted to manage alone.",
+                "reportedValue": "help"
+              },
+              {
+                "id": "M26.rest",
+                "text": "I wanted rest, and I wanted to keep working.",
+                "reportedValue": "rest"
+              },
+              {
+                "id": "M26.sequential",
+                "text": "My wants changed one after another, not at the same time.",
+                "reportedValue": "sequential"
+              }
+            ],
+            "responseControls": [
+              "none_fit",
+              "not_sure",
+              "no_event",
+              "not_applicable",
+              "skip"
+            ]
+          },
+          "fullSessionRoute": {
+            "status": "issued_and_accepted",
+            "runtimeResponseId": "pwr_d83c4f19ebc2178df170ecd46c1017b41e8abf47",
+            "runtimeOccurrenceId": "pwep_7a544a81-8112-4d13-8b59-2aef82416d80",
+            "stepId": "first",
+            "phase": "mapping",
+            "selection": [
+              "M26.rest"
+            ]
+          }
+        },
+        {
+          "sourceResponse": {
+            "responseId": "C06-SRC-M27-1",
+            "questionId": "M27",
+            "occurrenceId": "fx_C06_mapping_M26",
+            "stepId": "first",
+            "selectedOptionIds": [
+              "M27.alternate"
+            ],
+            "status": "answered",
+            "mode": "single"
+          },
+          "provenance": "original_authored_fictional_answer",
+          "questionContract": {
+            "id": "M27",
+            "stage": "mapping",
+            "prompt": "In that moment, what did you end up doing?",
+            "episodeFamily": "two_pulls",
+            "stepBinding": "first",
+            "selection": {
+              "mode": "single",
+              "max_select": 1,
+              "allow_simultaneous_pair": true,
+              "order_not_implied": true
+            },
+            "optionsInSourceOrder": [
+              {
+                "id": "M27.first",
+                "text": "I acted on the first want in that pair.",
+                "reportedValue": "first"
+              },
+              {
+                "id": "M27.second",
+                "text": "I acted on the second want in that pair.",
+                "reportedValue": "second"
+              },
+              {
+                "id": "M27.alternate",
+                "text": "I went back and forth.",
+                "reportedValue": "alternate"
+              },
+              {
+                "id": "M27.compromise",
+                "text": "I found a way to allow some of both.",
+                "reportedValue": "compromise"
+              },
+              {
+                "id": "M27.delay",
+                "text": "I put the decision off.",
+                "reportedValue": "delay"
+              },
+              {
+                "id": "M27.stuck",
+                "text": "I could not get started on either.",
+                "reportedValue": "stuck"
+              }
+            ],
+            "responseControls": [
+              "none_fit",
+              "not_sure",
+              "no_event",
+              "not_applicable",
+              "skip"
+            ]
+          },
+          "fullSessionRoute": {
+            "status": "issued_and_accepted",
+            "runtimeResponseId": "pwr_026a5543ddd60ae522d80e7287565245cb667c61",
+            "runtimeOccurrenceId": "pwep_7a544a81-8112-4d13-8b59-2aef82416d80",
+            "stepId": "first",
+            "phase": "mapping",
+            "selection": [
+              "M27.alternate"
+            ]
+          }
+        }
+      ],
+      "syntheticMappingScaffoldContextOnly": [],
+      "referentRoles": []
+    }
+  ],
+  "entryAndPermissionContext": {
+    "focusOccurrenceId": "fx_C06_mapping_M26",
+    "focusTopics": [],
+    "permissionOnlyTopics": [
+      "body_detail",
+      "body_detail"
+    ],
+    "actualAppliedFocusTopics": [],
+    "focusTopicsApplied": true,
+    "topicPermissionEvents": [
+      {
+        "topic": "body_detail",
+        "outcome": "opt_in",
+        "provenance": "original_authored_configuration",
+        "sourceRef": "C06.config"
+      }
+    ]
+  },
+  "distinctnessIntents": [],
+  "comparisonBindingIntents": [],
+  "intentionallyForbiddenAnswers": [],
+  "focusedBranchExecution": "not_executed_as_a_separate_transcript; full-session source-answer results are shown per response"
+}

@@ -206,7 +206,8 @@ async function generateDebugDraft(input: {
       return [type, layer.draft];
     })) as Readonly<Record<string, JsonObject>>
     : undefined;
-  const prepared = preparePwrp71Request({ packet, reportType: input.reportType, questionSource: resolved.questionSource, reportSource: resolved.reportSource, acceptedLayers });
+  const prepared = preparePwrp71Request({ packet, reportType: input.reportType, questionSource: resolved.questionSource, reportSource: resolved.reportSource,
+    canonicalResponseEvidence: resolved.fixture.canonicalResponseEvidence, acceptedLayers });
   if (!prepared.ok) throw new Error(`debug_pwrp71_input_invalid:${prepared.issues.slice(0, 5).map((entry) => entry.code).join(",")}`);
   const events: Pwrp71GenerationEvent[] = [];
   const result = await generateCanonicalReport({

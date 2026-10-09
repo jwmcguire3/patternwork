@@ -1,0 +1,16 @@
+
+> patternwork@0.1.0 reports:qualify:pwrp71
+> tsx scripts/qualify-pwrp71/index.ts offline --fixture-set route-replays-v5 --profiles P01,P02,P03,P04,P05,P06,P07,P08,P09,C01,C02,C03,C04,C05,C06,C07,C08,C09,C10,C11,C12,C13,C14,C15,C16 --reports ALL --aggregate-cost-cap-micros 500000 --run-id gate10-v5-offline-full-matrix --output-root qualification/pwrp71/gate10-routing-budget-readiness/v5-offline-run
+
+{
+  "runId": "gate10-v5-offline-full-matrix",
+  "mode": "offline",
+  "status": "offline_complete",
+  "routeParity": "pending",
+  "blockers": [],
+  "outputs": 125,
+  "totalReportedCostMicros": 0,
+  "reservedUnknownCostMicros": 0,
+  "qualificationRunSha256": "0212be334713a8897d3d454bb2a8332b0630089febf4f3b6a38f59e20368ccd8",
+  "outputDirectory": "C:\\Users\\jwmcg\\OneDrive\\Documents\\AI Projects\\Live Envirnments\\patternwork\\qualification\\pwrp71\\gate10-routing-budget-readiness\\v5-offline-run\\gate10-v5-offline-full-matrix"
+}

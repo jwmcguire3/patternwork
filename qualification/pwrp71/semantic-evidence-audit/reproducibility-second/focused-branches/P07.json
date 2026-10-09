@@ -1,0 +1,273 @@
+{
+  "schemaVersion": "PWQE51-FOCUSED-ROUTER-CONTRACT-CASE-V1",
+  "profileId": "P07",
+  "experimentalFixtureVariant": null,
+  "caseKind": "focused_router_contract_case",
+  "fullAssessmentTranscript": false,
+  "independentlyReviewedRoutingEvidence": false,
+  "semanticClaim": "A useful map without a problem inventory",
+  "status": "no_authored_deepening_semantic_anchors",
+  "sourcePins": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "authoredFixtureFile": "P07.json",
+    "authoredFixtureSha256": "6ce6fd27af8267fbfe2485ba31c1dc517d25acf797c95b1d68bb42fc5246dce4",
+    "routeReplayArtifactFile": "P07.json",
+    "routeReplayArtifactSha256": "2c05a50db409c377cadf89426f58572eea919e9c18db99f1303cd120146f1066",
+    "semanticResultSha256": "c41a3e0ded0c381e1fe161e0aad768c2d749bf7f51970fe171d2ffe5a96a294b",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "reportRelease": "PWRP-7.1.0-candidate.1"
+  },
+  "separationRules": {
+    "sourceAnswersRemainUnchanged": true,
+    "syntheticMappingScaffoldIsNotEvidenceForThisSemanticClaim": true,
+    "syntheticDeepeningAnswersAreContextOnly": true,
+    "routerMustIssueEveryQuestion": true,
+    "occurrenceAndBindingMustMatchExactly": true
+  },
+  "authoredCore": {
+    "requiredSourceResponseIds": [],
+    "acceptedSourceResponseIds": [],
+    "status": "unavailable",
+    "reason": "The source case contains no authored Deepening semantic anchors; a full session may not claim that Deepening semantically qualified this profile.",
+    "exactSourceAnswers": []
+  },
+  "occurrenceConditions": [
+    {
+      "fixtureOccurrenceReference": "fx_P07_E1",
+      "runtimeOccurrenceId": "pwep_80866bf2-8605-4554-8676-beb5a97b3df1",
+      "episodeFamily": "evaluation",
+      "basis": "actual_recalled",
+      "origin": "original_authored_scenario_episode",
+      "originalMappingContext": [
+        {
+          "sourceResponse": {
+            "responseId": "P07-A01",
+            "questionId": "M02",
+            "occurrenceId": "fx_P07_E1",
+            "stepId": "first",
+            "selectedOptionIds": [
+              "M02.bounded"
+            ],
+            "status": "answered",
+            "mode": "single",
+            "basis": "actual_recalled"
+          },
+          "provenance": "original_authored_fictional_answer",
+          "questionContract": {
+            "id": "M02",
+            "stage": "mapping",
+            "prompt": "Before {evaluator} looked at something you had done, how did you get ready?",
+            "episodeFamily": "evaluation",
+            "stepBinding": "first",
+            "selection": {
+              "mode": "single",
+              "max_select": 1,
+              "allow_simultaneous_pair": true,
+              "order_not_implied": true
+            },
+            "optionsInSourceOrder": [
+              {
+                "id": "M02.bounded",
+                "text": "I checked what was needed and left it there.",
+                "reportedValue": "bounded"
+              },
+              {
+                "id": "M02.recheck",
+                "text": "I checked it again after I had already checked it.",
+                "reportedValue": "recheck"
+              },
+              {
+                "id": "M02.rehearse",
+                "text": "I rehearsed what I would say.",
+                "reportedValue": "rehearse"
+              },
+              {
+                "id": "M02.avoid",
+                "text": "I put off looking at it.",
+                "reportedValue": "avoid"
+              },
+              {
+                "id": "M02.feedback",
+                "text": "I asked someone else to look it over.",
+                "reportedValue": "feedback"
+              },
+              {
+                "id": "M02.none",
+                "text": "I did not do any extra preparation.",
+                "reportedValue": "none"
+              }
+            ],
+            "responseControls": [
+              "none_fit",
+              "not_sure",
+              "no_event",
+              "not_applicable",
+              "skip"
+            ]
+          },
+          "fullSessionRoute": {
+            "status": "issued_and_accepted",
+            "runtimeResponseId": "pwr_88f58080a6c050816c031de28b2e535129d73144",
+            "runtimeOccurrenceId": "pwep_80866bf2-8605-4554-8676-beb5a97b3df1",
+            "stepId": "first",
+            "phase": "mapping",
+            "selection": [
+              "M02.bounded"
+            ]
+          }
+        },
+        {
+          "sourceResponse": {
+            "responseId": "P07-A02",
+            "questionId": "M03",
+            "occurrenceId": "fx_P07_E1",
+            "stepId": "first",
+            "selectedOptionIds": [
+              "M03.requirements"
+            ],
+            "status": "answered",
+            "mode": "single"
+          },
+          "provenance": "original_authored_fictional_answer",
+          "questionContract": {
+            "id": "M03",
+            "stage": "mapping",
+            "prompt": "What were you trying to accomplish with that preparation—or with leaving it alone?",
+            "episodeFamily": "evaluation",
+            "stepBinding": "first",
+            "selection": {
+              "mode": "single",
+              "max_select": 1,
+              "allow_simultaneous_pair": true,
+              "order_not_implied": true
+            },
+            "optionsInSourceOrder": [
+              {
+                "id": "M03.requirements",
+                "text": "Make sure it met the actual requirements.",
+                "reportedValue": "requirements"
+              },
+              {
+                "id": "M03.exposure",
+                "text": "Avoid being caught without an answer.",
+                "reportedValue": "exposure"
+              },
+              {
+                "id": "M03.error",
+                "text": "Catch a mistake before someone else did.",
+                "reportedValue": "error"
+              },
+              {
+                "id": "M03.approval",
+                "text": "Get a sign that it was good enough.",
+                "reportedValue": "approval"
+              },
+              {
+                "id": "M03.relief",
+                "text": "Get some relief from thinking about it.",
+                "reportedValue": "relief"
+              },
+              {
+                "id": "M03.no_aim",
+                "text": "I was not aiming for anything beyond the task.",
+                "reportedValue": "no_aim"
+              }
+            ],
+            "responseControls": [
+              "none_fit",
+              "not_sure",
+              "no_event",
+              "not_applicable",
+              "skip"
+            ]
+          },
+          "fullSessionRoute": {
+            "status": "issued_and_accepted",
+            "runtimeResponseId": "pwr_15737f5cc3adad13c8ba9c6a114795a19788ee2b",
+            "runtimeOccurrenceId": "pwep_80866bf2-8605-4554-8676-beb5a97b3df1",
+            "stepId": "first",
+            "phase": "mapping",
+            "selection": [
+              "M03.requirements"
+            ]
+          }
+        }
+      ],
+      "syntheticMappingScaffoldContextOnly": [],
+      "referentRoles": [
+        {
+          "occurrenceId": "fx_P07_E1",
+          "slot": "evaluator",
+          "role": "reviewer",
+          "origin": "new_synthetic_context_role"
+        }
+      ]
+    }
+  ],
+  "entryAndPermissionContext": {
+    "focusOccurrenceId": "fx_P07_E1",
+    "focusTopics": [],
+    "permissionOnlyTopics": [],
+    "actualAppliedFocusTopics": [],
+    "focusTopicsApplied": true,
+    "topicPermissionEvents": []
+  },
+  "distinctnessIntents": [
+    {
+      "sourceOccurrenceId": "fx_P07_E1",
+      "otherOccurrenceId": "fx_P07_E2",
+      "outcome": "different",
+      "kind": "authored_distinct_occurrences",
+      "provenance": "original_authored_fictional_scenario",
+      "requiresTrustedSimulatedConfirmation": true,
+      "runtimeDecision": {
+        "sourceReference": "fx_P07_E1",
+        "otherReference": "fx_P07_E2",
+        "outcome": "different",
+        "status": "applied",
+        "basis": "pass_two_context",
+        "sourceOccurrenceId": "pwep_80866bf2-8605-4554-8676-beb5a97b3df1",
+        "otherOccurrenceId": "pwep_d9c55f1a-ac5a-49a5-9683-9507fc515aff"
+      }
+    },
+    {
+      "sourceOccurrenceId": "fx_P07_E1",
+      "otherOccurrenceId": "fx_P07_E3",
+      "outcome": "different",
+      "kind": "authored_distinct_occurrences",
+      "provenance": "original_authored_fictional_scenario",
+      "requiresTrustedSimulatedConfirmation": true,
+      "runtimeDecision": {
+        "sourceReference": "fx_P07_E1",
+        "otherReference": "fx_P07_E3",
+        "outcome": "different",
+        "status": "applied",
+        "basis": "pass_two_context",
+        "sourceOccurrenceId": "pwep_80866bf2-8605-4554-8676-beb5a97b3df1",
+        "otherOccurrenceId": "pwep_2dd473e2-3533-4b82-ae3f-2040b3b8ee55"
+      }
+    },
+    {
+      "sourceOccurrenceId": "fx_P07_E1",
+      "otherOccurrenceId": "fx_P07_E4",
+      "outcome": "different",
+      "kind": "authored_distinct_occurrences",
+      "provenance": "original_authored_fictional_scenario",
+      "requiresTrustedSimulatedConfirmation": true,
+      "runtimeDecision": {
+        "sourceReference": "fx_P07_E1",
+        "otherReference": "fx_P07_E4",
+        "outcome": "different",
+        "status": "applied",
+        "basis": "pass_two_context",
+        "sourceOccurrenceId": "pwep_80866bf2-8605-4554-8676-beb5a97b3df1",
+        "otherOccurrenceId": "pwep_9167c572-676b-4edb-b537-ebc9b8e2ea79"
+      }
+    }
+  ],
+  "comparisonBindingIntents": [],
+  "intentionallyForbiddenAnswers": [],
+  "focusedBranchExecution": "not_executed_as_a_separate_transcript; full-session source-answer results are shown per response"
+}

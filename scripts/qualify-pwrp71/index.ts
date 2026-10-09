@@ -12,8 +12,8 @@ const ALL_PROFILES = [...Array.from({ length: 9 }, (_, index) => `P${String(inde
 const USAGE = `PWRP 7.1 qualification tooling
 
 Usage:
-  npm run reports:qualify:pwrp71 -- offline --profiles P01,P02 --reports MAP,IFS --cost-cap-micros 500000
-  npm run reports:qualify:pwrp71 -- live --diagnostic-only --profiles P01,P02 --reports ALL --cost-cap-micros 500000 --routing-evidence route-qualification.json
+  npm run reports:qualify:pwrp71 -- offline --fixture-set route-replays-v5 --profiles P01,P02 --reports ALL --aggregate-cost-cap-micros 500000
+  npm run reports:qualify:pwrp71 -- live --diagnostic-only --fixture-set route-replays-v5 --profiles C01,C02 --reports IFS --max-call-cost-micros 115000 --aggregate-cost-cap-micros 500000 --routing-evidence route-qualification.json
   npm run reports:qualify:pwrp71 -- resume <run-id> --diagnostic-only
   npm run reports:qualify:pwrp71 -- status <run-id>
   npm run reports:qualify:pwrp71 -- review-package <run-id>
@@ -22,7 +22,8 @@ Usage:
   npm run reports:qualify:pwrp71 -- manifest <run-id> --approval approval.json --semantic-evidence semantic-review.json --output reviewed-manifest.json
 
 Use --reports DEEPENING for IFS, PV, and ATT, or --reports ALL for all five layers.
-The live command is fixture-only and diagnostic. It requires --diagnostic-only, an explicit positive cost cap, and matching final PWQE 5.1 routing evidence. It never delivers reports.
+Fixture selection defaults to legacy-v1. route-replays-v3, route-replays-v4, and route-replays-v5 must be selected explicitly and never fall back to another fixture set.
+The live command is fixture-only and diagnostic. It requires --diagnostic-only, explicit positive --max-call-cost-micros and --aggregate-cost-cap-micros, and matching final PWQE 5.1 routing evidence. It never delivers reports.
 
 Approval requires a completed live qualification over P01-P09 and C01-C16, all five reports, current semantic-case evidence, and all explicit human checklist items. The manifest command only writes a reviewed manifest after those checks pass.`;
 
@@ -69,10 +70,28 @@ function requireFlag(args: ParsedArgs, name: string): string {
   return value;
 }
 
-function costCap(args: ParsedArgs): number {
-  const value = Number(requireFlag(args, "--cost-cap-micros"));
-  if (!Number.isSafeInteger(value) || value <= 0) throw new Error("--cost-cap-micros must be a positive integer in microdollars.");
-  return value;
+function parseMicros(value: string, flagName: string): number {
+  const parsed = Number(value);
+  if (!Number.isSafeInteger(parsed) || parsed <= 0) throw new Error(`${flagName} must be a positive safe integer in microdollars.`);
+  return parsed;
+}
+
+function costCaps(args: ParsedArgs, live: boolean, defaults?: { maxCallCostMicros?: number; aggregateCostCapMicros?: number }): { maxCallCostMicros: number; aggregateCostCapMicros: number } {
+  const maxCallRaw = flag(args, "--max-call-cost-micros");
+  const aggregateRaw = flag(args, "--aggregate-cost-cap-micros");
+  const legacyRaw = flag(args, "--cost-cap-micros");
+  if (live && (!maxCallRaw || !aggregateRaw)) {
+    throw new Error("Live qualification requires explicit --max-call-cost-micros and --aggregate-cost-cap-micros; offline caps do not authorize live spend.");
+  }
+  const aggregateCostCapMicros = aggregateRaw ? parseMicros(aggregateRaw, "--aggregate-cost-cap-micros")
+    : legacyRaw ? parseMicros(legacyRaw, "--cost-cap-micros")
+      : defaults?.aggregateCostCapMicros;
+  const maxCallCostMicros = maxCallRaw ? parseMicros(maxCallRaw, "--max-call-cost-micros")
+    : live ? undefined : defaults?.maxCallCostMicros ?? aggregateCostCapMicros;
+  if (aggregateCostCapMicros === undefined || maxCallCostMicros === undefined) {
+    throw new Error("Supply explicit positive safe-integer per-call and aggregate cost limits.");
+  }
+  return { maxCallCostMicros, aggregateCostCapMicros };
 }
 
 function profileIds(args: ParsedArgs): string[] {
@@ -94,6 +113,12 @@ function reportTypes(args: ParsedArgs, defaultAll = false): ReportType[] {
     throw new Error(`--reports must be ALL, DEEPENING, or unique report IDs: ${ALL_REPORTS.join(", ")}.`);
   }
   return [...values] as ReportType[];
+}
+
+function fixtureSet(args: ParsedArgs): "legacy-v1" | "route-replays-v3" | "route-replays-v4" | "route-replays-v5" {
+  const selected = flag(args, "--fixture-set") ?? "legacy-v1";
+  if (selected !== "legacy-v1" && selected !== "route-replays-v3" && selected !== "route-replays-v4" && selected !== "route-replays-v5") throw new Error("--fixture-set must be legacy-v1, route-replays-v3, route-replays-v4, or route-replays-v5.");
+  return selected;
 }
 
 async function readJson<T>(file: string): Promise<T> {
@@ -134,7 +159,7 @@ async function main(): Promise<void> {
   if (args.command === "offline" || args.command === "live") {
     const isLive = args.command === "live";
     if (isLive && args.flags.get("--diagnostic-only") !== true) throw new Error("live qualification requires explicit --diagnostic-only permission.");
-    const capMicros = costCap(args);
+    const caps = costCaps(args, isLive);
     const profiles = profileIds(args);
     const reports = reportTypes(args, !isLive);
     const routing = await routeEvidence(args);
@@ -148,7 +173,10 @@ async function main(): Promise<void> {
       mode: isLive ? "live" : "offline",
       profileIds: profiles,
       reportTypes: reports,
-      costCapMicros: capMicros,
+      fixtureSet: fixtureSet(args),
+      ...(flag(args, "--fixture-root") ? { fixtureRoot: path.resolve(flag(args, "--fixture-root")!) } : {}),
+      maxCallCostMicros: caps.maxCallCostMicros,
+      aggregateCostCapMicros: caps.aggregateCostCapMicros,
       workspaceRoot,
       outputRoot,
       routingEvidence: routing,
@@ -161,17 +189,31 @@ async function main(): Promise<void> {
   if (args.command === "resume") {
     const run = await qualification.readPwrp71QualificationRun(args.runId!, outputRoot);
     if (run.mode === "live" && args.flags.get("--diagnostic-only") !== true) throw new Error("Resuming a live run requires explicit --diagnostic-only permission.");
+    const caps = costCaps(args, run.mode === "live", {
+      maxCallCostMicros: run.maxCallCostMicros ?? run.costCapMicros,
+      aggregateCostCapMicros: run.aggregateCostCapMicros ?? run.costCapMicros,
+    });
+    if (caps.maxCallCostMicros !== (run.maxCallCostMicros ?? run.costCapMicros)
+      || caps.aggregateCostCapMicros !== (run.aggregateCostCapMicros ?? run.costCapMicros)) {
+      throw new Error("Resume cost ceilings must exactly match the source-pinned qualification run.");
+    }
     let routing = await routeEvidence(args);
     if (!routing && run.routingEvidenceFile) routing = await readJson<Pwqe51RouterQualificationEvidence>(path.join(run.outputDirectory, run.routingEvidenceFile));
     if (run.sourcePins.routingQualificationSha256 && (!routing || sha256Canonical(routing) !== run.sourcePins.routingQualificationSha256)) {
       throw new Error("Resume routing evidence must exactly match the source-pinned qualification receipt.");
     }
+    const resumedFixtureSet = run.fixtureSet ?? "legacy-v1";
+    const requestedFixtureSet = flag(args, "--fixture-set");
+    if (requestedFixtureSet && requestedFixtureSet !== resumedFixtureSet) throw new Error("Resume cannot change the fixture set pinned to the existing run.");
     const resumed = await qualification.runPwrp71Qualification({
       runId: run.runId,
       mode: run.mode,
+      fixtureSet: resumedFixtureSet,
+      ...(flag(args, "--fixture-root") ? { fixtureRoot: path.resolve(flag(args, "--fixture-root")!) } : {}),
       profileIds: run.selectedProfiles,
       reportTypes: run.selectedReports,
-      costCapMicros: run.costCapMicros,
+      maxCallCostMicros: caps.maxCallCostMicros,
+      aggregateCostCapMicros: caps.aggregateCostCapMicros,
       workspaceRoot,
       outputRoot,
       routingEvidence: routing,

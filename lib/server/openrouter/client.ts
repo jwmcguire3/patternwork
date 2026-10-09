@@ -1,14 +1,13 @@
 import type { JsonObject } from "../../question-engine/types.ts";
 import {
-  OPENROUTER_PROVIDER_POLICY,
   OpenRouterTransportError,
   type OpenRouterGenerationRequest,
   type OpenRouterGenerationResult,
   type OpenRouterTransport,
   type OpenRouterUsage,
 } from "./types.ts";
-
-const DEFAULT_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
+import { buildOpenRouterWirePayload, OPENROUTER_DEFAULT_ENDPOINT } from "./wire.ts";
+import { consumePwrp71BudgetAuthorization } from "../reports/qualification/budget-authorization.ts";
 
 type FetchLike = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
 
@@ -123,7 +122,7 @@ async function responseError(response: Response): Promise<{ message: string; pro
 
 export class OpenRouterClient implements OpenRouterTransport {
   private readonly apiKey: string;
-  private readonly endpoint: string;
+  readonly endpoint: string;
   private readonly timeoutMs: number;
   private readonly fetchImpl: FetchLike;
   private readonly appUrl?: string;
@@ -131,7 +130,7 @@ export class OpenRouterClient implements OpenRouterTransport {
 
   constructor(options: OpenRouterClientOptions = {}) {
     this.apiKey = options.apiKey ?? process.env.OPENROUTER_API_KEY ?? "";
-    this.endpoint = options.endpoint ?? DEFAULT_ENDPOINT;
+    this.endpoint = options.endpoint ?? OPENROUTER_DEFAULT_ENDPOINT;
     this.timeoutMs = options.timeoutMs ?? 120_000;
     this.fetchImpl = options.fetch ?? globalThis.fetch;
     this.appUrl = options.appUrl ?? process.env.OPENROUTER_APP_URL;
@@ -139,6 +138,9 @@ export class OpenRouterClient implements OpenRouterTransport {
   }
 
   async generate(request: OpenRouterGenerationRequest): Promise<OpenRouterGenerationResult> {
+    if (request.schemaName.includes("_pwrp71_") && !consumePwrp71BudgetAuthorization(request)) {
+      throw new OpenRouterTransportError("client_error", "PWRP 7.1 OpenRouter dispatch requires a durable budget-prepared request with usage and price controls.", { retryable: false });
+    }
     if (!this.apiKey) {
       throw new OpenRouterTransportError("client_error", "OPENROUTER_API_KEY is not configured; live qualification and generation are disabled.", { retryable: false });
     }
@@ -157,25 +159,7 @@ export class OpenRouterClient implements OpenRouterTransport {
           ...(this.appUrl ? { "http-referer": this.appUrl } : {}),
           ...(this.appTitle ? { "x-title": this.appTitle } : {}),
         },
-        body: JSON.stringify({
-          model: request.model,
-          messages: [
-            { role: "system", content: request.system },
-            { role: "user", content: request.prompt },
-          ],
-          stream: false,
-          max_completion_tokens: request.maxOutputTokens,
-          reasoning: { effort: request.reasoningEffort },
-          provider: OPENROUTER_PROVIDER_POLICY,
-          response_format: {
-            type: "json_schema",
-            json_schema: {
-              name: request.schemaName,
-              strict: true,
-              schema: request.schema,
-            },
-          },
-        }),
+        body: JSON.stringify(buildOpenRouterWirePayload(request)),
       });
     } catch (error) {
       if (error instanceof Error && error.name === "AbortError") {

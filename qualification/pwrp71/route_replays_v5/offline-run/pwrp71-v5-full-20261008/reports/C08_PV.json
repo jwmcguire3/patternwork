@@ -1,0 +1,30 @@
+{
+  "artifact_type": "pwrp71_report",
+  "report_release": "PWRP-7.1.0-candidate.1",
+  "source_manifest_sha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+  "report_id": "pwrp71_20ceab323bb5bdb7866139ed3a23",
+  "report_type": "PV",
+  "release_id": "PWQE-5.1.0-candidate.1",
+  "snapshot_id": "fictional-C08-deepening",
+  "evidence_sha256": "6200d78ff85beb823fe93647fd89a7a43010980269141d8f1ac2553fd6a1fc30",
+  "report_markdown": "# Offline structural fixture for PV\n\n*Patternwork is nonclinical self-reflection. Parts and state names are working interpretations, not diagnoses or physiological measurements.*\n",
+  "draft": {
+    "report_release": "PWRP-7.1.0-candidate.1",
+    "release_id": "PWQE-5.1.0-candidate.1",
+    "snapshot_id": "fictional-C08-deepening",
+    "evidence_sha256": "6200d78ff85beb823fe93647fd89a7a43010980269141d8f1ac2553fd6a1fc30",
+    "report_type": "PV",
+    "title": "Offline structural fixture for PV",
+    "title_claim_ids": [],
+    "content_status": "insufficient_evidence",
+    "sections": [],
+    "claims": [],
+    "name_registry": [],
+    "relationships": [],
+    "reflection_questions": []
+  },
+  "digests": {
+    "artifact_sha256": "c38b60f661cef2664f87e40e04658573e92e9a427dfd4fe40aa280dcb5f1201d",
+    "report_markdown_sha256": "63dbd05b7b5bc892ab60ab4c346f44f96bbce1bb8220afb030982123a0b8cd86"
+  }
+}

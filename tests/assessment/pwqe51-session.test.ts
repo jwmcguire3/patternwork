@@ -17,6 +17,9 @@ import {
   type Pwqe51SessionState,
 } from "../../lib/server/assessment/pwqe51-session.ts";
 import { compilePwqe51Route, type Pwqe51CanonicalResponse } from "../../lib/server/assessment/pwqe51-router.ts";
+import { buildPwqe51RouterPacket } from "../../lib/server/reports/pwqe51-packet.ts";
+import { preparePwrp71Request } from "../../lib/server/reports/pwrp71-adapter.ts";
+import { loadPwrp71SourcePackage } from "../../lib/server/reports/pwrp71-source.ts";
 
 const sourcePromise = loadPwqe51SourcePackage();
 
@@ -301,6 +304,37 @@ test("replay binding outcomes remain distinct and never create an episode withou
       assert.equal(next.currentInteraction?.occurrenceId === pending.currentInteraction?.occurrenceId, false);
     }
   }
+  for (const outcome of ["same", "unknown", "no_event", "skip"] as const) {
+    serial += 1;
+    const decisionId = `pwrb_${String(serial).padStart(40, "0")}`;
+    const closed = applyPwqe51ReplayBinding(pending, {
+      decisionId,
+      requestSha256: String(serial).padStart(64, "0"),
+      outcome,
+    }, source);
+    serial += 1;
+    const corrected = applyPwqe51ReplayBinding(closed, {
+      decisionId: `pwrb_${String(serial).padStart(40, "0")}`,
+      requestSha256: String(serial).padStart(64, "0"),
+      outcome: "different",
+      correctsDecisionId: decisionId,
+    }, source);
+    assert.equal(corrected.replayBindingHistory?.at(-1)?.supersedesDecisionId, decisionId, `${outcome} correction must preserve its decision lineage`);
+    assert.equal(corrected.routerResult.episodes.filter((episode) => episode.actual).length, 1, `${outcome} correction may bind a candidate but cannot manufacture an answered occurrence`);
+    const replayOccurrenceId = corrected.replayBindingHistory?.at(-1)?.replayOccurrenceId;
+    assert.ok(replayOccurrenceId);
+    assert.equal(corrected.currentInteraction?.questionId, "M02");
+    assert.equal(corrected.currentInteraction?.occurrenceId, replayOccurrenceId);
+    serial += 1;
+    const answeredReplay = advancePwqe51Session(corrected, {
+      responseId: `replay-root-${serial}`,
+      completionState: "COMPLETED",
+      selectedOptionIds: ["M02.rehearse"],
+      basis: "actual_recalled",
+      referentRole: "supervisor",
+    }, source);
+    assert.equal(answeredReplay.routerResult.episodes.filter((episode) => episode.actual).length, 2, `${outcome} becomes distinct only after a current replay-root answer`);
+  }
   assert.throws(() => applyPwqe51ReplayBinding(createPwqe51SessionState(source), {
     decisionId: `pwrb_${"9".repeat(40)}`, requestSha256: "9".repeat(64), outcome: "different",
   }, source), /no current server-issued replay binding/u, "a client cannot choose a target/source scope without a live router binding");
@@ -338,6 +372,8 @@ test("original C07 fixture traverses trusted replay, attached M03, D56/D57/D77 l
   }, source);
   assert.equal(state.currentInteraction?.questionId, "M03", "the second M03 must attach to the replayed M02 occurrence");
   assert.equal(state.currentInteraction?.occurrenceId, replayOccurrenceId);
+  const replayComparison = state.routerResult.targets.find((target) => target.targetId === "contrast_context" && target.comparisonIds?.includes(replayOccurrenceId));
+  assert.deepEqual(replayComparison?.comparisonIds, [firstOccurrenceId, replayOccurrenceId], "the respondent-confirmed replay pair retains source-first occurrence orientation");
 
   let iterations = 0;
   while (!state.responses.some((response) => response.questionId === "D77" && response.status === "answered") && iterations < 60) {
@@ -375,6 +411,15 @@ test("original C07 fixture traverses trusted replay, attached M03, D56/D57/D77 l
   assert.ok(d77Target?.sourceObservationIds.some((id) => id.startsWith(`${state.responses.find((response) => response.questionId === "D56")!.responseId}:D56.same`)));
   assert.ok(d77Target?.sourceObservationIds.some((id) => id.startsWith(`${state.responses.find((response) => response.questionId === "D57")!.responseId}:D57.same`)));
 
+  const reportSource = await loadPwrp71SourcePackage();
+  const qualifiedPacket = buildPwqe51RouterPacket({
+    snapshotId: "c07-before-correction", responses: state.responses, routerResult: state.routerResult, pass: 2,
+    controls: state.controls, comparisonDecisions: state.comparisonDecisions, source,
+  });
+  const qualifiedRequest = preparePwrp71Request({ packet: qualifiedPacket as never, reportType: "IFS", questionSource: source, reportSource });
+  assert.equal(qualifiedRequest.ok, true, qualifiedRequest.ok ? undefined : JSON.stringify(qualifiedRequest.issues));
+  assert.ok((qualifiedPacket.observations as Array<{ response_id: string }>).some((observation) => observation.response_id === d77Response!.responseId));
+
   const editingRoot = beginPwqe51Correction(state, replayRoot!.responseId, source);
   const rootCorrection = advancePwqe51Session(editingRoot, {
     responseId: "c07-replay-root-corrected", completionState: "COMPLETED", selectedOptionIds: ["M02.none"],
@@ -382,6 +427,15 @@ test("original C07 fixture traverses trusted replay, attached M03, D56/D57/D77 l
   assert.ok(rootCorrection.routerResult.invalidatedResponses.some((row) => row.responseId === d77Response!.responseId
     && row.reason === "comparison_support_removed"), "a changed root action must invalidate the continuity result it no longer supports");
   assert.ok(rootCorrection.routerResult.observations.some((observation) => observation.responseId === replayAim!.responseId), "an attached child with an intact answered parent remains valid");
+  const correctedPacket = buildPwqe51RouterPacket({
+    snapshotId: "c07-after-correction", responses: rootCorrection.responses, routerResult: rootCorrection.routerResult, pass: 2,
+    controls: rootCorrection.controls, comparisonDecisions: rootCorrection.comparisonDecisions, source,
+  });
+  assert.ok((correctedPacket.invalidated_response_ids as string[]).includes(d77Response!.responseId));
+  assert.equal((correctedPacket.observations as Array<{ response_id: string }>).some((observation) => observation.response_id === d77Response!.responseId), false,
+    "the invalidated D77 comparison must not enter the corrected PWRP evidence packet");
+  const correctedRequest = preparePwrp71Request({ packet: correctedPacket as never, reportType: "IFS", questionSource: source, reportSource });
+  assert.equal(correctedRequest.ok, true, correctedRequest.ok ? undefined : JSON.stringify(correctedRequest.issues));
 
   const currentBinding = rootCorrection.replayBindingHistory![0]!;
   const withdrawn = applyPwqe51ReplayBinding(rootCorrection, {
@@ -393,6 +447,19 @@ test("original C07 fixture traverses trusted replay, attached M03, D56/D57/D77 l
   assert.ok(withdrawn.routerResult.invalidatedResponses.some((row) => row.responseId === "c07-session-response-8" && row.reason === "episode_root_removed"),
     "an answered but parentless follow-up cannot preserve an occurrence after its replay root is withdrawn");
   assert.equal(withdrawn.routerResult.episodes.some((episode) => episode.id === replayOccurrenceId && episode.actual), false);
+  const bindingCorrectedPacket = buildPwqe51RouterPacket({
+    snapshotId: "c07-after-binding-correction", responses: withdrawn.responses, routerResult: withdrawn.routerResult, pass: 2,
+    controls: withdrawn.controls, comparisonDecisions: withdrawn.comparisonDecisions, source,
+  });
+  const withdrawnComparisonIds = new Set(["D56", "D57", "D77"].flatMap((questionId) =>
+    withdrawn.routerResult.invalidatedResponses.filter((entry) => entry.responseId === activeByQuestion(questionId)[0]?.responseId).map((entry) => entry.responseId)));
+  assert.ok([...withdrawnComparisonIds].length > 0);
+  assert.equal((bindingCorrectedPacket.observations as Array<{ response_id: string }>).some((observation) => withdrawnComparisonIds.has(observation.response_id)), false,
+    "a comparison invalidated by the corrected same binding must not enter the current packet");
+  assert.equal((bindingCorrectedPacket.context_comparisons as Array<{ occurrence_id: string; distinct_from: string[] }>).some((comparison) =>
+    comparison.occurrence_id === replayOccurrenceId || comparison.distinct_from.includes(replayOccurrenceId)), false);
+  const bindingCorrectedRequest = preparePwrp71Request({ packet: bindingCorrectedPacket as never, reportType: "IFS", questionSource: source, reportSource });
+  assert.equal(bindingCorrectedRequest.ok, true, bindingCorrectedRequest.ok ? undefined : JSON.stringify(bindingCorrectedRequest.issues));
 
   const restored = applyPwqe51ReplayBinding(withdrawn, {
     decisionId: `pwrb_${"e".repeat(40)}`, requestSha256: "f".repeat(64), outcome: "different", correctsDecisionId: withdrawn.replayBindingHistory!.at(-1)!.decisionId,

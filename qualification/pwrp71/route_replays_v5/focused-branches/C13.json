@@ -1,0 +1,460 @@
+{
+  "schemaVersion": "PWQE51-FOCUSED-ROUTER-CONTRACT-CASE-V1",
+  "profileId": "C13",
+  "experimentalFixtureVariant": null,
+  "caseKind": "focused_router_contract_case",
+  "fullAssessmentTranscript": false,
+  "independentlyReviewedRoutingEvidence": false,
+  "semanticClaim": "Private importance, desired pace and showing interest",
+  "status": "all_authored_semantic_anchors_issued_in_full_session",
+  "sourcePins": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "authoredFixtureFile": "C13.json",
+    "authoredFixtureSha256": "a9876d0b711cd11a933b89ba6ab2cdc2f8d3c3ea7174645c183ae879098cc2bb",
+    "routeReplayArtifactFile": "C13.json",
+    "routeReplayArtifactSha256": "ad5da676f74a93a5470fc2fd7db072a1962e9812cc097805222fbecc6dba2fd6",
+    "semanticResultSha256": "b17834b980e9762e5fe7ab0c6e219bfb9b1fbe63675841e0317ea967f2da9a4f",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "reportRelease": "PWRP-7.1.0-candidate.1"
+  },
+  "separationRules": {
+    "sourceAnswersRemainUnchanged": true,
+    "syntheticMappingScaffoldIsNotEvidenceForThisSemanticClaim": true,
+    "syntheticDeepeningAnswersAreContextOnly": true,
+    "routerMustIssueEveryQuestion": true,
+    "occurrenceAndBindingMustMatchExactly": true
+  },
+  "authoredCore": {
+    "requiredSourceResponseIds": [
+      "C13-SRC-D52-1",
+      "C13-SRC-D53-1",
+      "C13-SRC-D93-1",
+      "C13-SRC-D94-1",
+      "C13-SRC-D95-1"
+    ],
+    "acceptedSourceResponseIds": [
+      "C13-SRC-D52-1",
+      "C13-SRC-D53-1",
+      "C13-SRC-D93-1",
+      "C13-SRC-D94-1",
+      "C13-SRC-D95-1"
+    ],
+    "status": "complete",
+    "exactSourceAnswers": [
+      {
+        "sourceResponse": {
+          "responseId": "C13-SRC-D52-1",
+          "questionId": "D52",
+          "occurrenceId": "fx_C13_deepening_D52",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D52.fast"
+          ],
+          "status": "answered",
+          "mode": "single",
+          "basis": "actual_recalled"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D52",
+          "stage": "deepening",
+          "prompt": "Think of a time a new connection began to matter to you. Before much had been said between you, what was happening privately?",
+          "episodeFamily": "new_closeness",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D52.gradual",
+              "text": "It was becoming important gradually.",
+              "reportedValue": "gradual"
+            },
+            {
+              "id": "D52.fast",
+              "text": "It already felt more important than I was showing.",
+              "reportedValue": "fast"
+            },
+            {
+              "id": "D52.curious",
+              "text": "I was interested without knowing what I wanted.",
+              "reportedValue": "curious"
+            },
+            {
+              "id": "D52.uncertain",
+              "text": "I kept changing my mind about how close I wanted to be.",
+              "reportedValue": "uncertain"
+            },
+            {
+              "id": "D52.little",
+              "text": "It did not yet have much emotional weight.",
+              "reportedValue": "little"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_647dc14c088eebc1347487747ff5c1ec5a2e6839",
+          "runtimeOccurrenceId": "pwep_cfeefcc1-6d06-4837-a852-eef6608fe515",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D52.fast"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C13-SRC-D53-1",
+          "questionId": "D53",
+          "occurrenceId": "fx_C13_deepening_D52",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D53.small"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D53",
+          "stage": "deepening",
+          "prompt": "At that stage of the connection, what were you actually showing the other person?",
+          "episodeFamily": "new_closeness",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D53.direct",
+              "text": "My interest was fairly clear.",
+              "reportedValue": "direct"
+            },
+            {
+              "id": "D53.small",
+              "text": "I showed only a little of what I felt.",
+              "reportedValue": "small"
+            },
+            {
+              "id": "D53.wait",
+              "text": "I mostly waited for their moves.",
+              "reportedValue": "wait"
+            },
+            {
+              "id": "D53.alternate",
+              "text": "I moved closer and then stepped back.",
+              "reportedValue": "alternate"
+            },
+            {
+              "id": "D53.practical",
+              "text": "We mostly stayed with ordinary conversation or activities.",
+              "reportedValue": "practical"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_8f11c786e70919bb914300b0e54d5248a9879ebd",
+          "runtimeOccurrenceId": "pwep_cfeefcc1-6d06-4837-a852-eef6608fe515",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D53.small"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C13-SRC-D93-1",
+          "questionId": "D93",
+          "occurrenceId": "fx_C13_deepening_D52",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D93.slower"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D93",
+          "stage": "deepening",
+          "prompt": "At that stage of the new connection, how did the pace of contact feel to you?",
+          "episodeFamily": "bound",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": false,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D93.fit",
+              "text": "It fit the pace I wanted then.",
+              "reportedValue": "fit"
+            },
+            {
+              "id": "D93.slower",
+              "text": "I wanted it to slow down.",
+              "reportedValue": "slower"
+            },
+            {
+              "id": "D93.faster",
+              "text": "I wanted more contact or closeness sooner.",
+              "reportedValue": "faster"
+            },
+            {
+              "id": "D93.vary",
+              "text": "I wanted different paces at different moments.",
+              "reportedValue": "vary"
+            },
+            {
+              "id": "D93.unsure",
+              "text": "I had not worked out what pace I wanted.",
+              "reportedValue": "unsure"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_db91e88b70a2f9d173da025899c88efd2fd9fb05",
+          "runtimeOccurrenceId": "pwep_cfeefcc1-6d06-4837-a852-eef6608fe515",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D93.slower"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C13-SRC-D94-1",
+          "questionId": "D94",
+          "occurrenceId": "fx_C13_deepening_D52",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D94.expectations"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D94",
+          "stage": "deepening",
+          "prompt": "What most affected the pace you wanted in that connection at that stage?",
+          "episodeFamily": "bound",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D94.knowing",
+              "text": "How much I knew about the person.",
+              "reportedValue": "knowing"
+            },
+            {
+              "id": "D94.room",
+              "text": "How much room I had for a relationship then.",
+              "reportedValue": "room"
+            },
+            {
+              "id": "D94.response",
+              "text": "How they responded when I showed interest.",
+              "reportedValue": "response"
+            },
+            {
+              "id": "D94.expectations",
+              "text": "The expectations that seemed to come with getting closer.",
+              "reportedValue": "expectations"
+            },
+            {
+              "id": "D94.interest",
+              "text": "How interested I felt, apart from worry about what would happen.",
+              "reportedValue": "interest"
+            },
+            {
+              "id": "D94.unclear",
+              "text": "I could not tell what was shaping it.",
+              "reportedValue": "unclear"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_9239e5ddab8602c0dbdfe6eb653c0dcdb54ec6db",
+          "runtimeOccurrenceId": "pwep_cfeefcc1-6d06-4837-a852-eef6608fe515",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D94.expectations"
+          ]
+        }
+      },
+      {
+        "sourceResponse": {
+          "responseId": "C13-SRC-D95-1",
+          "questionId": "D95",
+          "occurrenceId": "fx_C13_deepening_D52",
+          "stepId": "first",
+          "selectedOptionIds": [
+            "D95.exposed"
+          ],
+          "status": "answered",
+          "mode": "single"
+        },
+        "provenance": "original_authored_fictional_answer",
+        "questionContract": {
+          "id": "D95",
+          "stage": "deepening",
+          "prompt": "After you showed some of that interest, what happened inside?",
+          "episodeFamily": "bound",
+          "stepBinding": "first",
+          "selection": {
+            "mode": "single",
+            "max_select": 1,
+            "allow_simultaneous_pair": true,
+            "order_not_implied": true
+          },
+          "optionsInSourceOrder": [
+            {
+              "id": "D95.settled",
+              "text": "I felt more at ease with the connection.",
+              "reportedValue": "settled"
+            },
+            {
+              "id": "D95.exposed",
+              "text": "I felt more exposed.",
+              "reportedValue": "exposed"
+            },
+            {
+              "id": "D95.withdraw",
+              "text": "I wanted to pull back after having shown it.",
+              "reportedValue": "withdraw"
+            },
+            {
+              "id": "D95.more",
+              "text": "I wanted to show more.",
+              "reportedValue": "more"
+            },
+            {
+              "id": "D95.same",
+              "text": "It did not change much inside.",
+              "reportedValue": "same"
+            },
+            {
+              "id": "D95.unclear",
+              "text": "I cannot separate that from what the other person did next.",
+              "reportedValue": "unclear"
+            }
+          ],
+          "responseControls": [
+            "none_fit",
+            "not_sure",
+            "no_event",
+            "not_applicable",
+            "skip"
+          ]
+        },
+        "fullSessionRoute": {
+          "status": "issued_and_accepted",
+          "runtimeResponseId": "pwr_fbd9d728c24afb043293e5a1577895810bfa6252",
+          "runtimeOccurrenceId": "pwep_cfeefcc1-6d06-4837-a852-eef6608fe515",
+          "stepId": "first",
+          "phase": "deepening",
+          "selection": [
+            "D95.exposed"
+          ]
+        }
+      }
+    ]
+  },
+  "occurrenceConditions": [
+    {
+      "fixtureOccurrenceReference": "fx_C13_deepening_D52",
+      "runtimeOccurrenceId": "pwep_cfeefcc1-6d06-4837-a852-eef6608fe515",
+      "episodeFamily": "new_closeness",
+      "basis": "actual_recalled",
+      "origin": "original_authored_fictional_scenario_episode",
+      "originalMappingContext": [],
+      "syntheticMappingScaffoldContextOnly": [],
+      "referentRoles": []
+    }
+  ],
+  "entryAndPermissionContext": {
+    "focusOccurrenceId": "fx_C13_deepening_D52",
+    "focusTopics": [
+      "growing_closeness"
+    ],
+    "permissionOnlyTopics": [
+      "body_detail",
+      "growing_closeness",
+      "body_detail",
+      "growing_closeness"
+    ],
+    "actualAppliedFocusTopics": [
+      "growing_closeness"
+    ],
+    "focusTopicsApplied": true,
+    "topicPermissionEvents": [
+      {
+        "topic": "body_detail",
+        "outcome": "opt_in",
+        "provenance": "original_authored_configuration",
+        "sourceRef": "C13.config"
+      },
+      {
+        "topic": "growing_closeness",
+        "outcome": "opt_in",
+        "provenance": "original_authored_configuration",
+        "sourceRef": "C13.config"
+      }
+    ]
+  },
+  "distinctnessIntents": [],
+  "comparisonBindingIntents": [],
+  "intentionallyForbiddenAnswers": [],
+  "focusedBranchExecution": "not_executed_as_a_separate_transcript; full-session source-answer results are shown per response"
+}

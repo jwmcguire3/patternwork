@@ -1,4 +1,4 @@
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { JsonObject, ReportType, ValidationIssue } from "../../question-engine/types.ts";
 import { canonicalJson, sha256Canonical } from "../../report-contracts/delivery-validator.ts";
@@ -16,6 +16,7 @@ import {
 import { buildPwqe5QualificationFixtureSet, type Pwqe5ProviderQualificationFixture, type Pwqe5ProviderQualificationFixtureSet } from "./pwqe5-qualification-fixtures.ts";
 import type { OpenRouterGenerationRequest, OpenRouterTransport, OpenRouterUsage } from "./types.ts";
 import { OpenRouterTransportError } from "./types.ts";
+import { renameFileWithTransientRetry } from "../reports/qualification/atomic-file.ts";
 import { projectOpenRouterStrictSchemaObject } from "./schema-projection.ts";
 import { buildGenerationPrompt, buildRepairPrompt, loadPwqe6ReportPrompt } from "../reports/prompts.ts";
 import { renderPwqe6ReportDraftMarkdown, validatePwqe6ReportDraftValue } from "../reports/pwqe6-validation.ts";
@@ -208,7 +209,12 @@ async function saveJson(outputDirectory: string, file: string, value: unknown): 
   await mkdir(path.dirname(target), { recursive: true });
   const temporary = `${target}.tmp`;
   await writeFile(temporary, `${JSON.stringify(value, null, 2)}\n`, "utf8");
-  await rename(temporary, target);
+  try {
+    await renameFileWithTransientRetry(temporary, target);
+  } catch (error) {
+    await rm(temporary, { force: true }).catch(() => undefined);
+    throw error;
+  }
 }
 
 async function saveText(outputDirectory: string, file: string, value: string): Promise<void> {
@@ -216,7 +222,12 @@ async function saveText(outputDirectory: string, file: string, value: string): P
   await mkdir(path.dirname(target), { recursive: true });
   const temporary = `${target}.tmp`;
   await writeFile(temporary, value, "utf8");
-  await rename(temporary, target);
+  try {
+    await renameFileWithTransientRetry(temporary, target);
+  } catch (error) {
+    await rm(temporary, { force: true }).catch(() => undefined);
+    throw error;
+  }
 }
 
 async function loadRun(outputDirectory: string): Promise<Pwqe5QualificationRunManifest | undefined> {
