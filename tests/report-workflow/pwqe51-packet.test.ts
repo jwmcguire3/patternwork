@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import test from "node:test";
 import Ajv2020 from "ajv/dist/2020.js";
 import { loadPwqe51SourcePackage } from "@/lib/question-engine";
@@ -6,6 +7,19 @@ import { compilePwqe51Route, type Pwqe51CanonicalResponse } from "@/lib/server/a
 import { buildPwqe51RouterPacket, verifyPwqe51PacketDigest } from "@/lib/server/reports/pwqe51-packet";
 import { preparePwrp71Request } from "@/lib/server/reports/pwrp71-adapter";
 import { loadPwrp71SourcePackage } from "@/lib/server/reports/pwrp71-source";
+
+function canonical(value: unknown): string {
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(canonical).join(",")}]`;
+  const record = value as Record<string, unknown>;
+  return `{${Object.keys(record).sort().map((key) => `${JSON.stringify(key)}:${canonical(record[key])}`).join(",")}}`;
+}
+
+function resign(packet: Record<string, unknown>): void {
+  const contents = { ...packet };
+  delete contents.content_sha256;
+  packet.content_sha256 = createHash("sha256").update(canonical(contents), "utf8").digest("hex");
+}
 
 test("builds a source-bound PWQE 5.1 packet with schema-valid evidence and a stable digest", async () => {
   const source = await loadPwqe51SourcePackage();
@@ -202,6 +216,23 @@ test("confirmed recurrence evidence carries only the router-confirmed pair into 
   assert.deepEqual(recurrence.comparison_ids, pair);
   const result = preparePwrp71Request({ packet: packet as never, reportType: "IFS", questionSource: source, reportSource });
   assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify(result.issues));
+
+});
+
+test("packet target attempt counts exclude superseded candidate answers", async () => {
+  const source = await loadPwqe51SourcePackage();
+  const responses: Pwqe51CanonicalResponse[] = [
+    { responseId: "wait-root", questionId: "M17", occurrenceId: "wait-event", stepId: "first", selectedOptionIds: ["M17.check"], status: "answered", mode: "single", basis: "actual_recalled" },
+    { responseId: "wait-aim", questionId: "D43", occurrenceId: "wait-event", stepId: "first", selectedOptionIds: ["D43.okay"], status: "answered", mode: "single" },
+    { responseId: "history-old", questionId: "D44", occurrenceId: "wait-event", stepId: "first", selectedOptionIds: ["D44.reliable"], status: "answered", mode: "single" },
+    { responseId: "history-corrected", questionId: "D44", occurrenceId: "wait-event", stepId: "first", selectedOptionIds: ["D44.variable"], status: "answered", mode: "single", supersedesResponseId: "history-old" },
+  ];
+  const routerResult = compilePwqe51Route({ responses, phase: "deepening" }, source);
+  const packet = buildPwqe51RouterPacket({ snapshotId: "corrected-history", responses, routerResult, pass: 2, controls: [], source });
+  const target = (packet.target_resolutions as Array<Record<string, unknown>>).find((entry) => entry.target_id === "availability_history");
+  assert.ok(target);
+  assert.equal(target.attempts, 1);
+  assert.deepEqual(packet.superseded_response_ids, ["history-old"]);
 });
 
 test("ordered D36 recovery details project to the real router sequence sub-steps", async () => {
@@ -226,4 +257,19 @@ test("ordered D36 recovery details project to the real router sequence sub-steps
   }
   const result = preparePwrp71Request({ packet: packet as never, reportType: "IFS", questionSource: source, reportSource });
   assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify(result.issues));
+
+  const relationTamper = structuredClone(packet);
+  (relationTamper.sequence_edges as Array<Record<string, unknown>>)[0]!.relation = "simultaneous";
+  resign(relationTamper);
+  const rejectedRelation = preparePwrp71Request({ packet: relationTamper as never, reportType: "IFS", questionSource: source, reportSource });
+  assert.equal(rejectedRelation.ok, false);
+  if (!rejectedRelation.ok) assert.ok(rejectedRelation.issues.some((issue) => issue.code === "recovery_sequence_semantics"));
+
+  const directionTamper = structuredClone(packet);
+  const firstEdge = (directionTamper.sequence_edges as Array<Record<string, unknown>>)[0]!;
+  [firstEdge.from_step, firstEdge.to_step] = [firstEdge.to_step, firstEdge.from_step];
+  resign(directionTamper);
+  const rejectedDirection = preparePwrp71Request({ packet: directionTamper as never, reportType: "IFS", questionSource: source, reportSource });
+  assert.equal(rejectedDirection.ok, false);
+  if (!rejectedDirection.ok) assert.ok(rejectedDirection.issues.some((issue) => issue.code === "recovery_sequence_semantics"));
 });

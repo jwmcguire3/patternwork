@@ -7,6 +7,7 @@ import { sha256Canonical } from "../../../report-contracts/delivery-validator.ts
 import { OpenRouterClient } from "../../openrouter/client.ts";
 import { QUALIFICATION_MODEL_ORDER, UNQUALIFIED_MOCK_MODEL_POLICY, type ActivatedReportModelPolicy } from "../../openrouter/policy.ts";
 import type { OpenRouterGenerationRequest, OpenRouterGenerationResult, OpenRouterTransport, OpenRouterUsage } from "../../openrouter/types.ts";
+import { GPT6_LUNA_BILLING_BASIS_SHA256 } from "../../openrouter/qualification-budget.ts";
 import { generateCanonicalReport } from "../generator.ts";
 import type { Pwrp71ReportArtifact } from "../pwrp71-validation.ts";
 import { preparePwrp71Request } from "../pwrp71-adapter.ts";
@@ -116,8 +117,15 @@ export interface Pwrp71QualificationRun {
     readonly reportModelPolicySha256: string;
   };
   readonly costCapMicros: number;
+  /** Explicit per-provider-call ceiling. Missing only on legacy/offline runs. */
+  readonly maxCallCostMicros?: number;
+  /** Aggregate qualification budget. costCapMicros is its legacy alias. */
+  readonly aggregateCostCapMicros?: number;
+  readonly billingBasisSha256?: string;
   readonly totalReportedCostMicros: number;
+  /** Legacy alias retained for prior run readers; now includes started + unknown attempts. */
   readonly reservedUnknownCostMicros: number;
+  readonly reservedInFlightOrUnknownCostMicros?: number;
   readonly selectedProfiles: readonly string[];
   readonly selectedReports: readonly ReportType[];
   readonly fixtureStatuses: Readonly<Record<string, FixtureStatus>>;
@@ -150,7 +158,10 @@ export interface RunPwrp71QualificationOptions {
   readonly fixtureRoot?: string;
   readonly profileIds: readonly string[];
   readonly reportTypes: readonly ReportType[];
-  readonly costCapMicros: number;
+  /** Legacy alias for aggregateCostCapMicros; live runs must also set maxCallCostMicros. */
+  readonly costCapMicros?: number;
+  readonly maxCallCostMicros?: number;
+  readonly aggregateCostCapMicros?: number;
   readonly workspaceRoot?: string;
   readonly outputRoot?: string;
   readonly fixtures?: Pwrp71QualificationFixtures;
@@ -646,7 +657,7 @@ function deterministicMockTransport(input: { readonly source: Pwrp71SourcePackag
 function attemptUsage(attempts: readonly QualificationAttemptRecord[]): { reported: number; reserved: number } {
   return {
     reported: attempts.reduce((sum, item) => sum + (item.usageStatus === "reported" ? item.usage?.costMicros ?? 0 : 0), 0),
-    reserved: attempts.reduce((sum, item) => sum + (item.usageStatus === "unknown" ? item.locallyEstimatedCostMicros : 0), 0),
+    reserved: attempts.reduce((sum, item) => sum + (item.status !== "completed" ? item.reservedCostMicros ?? item.locallyEstimatedCostMicros : 0), 0),
   };
 }
 
@@ -660,7 +671,13 @@ async function atomicWrite(target: string, contents: string): Promise<void> {
 async function saveRun(runDirectory: string, run: Pwrp71QualificationRun): Promise<Pwrp71QualificationRun> {
   const attempts = await new FileQualificationAttemptStore(runDirectory).list();
   const usage = attemptUsage(attempts);
-  const withTotals = { ...run, updatedAt: new Date().toISOString(), totalReportedCostMicros: usage.reported, reservedUnknownCostMicros: usage.reserved };
+  const withTotals = {
+    ...run,
+    updatedAt: new Date().toISOString(),
+    totalReportedCostMicros: usage.reported,
+    reservedUnknownCostMicros: usage.reserved,
+    reservedInFlightOrUnknownCostMicros: usage.reserved,
+  };
   await atomicWrite(path.join(runDirectory, "run.json"), `${JSON.stringify(withTotals, null, 2)}\n`);
   return withTotals;
 }
@@ -687,7 +704,10 @@ export async function runPwrp71Qualification(input: RunPwrp71QualificationOption
   const now = input.now ?? (() => new Date());
   const workspaceRoot = path.resolve(input.workspaceRoot ?? process.cwd());
   const runId = safeRunId(input.runId ?? `pwrp71-${now().toISOString().replace(/[:.]/gu, "-")}`);
-  if (!Number.isSafeInteger(input.costCapMicros) || input.costCapMicros <= 0) throw new Error("PWRP 7.1 qualification requires a positive integer cost cap in micros.");
+  const aggregateCostCapMicros = input.aggregateCostCapMicros ?? input.costCapMicros;
+  const maxCallCostMicros = input.maxCallCostMicros ?? (input.mode === "offline" ? aggregateCostCapMicros : undefined);
+  if (!Number.isSafeInteger(aggregateCostCapMicros) || typeof aggregateCostCapMicros !== "number" || aggregateCostCapMicros <= 0) throw new Error("PWRP 7.1 qualification requires an explicit positive safe-integer aggregateCostCapMicros.");
+  if (!Number.isSafeInteger(maxCallCostMicros) || typeof maxCallCostMicros !== "number" || maxCallCostMicros <= 0) throw new Error("Live PWRP 7.1 qualification requires an explicit positive safe-integer maxCallCostMicros; offline mock runs may use the aggregate cap as a non-spending ceiling.");
   if (!input.profileIds.length || new Set(input.profileIds).size !== input.profileIds.length) throw new Error("Select one or more unique PWRP 7.1 profiles.");
   if (!input.reportTypes.length || new Set(input.reportTypes).size !== input.reportTypes.length || input.reportTypes.some((type) => !PWRP71_QUALIFICATION_REPORT_ORDER.includes(type))) throw new Error("Select one or more unique PWRP 7.1 report types.");
   const fixtureSet = input.fixtureSet ?? "legacy-v1";
@@ -770,7 +790,9 @@ export async function runPwrp71Qualification(input: RunPwrp71QualificationOption
       ...(fixture.reportPackets ? { reportPackets: Object.fromEntries(reportTypes.map((type) => [type, fixture.reportPackets?.[type]?.packetSha256 ?? null])) } : {}) })),
     reports: reportTypes,
     sourcePins,
-    costCapMicros: input.costCapMicros,
+    maxCallCostMicros,
+    aggregateCostCapMicros,
+    billingBasisSha256: GPT6_LUNA_BILLING_BASIS_SHA256,
     candidates: QUALIFICATION_MODEL_ORDER,
     modelPolicy: policy,
   });
@@ -795,9 +817,13 @@ export async function runPwrp71Qualification(input: RunPwrp71QualificationOption
       reportModelPolicy: policy,
       reportModelPolicySha256: sha256Canonical(policy),
     },
-    costCapMicros: input.costCapMicros,
+    costCapMicros: aggregateCostCapMicros,
+    maxCallCostMicros,
+    aggregateCostCapMicros,
+    billingBasisSha256: GPT6_LUNA_BILLING_BASIS_SHA256,
     totalReportedCostMicros: 0,
     reservedUnknownCostMicros: 0,
+    reservedInFlightOrUnknownCostMicros: 0,
     selectedProfiles: input.profileIds,
     selectedReports: reportTypes,
     fixtureStatuses,
@@ -881,11 +907,16 @@ export async function runPwrp71Qualification(input: RunPwrp71QualificationOption
       const invocationKey = `pwrp71-qualification:${runId}:${fixture.profileId}`;
       const invocationPrefix = `${invocationKey}:${reportType}:`;
       const attemptsBefore = await store.list();
-      const spentBeforeThisReport = attemptsBefore.filter((attempt) => !attempt.attemptId.startsWith(invocationPrefix)).reduce((sum, attempt) => sum + (attempt.usage?.costMicros ?? (attempt.status === "unknown" ? attempt.locallyEstimatedCostMicros : 0)), 0);
+      const spentBeforeThisReport = attemptsBefore.filter((attempt) => !attempt.attemptId.startsWith(invocationPrefix)).reduce((sum, attempt) => sum + (
+        attempt.status === "completed"
+          ? attempt.usageStatus === "reported" ? attempt.usage?.costMicros ?? 0 : 0
+          : attempt.reservedCostMicros ?? attempt.locallyEstimatedCostMicros
+      ), 0);
       const provider = new JournaledPwrp71Transport({
         store,
         transport: baseTransport,
-        costCapMicros: input.costCapMicros,
+        maxCallCostMicros,
+        aggregateCostCapMicros,
         usageStatus: input.mode === "offline" ? "mock" : "reported",
         now,
         onResult: (request, result) => {
@@ -899,7 +930,7 @@ export async function runPwrp71Qualification(input: RunPwrp71QualificationOption
         provider,
         invocationKey,
         spentMicros: spentBeforeThisReport,
-        costCapMicros: input.costCapMicros,
+        costCapMicros: aggregateCostCapMicros,
         modelPolicy: policy,
         contractVersion: "v7.1",
         pwrp71: { request: prepared.value, packet: reportFixture.packet, source: reportSource },

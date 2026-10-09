@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { OpenRouterClient } from "../../lib/server/openrouter/client.ts";
 import { OpenRouterTransportError, type OpenRouterGenerationRequest } from "../../lib/server/openrouter/types.ts";
+import { buildOpenRouterWirePayload } from "../../lib/server/openrouter/wire.ts";
+import { GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY } from "../../lib/server/openrouter/qualification-budget.ts";
 
 const request: OpenRouterGenerationRequest = {
   model: "mock/luna",
@@ -43,6 +45,28 @@ test("OpenRouter request enforces strict schema and ZDR/no-collection routing an
   assert.equal(result.usage.costMicros, 1_200);
 });
 
+test("qualification price ceiling and no-cache controls survive exact HTTP serialization", async () => {
+  const controlledRequest: OpenRouterGenerationRequest = {
+    ...request,
+    model: "openai/gpt-6-luna",
+    reasoningEffort: "max",
+    providerPolicy: GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY,
+    promptCacheOptions: { mode: "explicit" },
+  };
+  const expected = buildOpenRouterWirePayload(controlledRequest);
+  let capturedBody = "";
+  const client = new OpenRouterClient({ apiKey: "test", fetch: async (_input, init) => {
+    capturedBody = String(init?.body);
+    return response('{"ok":true}', { model: controlledRequest.model });
+  } });
+  await client.generate(controlledRequest);
+  assert.equal(capturedBody, JSON.stringify(expected));
+  const body = JSON.parse(capturedBody) as Record<string, unknown>;
+  assert.deepEqual(body.provider, { zdr: true, data_collection: "deny", require_parameters: true, max_price: { prompt: 0.1, completion: 0.5 } });
+  assert.deepEqual(body.prompt_cache_options, { mode: "explicit" });
+  assert.deepEqual(body.reasoning, { effort: "max" });
+});
+
 test("retains provider finish reason so report contracts can reject truncated structured output", async () => {
   const client = new OpenRouterClient({ apiKey: "test", fetch: async () => response('{"ok":true}', {
     choices: [{ message: { content: '{"ok":true}' }, finish_reason: "length" }],
@@ -50,6 +74,19 @@ test("retains provider finish reason so report contracts can reject truncated st
   const result = await client.generate(request);
   assert.equal(result.ok, true);
   if (result.ok) assert.equal(result.finishReason, "length");
+});
+
+test("fails closed when the provider omits cost or token usage metadata", async () => {
+  for (const omitted of ["cost", "prompt_tokens", "completion_tokens", "total_tokens"]) {
+    const usage = { prompt_tokens: 10, completion_tokens: 4, total_tokens: 14, cost: 0.0012 };
+    delete (usage as Record<string, unknown>)[omitted];
+    const client = new OpenRouterClient({ apiKey: "test", fetch: async () => response('{"ok":true}', { usage }) });
+    await assert.rejects(client.generate(request), (error: unknown) => {
+      assert.ok(error instanceof OpenRouterTransportError);
+      assert.equal(error.kind, "protocol");
+      return true;
+    });
+  }
 });
 
 for (const [status, kind] of [[429, "rate_limited"], [503, "server_error"]] as const) {

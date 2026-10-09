@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
+import { mkdir, mkdtemp, rm } from "node:fs/promises";
+import path from "node:path";
 import test from "node:test";
 import { loadPwqe51SourcePackage } from "../../lib/question-engine/pwqe51-source.ts";
 import type { JsonObject } from "../../lib/question-engine/types.ts";
@@ -9,6 +11,8 @@ import { preparePwrp71Request } from "../../lib/server/reports/pwrp71-adapter.ts
 import { generateCanonicalReport } from "../../lib/server/reports/generator.ts";
 import { loadPwrp71SourcePackage } from "../../lib/server/reports/pwrp71-source.ts";
 import type { Pwrp71SourcePackage } from "../../lib/server/reports/pwrp71-source.ts";
+import { FileQualificationAttemptStore, JournaledPwrp71Transport } from "../../lib/server/reports/qualification/attempt-store.ts";
+import { maximumQuotedCallCostMicros } from "../../lib/server/openrouter/qualification-budget.ts";
 
 function canonical(value: unknown): string {
   if (value === null || typeof value !== "object") return JSON.stringify(value);
@@ -264,4 +268,115 @@ test("PWRP 7.1 rejects mismatched source or packet bindings before provider call
   assert.equal(badSource.ok, false);
   if (!badSource.ok) assert.equal(badSource.failure.code, "pwrp71_generation_binding");
   assert.equal(calls, 0);
+});
+
+test("journal budget preflights initial, reviewer, and repair calls and blocks the unaffordable post-repair review", async () => {
+  const value = await fixture();
+  const replacementRecord = structuredClone(value.draft) as Record<string, unknown>;
+  (replacementRecord.sections as Record<string, unknown>[])[0].text = "The respondent described a bounded reaction.";
+  const replacement = replacementRecord as JsonObject;
+  const quote = maximumQuotedCallCostMicros({
+    model: UNQUALIFIED_MOCK_MODEL_POLICY.MAP.model,
+    reasoningEffort: UNQUALIFIED_MOCK_MODEL_POLICY.MAP.reasoningEffort,
+    system: value.request.system,
+    prompt: "budget bound sample",
+    schemaName: "budget_test",
+    schema: value.request.response_schema,
+    maxOutputTokens: UNQUALIFIED_MOCK_MODEL_POLICY.MAP.maxOutputTokens,
+    idempotencyKey: "budget-bound-sample",
+  });
+  const chargedUsage: OpenRouterUsage = {
+    ...usage,
+    model: UNQUALIFIED_MOCK_MODEL_POLICY.MAP.model,
+    costMicros: quote,
+  };
+  const responses = [
+    value.draft,
+    reviewerOutput(value.draft, value.packet, value.reportSource, "revise", [reviseIssue()]),
+    replacement,
+    reviewerOutput(replacement, value.packet, value.reportSource, "accept"),
+  ];
+  let dispatched = 0;
+  const transport: OpenRouterTransport = {
+    async generate() {
+      const output = responses[dispatched++];
+      if (!output) throw new Error("Unexpected mock dispatch.");
+      return { ok: true, output, usage: chargedUsage, finishReason: "stop" };
+    },
+  };
+  const scratch = path.join(process.cwd(), ".codex-temp", "test-runs");
+  await mkdir(scratch, { recursive: true });
+  const runDirectory = await mkdtemp(path.join(scratch, "pwrp71-budget-generator-"));
+  try {
+    const store = new FileQualificationAttemptStore(runDirectory);
+    const journal = new JournaledPwrp71Transport({
+      store,
+      transport,
+      maxCallCostMicros: quote,
+      aggregateCostCapMicros: quote * 3,
+      usageStatus: "reported",
+    });
+    const generated = await generateCanonicalReport({
+      reportType: "MAP", input: {}, packets: [value.packet], provider: journal,
+      invocationKey: "pwrp71-budgeted-full-loop", spentMicros: 0, costCapMicros: quote * 3,
+      modelPolicy: UNQUALIFIED_MOCK_MODEL_POLICY, contractVersion: "v7.1",
+      pwrp71: { request: value.request, packet: value.packet, source: value.reportSource },
+    });
+    assert.equal(generated.ok, false);
+    if (!generated.ok) assert.equal(generated.failure.code, "cost_cap_exceeded");
+    assert.equal(dispatched, 3, "initial, first review, and repair fit; the fresh post-repair review has zero dispatches");
+    const records = await store.list();
+    assert.equal(records.length, 3);
+    assert.deepEqual(records.map((record) => record.status), ["completed", "completed", "completed"]);
+    assert.deepEqual(records.map((record) => record.attemptId.split(":").slice(-3, -2)[0]), ["initial", "review", "repair"]);
+    assert.equal(new Set(records.map((record) => record.wirePayloadSha256)).size, 3, "initial, reviewer, and repair wire requests have distinct exact-body fingerprints");
+    assert.equal(new Set(records.map((record) => record.request.systemSha256)).size, 3, "writer, reviewer, and repair instructions are separately pinned");
+    assert.equal(records.reduce((sum, record) => sum + (record.usage?.costMicros ?? 0), 0), quote * 3);
+  } finally {
+    await rm(runDirectory, { recursive: true, force: true });
+  }
+});
+
+test("a failed draft cannot use escalation after earlier attempts consume the aggregate allowance", async () => {
+  const value = await fixture();
+  const quote = maximumQuotedCallCostMicros({
+    model: UNQUALIFIED_MOCK_MODEL_POLICY.MAP.model,
+    reasoningEffort: UNQUALIFIED_MOCK_MODEL_POLICY.MAP.reasoningEffort,
+    system: value.request.system,
+    prompt: "budget bound sample",
+    schemaName: "budget_test",
+    schema: value.request.response_schema,
+    maxOutputTokens: UNQUALIFIED_MOCK_MODEL_POLICY.MAP.maxOutputTokens,
+    idempotencyKey: "budget-bound-escalation",
+  });
+  const chargedUsage: OpenRouterUsage = { ...usage, model: UNQUALIFIED_MOCK_MODEL_POLICY.MAP.model, costMicros: quote };
+  let dispatched = 0;
+  const transport: OpenRouterTransport = {
+    async generate() {
+      dispatched += 1;
+      return { ok: true, output: {} as JsonObject, usage: chargedUsage, finishReason: "stop" };
+    },
+  };
+  const scratch = path.join(process.cwd(), ".codex-temp", "test-runs");
+  await mkdir(scratch, { recursive: true });
+  const runDirectory = await mkdtemp(path.join(scratch, "pwrp71-budget-escalation-"));
+  try {
+    const store = new FileQualificationAttemptStore(runDirectory);
+    const provider = new JournaledPwrp71Transport({ store, transport, maxCallCostMicros: quote, aggregateCostCapMicros: quote * 2, usageStatus: "reported" });
+    const generated = await generateCanonicalReport({
+      reportType: "MAP", input: {}, packets: [value.packet], provider,
+      invocationKey: "pwrp71-budgeted-escalation", spentMicros: 0, costCapMicros: quote * 2,
+      modelPolicy: UNQUALIFIED_MOCK_MODEL_POLICY, contractVersion: "v7.1",
+      pwrp71: { request: value.request, packet: value.packet, source: value.reportSource },
+    });
+    assert.equal(generated.ok, false);
+    if (!generated.ok) assert.equal(generated.failure.code, "cost_cap_exceeded");
+    assert.equal(dispatched, 2, "initial and repair calls consume the aggregate cap; escalation is rejected before dispatch");
+    const records = await store.list();
+    assert.equal(records.length, 2);
+    assert.ok(records.every((record) => record.status === "completed"));
+    assert.equal(records.some((record) => record.attemptId.includes(":escalation:")), false);
+  } finally {
+    await rm(runDirectory, { recursive: true, force: true });
+  }
 });

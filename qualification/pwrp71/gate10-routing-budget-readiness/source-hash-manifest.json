@@ -1,0 +1,906 @@
+{
+  "schemaVersion": "PWRP71-GATE10-SOURCE-HASH-MANIFEST-V1",
+  "generatedAt": "2026-10-09T13:32:01Z",
+  "git": {
+    "startingCommit": "8dd192a7076ae535b90f340a778d915a8a2338bd",
+    "startingBranch": "codex/pwrp71-semantic-evidence-v5",
+    "workingBranch": "codex/pwrp71-gate10-routing-budget-readiness",
+    "candidateCommit": "recorded in final release-gate ledger after commit"
+  },
+  "sourcePins": {
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+    "currentRouterRuntimeSha256": "d08a7da2c6e3119c75e3e60917da42a60bbe6615024f901ac5b11ed26fa06d7d",
+    "semanticCaseSetSha256": "fec1752b4a4892da77fcadbf78688b23fd77e010b845ae6ddcd4523c0547569d",
+    "authoredHistoryManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "fixtureManifestSha256": "17b1c8cd9e43f0d647733e0408e5e663490da52e261e8124df9243181512b19f",
+    "fixtureSourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb"
+  },
+  "fixtureSet": {
+    "fixtureSet": "route-replays-v5",
+    "fixtureManifestSha256": "17b1c8cd9e43f0d647733e0408e5e663490da52e261e8124df9243181512b19f",
+    "fixtureSetSha256": "5f3471d13a54a9e1a7f5e6cd87a7ac5102bba695c29cc3bfaeb04af69a190170",
+    "historicalSourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb",
+    "profiles": [
+      {
+        "profileId": "P01",
+        "path": "qualification/pwrp71/route_replays_v5/P01.json",
+        "normalizedArtifactSha256": "09aafe7c0b90fe1ae0af2289acfaebe80bcbfb51be9e9caad3a54b41b0f2e32f",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "c77e49f56aefa302f12d342a3e719dbaab4d460ab8e3197bea78c90a01efb324"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "375f0dcfabc3029d051d621bbf53fb0d069a5d3ef84e77c47b408fd5fcb5e6eb"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "375f0dcfabc3029d051d621bbf53fb0d069a5d3ef84e77c47b408fd5fcb5e6eb"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "375f0dcfabc3029d051d621bbf53fb0d069a5d3ef84e77c47b408fd5fcb5e6eb"
+          }
+        ]
+      },
+      {
+        "profileId": "P02",
+        "path": "qualification/pwrp71/route_replays_v5/P02.json",
+        "normalizedArtifactSha256": "47611cccd841a7598daa9b88ebbb715872c10c1242fcc48be8923443710b229c",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "aeb9ed3363e06ba8ad13027d8788e6c9eea46d65d6aa51f50f00d0148fbfa9a9"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "f02e65f3adc4b5b1bbbac5c1835085969865887292ff376de8c4af8b6c050d87"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "f02e65f3adc4b5b1bbbac5c1835085969865887292ff376de8c4af8b6c050d87"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "f02e65f3adc4b5b1bbbac5c1835085969865887292ff376de8c4af8b6c050d87"
+          }
+        ]
+      },
+      {
+        "profileId": "P03",
+        "path": "qualification/pwrp71/route_replays_v5/P03.json",
+        "normalizedArtifactSha256": "6e17a0bf4ba8abae2aea60cf1249ecaa116acf5c38eb4915873eef826265fb6d",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "e49238d7c8b820933d4cb8f322fec3976a8b2d621599555455df6e4d339a1b2e"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "6fd4735121bbc820c19e0c7f4e6e273f1f49f0e9beb2eed0c97872508a8d7f17"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "6fd4735121bbc820c19e0c7f4e6e273f1f49f0e9beb2eed0c97872508a8d7f17"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "6fd4735121bbc820c19e0c7f4e6e273f1f49f0e9beb2eed0c97872508a8d7f17"
+          }
+        ]
+      },
+      {
+        "profileId": "P04",
+        "path": "qualification/pwrp71/route_replays_v5/P04.json",
+        "normalizedArtifactSha256": "cf2bcb9d2b2c72595dcf984a672c167edab83b8280a6d4f0664ba6316cac4951",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "f7d10b7da36887bea067672f2e73f55323c6c5933cae4a28e030b91e61f4102f"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "d6a454f003b26847ac764367525e2c7ad8933095aa063c16a161b38ee8b8bb2d"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "d6a454f003b26847ac764367525e2c7ad8933095aa063c16a161b38ee8b8bb2d"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "d6a454f003b26847ac764367525e2c7ad8933095aa063c16a161b38ee8b8bb2d"
+          }
+        ]
+      },
+      {
+        "profileId": "P05",
+        "path": "qualification/pwrp71/route_replays_v5/P05.json",
+        "normalizedArtifactSha256": "99ead569d4e93c8865fd3f07c42a4f0175b5b225c9e3d69fa650472b2684ea4f",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "cd75bdac504c1063abc0470cc575315505430b336506220629a5c99774b71dd9"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "14d8865876ed1e9d38400e94e589399e2cc4ccabb03ade2c186c9b031906be88"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "14d8865876ed1e9d38400e94e589399e2cc4ccabb03ade2c186c9b031906be88"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "14d8865876ed1e9d38400e94e589399e2cc4ccabb03ade2c186c9b031906be88"
+          }
+        ]
+      },
+      {
+        "profileId": "P06",
+        "path": "qualification/pwrp71/route_replays_v5/P06.json",
+        "normalizedArtifactSha256": "75b1887c0e70cc630b47f2b4787fa32154465e48d1bd33188bf6609879259c52",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "1d3785dbfd2f6157f5c75eab7bb6545fbc49221033f6d216c931a2f0fcde5a57"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "1ebbcfac7c7e4979d0c738b1272076744893621b97ce7d13b24c7e52caaef8bc"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "1ebbcfac7c7e4979d0c738b1272076744893621b97ce7d13b24c7e52caaef8bc"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "1ebbcfac7c7e4979d0c738b1272076744893621b97ce7d13b24c7e52caaef8bc"
+          }
+        ]
+      },
+      {
+        "profileId": "P07",
+        "path": "qualification/pwrp71/route_replays_v5/P07.json",
+        "normalizedArtifactSha256": "f74ca56083b894d224eebe2efac3862adfe1ab81e92e4acd352586de9499d7b5",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "d9d8e8a1b4201294702de06a0d807fb141b8522da90b4f3fbd78216f15ae4513"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "730cd86f1492c16bd3c9a452347545610bfef8809ae9478456b41526e3b50dbe"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "730cd86f1492c16bd3c9a452347545610bfef8809ae9478456b41526e3b50dbe"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "730cd86f1492c16bd3c9a452347545610bfef8809ae9478456b41526e3b50dbe"
+          }
+        ]
+      },
+      {
+        "profileId": "P08",
+        "path": "qualification/pwrp71/route_replays_v5/P08.json",
+        "normalizedArtifactSha256": "411c59800445ccbcc2264bbee3eafb52ed2a2e42978a08d0b9a2c24ab44284a6",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "dae66423377554e4689f40007b8983c127060cb762a66f797acebdd884d02602"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "34434c0219bd7f577d7cc118c806b5fcb4472d5b11b76cf09badeff7efc79bff"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "34434c0219bd7f577d7cc118c806b5fcb4472d5b11b76cf09badeff7efc79bff"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "34434c0219bd7f577d7cc118c806b5fcb4472d5b11b76cf09badeff7efc79bff"
+          }
+        ]
+      },
+      {
+        "profileId": "P09",
+        "path": "qualification/pwrp71/route_replays_v5/P09.json",
+        "normalizedArtifactSha256": "3fb5a20d80689d1430600dd6463e809ef09e2a317b83c345792f7099f13c3108",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "26e76d64bdd1b0721a7b2b20225355dba54501ec02234d0d14ef87fa801747d3"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "f60e0ebe61eac05a2a84122634907d0f3e253538420508b5361291e386a8fb80"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "f60e0ebe61eac05a2a84122634907d0f3e253538420508b5361291e386a8fb80"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "f60e0ebe61eac05a2a84122634907d0f3e253538420508b5361291e386a8fb80"
+          }
+        ]
+      },
+      {
+        "profileId": "C01",
+        "path": "qualification/pwrp71/route_replays_v5/C01.json",
+        "normalizedArtifactSha256": "87096b8f1381866954c3fbbd299530da34865850d2d1e22ae988a18154896d11",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "b9c45b374c86ba38115f5491f8caf4435228a9e3dbf47fdfa3bf841d36431c2f"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "c4b8363436f22b34b28095b155158cb5716bc397d6231a284b5c6d710df4e036"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "c4b8363436f22b34b28095b155158cb5716bc397d6231a284b5c6d710df4e036"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "c4b8363436f22b34b28095b155158cb5716bc397d6231a284b5c6d710df4e036"
+          }
+        ]
+      },
+      {
+        "profileId": "C02",
+        "path": "qualification/pwrp71/route_replays_v5/C02.json",
+        "normalizedArtifactSha256": "1840d101d9fd08b8f5bfaf80a0247843e4ec8589b7fa7f92c3a7a0955e00ab2e",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "721e3bb5131d8a6a7fd5dd85f8527d204cfb4725606ebbed8ec66aed9ccfd33e"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "c14bbcbd4ff8b6f69c1074b12a15d9132be9d3373d5d825257ff5dcf8ad61055"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "c14bbcbd4ff8b6f69c1074b12a15d9132be9d3373d5d825257ff5dcf8ad61055"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "c14bbcbd4ff8b6f69c1074b12a15d9132be9d3373d5d825257ff5dcf8ad61055"
+          }
+        ]
+      },
+      {
+        "profileId": "C03",
+        "path": "qualification/pwrp71/route_replays_v5/C03.json",
+        "normalizedArtifactSha256": "fa64330d99bf065c7551ab347cf913484c11ce12a6a5d442b744ed3200a546cd",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "be640410c033a9b6ab5c58e6538299ce71cbf9e81daf712ab8e5e7f059c2c810"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "2b0304adbc13fcccd38444b26e9ca4581b9c960295639cb42abfa2cd88abf534"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "2b0304adbc13fcccd38444b26e9ca4581b9c960295639cb42abfa2cd88abf534"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "2b0304adbc13fcccd38444b26e9ca4581b9c960295639cb42abfa2cd88abf534"
+          }
+        ]
+      },
+      {
+        "profileId": "C04",
+        "path": "qualification/pwrp71/route_replays_v5/C04.json",
+        "normalizedArtifactSha256": "1d1d3cc75f2b259a5b3a9317632dd6a9d0e91dd6401b05f82493235923f970a7",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "ad3de2562b52e9a490b250d293915b4cbd0240124b9dba5d4c441e838b50cefc"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "7372101aedb4ef8afa89dfcfea0fd611990979353b68eb3b03f7dda8589f743a"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "7372101aedb4ef8afa89dfcfea0fd611990979353b68eb3b03f7dda8589f743a"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "7372101aedb4ef8afa89dfcfea0fd611990979353b68eb3b03f7dda8589f743a"
+          }
+        ]
+      },
+      {
+        "profileId": "C05",
+        "path": "qualification/pwrp71/route_replays_v5/C05.json",
+        "normalizedArtifactSha256": "98e055edd24c600f451243f6e1c60438e537043bebb9a17e827a39bfc2835764",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "b0367654be395640444ebebd0981ea3e9c624eea1ddf7dfac51678dab84b0b1d"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "0adff918f8faa8c0fa0e373435af59aa6699e924df24ea2063efb91860a1be5b"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "0adff918f8faa8c0fa0e373435af59aa6699e924df24ea2063efb91860a1be5b"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "0adff918f8faa8c0fa0e373435af59aa6699e924df24ea2063efb91860a1be5b"
+          }
+        ]
+      },
+      {
+        "profileId": "C06",
+        "path": "qualification/pwrp71/route_replays_v5/C06.json",
+        "normalizedArtifactSha256": "7fad10e46a817ce002a09a471b12c8b9cfb3069c00b96040bae9f13597dcb4d8",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "0c5b9e92d61d7d1a2cdf95935bdcab025d90c8f843e17bd3721f196179ffa32f"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "5c6932b8cbe227b089da7825515edfaa73f354c07ed587c9a17681e053e96cde"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "5c6932b8cbe227b089da7825515edfaa73f354c07ed587c9a17681e053e96cde"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "5c6932b8cbe227b089da7825515edfaa73f354c07ed587c9a17681e053e96cde"
+          }
+        ]
+      },
+      {
+        "profileId": "C07",
+        "path": "qualification/pwrp71/route_replays_v5/C07.json",
+        "normalizedArtifactSha256": "0ed7896150d3cc9078dc3276164689d50024ceeaf2459cb9b5f46a2dc5692331",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "1852bfe18e42f1b6c10cb5d8ba3ee08b8d5ada0272722cd7764d03590d90c750"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "4e48607b3d9b901d00b722e75d87710a2eed33d3834fc591c251def4228e848a"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "4e48607b3d9b901d00b722e75d87710a2eed33d3834fc591c251def4228e848a"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "4e48607b3d9b901d00b722e75d87710a2eed33d3834fc591c251def4228e848a"
+          }
+        ]
+      },
+      {
+        "profileId": "C08",
+        "path": "qualification/pwrp71/route_replays_v5/C08.json",
+        "normalizedArtifactSha256": "b9af661405c0e53c08a23e626ec8b98063548f2412e3e25f0a77b88712d4d45f",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "fff0770586590f9b2a21ea4625644e5a5020da534171f4aab55f9f8177d845f5"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "353a047e89ab7b1cc191816c027123fc7d9f470cc729658e60bc02d2bcc193d1"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "353a047e89ab7b1cc191816c027123fc7d9f470cc729658e60bc02d2bcc193d1"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "353a047e89ab7b1cc191816c027123fc7d9f470cc729658e60bc02d2bcc193d1"
+          }
+        ]
+      },
+      {
+        "profileId": "C09",
+        "path": "qualification/pwrp71/route_replays_v5/C09.json",
+        "normalizedArtifactSha256": "4eca8f83a04eab5536b06cccef41c4a6897b2197b4dd49e3a6bd733d31db591b",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "029111f0c99264774fc4e2f15e8b81a3b640ed780b0fbf4374def2a159370438"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "d591f2235f2b1d1891322be4e5f37aafd278ac20df4df28960f9cdc49f10a235"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "d591f2235f2b1d1891322be4e5f37aafd278ac20df4df28960f9cdc49f10a235"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "d591f2235f2b1d1891322be4e5f37aafd278ac20df4df28960f9cdc49f10a235"
+          }
+        ]
+      },
+      {
+        "profileId": "C10",
+        "path": "qualification/pwrp71/route_replays_v5/C10.json",
+        "normalizedArtifactSha256": "6591fd1aae22a887b213958412813376b9ab6102581e487357b6319459d90afe",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "0e86e963bf859836896fd54fb7e81aa9c273caf387479822dde4072d68dbbdf1"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "708397f35a5ba798d3ed6bccd9a2f4059d912751a91e2a123cb9aadf5dc43e47"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "708397f35a5ba798d3ed6bccd9a2f4059d912751a91e2a123cb9aadf5dc43e47"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "708397f35a5ba798d3ed6bccd9a2f4059d912751a91e2a123cb9aadf5dc43e47"
+          }
+        ]
+      },
+      {
+        "profileId": "C11",
+        "path": "qualification/pwrp71/route_replays_v5/C11.json",
+        "normalizedArtifactSha256": "ebf9b4787970ec80f69843609230e62e1093f21e11499544ed5097c03c7c1e80",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "d33d183b8a8693431bd68798574ca0540a092e1f4225177f6ca32486014986ef"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "cf4e81f62092c8f979b96ae44864b66b2bc0c77563a6cd6266e1383df374b1e3"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "cf4e81f62092c8f979b96ae44864b66b2bc0c77563a6cd6266e1383df374b1e3"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "cf4e81f62092c8f979b96ae44864b66b2bc0c77563a6cd6266e1383df374b1e3"
+          }
+        ]
+      },
+      {
+        "profileId": "C12",
+        "path": "qualification/pwrp71/route_replays_v5/C12.json",
+        "normalizedArtifactSha256": "a7a2fee9449d2079992a0559422be15d93af97d723358b3c7d2b9b8d942cdf19",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "70a28a69936635d56b83b2757538516da48e62a7555567078e7b98b49f10df59"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "2ebab90691ba07e702426126e66cf6dffbb905eb25d522e5d1ab66472876c3b8"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "2ebab90691ba07e702426126e66cf6dffbb905eb25d522e5d1ab66472876c3b8"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "2ebab90691ba07e702426126e66cf6dffbb905eb25d522e5d1ab66472876c3b8"
+          }
+        ]
+      },
+      {
+        "profileId": "C13",
+        "path": "qualification/pwrp71/route_replays_v5/C13.json",
+        "normalizedArtifactSha256": "ad5da676f74a93a5470fc2fd7db072a1962e9812cc097805222fbecc6dba2fd6",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "b9f9ea8605c2a4d7cd2c8686f219adc0fd67edd244ffd961c11f944ac9c82b26"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "f6f14a3b26e460d1375f4c8b767dd17472a4b2be2cfe1a4ef60006b16c4e379d"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "f6f14a3b26e460d1375f4c8b767dd17472a4b2be2cfe1a4ef60006b16c4e379d"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "f6f14a3b26e460d1375f4c8b767dd17472a4b2be2cfe1a4ef60006b16c4e379d"
+          }
+        ]
+      },
+      {
+        "profileId": "C14",
+        "path": "qualification/pwrp71/route_replays_v5/C14.json",
+        "normalizedArtifactSha256": "5d758338d0e56b1dedde6f9355b86a1360d29752ad6da6b1bd580e0a4fcf632a",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "4f591b56fc8154d1f48ffbdd9b60218bcfbbbe4dcfae1449b1260d907ec6c5d1"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "75ee966b29ddf2e59c47550ca04f7209f6b784390540f58fc8b8cfd3c0d82127"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "75ee966b29ddf2e59c47550ca04f7209f6b784390540f58fc8b8cfd3c0d82127"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "75ee966b29ddf2e59c47550ca04f7209f6b784390540f58fc8b8cfd3c0d82127"
+          }
+        ]
+      },
+      {
+        "profileId": "C15",
+        "path": "qualification/pwrp71/route_replays_v5/C15.json",
+        "normalizedArtifactSha256": "af9ae3b515a2bf51e07ff931126394e3db3ba8abbede8c21d1b6accc22c9a369",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "70fcaac500560489b3a209f26f9ba25b958654e69df9bbb1a975ec5a166f061b"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "1f887a322c2a450cee104dbbdf816abc0bb422f090e6e0101ce666aa5ec94aac"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "1f887a322c2a450cee104dbbdf816abc0bb422f090e6e0101ce666aa5ec94aac"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "1f887a322c2a450cee104dbbdf816abc0bb422f090e6e0101ce666aa5ec94aac"
+          }
+        ]
+      },
+      {
+        "profileId": "C16",
+        "path": "qualification/pwrp71/route_replays_v5/C16.json",
+        "normalizedArtifactSha256": "c2259919021afbaf4157da2bd17ed140facf61a761a2d5872698bf3e2ccca0ad",
+        "packetDigests": [
+          {
+            "reportType": "MAP",
+            "sha256": "3a9dd64be1a9eb0def8b14287c10ce93698a3e10bb0e611523100fdae1a45d59"
+          },
+          {
+            "reportType": "IFS",
+            "sha256": "512ccce864b4fe9af9da102e0965a7732c9b0faae426ead3b71000fcd5985db1"
+          },
+          {
+            "reportType": "PV",
+            "sha256": "512ccce864b4fe9af9da102e0965a7732c9b0faae426ead3b71000fcd5985db1"
+          },
+          {
+            "reportType": "ATT",
+            "sha256": "512ccce864b4fe9af9da102e0965a7732c9b0faae426ead3b71000fcd5985db1"
+          }
+        ]
+      }
+    ]
+  },
+  "offlineRun": {
+    "runId": "gate10-v5-offline-full-matrix",
+    "status": "offline_complete",
+    "qualificationRunSha256": "0212be334713a8897d3d454bb2a8332b0630089febf4f3b6a38f59e20368ccd8",
+    "runJsonSha256": "2f5db322d4897fd64b8bb9bbd24fed9a4cc9b417fd7aa38d9a739dd7c152a729",
+    "attemptsJsonSha256": "b11ea956f8c63151943c8e09d774c9a32cf1930e0260885fd316015bd817ec66",
+    "results": 125,
+    "accepted": 125,
+    "attemptCount": 250,
+    "reportedCostMicros": 0
+  },
+  "livePreflight": {
+    "status": "BLOCKED",
+    "dispatchPerformed": false,
+    "providerCalls": 0,
+    "apiKeyRead": false,
+    "requests": [
+      {
+        "profileId": "C01",
+        "reportType": "IFS",
+        "packetSha256": "c4b8363436f22b34b28095b155158cb5716bc397d6231a284b5c6d710df4e036",
+        "fixtureArtifactSha256": "87096b8f1381866954c3fbbd299530da34865850d2d1e22ae988a18154896d11",
+        "wirePayloadSha256": "3a022081807cf2ac7657a5ff2c56a5407f9493361a8dced781acea486b80e7dc",
+        "wireRequestFingerprint": "e44265093c1420dad4efd83f9ee217e3cfe2d0f5abcaaf8a91715158aa6d27d6",
+        "requestFingerprint": null,
+        "promptSha256": "5e261b258c64d1ab119d1a4bad84a0fd04d780a7b8600313871e77da819b58a4",
+        "systemSha256": "9b5ca30210f364e0a2055f3da53b14aa1196940750b23cebbda682826fb98576",
+        "localSchemaSha256": "704ff6838efac71106fb0b01276e13ef13ad705c4fb92b87e31b7adda59ecc87",
+        "wireSchemaSha256": "624462e600a1ca626d444427f0dfb84022f6900410c3eb89d6d0f747a39e8342",
+        "maximumQuotedCostMicros": 115000
+      },
+      {
+        "profileId": "C02",
+        "reportType": "IFS",
+        "packetSha256": "c14bbcbd4ff8b6f69c1074b12a15d9132be9d3373d5d825257ff5dcf8ad61055",
+        "fixtureArtifactSha256": "1840d101d9fd08b8f5bfaf80a0247843e4ec8589b7fa7f92c3a7a0955e00ab2e",
+        "wirePayloadSha256": "0723a85bdb584d6df1deb74c73cc2274d27e531b0d541a4d7a2f783f28bc5f96",
+        "wireRequestFingerprint": "927a18d16f9e050faeb95c03b9ec2d0e33681157d47071d59f16002496444b70",
+        "requestFingerprint": null,
+        "promptSha256": "7251733597840423b5ff95dd77ccb21dd9ebfffd82705dd41355f15d77d8c20c",
+        "systemSha256": "9b5ca30210f364e0a2055f3da53b14aa1196940750b23cebbda682826fb98576",
+        "localSchemaSha256": "704ff6838efac71106fb0b01276e13ef13ad705c4fb92b87e31b7adda59ecc87",
+        "wireSchemaSha256": "624462e600a1ca626d444427f0dfb84022f6900410c3eb89d6d0f747a39e8342",
+        "maximumQuotedCostMicros": 115000
+      }
+    ]
+  },
+  "parity": {
+    "normalOutputSha256": "a58047a03cd54f908c9704d32333afe6280d1cb1e91d0babceab0808c193c9c0",
+    "normalExitCode": 0,
+    "strictOutputSha256": "0a276b19ecf6eceff1ce16aa053bee345a204eb1813025dba7840bce41959698",
+    "strictExitCode": 1,
+    "strictStatus": "incomplete_unsupported_coverage",
+    "unsupportedSurfaceCount": 893,
+    "unexplainedDifferenceCount": 0
+  },
+  "sourceFileDigests": [
+    {
+      "path": "lib/server/assessment/pwqe51-router.ts",
+      "sha256": "2cbf4baf46763aa45111e7e9b306b0f2888bdd8e3745aaace93d33d7ec81799c"
+    },
+    {
+      "path": "lib/server/assessment/pwqe51-coverage.ts",
+      "sha256": "65f0bfe3edeea6bc15c83d13a9f518656dc7f109112efd672bd18094989ca47b"
+    },
+    {
+      "path": "lib/server/assessment/pwqe51-flags.ts",
+      "sha256": "52e1e0ba4f4d6f3809d645bdece88165abf71f2ecd789fc97fe90238157ecee2"
+    },
+    {
+      "path": "lib/server/reports/pwqe51-packet.ts",
+      "sha256": "b56b00b0d0ed6eb0e0efdf5bde6da8d71319891690bd3668a5ef6e847162d02d"
+    },
+    {
+      "path": "lib/server/reports/pwrp71-adapter.ts",
+      "sha256": "79da7e50a11ba450489e782aaa9dbc14b7ce78f83a7cf17f52f7142c1fabea4d"
+    },
+    {
+      "path": "lib/server/reports/generator.ts",
+      "sha256": "942e29ef667b85abd8b37f8fa9868065ed073cd668d4ca88f1b11ffa64bd81cf"
+    },
+    {
+      "path": "lib/server/reports/qualification/attempt-store.ts",
+      "sha256": "a503229c22c110a182208dc6b8272bd32063dcc97fdfd4357ade3650edb42578"
+    },
+    {
+      "path": "lib/server/reports/qualification/runner.ts",
+      "sha256": "96a3126dd9724e2f1366cdf447ce38ad0102c9d76e89bcbe017d5553bf697f74"
+    },
+    {
+      "path": "lib/server/reports/qualification/semantic-evidence-verifier.ts",
+      "sha256": "fec1f44ea01c06549d6f1f836ae3a4704e24cc534ac338cdd15162b226b82fd2"
+    },
+    {
+      "path": "lib/server/openrouter/client.ts",
+      "sha256": "33ef94688daad6a6fedeab17b1b092ce97d9523bdc9dc09e37909e09d31c9117"
+    },
+    {
+      "path": "lib/server/openrouter/types.ts",
+      "sha256": "31be4e8ba2b4556ae99509a70f2b3709384c7be8f0f998cfe30390cdc81c8f1f"
+    },
+    {
+      "path": "lib/server/openrouter/wire.ts",
+      "sha256": "f0b1c320a951bd36fac2f36ae248161c78e9166cc11d39b71480c68c0d6619d7"
+    },
+    {
+      "path": "lib/server/openrouter/qualification-budget.ts",
+      "sha256": "97992bdfc10c71b20a0d869a5e9ab1762b0a94b8c2aa9db123227602d3bbc41f"
+    },
+    {
+      "path": "scripts/qualify-pwrp71/index.ts",
+      "sha256": "c5f981bf90bee27991e4b14e366d7f074d30e31d32baa3bc42e699d97b69ee5c"
+    },
+    {
+      "path": "scripts/preflight-pwrp71/index.ts",
+      "sha256": "5fc127d4a3034eb26f931fa8a6ea9f131868f90fe5e2110b17072f520d7b8ecb"
+    },
+    {
+      "path": "scripts/verify-pwrp71-v5-packets/index.ts",
+      "sha256": "e9731abf9b9d43a60a1627c761a44cabafbfd934bf0533b855e95ad14d390af1"
+    },
+    {
+      "path": "package.json",
+      "sha256": "e0a754dff1dfe295f2feb05b853f758243d9bc11d48d12534ca843615b08e29c"
+    },
+    {
+      "path": "tests/report-workflow/openrouter-client.test.ts",
+      "sha256": "5c8841381bc25e2f4ba9dee1a33bb373fa388a029ab08314914e250b6995adfe"
+    },
+    {
+      "path": "tests/report-workflow/pwqe51-packet.test.ts",
+      "sha256": "7ba2e9deb8a2bcdf4fbc77bbb6edc231184ef64c4cfa991c3b03fb4eb23baf11"
+    },
+    {
+      "path": "tests/report-workflow/pwrp71-generation.test.ts",
+      "sha256": "e2448596777ff3c3b8a55863391040007767d197c7fe11a7acb91d1d8085d19d"
+    },
+    {
+      "path": "tests/report-workflow/pwrp71-qualification-attempts.test.ts",
+      "sha256": "dde23e7e7af6d484b2d7c9cc41d87985113a099ae17f21385fa716015a9023f2"
+    },
+    {
+      "path": "tests/report-workflow/pwrp71-qualification-fixtures.test.ts",
+      "sha256": "bb5b92ec5df06643dbd429b72ae335c92acac51b1fec4574817a315eb578eea1"
+    },
+    {
+      "path": "tests/report-workflow/pwrp71-qualification-runner.test.ts",
+      "sha256": "0f12a4ec9d38d0d7e6548d1c818e40112a1dca42293a3d3984fa4ca96f5570ee"
+    },
+    {
+      "path": "tests/report-workflow/pwrp71-semantic-evidence.test.ts",
+      "sha256": "f0eb8209980cbbbfdbaf688baa0387ea7ee49ffc6b933d2293eb61b353103524"
+    }
+  ],
+  "evidenceFileDigests": [
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/routing-parity-current/normal.json",
+      "sha256": "a58047a03cd54f908c9704d32333afe6280d1cb1e91d0babceab0808c193c9c0",
+      "bytes": 12791064
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/routing-parity-current/normal.exit-code.txt",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/routing-parity-current/strict.json",
+      "sha256": "0a276b19ecf6eceff1ce16aa053bee345a204eb1813025dba7840bce41959698",
+      "bytes": 12791063
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/routing-parity-current/strict.exit-code.txt",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "bytes": 1
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/routing-parity-current/strict-parity-gap-ledger.json",
+      "sha256": "583ce98d40e6cb3ce4de163b870df8cb4088bdb66801f956980b4ca0a3d4feb9",
+      "bytes": 6318
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/provider-preflight/c01-c02-ifs-no-dispatch-current.json",
+      "sha256": "b180773fd4112530a2ddecd4a2917da31ed1a6a4cb616d2c9cd69ed5b8b9ddf4",
+      "bytes": 187968
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/packet-verification/v5-current-contract-verification.json",
+      "sha256": "6b37fe653f3e0b3436955eddaab91d93570363d9c640ff87430609e6aede5668",
+      "bytes": 33419
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/v5-offline-run/gate10-v5-offline-full-matrix/run.json",
+      "sha256": "2f5db322d4897fd64b8bb9bbd24fed9a4cc9b417fd7aa38d9a739dd7c152a729",
+      "bytes": 300144
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/v5-offline-run/gate10-v5-offline-full-matrix/attempts.json",
+      "sha256": "b11ea956f8c63151943c8e09d774c9a32cf1930e0260885fd316015bd817ec66",
+      "bytes": 866645
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/npm-test-final.log",
+      "sha256": "409ce325b32c5bc20519b1634d6afe27a0a4edd187d7c66ad6a51646eecd93b2",
+      "bytes": 37834
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/npm-test-final.exit-code.txt",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/typecheck-final.log",
+      "sha256": "c554e4ffd45739d4e9dcd7e8aa2031654ee438285f9b6da2f65b8fe7cce3b24c",
+      "bytes": 51
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/typecheck-final.exit-code.txt",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/build-final-escalated.log",
+      "sha256": "fbb6b26ebade9184e3568188b3a93351464b447952128a99f2cf39aa084a7e2e",
+      "bytes": 10848
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/build-final-escalated.exit-code.txt",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/scoped-eslint-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/scoped-eslint-final.exit-code.txt",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/focused-regressions-final.log",
+      "sha256": "cb53d88a0597bf517f6552449f5eb60a711539cc89c1687f0baadd31fbd8a427",
+      "bytes": 6498
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/focused-regressions-final.exit-code.txt",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/npm-test-post-review-final.log",
+      "sha256": "02364508fbd51bf24b5de03dbb428c0cbb007b3976198aed1611010ce1a8a631",
+      "bytes": 37854
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/npm-test-post-review-final.exit-code.txt",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/verification/command-results.md",
+      "sha256": "29f6ef9585fd93f25603a70a5c55fb16a5cd23fc753e3a0b37f4e4d6b687a67c",
+      "bytes": 4171
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/release-gate-ledger.md",
+      "sha256": "17d0997ba7120387ec36091d83e21309bde69f66f08e0b0a394b8143b6e0a3ec",
+      "bytes": 4000
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/budget/provider-billing-assumptions.md",
+      "sha256": "dca4c6fe4322ccb49b1553fc2f835de64d4b5ec274a20d177e457a1163f8c9da",
+      "bytes": 5509
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/provider-preflight/live-diagnostic-readiness.md",
+      "sha256": "007e13e2e1cef0f635a114a8f471bf7d7cf3305e58761b122f1ef50eb3aafcbb",
+      "bytes": 3349
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/independent-review/reviewer-handoff.md",
+      "sha256": "d15496e1b07850c50b7e75a52358fab34e4e5be5d6a866b7130b0830562c981b",
+      "bytes": 4087
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/routing-parity-current/gap-ledger.md",
+      "sha256": "a14f0d15eab1465805e37553888c8d161fedf2f9299229711de5e8ebd1dada01",
+      "bytes": 5493
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/README.md",
+      "sha256": "d7c4772a212190b573e9c7f8fa3da457cd71387ffb491a9bbcfaee5cece8a71f",
+      "bytes": 4029
+    },
+    {
+      "path": "qualification/pwrp71/gate10-routing-budget-readiness/independent-review/v5-review.md",
+      "sha256": "1cd9a4db34e467551aa8cf1027e4966300ad4497a189531ec5bf0f8e56b461e6",
+      "bytes": 2905
+    }
+  ]
+}

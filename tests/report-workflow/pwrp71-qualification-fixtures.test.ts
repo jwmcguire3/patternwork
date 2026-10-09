@@ -95,7 +95,7 @@ test("C01–C16 remain exact candidate packet archives pending router qualificat
   assert.deepEqual(candidate.issues, []);
 });
 
-test("C candidate archives may be structurally report-ready while remaining unqualified routing inputs", async () => {
+test("C candidate archives remain unqualified and legacy C10 D36 packet order is rejected", async () => {
   const fixtures = await loadPwrp71QualificationFixtures();
   const questionSource = await loadPwqe51SourcePackage();
   const reportSource = await loadPwrp71SourcePackage();
@@ -103,7 +103,12 @@ test("C candidate archives may be structurally report-ready while remaining unqu
   for (const profile of fixtures.coverageCandidates) {
     const prepared = preparePwrp71Request({ packet: profile.packet, reportType: "MAP", questionSource, reportSource });
     if (prepared.ok) structurallyReady += 1;
-    else assert.ok(prepared.issues.every((issue) => issue.code === "target_lineage" || issue.code === "sequence_lineage"), JSON.stringify(prepared.issues));
+    else {
+      assert.ok(prepared.issues.every((issue) => issue.code === "target_lineage" || issue.code === "sequence_lineage" || issue.code === "recovery_sequence_semantics"), JSON.stringify(prepared.issues));
+      if (prepared.issues.some((issue) => issue.code === "recovery_sequence_semantics")) {
+        assert.equal(profile.id, "C10", "only the legacy candidate archive with D36 carries the old response/edge ordering mismatch");
+      }
+    }
     assert.equal(profile.routerParity, "pending");
   }
   assert.ok(structurallyReady > 0);

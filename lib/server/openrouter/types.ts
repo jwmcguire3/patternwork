@@ -6,6 +6,16 @@ export interface OpenRouterProviderPolicy {
   readonly zdr: true;
   readonly data_collection: "deny";
   readonly require_parameters: true;
+  readonly max_price?: {
+    /** OpenRouter price ceiling in USD per million prompt tokens. */
+    readonly prompt: number;
+    /** OpenRouter price ceiling in USD per million completion tokens. */
+    readonly completion: number;
+  };
+}
+
+export interface OpenRouterPromptCacheOptions {
+  readonly mode: "explicit";
 }
 
 export const OPENROUTER_PROVIDER_POLICY: OpenRouterProviderPolicy = {
@@ -56,6 +66,10 @@ export interface OpenRouterGenerationRequest {
   readonly schema: JsonObject;
   readonly maxOutputTokens: number;
   readonly idempotencyKey: string;
+  /** Optional request-specific provider constraints included in the serialized body. */
+  readonly providerPolicy?: OpenRouterProviderPolicy;
+  /** Optional provider request cache control included in the serialized body. */
+  readonly promptCacheOptions?: OpenRouterPromptCacheOptions;
 }
 
 export interface OpenRouterTransport {

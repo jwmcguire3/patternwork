@@ -75,6 +75,60 @@ function addUniqueIndex(items: readonly Record<string, unknown>[], key: string, 
   return index;
 }
 
+function validateD36SequenceEvidence(
+  observations: readonly Record<string, unknown>[],
+  edges: readonly Record<string, unknown>[],
+  issues: ValidationIssue[],
+): void {
+  const byResponse = new Map<string, Record<string, unknown>[]>();
+  for (const observation of observations) {
+    if (observation.item_id !== "D36" || typeof observation.response_id !== "string") continue;
+    byResponse.set(observation.response_id, [...(byResponse.get(observation.response_id) ?? []), observation]);
+  }
+  const expected: { id: string; occurrenceId: string; fromStep: string; toStep: string; relation: string; evidenceIds: string[] }[] = [];
+  for (const [responseId, selected] of byResponse) {
+    if (selected.length < 2) continue;
+    const first = selected[0]!;
+    const mode = first.mode;
+    const relation = mode === "ordered" ? "before"
+      : mode === "simultaneous" ? "simultaneous"
+        : mode === "order_unknown" ? "order_unknown" : undefined;
+    if (!relation || selected.some((observation) => observation.mode !== mode || observation.occurrence_id !== first.occurrence_id)) {
+      issues.push(issue("recovery_sequence_mode", "$.packet.sequence_edges", `D36 response ${responseId} does not retain one supported selection mode and occurrence.`));
+      continue;
+    }
+    for (let index = 0; index < selected.length - 1; index += 1) {
+      const from = selected[index]!;
+      const to = selected[index + 1]!;
+      if (typeof from.option_id !== "string" || typeof to.option_id !== "string"
+        || typeof from.step_id !== "string" || typeof to.step_id !== "string") continue;
+      expected.push({
+        id: `recovery:${responseId}:${from.option_id}:${to.option_id}`,
+        occurrenceId: String(first.occurrence_id),
+        fromStep: from.step_id,
+        toStep: to.step_id,
+        relation,
+        evidenceIds: [String(from.id), String(to.id)],
+      });
+    }
+  }
+  const recoveryEdges = edges.filter((edge) => edge.meaning === "reported_recovery_order");
+  const d36ObservationIds = new Set(observations.filter((observation) => observation.item_id === "D36")
+    .map((observation) => observation.id).filter((id): id is string => typeof id === "string"));
+  const edgesTouchingD36 = edges.filter((edge) => Array.isArray(edge.evidence_ids)
+    && (edge.evidence_ids as unknown[]).some((id) => typeof id === "string" && d36ObservationIds.has(id)));
+  if (recoveryEdges.length !== expected.length || edgesTouchingD36.length !== expected.length
+    || recoveryEdges.some((edge, index) => {
+      const row = expected[index];
+      const evidence = Array.isArray(edge.evidence_ids) ? edge.evidence_ids : [];
+      return !row || edge.id !== row.id || edge.occurrence_id !== row.occurrenceId
+        || edge.from_step !== row.fromStep || edge.to_step !== row.toStep || edge.relation !== row.relation
+        || evidence.length !== row.evidenceIds.length || evidence.some((id, evidenceIndex) => id !== row.evidenceIds[evidenceIndex]);
+    })) {
+    issues.push(issue("recovery_sequence_semantics", "$.packet.sequence_edges", "D36 sequence edges must preserve the selected adjacent option order, response mode, occurrence, and exact observations."));
+  }
+}
+
 function validateSourceBindings(input: PreparePwrp71RequestInput, issues: ValidationIssue[]): void {
   const { questionSource, reportSource } = input;
   if (questionSource.manifest.source_binding.question_release !== PWQE51_RELEASE_IDENTITY.questionRelease
@@ -155,6 +209,7 @@ function validatePacket(packet: JsonObject, source: Pwqe51SourcePackage, issues:
       issues.push(issue("observation_lineage", path, "Observation identity or current response/occurrence lineage is invalid."));
     }
   }
+  validateD36SequenceEvidence(observations, edges, issues);
 
   const observationIds = new Set(observationIndex.keys());
   const episodeIds = new Set(episodeIndex.keys());

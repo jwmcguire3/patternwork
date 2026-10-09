@@ -202,6 +202,8 @@ test("live runner blocks before provider dispatch when final routing evidence is
       profileIds: ["C01"],
       reportTypes: ["MAP"],
       costCapMicros: 1_000_000,
+      maxCallCostMicros: 1_000_000,
+      aggregateCostCapMicros: 1_000_000,
       outputRoot,
       workspaceRoot: process.cwd(),
       transport,
@@ -210,6 +212,30 @@ test("live runner blocks before provider dispatch when final routing evidence is
     assert.equal(providerCalls, 0);
     assert.match(run.blockers[0] ?? "", /router qualification evidence/u);
     assert.equal(run.results.length, 0);
+  });
+});
+
+test("live runner refuses legacy aggregate-only budgets before any provider dispatch", async () => {
+  await withOutputRoot(async (outputRoot) => {
+    let providerCalls = 0;
+    const transport: OpenRouterTransport = {
+      async generate(): Promise<OpenRouterGenerationResult> {
+        providerCalls += 1;
+        throw new Error("provider must not be called when the per-call cap is absent");
+      },
+    };
+    await assert.rejects(runPwrp71Qualification({
+      runId: "live-missing-call-cap",
+      mode: "live",
+      profileIds: ["C01"],
+      reportTypes: ["IFS"],
+      costCapMicros: 1_000_000,
+      aggregateCostCapMicros: 1_000_000,
+      outputRoot,
+      workspaceRoot: process.cwd(),
+      transport,
+    }), /explicit positive safe-integer maxCallCostMicros/u);
+    assert.equal(providerCalls, 0);
   });
 });
 

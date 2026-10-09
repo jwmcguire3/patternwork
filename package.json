@@ -13,6 +13,8 @@
     "reports:codex": "tsx scripts/report-cli/index.ts",
     "reports:qualify": "tsx scripts/qualify-openrouter/index.ts",
     "reports:qualify:pwrp71": "tsx scripts/qualify-pwrp71/index.ts",
+    "reports:preflight:pwrp71": "tsx scripts/preflight-pwrp71/index.ts",
+    "reports:verify:v5-packets": "tsx scripts/verify-pwrp71-v5-packets/index.ts",
     "pwqe51:replay:fictional": "tsx scripts/replay-pwqe51-fictional/index.ts",
     "pwqe51:replay:ledger": "tsx scripts/replay-pwqe51-fictional/ledger.ts",
     "reports:preflight": "tsx scripts/report-preflight/index.ts",

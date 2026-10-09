@@ -119,12 +119,74 @@ function assertCurrentLineage(input: BuildPwqe51PacketInput): void {
   }
 }
 
+function assertD36SequenceSemantics(input: BuildPwqe51PacketInput): void {
+  const responseById = new Map(input.responses.map((response) => [response.responseId, response]));
+  const stale = new Set([
+    ...input.routerResult.supersededResponseIds,
+    ...input.routerResult.invalidatedResponses.map((entry) => entry.responseId),
+  ]);
+  const recoveryEdges = input.routerResult.sequenceEdges.filter((edge) => edge.meaning === "reported_recovery_order");
+  const currentResponses = input.responses.filter((response) => response.questionId === "D36"
+    && (response.status ?? "answered") === "answered" && !stale.has(response.responseId));
+
+  for (const edge of input.routerResult.sequenceEdges) {
+    const response = responseById.get(edge.responseId);
+    if (edge.meaning === "reported_recovery_order" || response?.questionId === "D36") {
+      if (response?.questionId !== "D36" || stale.has(edge.responseId)) {
+        throw new Error("PWQE 5.1 recovery sequence edge must bind a current D36 response.");
+      }
+    }
+  }
+
+  const expectedByResponse = new Map<string, { id: string; occurrenceId: string; fromStep: string; toStep: string; relation: string; observationIds: string[] }[]>();
+  for (const response of currentResponses) {
+    if (response.selectedOptionIds?.length !== undefined && response.selectedOptionIds.length > 1) {
+      const relation = response.mode === "ordered" ? "before"
+        : response.mode === "simultaneous" ? "simultaneous"
+          : response.mode === "order_unknown" ? "order_unknown" : undefined;
+      if (!relation) throw new Error("PWQE 5.1 D36 response has no authored order mode for its recovery sequence.");
+      const stepId = response.stepId ?? input.source.questionBank.items.find((question) => question.id === "D36")?.step_binding ?? "first";
+      const expected = response.selectedOptionIds.slice(0, -1).map((optionId, index) => {
+        const nextOptionId = response.selectedOptionIds![index + 1]!;
+        return {
+          id: `recovery:${response.responseId}:${optionId}:${nextOptionId}`,
+          occurrenceId: response.occurrenceId,
+          fromStep: `${stepId}/${optionId}`,
+          toStep: `${stepId}/${nextOptionId}`,
+          relation,
+          observationIds: [`${response.responseId}:${optionId}`, `${response.responseId}:${nextOptionId}`],
+        };
+      });
+      expectedByResponse.set(response.responseId, expected);
+    }
+  }
+
+  const expectedCount = [...expectedByResponse.values()].reduce((sum, edges) => sum + edges.length, 0);
+  if (recoveryEdges.length !== expectedCount) {
+    throw new Error("PWQE 5.1 recovery sequence edges do not match the selected D36 option order and response mode.");
+  }
+  for (const [responseId, expectedEdges] of expectedByResponse) {
+    const actual = recoveryEdges.filter((edge) => edge.responseId === responseId);
+    if (actual.length !== expectedEdges.length || expectedEdges.some((expected, index) => {
+      const edge = actual[index];
+      return !edge || edge.id !== expected.id || edge.occurrenceId !== expected.occurrenceId
+        || edge.fromStep !== expected.fromStep || edge.toStep !== expected.toStep || edge.relation !== expected.relation
+        || edge.meaning !== "reported_recovery_order" || edge.observationIds.length !== 2
+        || edge.observationIds[0] !== expected.observationIds[0] || edge.observationIds[1] !== expected.observationIds[1];
+    })) {
+      throw new Error("PWQE 5.1 recovery sequence edge direction, relation, or evidence does not match the selected D36 response.");
+    }
+  }
+}
+
 /** Builds a source-bound 5.1 packet from canonical response evidence and the matching router result. */
 export function buildPwqe51RouterPacket(input: BuildPwqe51PacketInput): Record<string, unknown> {
   const { snapshotId, responses, routerResult: route, source } = input;
   assertCurrentLineage(input);
+  assertD36SequenceSemantics(input);
   const questions = new Map(source.questionBank.items.map((question) => [question.id, question]));
   const responseById = new Map(responses.map((response) => [response.responseId, response]));
+  const staleResponseIds = new Set([...route.supersededResponseIds, ...route.invalidatedResponses.map((entry) => entry.responseId)]);
   const packetObservationId = new Map(route.observations.map((observation) => [
     observation.id,
     `O${sha256(canonicalize([observation.responseId, observation.optionId])).slice(0, 20)}`,
@@ -306,8 +368,14 @@ export function buildPwqe51RouterPacket(input: BuildPwqe51PacketInput): Record<s
     return !!a && !!b && (explicitPair || a.distinctFrom?.includes(second) || b.distinctFrom?.includes(first) || false);
   };
   const targetResolutions = route.targets.map((target) => {
-    const attempts = responses.filter((response) => response.occurrenceId === target.occurrenceId
-      && target.candidateItems.includes(response.questionId)
+    const sourceTarget = source.routingTargets.targets.find((entry) => entry.id === target.targetId);
+    const authoredCandidateItems = Array.isArray(sourceTarget?.candidate_items)
+      ? sourceTarget.candidate_items.filter((entry): entry is string => typeof entry === "string")
+      : [];
+    const candidateItems = new Set([...target.candidateItems, ...authoredCandidateItems]);
+    const attempts = responses.filter((response) => !staleResponseIds.has(response.responseId)
+      && response.occurrenceId === target.occurrenceId
+      && candidateItems.has(response.questionId)
       && (response.stepId ?? questions.get(response.questionId)?.step_binding ?? "first") === target.stepId).length;
     const referencedObservationIds = [...target.sourceObservationIds, ...target.resolutionObservationIds];
     const referencedOccurrences = [...new Set(referencedObservationIds.flatMap((id) => {
@@ -385,7 +453,6 @@ export function buildPwqe51RouterPacket(input: BuildPwqe51PacketInput): Record<s
   }
   const independentlySupportedOccurrences = new Set(actualEpisodes.map((episode) => findParent(episode.id))).size;
   const mappingCount = responses.filter((response) => questions.get(response.questionId)?.stage === "mapping").length;
-  const staleResponseIds = new Set([...route.supersededResponseIds, ...route.invalidatedResponses.map((entry) => entry.responseId)]);
   const administrationProvenance = responses.filter((response) => !staleResponseIds.has(response.responseId)).map((response) => {
     const question = questions.get(response.questionId);
     const variant = response.variantId ? source.questionBank.variants.find((item) => item.id === response.variantId && item.replaces === response.questionId) : undefined;

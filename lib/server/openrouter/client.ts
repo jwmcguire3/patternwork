@@ -1,14 +1,12 @@
 import type { JsonObject } from "../../question-engine/types.ts";
 import {
-  OPENROUTER_PROVIDER_POLICY,
   OpenRouterTransportError,
   type OpenRouterGenerationRequest,
   type OpenRouterGenerationResult,
   type OpenRouterTransport,
   type OpenRouterUsage,
 } from "./types.ts";
-
-const DEFAULT_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
+import { buildOpenRouterWirePayload, OPENROUTER_DEFAULT_ENDPOINT } from "./wire.ts";
 
 type FetchLike = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
 
@@ -131,7 +129,7 @@ export class OpenRouterClient implements OpenRouterTransport {
 
   constructor(options: OpenRouterClientOptions = {}) {
     this.apiKey = options.apiKey ?? process.env.OPENROUTER_API_KEY ?? "";
-    this.endpoint = options.endpoint ?? DEFAULT_ENDPOINT;
+    this.endpoint = options.endpoint ?? OPENROUTER_DEFAULT_ENDPOINT;
     this.timeoutMs = options.timeoutMs ?? 120_000;
     this.fetchImpl = options.fetch ?? globalThis.fetch;
     this.appUrl = options.appUrl ?? process.env.OPENROUTER_APP_URL;
@@ -157,25 +155,7 @@ export class OpenRouterClient implements OpenRouterTransport {
           ...(this.appUrl ? { "http-referer": this.appUrl } : {}),
           ...(this.appTitle ? { "x-title": this.appTitle } : {}),
         },
-        body: JSON.stringify({
-          model: request.model,
-          messages: [
-            { role: "system", content: request.system },
-            { role: "user", content: request.prompt },
-          ],
-          stream: false,
-          max_completion_tokens: request.maxOutputTokens,
-          reasoning: { effort: request.reasoningEffort },
-          provider: OPENROUTER_PROVIDER_POLICY,
-          response_format: {
-            type: "json_schema",
-            json_schema: {
-              name: request.schemaName,
-              strict: true,
-              schema: request.schema,
-            },
-          },
-        }),
+        body: JSON.stringify(buildOpenRouterWirePayload(request)),
       });
     } catch (error) {
       if (error instanceof Error && error.name === "AbortError") {

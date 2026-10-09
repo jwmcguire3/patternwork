@@ -2,9 +2,11 @@ import { createHash, randomUUID } from "node:crypto";
 import { open, mkdir, readFile, rename, rm } from "node:fs/promises";
 import path from "node:path";
 import { sha256Canonical } from "../../../report-contracts/delivery-validator.ts";
-import { estimatedCallCostMicros, QUALIFICATION_MODEL_ORDER } from "../../openrouter/policy.ts";
-import { OPENROUTER_PROVIDER_POLICY, OpenRouterTransportError, type OpenRouterGenerationRequest, type OpenRouterGenerationResult, type OpenRouterTransport, type OpenRouterUsage } from "../../openrouter/types.ts";
+import { QUALIFICATION_MODEL_ORDER } from "../../openrouter/policy.ts";
+import { OpenRouterTransportError, type OpenRouterGenerationRequest, type OpenRouterGenerationResult, type OpenRouterTransport, type OpenRouterUsage } from "../../openrouter/types.ts";
 import { projectOpenRouterStrictSchemaObject } from "../../openrouter/schema-projection.ts";
+import { GPT6_LUNA_BILLING_BASIS_SHA256, GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY, maximumQuotedCallCostMicros, validatePositiveMicros } from "../../openrouter/qualification-budget.ts";
+import { buildOpenRouterWirePayload, OPENROUTER_DEFAULT_ENDPOINT } from "../../openrouter/wire.ts";
 import type { Pwrp71GenerationEvent } from "../generator.ts";
 
 export type QualificationAttemptStatus = "started" | "completed" | "unknown";
@@ -28,6 +30,12 @@ export interface QualificationAttemptRecord {
     readonly wireSchemaSha256: string;
   };
   readonly locallyEstimatedCostMicros: number;
+  /** Conservative live reservation; old ledger rows fall back to locallyEstimatedCostMicros. */
+  readonly reservedCostMicros?: number;
+  readonly maximumCallCostMicros?: number;
+  readonly aggregateCostCapMicros?: number;
+  readonly billingBasisSha256?: string;
+  readonly wirePayloadSha256?: string;
   readonly usageStatus: "reported" | "mock" | "unknown";
   readonly usage?: OpenRouterUsage;
   readonly finishReason?: string;
@@ -91,11 +99,31 @@ export class FileQualificationAttemptStore {
   async begin(input: {
     readonly request: OpenRouterGenerationRequest;
     readonly wireRequest: OpenRouterGenerationRequest;
-    readonly costCapMicros: number;
+    readonly maxCallCostMicros?: number;
+    readonly aggregateCostCapMicros?: number;
+    /** Legacy alias retained for archived tests/runs; new live callers pass both explicit limits. */
+    readonly costCapMicros?: number;
+    readonly usageStatus?: "reported" | "mock";
+    readonly endpoint?: string;
     readonly startedAt: Date;
   }): Promise<{ readonly record: QualificationAttemptRecord; readonly reused: boolean }> {
+    const maxCallCostMicros = input.maxCallCostMicros ?? input.costCapMicros;
+    const aggregateCostCapMicros = input.aggregateCostCapMicros ?? input.costCapMicros;
+    validatePositiveMicros(maxCallCostMicros, "maxCallCostMicros");
+    validatePositiveMicros(aggregateCostCapMicros, "aggregateCostCapMicros");
     return this.mutate<{ readonly record: QualificationAttemptRecord; readonly reused: boolean }>((attempts) => {
-      const fingerprint = requestFingerprint(input.request, input.wireRequest);
+      const endpoint = input.endpoint ?? OPENROUTER_DEFAULT_ENDPOINT;
+      const wirePayload = buildOpenRouterWirePayload(input.wireRequest);
+      const wireBody = JSON.stringify(wirePayload);
+      const wirePayloadSha256 = sha256Text(wireBody);
+      const usageStatus = input.usageStatus ?? "reported";
+      const fingerprint = qualificationAttemptFingerprint({
+        request: input.request,
+        wireRequest: input.wireRequest,
+        endpoint,
+        maxCallCostMicros,
+        aggregateCostCapMicros,
+      });
       const prior = attempts.find((attempt) => attempt.attemptId === input.request.idempotencyKey);
       if (prior) {
         if (prior.requestFingerprint !== fingerprint) {
@@ -105,12 +133,16 @@ export class FileQualificationAttemptStore {
         throw new QualificationAttemptError("attempt_uncertain", `Provider attempt ${prior.attemptId} is ${prior.status}; its result is not safe to repeat automatically.`);
       }
 
-      const estimateTier = QUALIFICATION_MODEL_ORDER.find((tier) => tier.model === input.request.model && tier.reasoningEffort === input.request.reasoningEffort);
-      if (!estimateTier) throw new QualificationAttemptError("resume_conflict", "Requested model/reasoning pair is outside the pinned qualification candidate policy.");
-      const estimatedMicros = estimatedCallCostMicros(estimateTier, input.request.prompt, input.request.maxOutputTokens);
-      const reserved = attempts.reduce((sum, attempt) => sum + (attempt.usage?.costMicros ?? attempt.locallyEstimatedCostMicros), 0);
-      if (reserved + estimatedMicros > input.costCapMicros) {
-        throw new QualificationAttemptError("budget_blocked", `PWRP 7.1 qualification budget blocked: ${reserved} reserved/reported + ${estimatedMicros} estimated > ${input.costCapMicros} micros.`);
+      const allowedTier = QUALIFICATION_MODEL_ORDER.find((tier) => tier.model === input.request.model && tier.reasoningEffort === input.request.reasoningEffort);
+      if (!allowedTier) throw new QualificationAttemptError("resume_conflict", "Requested model/reasoning pair is outside the pinned qualification candidate policy.");
+      const quotedCeilingMicros = usageStatus === "mock" ? 0 : maximumQuotedCallCostMicros(input.wireRequest);
+      if (quotedCeilingMicros > maxCallCostMicros) {
+        throw new QualificationAttemptError("budget_blocked", `Per-call ceiling blocked before dispatch: quoted ${quotedCeilingMicros} > maxCallCostMicros ${maxCallCostMicros}.`);
+      }
+      const reservedCostMicros = quotedCeilingMicros;
+      const reserved = attempts.reduce((sum, attempt) => sum + accountedCostMicros(attempt), 0);
+      if (reserved + reservedCostMicros > aggregateCostCapMicros) {
+        throw new QualificationAttemptError("budget_blocked", `PWRP 7.1 aggregate budget blocked before dispatch: ${reserved} spent/reserved + ${reservedCostMicros} reserved > ${aggregateCostCapMicros} micros.`);
       }
       const record: QualificationAttemptRecord = {
         attemptId: input.request.idempotencyKey,
@@ -128,7 +160,12 @@ export class FileQualificationAttemptStore {
           localSchemaSha256: sha256Canonical(input.request.schema),
           wireSchemaSha256: sha256Canonical(input.wireRequest.schema),
         },
-        locallyEstimatedCostMicros: estimatedMicros,
+        locallyEstimatedCostMicros: reservedCostMicros,
+        reservedCostMicros,
+        maximumCallCostMicros: maxCallCostMicros,
+        aggregateCostCapMicros,
+        billingBasisSha256: GPT6_LUNA_BILLING_BASIS_SHA256,
+        wirePayloadSha256,
         usageStatus: "unknown",
       };
       return { next: [...attempts, record], value: { record, reused: false } };
@@ -220,18 +257,10 @@ export class FileQualificationAttemptStore {
         lockHandle = await open(lockPath, "wx");
         await lockHandle.writeFile(`${process.pid}\t${Date.now()}\n`, "utf8");
       } catch (error) {
-        if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
-        let ownerPid = -1;
-        try { ownerPid = Number((await readFile(lockPath, "utf8")).split("\t")[0]); } catch { /* a lock being created */ }
-        let ownerAlive = ownerPid > 0;
-        if (ownerAlive) {
-          try { process.kill(ownerPid, 0); }
-          catch (killError) { if ((killError as NodeJS.ErrnoException).code === "ESRCH") ownerAlive = false; }
+        if ((error as NodeJS.ErrnoException).code === "EEXIST") {
+          throw new QualificationAttemptError("run_locked", "Qualification run has an existing writer lock; automatic stale-lock removal is disabled.");
         }
-        if (ownerAlive) throw new QualificationAttemptError("run_locked", `Qualification run is locked by live process ${ownerPid}.`);
-        await rm(lockPath, { force: true });
-        lockHandle = await open(lockPath, "wx");
-        await lockHandle.writeFile(`${process.pid}\t${Date.now()}\n`, "utf8");
+        throw error;
       }
       const current = await this.readFile();
       const { next, value } = fn(current.attempts);
@@ -239,7 +268,7 @@ export class FileQualificationAttemptStore {
       return value;
     } finally {
       await lockHandle?.close();
-      await rm(lockPath, { force: true });
+      if (lockHandle) await rm(lockPath, { force: true });
       FileQualificationAttemptStore.inProcessLocks.delete(lockKey);
     }
   }
@@ -255,12 +284,24 @@ export class FileQualificationAttemptStore {
   }
 }
 
-function requestFingerprint(localRequest: OpenRouterGenerationRequest, wireRequest: OpenRouterGenerationRequest): string {
+export function qualificationAttemptFingerprint(input: {
+  readonly request: OpenRouterGenerationRequest;
+  readonly wireRequest: OpenRouterGenerationRequest;
+  readonly endpoint?: string;
+  readonly maxCallCostMicros: number;
+  readonly aggregateCostCapMicros: number;
+  readonly billingBasisSha256?: string;
+}): string {
+  const endpoint = input.endpoint ?? OPENROUTER_DEFAULT_ENDPOINT;
+  const wireBody = JSON.stringify(buildOpenRouterWirePayload(input.wireRequest));
   return sha256Canonical({
-    request: localRequest,
-    wireSchema: wireRequest.schema,
-    providerPolicy: OPENROUTER_PROVIDER_POLICY,
-    endpoint: "https://openrouter.ai/api/v1/chat/completions",
+    request: input.request,
+    endpoint,
+    idempotencyHeader: input.request.idempotencyKey,
+    exactWireBodySha256: sha256Text(wireBody),
+    maximumCallCostMicros: input.maxCallCostMicros,
+    aggregateCostCapMicros: input.aggregateCostCapMicros,
+    billingBasisSha256: input.billingBasisSha256 ?? GPT6_LUNA_BILLING_BASIS_SHA256,
   });
 }
 
@@ -269,14 +310,18 @@ export class JournaledPwrp71Transport implements OpenRouterTransport {
   constructor(input: {
     readonly store: FileQualificationAttemptStore;
     readonly transport: OpenRouterTransport;
-    readonly costCapMicros: number;
+    readonly maxCallCostMicros?: number;
+    readonly aggregateCostCapMicros?: number;
+    /** Legacy alias retained for existing offline/test callers. */
+    readonly costCapMicros?: number;
     readonly usageStatus?: "reported" | "mock";
     readonly now?: () => Date;
     readonly onResult?: (request: OpenRouterGenerationRequest, result: OpenRouterGenerationResult) => void | Promise<void>;
   }) {
     this.store = input.store;
     this.transport = input.transport;
-    this.costCapMicros = input.costCapMicros;
+    this.maxCallCostMicros = input.maxCallCostMicros ?? input.costCapMicros ?? 0;
+    this.aggregateCostCapMicros = input.aggregateCostCapMicros ?? input.costCapMicros ?? 0;
     this.usageStatus = input.usageStatus ?? "reported";
     this.now = input.now ?? (() => new Date());
     this.onResult = input.onResult;
@@ -284,17 +329,37 @@ export class JournaledPwrp71Transport implements OpenRouterTransport {
 
   private readonly store: FileQualificationAttemptStore;
   private readonly transport: OpenRouterTransport;
-  private readonly costCapMicros: number;
+  private readonly maxCallCostMicros: number;
+  private readonly aggregateCostCapMicros: number;
   private readonly usageStatus: "reported" | "mock";
   private readonly now: () => Date;
   private readonly onResult?: (request: OpenRouterGenerationRequest, result: OpenRouterGenerationResult) => void | Promise<void>;
 
   async generate(request: OpenRouterGenerationRequest): Promise<OpenRouterGenerationResult> {
-    const wireRequest = { ...request, schema: projectOpenRouterStrictSchemaObject(request.schema) };
+    try {
+      validatePositiveMicros(this.maxCallCostMicros, "maxCallCostMicros");
+      validatePositiveMicros(this.aggregateCostCapMicros, "aggregateCostCapMicros");
+    } catch (error) {
+      throw new QualificationAttemptError("budget_blocked", error instanceof Error ? error.message : "Invalid provider spending limits.");
+    }
+    const wireRequest: OpenRouterGenerationRequest = {
+      ...request,
+      schema: projectOpenRouterStrictSchemaObject(request.schema),
+      providerPolicy: GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY,
+      promptCacheOptions: { mode: "explicit" },
+    };
     const startedAt = this.now();
-    const begun = await this.store.begin({ request, wireRequest, costCapMicros: this.costCapMicros, startedAt });
+    const begun = await this.store.begin({
+      request,
+      wireRequest,
+      maxCallCostMicros: this.maxCallCostMicros,
+      aggregateCostCapMicros: this.aggregateCostCapMicros,
+      usageStatus: this.usageStatus,
+      startedAt,
+    });
     if (begun.reused) {
       const result = structuredClone(begun.record.providerResult!);
+      validateProviderResult(request, result, begun.record);
       await this.onResult?.(request, result);
       return result;
     }
@@ -307,8 +372,33 @@ export class JournaledPwrp71Transport implements OpenRouterTransport {
       await this.store.markUnknown(request.idempotencyKey, error, Date.now() - startedMs, this.now());
       throw error instanceof OpenRouterTransportError ? error : new OpenRouterTransportError("network", "Qualification provider call ended without a durable response.", { retryable: false, cause: error });
     }
+    validateProviderResult(request, result, begun.record);
     await this.onResult?.(request, result);
     return result;
+  }
+}
+
+function accountedCostMicros(attempt: QualificationAttemptRecord): number {
+  if (attempt.status === "completed") {
+    if (attempt.usageStatus === "mock") return 0;
+    return attempt.usage?.costMicros ?? attempt.reservedCostMicros ?? attempt.locallyEstimatedCostMicros;
+  }
+  return attempt.reservedCostMicros ?? attempt.locallyEstimatedCostMicros;
+}
+
+function validateProviderResult(request: OpenRouterGenerationRequest, result: OpenRouterGenerationResult, record: QualificationAttemptRecord): void {
+  const usage = result.usage;
+  if (usage.currency !== "USD" || !Number.isSafeInteger(usage.costMicros) || usage.costMicros < 0) {
+    throw new OpenRouterTransportError("protocol", "Provider usage did not report a valid nonnegative USD cost.", { retryable: false });
+  }
+  if (usage.model !== "offline/mock" && usage.model !== request.model) {
+    throw new OpenRouterTransportError("protocol", `OpenRouter returned model ${usage.model}, but the qualification request pinned ${request.model}.`, { retryable: false });
+  }
+  const maximumCallCostMicros = record.maximumCallCostMicros;
+  const reservedCostMicros = record.reservedCostMicros;
+  if (record.usageStatus !== "mock" && maximumCallCostMicros !== undefined
+    && (usage.costMicros > maximumCallCostMicros || (reservedCostMicros !== undefined && usage.costMicros > reservedCostMicros))) {
+    throw new OpenRouterTransportError("protocol", `Provider-reported charge ${usage.costMicros} micros exceeded the pre-dispatch reservation ${reservedCostMicros ?? "unknown"} or per-call limit ${maximumCallCostMicros}.`, { retryable: false });
   }
 }
 

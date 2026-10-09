@@ -157,6 +157,18 @@ test("the independent v5 verifier qualifies retained source-to-packet bindings a
   const syntheticMapResponse = submitted.find((row) => row.provenance === "new_synthetic_mapping_response")!;
   const syntheticSourceId = syntheticMapResponse.sourceResponseId as string;
   const syntheticRuntimeId = syntheticMapResponse.runtimeResponseId as string;
+  const sourceBoundProvenanceTamper = structuredClone(artifact);
+  const sourceBoundReplay = sourceBoundProvenanceTamper.replay as JsonRecord;
+  const sourceBoundSubmitted = (sourceBoundReplay.submittedSourceToRuntimeResponses as JsonRecord[])
+    .find((row) => row.runtimeResponseId === syntheticRuntimeId)!;
+  sourceBoundSubmitted.provenance = "original_authored_fictional_response";
+  const sourceBoundPacket = (((sourceBoundProvenanceTamper.packets as JsonRecord).MAP as JsonRecord).packet as JsonRecord);
+  (sourceBoundPacket.observations as JsonRecord[]).find((row) => row.response_id === syntheticRuntimeId)!.selection_reason =
+    "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data";
+  const sourceBoundResult = verifySemanticEvidencePacket({ history: history as unknown as JsonRecord, artifact: sourceBoundProvenanceTamper, questionSource });
+  assert.ok(sourceBoundResult.failures.some((failure) => failure.includes("submitted_provenance_does_not_match_source_origin")));
+  assert.ok(sourceBoundResult.failures.some((failure) => failure.includes("response_provenance_not_visible_in_packet")));
+
   syntheticMapResponse.provenance = "original_authored_fictional_response";
   const runtimeProvenance = replay.completeResponseProvenance as JsonRecord[];
   runtimeProvenance.find((row) => row.sourceResponseId === syntheticSourceId)!.origin = "original_authored_fictional_answer";

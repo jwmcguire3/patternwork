@@ -120,16 +120,21 @@ export function verifySemanticEvidencePacket(input: {
       if (typeof responseId === "string" && typeof submittedRow?.sourceResponseId === "string") {
         const sourceLine = provenanceBySourceId.get(submittedRow.sourceResponseId);
         if (!sourceLine || sourceLine.accepted !== true) failures.push(`${packetType}:source_provenance_missing_or_unaccepted:${responseId}`);
-        const sourceOrigin = authoredOriginBySourceId.get(submittedRow.sourceResponseId) ?? sourceLine?.origin;
-        const expectedProvenance = responseProvenanceLabel(sourceOrigin);
+        const authoredOrigin = authoredOriginBySourceId.get(submittedRow.sourceResponseId);
+        const authoredProvenance = responseProvenanceLabel(authoredOrigin);
+        const runtimeProvenance = responseProvenanceLabel(sourceLine?.origin);
+        if (!runtimeProvenance) failures.push(`${packetType}:runtime_provenance_origin_unrecognized:${responseId}`);
+        if (authoredOrigin !== undefined && authoredProvenance !== runtimeProvenance) {
+          failures.push(`${packetType}:runtime_provenance_does_not_match_authored_source_origin:${responseId}`);
+        }
+        const expectedProvenance = authoredProvenance ?? runtimeProvenance;
         if (expectedProvenance && submittedRow.provenance !== expectedProvenance) {
           failures.push(`${packetType}:submitted_provenance_does_not_match_source_origin:${responseId}`);
         }
-        if (sourceLine && expectedProvenance && responseProvenanceLabel(sourceLine.origin) !== expectedProvenance) {
-          failures.push(`${packetType}:runtime_provenance_does_not_match_authored_source_origin:${responseId}`);
-        }
-        const expectedSelectionReason = `source provenance: ${String(expectedProvenance ?? submittedRow.provenance)}; fictional qualification evidence, not real participant data`;
-        if (input.requirePacketProvenance !== false && observation.selection_reason !== expectedSelectionReason) {
+        const expectedSelectionReason = expectedProvenance
+          ? `source provenance: ${expectedProvenance}; fictional qualification evidence, not real participant data`
+          : undefined;
+        if (input.requirePacketProvenance !== false && (!expectedSelectionReason || observation.selection_reason !== expectedSelectionReason)) {
           failures.push(`${packetType}:response_provenance_not_visible_in_packet:${responseId}`);
         }
         if (submittedRow.phase === "mapping" && expectedProvenance === "new_synthetic_mapping_response"

@@ -25,6 +25,7 @@ import type { Pwrp71PreparedRequest } from "./pwrp71-adapter.ts";
 import { validatePwrp71ReportDraft } from "./pwrp71-validation.ts";
 import type { Pwrp71ReportArtifact } from "./pwrp71-validation.ts";
 import { validatePwrp71Review } from "./pwrp71-review.ts";
+import { QualificationAttemptError } from "./qualification/attempt-store.ts";
 
 export interface GenerateCanonicalReportOptions {
   readonly reportType: ReportType;
@@ -103,8 +104,13 @@ export async function generateCanonicalReport(options: GenerateCanonicalReportOp
     override?: { readonly system?: string; readonly prompt?: string; readonly schema?: JsonObject; readonly schemaName?: string },
   ): Promise<OpenRouterGenerationResult> => {
     const tier = QUALIFICATION_MODEL_ORDER[tierIndex];
-    const spentMicros = options.spentMicros + usages.reduce((sum, usage) => sum + usage.costMicros, 0);
-    assertCallWithinCostCap({ capMicros: options.costCapMicros, spentMicros }, tier, currentPrompt, config.maxOutputTokens);
+    // PWRP 7.1 is gated by the durable journal using the final wire payload,
+    // explicit per-call limit, and aggregate reservation. The character-based
+    // estimate is retained only for older contract versions.
+    if (options.contractVersion !== "v7.1") {
+      const spentMicros = options.spentMicros + usages.reduce((sum, usage) => sum + usage.costMicros, 0);
+      assertCallWithinCostCap({ capMicros: options.costCapMicros, spentMicros }, tier, currentPrompt, config.maxOutputTokens);
+    }
     const attemptOrdinal = options.contractVersion === "v7.1" ? `:attempt-${++callOrdinal}` : "";
     const request = {
       model: tierIndex === config.pinnedTier ? config.model : config.escalationModel,
@@ -243,7 +249,7 @@ export async function generateCanonicalReport(options: GenerateCanonicalReportOp
     }
     let checked = await validate(firstResult, lastAttemptId);
     if (checked.ok) {
-      if (options.contractVersion === "v7.1") return reviewAndAcceptPwrp71(checked.artifact as Pwrp71ReportArtifact);
+      if (options.contractVersion === "v7.1") return await reviewAndAcceptPwrp71(checked.artifact as Pwrp71ReportArtifact);
       return { ok: true, value: { reportType: options.reportType, artifact: checked.artifact, usage: totalUsage(usages) } as GeneratedCanonicalArtifact };
     }
     validationIssues = checked.issues;
@@ -259,7 +265,7 @@ export async function generateCanonicalReport(options: GenerateCanonicalReportOp
       }
       checked = await validate(repairedResult, lastAttemptId);
       if (checked.ok) {
-        if (options.contractVersion === "v7.1") return reviewAndAcceptPwrp71(checked.artifact as Pwrp71ReportArtifact);
+        if (options.contractVersion === "v7.1") return await reviewAndAcceptPwrp71(checked.artifact as Pwrp71ReportArtifact);
         return { ok: true, value: { reportType: options.reportType, artifact: checked.artifact, usage: totalUsage(usages) } as GeneratedCanonicalArtifact };
       }
       validationIssues = checked.issues;
@@ -274,12 +280,13 @@ export async function generateCanonicalReport(options: GenerateCanonicalReportOp
     }
     checked = await validate(escalatedResult, lastAttemptId);
     if (checked.ok) {
-      if (options.contractVersion === "v7.1") return reviewAndAcceptPwrp71(checked.artifact as Pwrp71ReportArtifact);
+      if (options.contractVersion === "v7.1") return await reviewAndAcceptPwrp71(checked.artifact as Pwrp71ReportArtifact);
       return { ok: true, value: { reportType: options.reportType, artifact: checked.artifact, usage: totalUsage(usages) } as GeneratedCanonicalArtifact };
     }
     return failure(options.reportType, "artifact_validation_failed", "Canonical artifact failed after one repair and one-tier escalation.", checked.issues, usages);
   } catch (error) {
     if (error instanceof ReportCostCapError) return failure(options.reportType, "cost_cap_exceeded", error.message, [], usages);
+    if (error instanceof QualificationAttemptError && error.code === "budget_blocked") return failure(options.reportType, "cost_cap_exceeded", error.message, [], usages);
     if (error instanceof OpenRouterTransportError) return failure(options.reportType, error.kind, error.message, [], usages, error.retryable);
     return failure(options.reportType, "generation_error", error instanceof Error ? error.message : String(error), [], usages);
   }
