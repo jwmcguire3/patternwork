@@ -7,8 +7,8 @@
     {
       "command": "npm test",
       "exitCode": 0,
-      "result": "380 passed; 0 failed",
-      "outputFile": "npm-test.log"
+      "result": "380 passed; 0 failed; rerun against pushed revision 1b6225dec8124074e278a521a3652925c7d64551",
+      "outputFile": "npm-test-pushed-commit.log"
     },
     {
       "command": "npx tsx --test [15 session, routing-contract, replay, packet, adapter, validation, runner, readiness, review, and semantic-evidence test files]",
