@@ -1,0 +1,13 @@
+
+> patternwork@0.1.0 reports:verify:v5-packets
+> tsx scripts/verify-pwrp71-v5-packets/index.ts
+
+{
+  "status": "pass",
+  "profiles": 25,
+  "passedProfiles": 25,
+  "packets": 100,
+  "passedPackets": 100,
+  "failures": 0,
+  "output": "C:\\Users\\jwmcg\\OneDrive\\Documents\\AI Projects\\Live Envirnments\\patternwork\\qualification\\pwrp71\\gate10-routing-budget-readiness\\packet-verification\\v5-current-contract-verification.json"
+}
