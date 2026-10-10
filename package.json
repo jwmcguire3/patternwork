@@ -23,6 +23,16 @@
     "pwqe51:parity:strict": "tsx scripts/pwqe51-parity/index.ts --strict",
     "postinstall": "prisma generate"
   },
+  "allowScripts": {
+    "@swc/core@1.15.3": true,
+    "cbor-extract@2.2.2": true,
+    "esbuild@0.28.2": true,
+    "prisma@6.19.3": true,
+    "sharp@0.34.5": true,
+    "unrs-resolver@1.12.2": true,
+    "@prisma/engines@6.19.3": true,
+    "@prisma/client@6.19.3": true
+  },
   "dependencies": {
     "@prisma/client": "^6.7.0",
     "@react-email/components": "^1.0.12",
