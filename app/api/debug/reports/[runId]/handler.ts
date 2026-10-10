@@ -3,8 +3,6 @@ import { prisma } from "../../../../../lib/prisma.ts";
 import { authorizeDebugRequest, debugAuthorizationResponse } from "../../../../../lib/server/debug/auth.ts";
 import { isDebugReportResult } from "../../../../../lib/server/debug/report-runner.ts";
 
-export const dynamic = "force-dynamic";
-
 const NO_STORE = { "cache-control": "no-store, private", "x-robots-tag": "noindex, nofollow, noarchive" };
 
 export async function GET(request: Request, context: { readonly params: Promise<{ runId: string }> }): Promise<Response> {

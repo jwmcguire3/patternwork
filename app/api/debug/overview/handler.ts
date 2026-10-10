@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { authorizeDebugRequest, debugAuthorizationResponse } from "../../../../lib/server/debug/auth.ts";
 import { loadDebugOverview } from "../../../../lib/server/debug/overview.ts";
 
-export const dynamic = "force-dynamic";
-
 const NO_STORE = { "cache-control": "no-store, private", "x-robots-tag": "noindex, nofollow, noarchive" };
 
 export async function GET(request: Request): Promise<Response> {

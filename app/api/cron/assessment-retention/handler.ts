@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { runAssessmentRetentionBatch, type AssessmentRetentionJobResult } from "@/lib/server/assessment/retention-job";
 import { constantTimeEqual } from "@/lib/server/security";
 
-export const dynamic = "force-dynamic";
-
 interface RetentionLogger {
   error(message: string): void;
   info(message: string): void;

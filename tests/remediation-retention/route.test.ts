@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createAssessmentRetentionHandler } from "../../app/api/cron/assessment-retention/route.ts";
+import { createAssessmentRetentionHandler } from "../../app/api/cron/assessment-retention/handler.ts";
 
 const successResult = {
   abandonedPurged: 2,

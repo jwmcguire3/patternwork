@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { NextRequest } from "next/server";
-import { POST } from "../../app/api/reports/request-link/route.ts";
+import { POST } from "../../app/api/reports/request-link/handler.ts";
 
 test("report-link request returns the same enumeration-safe response for malformed and invalid email input", async () => {
   const malformed = await POST(new NextRequest("https://patternwork.test/api/reports/request-link", { method: "POST", body: "{" }));

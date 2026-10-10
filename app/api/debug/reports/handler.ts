@@ -7,8 +7,6 @@ import { OPENROUTER_SITE_MODEL } from "../../../../lib/server/openrouter/policy.
 import { assertDebugProfileEligible, DEBUG_PROFILE_IDS, DEBUG_REPORT_MODES, listDebugProfileAvailability, type DebugReportMode, type DebugReportRunInput } from "../../../../lib/server/debug/report-runner.ts";
 import { debugReportWorkflow } from "../../../../workflows/debug-report.ts";
 
-export const dynamic = "force-dynamic";
-
 const NO_STORE = { "cache-control": "no-store, private", "x-robots-tag": "noindex, nofollow, noarchive" };
 const MAX_ACTIVE_RUNS = 3;
 
