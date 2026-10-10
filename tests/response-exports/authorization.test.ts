@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { NextRequest } from "next/server";
-import { POST as requestLink } from "../../app/api/response-exports/request-link/route.ts";
+import { POST as requestLink } from "../../app/api/response-exports/request-link/handler.ts";
 import { issueReportViewCookie } from "../../app/reports/_server/access.ts";
 import { consumeResponseExportToken, requestResponseExportLinkForSession } from "../../lib/server/exports/service.ts";
 import { authorizeResponseExportRequest, issueResponseExportCookie, RESPONSE_EXPORT_COOKIE } from "../../lib/server/exports/cookie.ts";
