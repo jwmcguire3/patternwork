@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "PWRP71-OPENROUTER-PRICING-CHECK-1",
+  "checkedOn": "2026-10-11",
+  "model": "openai/gpt-6-luna",
+  "inputUsdPerMillionTokens": 0.1,
+  "completionUsdPerMillionTokens": 0.5,
+  "contextTokens": 1050000,
+  "maxCompletionTokens": 128000,
+  "structuredOutputJsonSchema": true,
+  "providerRouting": {
+    "publishedProviders": ["OpenAI", "Azure", "Amazon Bedrock"],
+    "requireParameters": true,
+    "dataCollection": "deny",
+    "zeroDataRetention": true,
+    "maxPricePromptUsdPerMillionTokens": 0.1,
+    "maxPriceCompletionUsdPerMillionTokens": 0.5,
+    "priceFilterBehavior": "OpenRouter docs state that max_price prevents routing when the provider price is unavailable or exceeds the request ceiling."
+  },
+  "sources": [
+    "https://openrouter.ai/openai/gpt-6-luna?view=api",
+    "https://openrouter.ai/docs/guides/routing/provider-selection",
+    "https://openrouter.ai/docs/guides/features/sovereign-ai"
+  ],
+  "limits": {
+    "quoteIsProviderDependent": true,
+    "invoiceMaximumGuaranteed": false,
+    "reasoningEffort": "max",
+    "pwrp71IfsMaxOutputTokens": 20000,
+    "perCallReservationMicros": 115000,
+    "aggregateAuthorizationMicros": 3000000
+  }
+}

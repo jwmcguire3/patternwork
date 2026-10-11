@@ -203,16 +203,20 @@ test("PWRP 7.1 reviewer revise gets one repair and a fresh review bound to the r
     { output: reviewerOutput(revisedDraft, value.packet, value.reportSource, "accept"), finishReason: "stop" },
   ];
   const requests: OpenRouterGenerationRequest[] = [];
+  const validations: { readonly attemptId: string; readonly ok: boolean }[] = [];
   const result = await generateCanonicalReport({
     reportType: "MAP", input: {}, packets: [value.packet], provider: mockProvider(outputs, (request) => { requests.push(request); }),
     invocationKey: "pwrp71-revise-fresh-review", spentMicros: 0, costCapMicros: 1_000_000, modelPolicy: UNQUALIFIED_MOCK_MODEL_POLICY,
     contractVersion: "v7.1", pwrp71: { request: value.request, packet: value.packet, source: value.reportSource },
+    onPwrp71Event: (event) => { if (event.type === "draft_validation") validations.push({ attemptId: event.attemptId, ok: event.ok }); },
   });
   assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify(result.failure));
   if (!result.ok) return;
   const acceptedDraft = (result.value.artifact as Record<string, unknown>).draft as Record<string, unknown>;
   assert.equal(((acceptedDraft.sections as Record<string, unknown>[])[0]).text, ((revisedDraft.sections as Record<string, unknown>[])[0]).text);
   assert.equal(requests.length, 4);
+  assert.equal(validations.length, 2, "both initial and reviewer-requested replacement drafts retain their validation receipts");
+  assert.deepEqual(validations.map((entry) => [entry.attemptId.split(":").at(-3), entry.ok]), [["initial", true], ["repair", true]]);
   assert.equal(requests[2].system, `${value.request.system}\n\n${value.reportSource.prompts.repair}`);
   assert.ok(requests[3].system.includes(value.reportSource.prompts.reviewer));
   assert.deepEqual(requests[3].schema, value.reportSource.schemas.reportReview);

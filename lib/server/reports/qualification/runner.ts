@@ -555,6 +555,64 @@ function routeReplayFixturePacket(input: {
   };
 }
 
+/**
+ * Load the same validated, retained v5 route-replay packet used by the offline
+ * qualification runner for the separately authorized C01/C02 fictional IFS
+ * diagnostic. This helper only assembles source-backed fixture inputs; it does
+ * not qualify routing or produce a qualification run.
+ */
+export async function loadPwrp71FictionalDiagnosticFixture(input: {
+  readonly profileId: "C01" | "C02";
+  readonly workspaceRoot: string;
+}): Promise<{
+  readonly profileId: "C01" | "C02";
+  readonly fixtureStatus: FixtureStatus;
+  readonly fixtureManifestSha256: string;
+  readonly fixtureSetSha256: string;
+  readonly fixtureArtifactSha256: string;
+  readonly packet: JsonObject;
+  readonly packetSha256: string;
+  readonly canonicalResponseEvidence: Pwrp71FixturePacket["canonicalResponseEvidence"];
+  readonly issues: readonly ValidationIssue[];
+  readonly questionSource: Pwqe51SourcePackage;
+  readonly reportSource: Pwrp71SourcePackage;
+}> {
+  const workspaceRoot = path.resolve(input.workspaceRoot);
+  const [questionSource, reportSource] = await Promise.all([
+    loadPwqe51SourcePackage(workspaceRoot),
+    loadPwrp71SourcePackage(workspaceRoot),
+  ]);
+  const set = await loadRouteReplayFixtureSet({
+    workspaceRoot,
+    fixtureSet: "route-replays-v5",
+    questionSource,
+    reportSource,
+  });
+  const selected = routeReplayFixturePacket({
+    profileId: input.profileId,
+    reportTypes: ["IFS"],
+    set,
+    questionSource,
+    reportSource,
+  });
+  const fixture = selected.reportPackets?.IFS;
+  const entry = set.cases.get(input.profileId);
+  if (!fixture || !entry) throw new Error(`The pinned v5 fixture does not contain the ${input.profileId} IFS packet.`);
+  return {
+    profileId: input.profileId,
+    fixtureStatus: fixture.fixtureStatus,
+    fixtureManifestSha256: set.manifestSha256,
+    fixtureSetSha256: set.fixtureSetSha256,
+    fixtureArtifactSha256: entry.manifestCase.artifactSha256,
+    packet: fixture.packet,
+    packetSha256: fixture.packetSha256,
+    canonicalResponseEvidence: fixture.canonicalResponseEvidence,
+    issues: selected.reportIssues?.IFS ?? fixture.issues,
+    questionSource,
+    reportSource,
+  };
+}
+
 function safeRunId(value: string): string {
   if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,79}$/u.test(value) || value === "." || value === "..") throw new Error("Run ID must use 1–80 letters, numbers, dots, underscores or hyphens.");
   return value;

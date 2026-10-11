@@ -1,0 +1,27 @@
+npm notice run patternwork@0.1.0 npx
+npm notice run tsx --test tests/report-workflow/pwrp71-fictional-ifs-diagnostic.test.ts tests/report-workflow/pwrp71-generation.test.ts
+✔ diagnostic CLI requires exact owner scope, candidate, and both approved caps (2.2524ms)
+✔ source, runtime, and packet pin mismatches reject before transport creation (1482.5583ms)
+✔ pure current-source pin checks reject every changed comparison surface (0.5278ms)
+✔ the pre-dispatch transport rejects changed provider parameters before fetch (29.8761ms)
+✔ the diagnostic fetch requires an exact active journal reservation and dispatches each attempt once (210.9532ms)
+✔ direct unjournaled PWRP calls and diagnostic-to-qualification conversions fail closed (57.4573ms)
+✔ a restarted diagnostic retains dispatch evidence before a profile result was saved (1266.5708ms)
+✔ the fictional diagnostic rejects an offline/mock returned model before review or C02 (688.5471ms)
+✔ an unknown-cost attempt retains its reservation and the fixed diagnostic never retries (913.5371ms)
+✔ PWRP 7.1 uses the prepared prompt/schema and validates a complete stop response (583.7816ms)
+✔ PWRP 7.1 fails closed on a length finish reason without attempting repair (39.5598ms)
+✔ PWRP 7.1 repair uses its authored repair contract and keeps the prepared source view (90.2193ms)
+✔ PWRP 7.1 reviewer revise gets one repair and a fresh review bound to the replacement (86.6367ms)
+✔ PWRP 7.1 rejects a stale review after the draft has been repaired (96.2101ms)
+✔ PWRP 7.1 rejects mismatched source or packet bindings before provider call (51.0762ms)
+✔ journal budget preflights initial, reviewer, and repair calls and blocks the unaffordable post-repair review (427.1787ms)
+✔ a failed draft cannot use escalation after earlier attempts consume the aggregate allowance (143.805ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5872.9337

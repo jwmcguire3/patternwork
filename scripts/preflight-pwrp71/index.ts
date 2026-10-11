@@ -18,7 +18,7 @@ import type { JsonObject } from "../../lib/question-engine/types.ts";
 const REPORT_TYPE = "IFS" as const;
 const PROFILES = ["C01", "C02"] as const;
 const FIXTURE_ROOT = path.join(process.cwd(), "qualification", "pwrp71", "route_replays_v5");
-const DEFAULT_RUN_ID = "gate10-c01-c02-ifs-live-diagnostic";
+const DEFAULT_RUN_ID = "gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011";
 const OUTPUT_FILE = path.join(process.cwd(), "qualification", "pwrp71", "gate10-routing-budget-readiness", "provider-preflight", "c01-c02-ifs-no-dispatch.json");
 
 interface FixtureManifest {
@@ -70,7 +70,7 @@ async function main(): Promise<void> {
   if (maxCallCostMicros === null) blockers.push("No explicit per-call ceiling was supplied; this dry run does not create live spending authorization.");
   if (aggregateCostCapMicros === null) blockers.push("No explicit aggregate qualification budget was supplied; this dry run does not create live spending authorization.");
   blockers.push("No independently reviewed, source-bound qualified routing receipt is present for the current router runtime and these packet digests.");
-  blockers.push("No external human authorization to make a paid OpenRouter request was supplied; this command is permanently no-dispatch.");
+  blockers.push("This command is permanently no-dispatch and cannot consume the separately recorded owner-authorized fictional diagnostic approval.");
 
   const [questionSource, reportSource, fixtureManifestText, currentRouterRuntimeSha256] = await Promise.all([
     loadPwqe51SourcePackage(process.cwd()),
@@ -131,7 +131,7 @@ async function main(): Promise<void> {
       schemaName: "patternwork_ifs_pwrp71_candidate_1",
       schema: prepared.value.response_schema,
       maxOutputTokens: modelPin.maxOutputTokens,
-      idempotencyKey: `pwrp71-qualification:${runId}:${profileId}:${REPORT_TYPE}:initial:${pinnedTierName}:attempt-1`,
+      idempotencyKey: `pwrp71-fictional-diagnostic:${runId}:${profileId}:${REPORT_TYPE}:initial:openai-gpt-6-luna-max:attempt-1`,
       includeUsage: true,
     } as const;
     const wireRequest = {

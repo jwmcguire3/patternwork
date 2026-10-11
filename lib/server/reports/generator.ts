@@ -39,6 +39,8 @@ export interface GenerateCanonicalReportOptions {
   readonly synthesisBundle?: SynthesisBundle | JsonObject;
   readonly modelPolicy: ActivatedReportModelPolicy;
   readonly contractVersion?: "v3.1" | "v6" | "v7.1";
+  /** Diagnostic-only request label for correlation IDs; it never selects a model or effort setting. */
+  readonly requestIdentityLabel?: string;
   readonly source?: Pwqe5SourcePackage;
   readonly qualificationManifestSha256?: string;
   readonly snapshotId?: string;
@@ -122,7 +124,7 @@ export async function generateCanonicalReport(options: GenerateCanonicalReportOp
       schemaName: override?.schemaName ?? providerSchemaName,
       schema: override?.schema ?? providerSchema,
       maxOutputTokens: config.maxOutputTokens,
-      idempotencyKey: `${options.invocationKey}:${options.reportType}:${phase}:${tier.name}${attemptOrdinal}`,
+      idempotencyKey: `${options.invocationKey}:${options.reportType}:${phase}:${options.requestIdentityLabel ?? tier.name}${attemptOrdinal}`,
     };
     lastAttemptId = request.idempotencyKey;
     const result = await options.provider.generate(request);
@@ -231,13 +233,13 @@ export async function generateCanonicalReport(options: GenerateCanonicalReportOp
       return failure(options.reportType, "incomplete_generation", `PWRP 7.1 repair is incomplete (finish reason: ${repairedResult.finishReason ?? "missing"}).`, [{ code: "finish_reason", path: "$.finish_reason", message: "A PWRP 7.1 response requires provider finishReason 'stop'." }], usages);
     }
     if (!repairedResult.ok) return failure(options.reportType, "repair_provider_failed", repairedResult.message, [invalidJsonIssue(repairedResult)], usages);
-    const replacement = validatePwrp71ReportDraft({ value: repairedResult.output, reportType: options.reportType, snapshotId: pwrp71!.request.binding.snapshot_id, packet: pwrp71!.packet, source: pwrp71!.source });
+    const replacement = await validate(repairedResult, lastAttemptId);
     if (!replacement.ok) return failure(options.reportType, "artifact_validation_failed", "PWRP 7.1 repaired draft failed structural validation.", replacement.issues, usages);
 
     // A replacement has a new draft digest and always requires a fresh review.
-    const secondReview = await reviewPwrp71Draft(replacement.value, "review_after_repair");
+    const secondReview = await reviewPwrp71Draft(replacement.artifact as Pwrp71ReportArtifact, "review_after_repair");
     if (!secondReview.ok) return secondReview.outcome;
-    if (secondReview.verdict === "accept") return { ok: true, value: { reportType: options.reportType, artifact: replacement.value, usage: totalUsage(usages) } };
+    if (secondReview.verdict === "accept") return { ok: true, value: { reportType: options.reportType, artifact: replacement.artifact, usage: totalUsage(usages) } };
     if (secondReview.verdict === "invalid_input") return failure(options.reportType, "review_invalid_input", "PWRP 7.1 reviewer marked the repaired source invalid.", [], usages);
     return failure(options.reportType, "review_not_accepted", "PWRP 7.1 replacement draft did not receive a fresh accept review.", [], usages);
   };

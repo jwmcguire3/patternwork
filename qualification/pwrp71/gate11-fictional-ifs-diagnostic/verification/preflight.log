@@ -1,0 +1,13 @@
+npm notice run patternwork@0.1.0 reports:preflight:pwrp71
+npm notice run tsx scripts/preflight-pwrp71/index.ts --run-id gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011 --max-call-cost-micros 115000 --aggregate-cost-cap-micros 3000000 --output qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-no-dispatch-20261011.json
+{
+  "readiness": "BLOCKED",
+  "dispatchPerformed": false,
+  "providerCalls": 0,
+  "outputFile": "C:\\Users\\jwmcg\\OneDrive\\Documents\\AI Projects\\Live Envirnments\\patternwork\\qualification\\pwrp71\\gate11-fictional-ifs-diagnostic\\provider-preflight\\c01-c02-ifs-no-dispatch-20261011.json",
+  "blockers": [
+    "No independently reviewed, source-bound qualified routing receipt is present for the current router runtime and these packet digests.",
+    "This command is permanently no-dispatch and cannot consume the separately recorded owner-authorized fictional diagnostic approval."
+  ],
+  "requests": 2
+}
