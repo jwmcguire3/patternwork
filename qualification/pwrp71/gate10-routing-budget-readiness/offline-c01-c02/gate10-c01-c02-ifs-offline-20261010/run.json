@@ -1,0 +1,235 @@
+{
+  "schemaVersion": 1,
+  "runId": "gate10-c01-c02-ifs-offline-20261010",
+  "mode": "offline",
+  "fixtureSet": "route-replays-v5",
+  "status": "offline_complete",
+  "createdAt": "2026-10-11T01:45:38.190Z",
+  "updatedAt": "2026-10-11T01:45:38.343Z",
+  "runFingerprint": "bd67836ed4397d773cb3a3cc39503c65fbb112252b8bde4fca8d32bcf16c6679",
+  "outputDirectory": "C:\\Users\\jwmcg\\OneDrive\\Documents\\AI Projects\\Live Envirnments\\patternwork\\qualification\\pwrp71\\gate10-routing-budget-readiness\\offline-c01-c02\\gate10-c01-c02-ifs-offline-20261010",
+  "attemptsFile": "qualification/pwrp71/gate10-routing-budget-readiness/offline-c01-c02/gate10-c01-c02-ifs-offline-20261010/attempts.json",
+  "sourcePins": {
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+    "routerPacketSchemaSha256": "0e4e62a10ca14841b0c90f22465761f33fc0975c874dc045a6cda3f242bdb24a",
+    "reportDraftSchemaSha256": "14e880841aab064593b777b9d113376a30338968e4b0375a38955b174e55b4ba",
+    "reportReviewSchemaSha256": "cfbb62aea8cc00ab3b1858f0ccdcb0b8dd46066ad1a52b64f9140156edc90194",
+    "semanticCaseSetSha256": "fec1752b4a4892da77fcadbf78688b23fd77e010b845ae6ddcd4523c0547569d",
+    "semanticCasesCanonicalJsonSha256": "ad48886eb708871933674f95f008edc08871be0a68d8b887571e430e174201e2",
+    "fixtureSetSha256": "5f3471d13a54a9e1a7f5e6cd87a7ac5102bba695c29cc3bfaeb04af69a190170",
+    "fixtureManifestSha256": "17b1c8cd9e43f0d647733e0408e5e663490da52e261e8124df9243181512b19f",
+    "fixtureSourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb",
+    "fixtureSourceSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "fixtureSet": "route-replays-v5",
+    "routerRuntimeSha256": "d08a7da2c6e3119c75e3e60917da42a60bbe6615024f901ac5b11ed26fa06d7d"
+  },
+  "candidatePolicy": {
+    "candidates": [
+      {
+        "name": "luna-low",
+        "model": "openai/gpt-6-luna",
+        "reasoningEffort": "max",
+        "estimatedInputMicrosPerMillion": 100000,
+        "estimatedOutputMicrosPerMillion": 500000
+      },
+      {
+        "name": "luna-medium",
+        "model": "openai/gpt-6-luna",
+        "reasoningEffort": "max",
+        "estimatedInputMicrosPerMillion": 100000,
+        "estimatedOutputMicrosPerMillion": 500000
+      },
+      {
+        "name": "terra-medium",
+        "model": "openai/gpt-6-luna",
+        "reasoningEffort": "max",
+        "estimatedInputMicrosPerMillion": 100000,
+        "estimatedOutputMicrosPerMillion": 500000
+      },
+      {
+        "name": "sol-high",
+        "model": "openai/gpt-6-luna",
+        "reasoningEffort": "max",
+        "estimatedInputMicrosPerMillion": 100000,
+        "estimatedOutputMicrosPerMillion": 500000
+      }
+    ],
+    "candidatesSha256": "cafb5e380c2b46f2b094cbc5f49bccce34db1534579fa846b1394cb58c4d3b93",
+    "reportModelPolicy": {
+      "MAP": {
+        "pinnedTier": 0,
+        "model": "openai/gpt-6-luna",
+        "reasoningEffort": "max",
+        "escalationTier": 1,
+        "escalationModel": "openai/gpt-6-luna",
+        "escalationReasoningEffort": "max",
+        "maxOutputTokens": 16000
+      },
+      "IFS": {
+        "pinnedTier": 1,
+        "model": "openai/gpt-6-luna",
+        "reasoningEffort": "max",
+        "escalationTier": 2,
+        "escalationModel": "openai/gpt-6-luna",
+        "escalationReasoningEffort": "max",
+        "maxOutputTokens": 20000
+      },
+      "PV": {
+        "pinnedTier": 1,
+        "model": "openai/gpt-6-luna",
+        "reasoningEffort": "max",
+        "escalationTier": 2,
+        "escalationModel": "openai/gpt-6-luna",
+        "escalationReasoningEffort": "max",
+        "maxOutputTokens": 20000
+      },
+      "ATT": {
+        "pinnedTier": 2,
+        "model": "openai/gpt-6-luna",
+        "reasoningEffort": "max",
+        "escalationTier": 3,
+        "escalationModel": "openai/gpt-6-luna",
+        "escalationReasoningEffort": "max",
+        "maxOutputTokens": 20000
+      },
+      "SYNTHESIS": {
+        "pinnedTier": 2,
+        "model": "openai/gpt-6-luna",
+        "reasoningEffort": "max",
+        "escalationTier": 3,
+        "escalationModel": "openai/gpt-6-luna",
+        "escalationReasoningEffort": "max",
+        "maxOutputTokens": 16000
+      }
+    },
+    "reportModelPolicySha256": "f18d6512fbf586927d7d9f91d1dd50ea1a084a189c9b21b124d36449cc5f8e8c"
+  },
+  "costCapMicros": 3000000,
+  "maxCallCostMicros": 3000000,
+  "aggregateCostCapMicros": 3000000,
+  "billingBasisSha256": "0018d4a8c7134c82d4be2d36c603bea3ff29f9300270b46a73ed1d17fdd1f77e",
+  "totalReportedCostMicros": 0,
+  "reservedUnknownCostMicros": 0,
+  "reservedInFlightOrUnknownCostMicros": 0,
+  "selectedProfiles": [
+    "C01",
+    "C02"
+  ],
+  "selectedReports": [
+    "IFS"
+  ],
+  "fixtureStatuses": {
+    "C01": "route_replay_v5_eligible",
+    "C02": "route_replay_v5_eligible"
+  },
+  "routeParity": "pending",
+  "blockers": [],
+  "results": [
+    {
+      "profileId": "C01",
+      "reportType": "IFS",
+      "status": "accepted",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "c4b8363436f22b34b28095b155158cb5716bc397d6231a284b5c6d710df4e036",
+      "evidenceSha256": "7171b823f3be7044eeeb33d2779fc3fe66c235535807c8771d0b96e7c4c75b3d",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "artifactFile": "reports/C01_IFS.json",
+      "markdownFile": "reports/C01_IFS.md",
+      "artifactSha256": "fdd47a09a5c2ba095c5602e9ccbda984e888137ca3101e187d2f71a6f46dba6f",
+      "markdownSha256": "72ef86412d4f20ffbfcd1626d580c814aab0def05b8d54cf2bb2cb8d4726241f",
+      "validationIssues": [],
+      "reviewerReceipts": [
+        {
+          "receipt_type": "pwrp71_structural_review_receipt",
+          "report_release": "PWRP-7.1.0-candidate.1",
+          "source_manifest_sha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+          "report_id": "pwrp71_1c3278ba22e0977c7549d6d5a33b",
+          "reviewed_draft_sha256": "03df66543c68b602297d1e73da55c511ace6c99f41418b3d02c2e74415e2028c",
+          "reviewed_evidence_sha256": "7171b823f3be7044eeeb33d2779fc3fe66c235535807c8771d0b96e7c4c75b3d",
+          "verdict": "accept",
+          "review_sha256": "37b4249547de0fc10678a4d7b5f9f75fa5f4b7fc2f55ca8274ee0aceee5fcf2a",
+          "review": {
+            "review_contract": "PWRP-REVIEW-7.0.0-candidate.1",
+            "report_release": "PWRP-7.1.0-candidate.1",
+            "reviewed_draft_sha256": "03df66543c68b602297d1e73da55c511ace6c99f41418b3d02c2e74415e2028c",
+            "reviewed_evidence_sha256": "7171b823f3be7044eeeb33d2779fc3fe66c235535807c8771d0b96e7c4c75b3d",
+            "verdict": "accept",
+            "issues": [],
+            "summary": "Offline deterministic structural mock; not a semantic or human approval."
+          }
+        }
+      ],
+      "usage": {
+        "status": "mock",
+        "costMicros": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 0,
+        "attempts": 2,
+        "generationIds": [
+          "offline-2df8815a9da91170c1fea213",
+          "offline-70ab6587eed242d405bb53fa"
+        ]
+      }
+    },
+    {
+      "profileId": "C02",
+      "reportType": "IFS",
+      "status": "accepted",
+      "fixtureStatus": "route_replay_v5_eligible",
+      "packetSha256": "c14bbcbd4ff8b6f69c1074b12a15d9132be9d3373d5d825257ff5dcf8ad61055",
+      "evidenceSha256": "3dac1972a62b994a969c5cb2f65154c1d388b471c67ed5ac6f43c991417e2333",
+      "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+      "requestedModel": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "artifactFile": "reports/C02_IFS.json",
+      "markdownFile": "reports/C02_IFS.md",
+      "artifactSha256": "dcc695d2e3f0e1bb61e851efa831fbd775faae33639eb0abaa5f5df2a2077102",
+      "markdownSha256": "72ef86412d4f20ffbfcd1626d580c814aab0def05b8d54cf2bb2cb8d4726241f",
+      "validationIssues": [],
+      "reviewerReceipts": [
+        {
+          "receipt_type": "pwrp71_structural_review_receipt",
+          "report_release": "PWRP-7.1.0-candidate.1",
+          "source_manifest_sha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+          "report_id": "pwrp71_5d173150567161c3fee53622292e",
+          "reviewed_draft_sha256": "991d1e707892ab0115b0d5ed0d19aae745215c4a26a28e53348ed657101ea066",
+          "reviewed_evidence_sha256": "3dac1972a62b994a969c5cb2f65154c1d388b471c67ed5ac6f43c991417e2333",
+          "verdict": "accept",
+          "review_sha256": "4977eb4bec8dd946cdce5844c0be680ffe229de8e2d77930504d4cc53d5a0bd9",
+          "review": {
+            "review_contract": "PWRP-REVIEW-7.0.0-candidate.1",
+            "report_release": "PWRP-7.1.0-candidate.1",
+            "reviewed_draft_sha256": "991d1e707892ab0115b0d5ed0d19aae745215c4a26a28e53348ed657101ea066",
+            "reviewed_evidence_sha256": "3dac1972a62b994a969c5cb2f65154c1d388b471c67ed5ac6f43c991417e2333",
+            "verdict": "accept",
+            "issues": [],
+            "summary": "Offline deterministic structural mock; not a semantic or human approval."
+          }
+        }
+      ],
+      "usage": {
+        "status": "mock",
+        "costMicros": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 0,
+        "attempts": 2,
+        "generationIds": [
+          "offline-9e8c2dd0caf57952b66a2a1b",
+          "offline-7bb7248d84a0c2740a8adf00"
+        ]
+      }
+    }
+  ],
+  "qualificationRunSha256": "44f1b5a2882dc6111efc14852586c334af4318bccbcd5d9bb67307d935ee10ea"
+}
