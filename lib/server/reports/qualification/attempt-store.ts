@@ -3,7 +3,7 @@ import { open, mkdir, readFile, rm } from "node:fs/promises";
 import path from "node:path";
 import { sha256Canonical } from "../../../report-contracts/delivery-validator.ts";
 import { QUALIFICATION_MODEL_ORDER } from "../../openrouter/policy.ts";
-import { OpenRouterTransportError, type OpenRouterGenerationRequest, type OpenRouterGenerationResult, type OpenRouterProviderPolicy, type OpenRouterTransport, type OpenRouterUsage } from "../../openrouter/types.ts";
+import { OpenRouterTransportError, type OpenRouterGenerationRequest, type OpenRouterGenerationResult, type OpenRouterRequestProviderPolicy, type OpenRouterTransport, type OpenRouterUsage } from "../../openrouter/types.ts";
 import { projectOpenRouterStrictSchemaObject } from "../../openrouter/schema-projection.ts";
 import { GPT6_LUNA_BILLING_BASIS_SHA256, GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY, maximumQuotedCallCostMicros, validatePositiveMicros } from "../../openrouter/qualification-budget.ts";
 import { buildOpenRouterWirePayload, OPENROUTER_DEFAULT_ENDPOINT } from "../../openrouter/wire.ts";
@@ -354,7 +354,7 @@ export class JournaledPwrp71Transport implements OpenRouterTransport {
     readonly transport: OpenRouterTransport;
     readonly endpoint?: string;
     /** Optional workflow-specific provider restriction; ordinary qualification keeps the default policy. */
-    readonly providerPolicy?: OpenRouterProviderPolicy;
+    readonly providerPolicy?: OpenRouterRequestProviderPolicy;
     readonly maxCallCostMicros?: number;
     readonly aggregateCostCapMicros?: number;
     /** Legacy alias retained for existing offline/test callers. */
@@ -376,7 +376,7 @@ export class JournaledPwrp71Transport implements OpenRouterTransport {
 
   private readonly store: FileQualificationAttemptStore;
   private readonly transport: OpenRouterTransport;
-  private readonly providerPolicy: OpenRouterProviderPolicy;
+  private readonly providerPolicy: OpenRouterRequestProviderPolicy;
   readonly endpoint: string;
   private readonly maxCallCostMicros: number;
   private readonly aggregateCostCapMicros: number;

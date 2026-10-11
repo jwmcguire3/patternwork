@@ -8,6 +8,7 @@ import { UNQUALIFIED_MOCK_MODEL_POLICY } from "../../lib/server/openrouter/polic
 import {
   GPT6_LUNA_BILLING_BASIS_SHA256,
   GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY,
+  GPT6_LUNA_OPENAI_NON_ZDR_DIAGNOSTIC_PROVIDER_POLICY,
   maximumQuotedCallCostMicros,
 } from "../../lib/server/openrouter/qualification-budget.ts";
 import { buildOpenRouterWirePayload, OPENROUTER_DEFAULT_ENDPOINT } from "../../lib/server/openrouter/wire.ts";
@@ -55,6 +56,7 @@ export const FICTIONAL_IFS_DIAGNOSTIC_PINS = {
   independentReviewSha256: "19f9e069cee6b60a777864beac326e2aeb5621483a79d82adb8e9a335148ad79",
   priorNoDispatchPreflightSha256: "2aae9c58d9305129da5f42ad69578933dbcafc3e4ea04ce0c01b8e72a041143b",
   currentPricingCheckSha256: "2fa98427307b6bfcbab46674261bef83b05f6d1cd7b697809a6838ed8e5ed4c0",
+  nonZdrPricingCheckSha256: "fd34d59b4bdf49f7dc1fa6b5b43af7953a45c6a50c457b09db4c00a92f0b4b57",
   c01PacketSha256: "c4b8363436f22b34b28095b155158cb5716bc397d6231a284b5c6d710df4e036",
   c02PacketSha256: "c14bbcbd4ff8b6f69c1074b12a15d9132be9d3373d5d825257ff5dcf8ad61055",
 } as const;
@@ -62,17 +64,24 @@ export const FICTIONAL_IFS_DIAGNOSTIC_PINS = {
 const APPROVAL_RELATIVE = "qualification/pwrp71/gate10-routing-budget-readiness/approval-statements/c01-c02-live-ifs-approval.md";
 const REVIEW_RELATIVE = "qualification/pwrp71/gate10-routing-budget-readiness/independent-review/c01-c02-current-scope-review.md";
 const PRICING_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/pricing-check-2026-10-11.json";
+const NON_ZDR_PRICING_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/pricing-check-2026-10-11-openai-non-zdr.json";
 const PREFLIGHT_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-no-dispatch-20261011.json";
 const CONTINUATION_PREFLIGHT_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-continuation-no-dispatch-20261011.json";
 const FRESH_BUDGET_EPOCH_2_PREFLIGHT_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-fresh-budget-epoch-2-no-dispatch-20261011.json";
+const NON_ZDR_CONTINUATION_PREFLIGHT_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-non-zdr-continuation-no-dispatch-20261011.json";
 const DIAGNOSTIC_LOCK_NAME = ".diagnostic-run.lock";
 const CONTINUATION_FLAG = "--continue-after-unknown-provider-attempt";
 const FRESH_BUDGET_EPOCH_2_FLAG = "--owner-authorized-fresh-budget-epoch-2";
+const NON_ZDR_CONTINUATION_FLAG = "--owner-authorized-allow-non-zdr-continuation";
 const FRESH_BUDGET_EPOCH_2_MARKER = "fresh-budget-epoch-2";
+const OPENAI_NON_ZDR_CONTINUATION_MARKER = "openai-non-zdr-continuation-1";
 const LEGACY_DEFAULT_ROUTE_RUN_SHA256 = "63b73b54845e4a719603b77abddd403f7297c6d157be4a8ffbf5f1d29b2e73be";
 const LEGACY_DEFAULT_ROUTE_RUN_FINGERPRINT = "e6223344cc26baa9dea4480b31b0e8c7f1c2296f3313aed0b61c0260a901bd83";
 const LEGACY_C01_ATTEMPT_ID = `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_RUN_ID}:C01:IFS:initial:${FICTIONAL_IFS_DIAGNOSTIC_REQUEST_LABEL}:attempt-1`;
 const OPENAI_ROUTE_CONTINUATION_MARKER = "openai-route-continuation-1";
+export const FICTIONAL_IFS_DIAGNOSTIC_EPOCH_2_ZDR_PARENT_SHA256 = "f64878238c24e42cc8a4ce149eab22002e92fbab0eb28dc52731d94eb255b314" as const;
+const FRESH_EPOCH_2_ZDR_RUN_FINGERPRINT = "47f4481c127b1546745d3089207e8eda46f38f4ce530b2e2a76cf8616092b928";
+const FRESH_EPOCH_2_C01_ATTEMPT_ID = `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID}:C01:IFS:initial:${FICTIONAL_IFS_DIAGNOSTIC_REQUEST_LABEL}:attempt-1`;
 
 type ProfileId = "C01" | "C02";
 type DiagnosticPhase = "initial" | "repair" | "escalation" | "review" | "review_after_repair";
@@ -90,20 +99,22 @@ export interface FictionalIfsDiagnosticInvocation {
   readonly continueAfterUnknownProviderAttempt?: boolean;
   /** One explicitly owner-directed fresh budget epoch; previous unknown attempts remain archived in their prior run. */
   readonly freshBudgetEpoch2?: boolean;
+  /** Owner-authorized OpenAI-only non-ZDR continuation of the exact epoch-2 ZDR route rejection. */
+  readonly allowNonZdrContinuation?: boolean;
 }
 
 export interface FictionalIfsDiagnosticContinuation {
-  readonly ordinal: 1;
-  readonly reason: "openai_only_provider_route_after_prior_azure_schema_rejection";
-  readonly operatorFlag: typeof CONTINUATION_FLAG;
-  readonly operatorDirective: "run em";
-  readonly priorRunSha256: typeof LEGACY_DEFAULT_ROUTE_RUN_SHA256;
-  readonly priorRunFingerprint: typeof LEGACY_DEFAULT_ROUTE_RUN_FINGERPRINT;
+  readonly ordinal: 1 | 2;
+  readonly reason: "openai_only_provider_route_after_prior_azure_schema_rejection" | "owner_authorized_non_zdr_after_openai_zdr_route_rejection";
+  readonly operatorFlag: typeof CONTINUATION_FLAG | typeof NON_ZDR_CONTINUATION_FLAG;
+  readonly operatorDirective: "run em" | "allow non zdr";
+  readonly priorRunSha256: string;
+  readonly priorRunFingerprint: string;
   readonly priorRunArchiveFile: string;
   readonly priorAttemptsArchiveFile: string;
   readonly priorDispatchesArchiveFile: string;
-  readonly carriedUnknownAttemptIds: readonly [typeof LEGACY_C01_ATTEMPT_ID];
-  readonly carriedUnknownReservationMicros: 115_000;
+  readonly carriedUnknownAttemptIds: readonly [string];
+  readonly carriedUnknownReservationMicros: 115_000 | 230_000;
   readonly startedAt: string;
 }
 
@@ -112,7 +123,7 @@ export interface DiagnosticHttpDispatchRecord {
   readonly idempotencyKey: string;
   readonly profileId: ProfileId;
   readonly phase: DiagnosticPhase;
-  readonly requestVariant?: typeof OPENAI_ROUTE_CONTINUATION_MARKER | typeof FRESH_BUDGET_EPOCH_2_MARKER;
+  readonly requestVariant?: typeof OPENAI_ROUTE_CONTINUATION_MARKER | typeof FRESH_BUDGET_EPOCH_2_MARKER | typeof OPENAI_NON_ZDR_CONTINUATION_MARKER;
   readonly model: string;
   readonly reasoningEffort: string;
   readonly endpoint: string;
@@ -183,6 +194,7 @@ export interface FictionalIfsDiagnosticRun {
     readonly model: "openai/gpt-6-luna";
     readonly reasoningEffort: "max";
     readonly providerRestriction: "openai_only_no_fallbacks";
+    readonly retentionPolicy: "zdr_required" | "non_zdr_allowed";
   };
   readonly authorization: {
     readonly operatorFlagProvided: true;
@@ -193,6 +205,12 @@ export interface FictionalIfsDiagnosticRun {
       readonly excludedFromFreshEpochCap: true;
       readonly priorInvoiceStatusRemainsUnknown: true;
       readonly operatorDirective: "billing starts over";
+    };
+    readonly nonZdrContinuation?: {
+      readonly operatorDirective: "allow non zdr";
+      readonly priorEpoch2UnknownReservedMicros: 115_000;
+      readonly priorInvoiceStatusRemainsUnknown: true;
+      readonly promptRetentionAcknowledged: true;
     };
     readonly recordedApprovalSha256: string;
     readonly independentScopeReviewSha256: string;
@@ -329,7 +347,7 @@ function expectedPacketSha(profileId: ProfileId): string {
 }
 
 function runIdFor(invocation: FictionalIfsDiagnosticInvocation): string {
-  return invocation.freshBudgetEpoch2
+  return invocation.freshBudgetEpoch2 || invocation.allowNonZdrContinuation
     ? FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID
     : FICTIONAL_IFS_DIAGNOSTIC_RUN_ID;
 }
@@ -344,7 +362,13 @@ function validateInvocation(value: FictionalIfsDiagnosticInvocation): void {
     throw new Error("Both explicit spend limits must exactly match the authorized $0.115 per-call and $3.00 aggregate ceilings.");
   }
   if (value.continueAfterUnknownProviderAttempt && value.freshBudgetEpoch2) {
-    throw new Error("A continuation of the existing budget and a fresh budget epoch cannot be requested together.");
+    throw new Error("The legacy continuation and fresh budget epoch cannot be requested together.");
+  }
+  if (value.allowNonZdrContinuation && !value.freshBudgetEpoch2) {
+    throw new Error("The non-ZDR continuation must remain within the explicitly started fresh budget epoch 2.");
+  }
+  if (value.allowNonZdrContinuation && value.continueAfterUnknownProviderAttempt) {
+    throw new Error("The epoch-2 non-ZDR continuation cannot be combined with the legacy continuation.");
   }
 }
 
@@ -363,6 +387,7 @@ export function parseFictionalIfsDiagnosticArgs(argv: readonly string[]): Fictio
   let operatorAuthorized = false;
   let continueAfterUnknownProviderAttempt = false;
   let freshBudgetEpoch2 = false;
+  let allowNonZdrContinuation = false;
   for (let index = 0; index < argv.length; index += 1) {
     const name = argv[index]!;
     if (name === "--owner-authorized-fictional-diagnostic") {
@@ -378,6 +403,11 @@ export function parseFictionalIfsDiagnosticArgs(argv: readonly string[]): Fictio
     if (name === FRESH_BUDGET_EPOCH_2_FLAG) {
       if (freshBudgetEpoch2) throw new Error(`${name} may be specified only once.`);
       freshBudgetEpoch2 = true;
+      continue;
+    }
+    if (name === NON_ZDR_CONTINUATION_FLAG) {
+      if (allowNonZdrContinuation) throw new Error(`${name} may be specified only once.`);
+      allowNonZdrContinuation = true;
       continue;
     }
     if (!REQUIRED_VALUE_FLAGS.includes(name as typeof REQUIRED_VALUE_FLAGS[number]) || values.has(name)) {
@@ -401,6 +431,7 @@ export function parseFictionalIfsDiagnosticArgs(argv: readonly string[]): Fictio
     aggregateCostCapMicros: Number(values.get("--aggregate-cost-cap-micros")) as 3_000_000,
     continueAfterUnknownProviderAttempt,
     freshBudgetEpoch2,
+    allowNonZdrContinuation,
   };
   validateInvocation(invocation);
   return invocation;
@@ -439,6 +470,7 @@ export function buildFictionalDiagnosticRequest(input: {
   readonly prepared: Pwrp71PreparedRequest;
   readonly runId: string;
   readonly continuation: boolean;
+  readonly allowNonZdrContinuation?: boolean;
 }): { readonly request: OpenRouterGenerationRequest; readonly wireRequest: OpenRouterGenerationRequest; readonly requestFingerprint: string; readonly wirePayloadSha256: string } {
   const modelPin = UNQUALIFIED_MOCK_MODEL_POLICY.IFS;
   if (modelPin.model !== "openai/gpt-6-luna" || modelPin.reasoningEffort !== "max"
@@ -446,7 +478,10 @@ export function buildFictionalDiagnosticRequest(input: {
     || QUALIFICATION_MODEL_ORDER_NOT_FIXED(modelPin)) {
     throw new Error("The IFS candidate policy no longer matches the approved OpenRouter model, reasoning, and output pins.");
   }
-  const invocationKey = `pwrp71-fictional-diagnostic:${input.runId}:${input.profileId}${input.continuation && input.profileId === "C01" ? `:${OPENAI_ROUTE_CONTINUATION_MARKER}` : ""}`;
+  const requestVariant = input.allowNonZdrContinuation
+    ? OPENAI_NON_ZDR_CONTINUATION_MARKER
+    : input.continuation && input.profileId === "C01" ? OPENAI_ROUTE_CONTINUATION_MARKER : undefined;
+  const invocationKey = `pwrp71-fictional-diagnostic:${input.runId}:${input.profileId}${requestVariant ? `:${requestVariant}` : ""}`;
   const request: OpenRouterGenerationRequest = {
     model: modelPin.model,
     reasoningEffort: modelPin.reasoningEffort,
@@ -461,7 +496,9 @@ export function buildFictionalDiagnosticRequest(input: {
   const wireRequest: OpenRouterGenerationRequest = {
     ...request,
     schema: projectOpenRouterStrictSchemaObject(request.schema),
-    providerPolicy: GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY,
+    providerPolicy: input.allowNonZdrContinuation
+      ? GPT6_LUNA_OPENAI_NON_ZDR_DIAGNOSTIC_PROVIDER_POLICY
+      : GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY,
     promptCacheOptions: { mode: "explicit" },
     includeUsage: true,
   };
@@ -488,8 +525,11 @@ function QUALIFICATION_MODEL_ORDER_NOT_FIXED(modelPin: typeof UNQUALIFIED_MOCK_M
   return modelPin.escalationModel !== "openai/gpt-6-luna" || modelPin.escalationReasoningEffort !== "max";
 }
 
-function validatePricing(value: PricingEvidence, hash: string, now: Date): void {
-  if (hash !== FICTIONAL_IFS_DIAGNOSTIC_PINS.currentPricingCheckSha256
+function validatePricing(value: PricingEvidence, hash: string, now: Date, allowNonZdr = false): void {
+  const expectedHash = allowNonZdr
+    ? FICTIONAL_IFS_DIAGNOSTIC_PINS.nonZdrPricingCheckSha256
+    : FICTIONAL_IFS_DIAGNOSTIC_PINS.currentPricingCheckSha256;
+  if (hash !== expectedHash
     || value.schemaVersion !== "PWRP71-OPENROUTER-PRICING-CHECK-1"
     || value.checkedOn !== localDate(now)
     || value.model !== "openai/gpt-6-luna"
@@ -500,7 +540,7 @@ function validatePricing(value: PricingEvidence, hash: string, now: Date): void 
     || value.structuredOutputJsonSchema !== true
     || value.providerRouting.requireParameters !== true
     || value.providerRouting.dataCollection !== "deny"
-    || value.providerRouting.zeroDataRetention !== true
+    || value.providerRouting.zeroDataRetention !== !allowNonZdr
     || value.providerRouting.maxPricePromptUsdPerMillionTokens !== 0.1
     || value.providerRouting.maxPriceCompletionUsdPerMillionTokens !== 0.5
     || value.limits.quoteIsProviderDependent !== true
@@ -522,6 +562,7 @@ function validatePreflight(input: {
   readonly semanticCaseSetSha256: string;
   readonly continuation: boolean;
   readonly freshBudgetEpoch2: boolean;
+  readonly allowNonZdrContinuation: boolean;
   readonly runId: string;
 }): string {
   const preflight = input.preflight;
@@ -535,7 +576,9 @@ function validatePreflight(input: {
   const exactRequests = preflight.exactRequests;
   if (!isRecord(candidate) || candidate.model !== "openai/gpt-6-luna" || candidate.reasoningEffort !== "max" || candidate.reportType !== "IFS"
     || candidate.providerSelection !== "openai_only_no_fallbacks"
-      || (candidate.requestVariant ?? "initial") !== (input.continuation
+      || (candidate.requestVariant ?? "initial") !== (input.allowNonZdrContinuation
+        ? OPENAI_NON_ZDR_CONTINUATION_MARKER
+        : input.continuation
         ? OPENAI_ROUTE_CONTINUATION_MARKER
         : input.freshBudgetEpoch2 ? FRESH_BUDGET_EPOCH_2_MARKER : "initial")
     || !isRecord(sourcePins)
@@ -590,13 +633,15 @@ async function prepareDiagnostic(
   const workspaceRoot = path.resolve(dependencies.workspaceRoot);
   const now = dependencies.now?.() ?? new Date();
   const runId = runIdFor(invocation);
+  const pricingRelative = invocation.allowNonZdrContinuation ? NON_ZDR_PRICING_RELATIVE : PRICING_RELATIVE;
   const preflightRelative = invocation.continueAfterUnknownProviderAttempt
     ? CONTINUATION_PREFLIGHT_RELATIVE
-    : invocation.freshBudgetEpoch2 ? FRESH_BUDGET_EPOCH_2_PREFLIGHT_RELATIVE : PREFLIGHT_RELATIVE;
+    : invocation.allowNonZdrContinuation ? NON_ZDR_CONTINUATION_PREFLIGHT_RELATIVE
+      : invocation.freshBudgetEpoch2 ? FRESH_BUDGET_EPOCH_2_PREFLIGHT_RELATIVE : PREFLIGHT_RELATIVE;
   const [approvalBytes, reviewBytes, pricingBytes, preflightBytes, semanticBytes] = await Promise.all([
     readBytes(workspaceRoot, APPROVAL_RELATIVE),
     readBytes(workspaceRoot, REVIEW_RELATIVE),
-    readBytes(workspaceRoot, PRICING_RELATIVE),
+    readBytes(workspaceRoot, pricingRelative),
     readBytes(workspaceRoot, preflightRelative),
     readBytes(workspaceRoot, "qualification/pwrp71/SEMANTIC_CASES.json"),
   ]);
@@ -616,7 +661,7 @@ async function prepareDiagnostic(
     FICTIONAL_IFS_DIAGNOSTIC_PINS.c02PacketSha256,
   ]) if (!reviewText.includes(term)) throw new Error("The independent current-scope review no longer binds the exact diagnostic source and packet pins.");
   const pricing = JSON.parse(pricingBytes.toString("utf8")) as PricingEvidence;
-  validatePricing(pricing, pricingSha256, now);
+  validatePricing(pricing, pricingSha256, now, invocation.allowNonZdrContinuation === true);
 
   const semanticCaseSetSha256 = sha256Text(normalizeLf(semanticBytes.toString("utf8")));
   if (semanticCaseSetSha256 !== PWRP71_SEMANTIC_CASE_SET_SHA256) throw new Error("The semantic case bytes do not match the PWRP 7.1 readiness pin.");
@@ -663,6 +708,7 @@ async function prepareDiagnostic(
       prepared: prepared.value,
       runId,
       continuation: invocation.continueAfterUnknownProviderAttempt === true,
+      allowNonZdrContinuation: invocation.allowNonZdrContinuation === true,
     });
     preparedProfiles.push({ fixture, prepared: prepared.value, ...request });
   }
@@ -678,6 +724,7 @@ async function prepareDiagnostic(
     semanticCaseSetSha256,
     continuation: invocation.continueAfterUnknownProviderAttempt === true,
     freshBudgetEpoch2: invocation.freshBudgetEpoch2 === true,
+    allowNonZdrContinuation: invocation.allowNonZdrContinuation === true,
     runId,
   });
   const sourcePins: FictionalIfsDiagnosticRun["sourcePins"] = {
@@ -704,8 +751,18 @@ async function prepareDiagnostic(
   const runFingerprint = sha256Canonical({
     schemaVersion: FICTIONAL_IFS_DIAGNOSTIC_SCHEMA,
     runId,
-    scope: { profiles: ["C01", "C02"], reportType: "IFS", fixtureSet: "route-replays-v5", model: "openai/gpt-6-luna", reasoningEffort: "max", providerRestriction: "openai_only_no_fallbacks" },
-    authorization: { operatorFlagProvided: true, freshBudgetEpoch2: invocation.freshBudgetEpoch2 === true, approvalSha256, reviewSha256 },
+    scope: {
+      profiles: ["C01", "C02"], reportType: "IFS", fixtureSet: "route-replays-v5", model: "openai/gpt-6-luna",
+      reasoningEffort: "max", providerRestriction: "openai_only_no_fallbacks",
+      retentionPolicy: invocation.allowNonZdrContinuation ? "non_zdr_allowed" : "zdr_required",
+    },
+    authorization: {
+      operatorFlagProvided: true,
+      freshBudgetEpoch2: invocation.freshBudgetEpoch2 === true,
+      allowNonZdrContinuation: invocation.allowNonZdrContinuation === true,
+      approvalSha256,
+      reviewSha256,
+    },
     pricingSha256,
     sourcePins,
     requestFingerprints: preparedProfiles.map((profile) => profile.requestFingerprint),
@@ -734,12 +791,20 @@ async function prepareDiagnostic(
           operatorDirective: "billing starts over" as const,
         },
       } : {}),
+      ...(invocation.allowNonZdrContinuation ? {
+        nonZdrContinuation: {
+          operatorDirective: "allow non zdr" as const,
+          priorEpoch2UnknownReservedMicros: 115_000 as const,
+          priorInvoiceStatusRemainsUnknown: true as const,
+          promptRetentionAcknowledged: true as const,
+        },
+      } : {}),
       recordedApprovalSha256: approvalSha256,
       independentScopeReviewSha256: reviewSha256,
       credentialInterpretation: "approval_record_is_not_a_cryptographic_credential_or_routing_receipt",
     },
     pricing: {
-      evidenceFile: PRICING_RELATIVE,
+      evidenceFile: pricingRelative,
       evidenceSha256: pricingSha256,
       billingBasisSha256: GPT6_LUNA_BILLING_BASIS_SHA256,
       currentPublishedInputUsdPerMillionTokens: pricing.inputUsdPerMillionTokens,
@@ -758,7 +823,7 @@ function validateFinalWireRequest(input: string | URL | Request, init: RequestIn
   readonly model: string;
   readonly reasoningEffort: string;
   readonly payloadSha256: string;
-  readonly requestVariant?: typeof OPENAI_ROUTE_CONTINUATION_MARKER | typeof FRESH_BUDGET_EPOCH_2_MARKER;
+  readonly requestVariant?: typeof OPENAI_ROUTE_CONTINUATION_MARKER | typeof FRESH_BUDGET_EPOCH_2_MARKER | typeof OPENAI_NON_ZDR_CONTINUATION_MARKER;
 } {
   const endpoint = String(input);
   const headers = new Headers(init?.headers);
@@ -767,14 +832,18 @@ function validateFinalWireRequest(input: string | URL | Request, init: RequestIn
   let payload: Record<string, unknown>;
   try { payload = JSON.parse(bodyText) as Record<string, unknown>; }
   catch { throw new Error("The final OpenRouter body is missing or is not valid JSON."); }
-  const match = idempotencyKey.match(/^pwrp71-fictional-diagnostic:(gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011(?:-fresh-budget-epoch-2)?):(C01|C02)(?::(openai-route-continuation-1))?:IFS:(initial|repair|escalation|review|review_after_repair):openai-gpt-6-luna-max:attempt-\d+$/u);
+  const match = idempotencyKey.match(/^pwrp71-fictional-diagnostic:(gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011(?:-fresh-budget-epoch-2)?):(C01|C02)(?::(openai-route-continuation-1|openai-non-zdr-continuation-1))?:IFS:(initial|repair|escalation|review|review_after_repair):openai-gpt-6-luna-max:attempt-\d+$/u);
   const runId = match?.[1];
   const profileId = match?.[2] as ProfileId | undefined;
-  const continuationMarker = match?.[3] as typeof OPENAI_ROUTE_CONTINUATION_MARKER | undefined;
-  const freshBudgetMarker = runId === FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID ? FRESH_BUDGET_EPOCH_2_MARKER : undefined;
+  const requestVariantMarker = match?.[3] as typeof OPENAI_ROUTE_CONTINUATION_MARKER | typeof OPENAI_NON_ZDR_CONTINUATION_MARKER | undefined;
+  const freshBudgetMarker = runId === FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID && requestVariantMarker !== OPENAI_NON_ZDR_CONTINUATION_MARKER
+    ? FRESH_BUDGET_EPOCH_2_MARKER : undefined;
   const phase = match?.[4] as DiagnosticPhase | undefined;
   if (init?.method !== "POST" || endpoint !== OPENROUTER_DEFAULT_ENDPOINT || !headers.get("authorization")?.startsWith("Bearer ")
-    || !runId || !profileId || (continuationMarker && (profileId !== "C01" || runId !== FICTIONAL_IFS_DIAGNOSTIC_RUN_ID)) || !phase || !isRecord(payload.reasoning) || !isRecord(payload.provider) || !isRecord(payload.usage)
+    || !runId || !profileId
+    || (requestVariantMarker === OPENAI_ROUTE_CONTINUATION_MARKER && (profileId !== "C01" || runId !== FICTIONAL_IFS_DIAGNOSTIC_RUN_ID))
+    || (requestVariantMarker === OPENAI_NON_ZDR_CONTINUATION_MARKER && runId !== FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID)
+    || !phase || !isRecord(payload.reasoning) || !isRecord(payload.provider) || !isRecord(payload.usage)
     || !isRecord(payload.prompt_cache_options) || !isRecord(payload.response_format) || !isRecord(payload.response_format.json_schema)) {
     throw new Error("The provider request is outside the journaled fictional diagnostic transport contract.");
   }
@@ -786,7 +855,9 @@ function validateFinalWireRequest(input: string | URL | Request, init: RequestIn
     || payload.stream !== false
     || payload.max_completion_tokens !== 20_000
     || payload.reasoning.effort !== "max"
-    || sha256Canonical(payload.provider) !== sha256Canonical(GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY)
+    || sha256Canonical(payload.provider) !== sha256Canonical(requestVariantMarker === OPENAI_NON_ZDR_CONTINUATION_MARKER
+      ? GPT6_LUNA_OPENAI_NON_ZDR_DIAGNOSTIC_PROVIDER_POLICY
+      : GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY)
     || payload.prompt_cache_options.mode !== "explicit"
     || payload.usage.include !== true
     || !Array.isArray(messages) || messages.length !== 2
@@ -802,7 +873,7 @@ function validateFinalWireRequest(input: string | URL | Request, init: RequestIn
     model: String(payload.model),
     reasoningEffort: String(payload.reasoning.effort),
     payloadSha256: sha256Text(bodyText),
-    ...(continuationMarker ? { requestVariant: continuationMarker } : freshBudgetMarker ? { requestVariant: freshBudgetMarker } : {}),
+    ...(requestVariantMarker ? { requestVariant: requestVariantMarker } : freshBudgetMarker ? { requestVariant: freshBudgetMarker } : {}),
   };
 }
 
@@ -916,7 +987,11 @@ function makeRun(input: {
     outputDirectory: input.prepared.runDirectory,
     attemptsFile: "attempts.json",
     dispatchesFile: "dispatches.json",
-    scope: { profiles: ["C01", "C02"], reportType: "IFS", fixtureSet: "route-replays-v5", model: "openai/gpt-6-luna", reasoningEffort: "max", providerRestriction: "openai_only_no_fallbacks" },
+    scope: {
+      profiles: ["C01", "C02"], reportType: "IFS", fixtureSet: "route-replays-v5", model: "openai/gpt-6-luna",
+      reasoningEffort: "max", providerRestriction: "openai_only_no_fallbacks",
+      retentionPolicy: input.prepared.authorization.nonZdrContinuation ? "non_zdr_allowed" : "zdr_required",
+    },
     authorization: input.prepared.authorization,
     sourcePins: input.prepared.sourcePins,
     pricing: input.prepared.pricing,
@@ -1060,6 +1135,104 @@ function validateLegacyContinuationParent(input: {
   };
 }
 
+function validateEpoch2NonZdrContinuationParent(input: {
+  readonly existing: FictionalIfsDiagnosticRun;
+  readonly prepared: PreparedDiagnostic;
+  readonly attempts: readonly QualificationAttemptRecord[];
+  readonly dispatches: DispatchFile;
+  readonly now: Date;
+}): FictionalIfsDiagnosticContinuation {
+  const { existing, prepared, attempts, dispatches } = input;
+  assertRunManifestDigest(existing);
+  if (existing.runId !== FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID
+    || existing.runSha256 !== FICTIONAL_IFS_DIAGNOSTIC_EPOCH_2_ZDR_PARENT_SHA256
+    || existing.runFingerprint !== FRESH_EPOCH_2_ZDR_RUN_FINGERPRINT
+    || existing.status !== "diagnostic_stopped"
+    || existing.continuation !== undefined
+    || existing.authorization.budgetEpoch !== 2
+    || existing.scope.retentionPolicy !== undefined
+    || existing.scope.providerRestriction !== "openai_only_no_fallbacks"
+    || existing.sourcePins.routerRuntimeSha256 !== prepared.sourcePins.routerRuntimeSha256
+    || existing.sourcePins.questionSourceSha256 !== prepared.sourcePins.questionSourceSha256
+    || existing.sourcePins.questionSourceManifestSha256 !== prepared.sourcePins.questionSourceManifestSha256
+    || existing.sourcePins.reportSourceManifestSha256 !== prepared.sourcePins.reportSourceManifestSha256
+    || existing.sourcePins.semanticCaseSetSha256 !== prepared.sourcePins.semanticCaseSetSha256
+    || existing.sourcePins.fixtureManifestSha256 !== prepared.sourcePins.fixtureManifestSha256
+    || existing.sourcePins.fixtureSetSha256 !== prepared.sourcePins.fixtureSetSha256
+    || existing.sourcePins.profiles.length !== 2
+    || prepared.sourcePins.profiles.length !== 2) {
+    throw new Error("The epoch-2 run is not the exact pinned OpenAI-only ZDR rejection eligible for this owner-authorized non-ZDR continuation.");
+  }
+  for (const profileId of ["C01", "C02"] as const) {
+    const prior = existing.sourcePins.profiles.find((row) => row.profileId === profileId);
+    const current = prepared.sourcePins.profiles.find((row) => row.profileId === profileId);
+    if (!prior || !current
+      || prior.fixtureArtifactSha256 !== current.fixtureArtifactSha256
+      || prior.packetSha256 !== current.packetSha256
+      || prior.evidenceSha256 !== current.evidenceSha256) {
+      throw new Error(`The epoch-2 ${profileId} packet changed before the non-ZDR continuation.`);
+    }
+  }
+  const priorResult = existing.results.length === 1 ? existing.results[0] : undefined;
+  if (!priorResult || priorResult.profileId !== "C01" || priorResult.reportType !== "IFS" || priorResult.status !== "failed"
+    || priorResult.failure?.code !== "client_error"
+    || !priorResult.failure.message.includes("Zero data retention")
+    || existing.providerDispatchCount !== 1
+    || existing.budget.aggregateReportedCostMicros !== 0
+    || existing.budget.unknownOrInFlightReservedCostMicros !== FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros
+    || existing.budget.remainingAuthorizedMicros !== FICTIONAL_IFS_DIAGNOSTIC_LIMITS.aggregateCostCapMicros - FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros) {
+    throw new Error("The epoch-2 parent must contain exactly the one failed C01 ZDR route attempt and its retained reservation.");
+  }
+  const oldProfile = existing.sourcePins.profiles.find((row) => row.profileId === "C01");
+  const oldAttempt = attempts.length === 1 ? attempts[0] : undefined;
+  if (!oldAttempt
+    || oldAttempt.attemptId !== FRESH_EPOCH_2_C01_ATTEMPT_ID
+    || oldAttempt.status !== "unknown"
+    || oldAttempt.usageStatus !== "unknown"
+    || oldAttempt.request.requestedModel !== "openai/gpt-6-luna"
+    || oldAttempt.request.requestedReasoningEffort !== "max"
+    || oldAttempt.request.schemaName !== "patternwork_ifs_pwrp71_candidate_1"
+    || oldAttempt.reservedCostMicros !== FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros
+    || oldAttempt.maximumCallCostMicros !== FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros
+    || oldAttempt.aggregateCostCapMicros !== FICTIONAL_IFS_DIAGNOSTIC_LIMITS.aggregateCostCapMicros
+    || oldAttempt.billingBasisSha256 !== GPT6_LUNA_BILLING_BASIS_SHA256
+    || oldAttempt.endpoint !== OPENROUTER_DEFAULT_ENDPOINT
+    || oldAttempt.wirePayloadSha256 !== oldProfile?.initialWirePayloadSha256
+    || oldAttempt.diagnostic?.statusCode !== 404
+    || oldAttempt.diagnostic?.providerCode !== "404"
+    || !oldAttempt.diagnostic.message.includes("Zero data retention")) {
+    throw new Error("The exact epoch-2 unknown reservation could not be validated and will not be carried into a new request.");
+  }
+  const priorDispatch = dispatches.entries.length === 1 ? dispatches.entries[0] : undefined;
+  if (!priorDispatch
+    || priorDispatch.idempotencyKey !== FRESH_EPOCH_2_C01_ATTEMPT_ID
+    || priorDispatch.profileId !== "C01"
+    || priorDispatch.phase !== "initial"
+    || priorDispatch.model !== "openai/gpt-6-luna"
+    || priorDispatch.endpoint !== OPENROUTER_DEFAULT_ENDPOINT
+    || priorDispatch.outcome !== "response_received"
+    || priorDispatch.responseStatus !== 404
+    || priorDispatch.wirePayloadSha256 !== oldAttempt.wirePayloadSha256
+    || existing.providerDispatchesFileSha256 !== sha256Canonical(dispatches)) {
+    throw new Error("The epoch-2 dispatch receipt does not match the exact one-request ZDR rejection.");
+  }
+  const parentSha = existing.runSha256;
+  return {
+    ordinal: 2,
+    reason: "owner_authorized_non_zdr_after_openai_zdr_route_rejection",
+    operatorFlag: NON_ZDR_CONTINUATION_FLAG,
+    operatorDirective: "allow non zdr",
+    priorRunSha256: parentSha,
+    priorRunFingerprint: existing.runFingerprint,
+    priorRunArchiveFile: `history/prior-openai-zdr-route-run-${parentSha}.json`,
+    priorAttemptsArchiveFile: `history/prior-openai-zdr-route-attempts-${parentSha}.json`,
+    priorDispatchesArchiveFile: `history/prior-openai-zdr-route-dispatches-${parentSha}.json`,
+    carriedUnknownAttemptIds: [FRESH_EPOCH_2_C01_ATTEMPT_ID],
+    carriedUnknownReservationMicros: FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros,
+    startedAt: input.now.toISOString(),
+  };
+}
+
 async function preserveLegacyRunSnapshot(runDirectory: string, continuation: FictionalIfsDiagnosticContinuation): Promise<void> {
   const entries = [
     { source: "run.json", archive: continuation.priorRunArchiveFile },
@@ -1104,10 +1277,17 @@ export async function runFictionalIfsDiagnostic(
     const store = new FileQualificationAttemptStore(prepared.runDirectory);
     let dispatches = await readDispatchFile(dispatchFile);
     const priorAttempts = await store.list();
-    if (!existing && invocation.continueAfterUnknownProviderAttempt) throw new Error(`${CONTINUATION_FLAG} requires the exact previously stopped default-routed run; it cannot authorize a fresh or different run.`);
+    if (!existing && (invocation.continueAfterUnknownProviderAttempt || invocation.allowNonZdrContinuation)) {
+      throw new Error("An explicitly authorized continuation requires the exact previously stopped default-routed run; it cannot authorize a fresh or different run.");
+    }
     if (existing && existing.runFingerprint !== prepared.runFingerprint) {
-      if (!invocation.continueAfterUnknownProviderAttempt) throw new Error(`The fixed diagnostic run has different request pins; the explicit ${CONTINUATION_FLAG} operator flag is required to consider its one reviewed continuation.`);
-      continuation = validateLegacyContinuationParent({ existing, prepared, attempts: priorAttempts, dispatches, now: now() });
+      if (invocation.allowNonZdrContinuation) {
+        continuation = validateEpoch2NonZdrContinuationParent({ existing, prepared, attempts: priorAttempts, dispatches, now: now() });
+      } else if (invocation.continueAfterUnknownProviderAttempt) {
+        continuation = validateLegacyContinuationParent({ existing, prepared, attempts: priorAttempts, dispatches, now: now() });
+      } else {
+        throw new Error("The fixed diagnostic run has different request pins; the explicit --continue-after-unknown-provider-attempt operator flag or separately authorized non-ZDR continuation flag is required to consider this changed request.");
+      }
       await preserveLegacyRunSnapshot(prepared.runDirectory, continuation);
       carriedUnknownAttemptIds = new Set(continuation.carriedUnknownAttemptIds);
       manifestWriteAuthorized = true;
@@ -1116,6 +1296,7 @@ export async function runFictionalIfsDiagnostic(
       continuation = existing.continuation;
       if (continuation) carriedUnknownAttemptIds = new Set(continuation.carriedUnknownAttemptIds);
       if (invocation.continueAfterUnknownProviderAttempt && !continuation) throw new Error("The continuation flag cannot be used to repeat a matching request or an unknown attempt without a changed OpenAI-only request identity.");
+      if (invocation.allowNonZdrContinuation && continuation?.ordinal !== 2) throw new Error("The non-ZDR continuation flag requires the already recorded ordinal-2 privacy continuation.");
       manifestWriteAuthorized = true;
     } else {
       manifestWriteAuthorized = true;
@@ -1173,7 +1354,10 @@ export async function runFictionalIfsDiagnostic(
       if (priorResult?.status === "accepted") continue;
       if (priorResult?.status === "failed") break;
       const profileInvocationPrefix = `pwrp71-fictional-diagnostic:${prepared.runId}:${profile.fixture.profileId}`;
-      const invocationPrefix = `${profileInvocationPrefix}${continuation && profile.fixture.profileId === "C01" ? `:${OPENAI_ROUTE_CONTINUATION_MARKER}` : ""}:`;
+      const requestVariant = continuation?.ordinal === 2
+        ? OPENAI_NON_ZDR_CONTINUATION_MARKER
+        : continuation && profile.fixture.profileId === "C01" ? OPENAI_ROUTE_CONTINUATION_MARKER : undefined;
+      const invocationPrefix = `${profileInvocationPrefix}${requestVariant ? `:${requestVariant}` : ""}:`;
       const attemptsBefore = await store.list();
       const spentBefore = attemptsBefore
         .filter((attempt) => !attempt.attemptId.startsWith(invocationPrefix))
@@ -1186,7 +1370,9 @@ export async function runFictionalIfsDiagnostic(
         endpoint: provider.endpoint ?? OPENROUTER_DEFAULT_ENDPOINT,
         maxCallCostMicros: invocation.maxCallCostMicros,
         aggregateCostCapMicros: invocation.aggregateCostCapMicros,
-        providerPolicy: GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY,
+        providerPolicy: invocation.allowNonZdrContinuation
+          ? GPT6_LUNA_OPENAI_NON_ZDR_DIAGNOSTIC_PROVIDER_POLICY
+          : GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY,
         usageStatus: "reported",
         now,
         onResult: (_request, result) => {
@@ -1284,7 +1470,7 @@ export async function runFictionalIfsDiagnostic(
     const blockers = status === "diagnostic_complete"
       ? []
       : status === "diagnostic_complete_with_prior_unknown_cost"
-        ? ["Both requested reports completed. The prior Azure attempt remains an unknown $0.115 reservation in this same budget journal; it was preserved and not retried."]
+        ? ["Both requested reports completed. Prior unknown-cost reservations remain recorded in this budget journal; they were preserved and not retried."]
         : run.blockers.length ? run.blockers : [
           hasUnresolvedNewAttempt ? "A new provider attempt has unknown billing status; its reservation remains held and no retry was made." : "The approved C01/C02 diagnostic did not complete both accepted IFS outputs.",
         ];

@@ -1,5 +1,5 @@
 import { sha256Canonical } from "../../report-contracts/delivery-validator.ts";
-import type { OpenRouterGenerationRequest, OpenRouterProviderPolicy } from "./types.ts";
+import type { OpenRouterGenerationRequest, OpenRouterNonZdrDiagnosticProviderPolicy, OpenRouterProviderPolicy } from "./types.ts";
 
 /** OpenRouter's currently published non-cached GPT-6 Luna pricing basis. */
 export const GPT6_LUNA_BILLING_BASIS = {
@@ -33,6 +33,15 @@ export const GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY = {
   only: ["openai"],
   allow_fallbacks: false,
 } as const satisfies OpenRouterProviderPolicy;
+
+/** Owner-authorized non-ZDR route, limited to the fictional IFS diagnostic. */
+export const GPT6_LUNA_OPENAI_NON_ZDR_DIAGNOSTIC_PROVIDER_POLICY = {
+  data_collection: "deny",
+  require_parameters: true,
+  max_price: GPT6_LUNA_PROVIDER_PRICE_CEILING,
+  only: ["openai"],
+  allow_fallbacks: false,
+} as const satisfies OpenRouterNonZdrDiagnosticProviderPolicy;
 
 export const GPT6_LUNA_BILLING_BASIS_SHA256 = sha256Canonical(GPT6_LUNA_BILLING_BASIS);
 

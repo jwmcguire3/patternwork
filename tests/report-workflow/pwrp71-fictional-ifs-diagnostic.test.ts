@@ -5,7 +5,10 @@ import test from "node:test";
 import type { OpenRouterGenerationRequest, OpenRouterTransport } from "../../lib/server/openrouter/types.ts";
 import { OpenRouterClient } from "../../lib/server/openrouter/client.ts";
 import { OPENROUTER_DEFAULT_ENDPOINT } from "../../lib/server/openrouter/wire.ts";
-import { GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY } from "../../lib/server/openrouter/qualification-budget.ts";
+import {
+  GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY,
+  GPT6_LUNA_OPENAI_NON_ZDR_DIAGNOSTIC_PROVIDER_POLICY,
+} from "../../lib/server/openrouter/qualification-budget.ts";
 import type { JsonObject } from "../../lib/question-engine/types.ts";
 import { readPwrp71QualificationRun } from "../../lib/server/reports/qualification/runner.ts";
 import { FileQualificationAttemptStore } from "../../lib/server/reports/qualification/attempt-store.ts";
@@ -13,6 +16,8 @@ import {
   FICTIONAL_IFS_DIAGNOSTIC_LIMITS,
   FICTIONAL_IFS_DIAGNOSTIC_PINS,
   FICTIONAL_IFS_DIAGNOSTIC_RUN_ID,
+  FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID,
+  FICTIONAL_IFS_DIAGNOSTIC_EPOCH_2_ZDR_PARENT_SHA256,
   FICTIONAL_IFS_DIAGNOSTIC_SCHEMA,
   assertDiagnosticSourcePins,
   createDiagnosticFetch,
@@ -25,9 +30,12 @@ import { loadPwrp71FictionalDiagnosticFixture } from "../../lib/server/reports/q
 import { OpenRouterTransportError, type OpenRouterGenerationResult } from "../../lib/server/openrouter/types.ts";
 import {
   assertOpenRouterDiagnosticRouteEligible,
+  assertOpenRouterNonZdrDiagnosticRouteEligible,
   assertOpenRouterReachable,
   OpenRouterDiagnosticRouteIneligibleError,
+  OpenRouterNonZdrRouteIneligibleError,
 } from "../../scripts/pwrp71-fictional-ifs-diagnostic/connectivity.ts";
+import { sha256Canonical } from "../../lib/report-contracts/delivery-validator.ts";
 
 const TEST_SCRATCH = path.join(process.cwd(), ".codex-temp", "test-runs");
 
@@ -75,6 +83,31 @@ async function seedLegacyUnknownRun(outputRoot: string): Promise<{ readonly runD
   return { runDirectory, originalRunBytes };
 }
 
+async function seedEpoch2ZdrUnknownRun(outputRoot: string): Promise<{ readonly runDirectory: string; readonly originalRunBytes: Buffer<ArrayBufferLike> }> {
+  const runDirectory = path.join(outputRoot, FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID);
+  const sourceDirectory = path.join(process.cwd(), "qualification", "pwrp71", "gate11-fictional-ifs-diagnostic", "live", FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID);
+  const archivedNames = {
+    "run.json": `prior-openai-zdr-route-run-${FICTIONAL_IFS_DIAGNOSTIC_EPOCH_2_ZDR_PARENT_SHA256}.json`,
+    "attempts.json": `prior-openai-zdr-route-attempts-${FICTIONAL_IFS_DIAGNOSTIC_EPOCH_2_ZDR_PARENT_SHA256}.json`,
+    "dispatches.json": `prior-openai-zdr-route-dispatches-${FICTIONAL_IFS_DIAGNOSTIC_EPOCH_2_ZDR_PARENT_SHA256}.json`,
+  } as const;
+  await mkdir(runDirectory, { recursive: true });
+  let originalRunBytes: Buffer<ArrayBufferLike> = Buffer.alloc(0);
+  for (const filename of Object.keys(archivedNames) as Array<keyof typeof archivedNames>) {
+    const bytes = await readFile(path.join(sourceDirectory, "history", archivedNames[filename]));
+    if (filename === "run.json") {
+      const parent = JSON.parse(bytes.toString("utf8")) as { runSha256?: unknown; continuation?: unknown; providerDispatchCount?: unknown; budget?: { unknownOrInFlightReservedCostMicros?: unknown } };
+      assert.equal(parent.runSha256, FICTIONAL_IFS_DIAGNOSTIC_EPOCH_2_ZDR_PARENT_SHA256);
+      assert.equal(parent.continuation, undefined, "test setup must begin from the immutable pre-continuation parent");
+      assert.equal(parent.providerDispatchCount, 1);
+      assert.equal(parent.budget?.unknownOrInFlightReservedCostMicros, FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros);
+    }
+    await writeFile(path.join(runDirectory, filename), Uint8Array.from(bytes));
+    if (filename === "run.json") originalRunBytes = bytes;
+  }
+  return { runDirectory, originalRunBytes };
+}
+
 async function withTempDirectory(run: (directory: string) => Promise<void>): Promise<void> {
   await mkdir(TEST_SCRATCH, { recursive: true });
   const directory = await mkdtemp(path.join(TEST_SCRATCH, "pwrp71-fictional-ifs-"));
@@ -103,6 +136,8 @@ test("diagnostic CLI requires exact owner scope, candidate, and both approved ca
     { name: "approval manifest request", args: [...validArgs, "--activation-manifest", "approval.json"] },
     { name: "duplicate continuation flag", args: [...validArgs, "--continue-after-unknown-provider-attempt", "--continue-after-unknown-provider-attempt"] },
     { name: "duplicate fresh budget flag", args: [...validArgs, "--owner-authorized-fresh-budget-epoch-2", "--owner-authorized-fresh-budget-epoch-2"] },
+    { name: "duplicate non-ZDR continuation flag", args: [...validArgs, "--owner-authorized-fresh-budget-epoch-2", "--owner-authorized-allow-non-zdr-continuation", "--owner-authorized-allow-non-zdr-continuation"] },
+    { name: "non-ZDR continuation without fresh epoch", args: [...validArgs, "--owner-authorized-allow-non-zdr-continuation"] },
   ];
   for (const entry of cases) {
     let providerFactoryCalls = 0;
@@ -186,6 +221,38 @@ test("OpenRouter diagnostic route preflight blocks an empty OpenAI/ZDR intersect
   ] }), { status: 200 }), () => new Date("2026-10-11T00:00:00.000Z"));
   assert.equal(eligible.matchingEligibleEndpointCount, 1);
   assert.equal(eligible.matchingEligibleEndpoints[0]!.provider, "OpenAI");
+});
+
+test("owner-authorized non-ZDR route preflight requires an OpenAI endpoint and records retention policy without dispatch", async () => {
+  let requestedUrl = "";
+  let requestMethod = "";
+  let requestHeaders: Headers | undefined;
+  const eligible = await assertOpenRouterNonZdrDiagnosticRouteEligible(async (input, init) => {
+    requestedUrl = String(input);
+    requestMethod = init?.method ?? "";
+    requestHeaders = new Headers(init?.headers);
+    return new Response(JSON.stringify({ data: { endpoints: [
+      { provider_name: "Azure", name: "Azure route" },
+      { provider_name: "OpenAI", name: "OpenAI route" },
+    ] } }), { status: 200, headers: { "content-type": "application/json" } });
+  }, () => new Date("2026-10-11T00:00:00.000Z"));
+  assert.equal(requestedUrl, "https://openrouter.ai/api/v1/models/openai/gpt-6-luna/endpoints");
+  assert.equal(requestMethod, "GET");
+  assert.equal(requestHeaders?.has("authorization"), false);
+  assert.equal(eligible.zeroDataRetentionRequired, false);
+  assert.equal(eligible.privacyMode, "non_zdr_allowed");
+  assert.equal(eligible.dataCollectionPolicy, "deny");
+  assert.equal(eligible.matchingEligibleEndpointCount, 1);
+  assert.equal(eligible.matchingEligibleEndpoints[0]!.provider, "OpenAI");
+
+  await assert.rejects(() => assertOpenRouterNonZdrDiagnosticRouteEligible(async () => new Response(JSON.stringify({ data: { endpoints: [
+    { provider_name: "Azure", name: "Azure route" },
+  ] } }), { status: 200 })), (error: unknown) => {
+    assert.ok(error instanceof OpenRouterNonZdrRouteIneligibleError);
+    assert.equal(error.evidence.matchingEligibleEndpointCount, 0);
+    assert.deepEqual(error.evidence.providerAllowlist, ["openai"]);
+    return true;
+  });
 });
 
 test("an ineligible pre-dispatch route stops before reservations and safely permits a metadata recheck", async () => {
@@ -345,6 +412,178 @@ test("an explicitly authorized OpenAI continuation allocates a fresh C01 attempt
     } finally {
       globalThis.fetch = originalFetch;
     }
+  });
+});
+
+test("owner-authorized non-ZDR continuation changes only retention policy, retains the epoch-2 unknown cost, and never replays it", async () => {
+  await withTempDirectory(async (outputRoot) => {
+    const seeded = await seedEpoch2ZdrUnknownRun(outputRoot);
+    const invocation = parseFictionalIfsDiagnosticArgs([
+      ...validArgs,
+      "--owner-authorized-fresh-budget-epoch-2",
+      "--owner-authorized-allow-non-zdr-continuation",
+    ]);
+    let catalogChecks = 0;
+    let providerDispatches = 0;
+    let requestId = "";
+    let requestPayload: Record<string, unknown> | undefined;
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = async (input, init) => {
+      if (init?.method === "GET") {
+        catalogChecks += 1;
+        assert.match(String(input), /\/api\/v1\/models\/openai\/gpt-6-luna\/endpoints$/u);
+        return new Response(JSON.stringify({ data: { endpoints: [{ provider_name: "OpenAI", name: "OpenAI test endpoint" }] } }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        });
+      }
+      providerDispatches += 1;
+      requestId = new Headers(init?.headers).get("x-request-id") ?? "";
+      requestPayload = JSON.parse(String(init?.body)) as Record<string, unknown>;
+      assert.equal(new URL(String(input)).pathname, "/api/v1/chat/completions");
+      return new Response(JSON.stringify({ error: { message: "Provider returned error", code: 400, metadata: { provider_name: "OpenAI", provider_error_code: "invalid_json_schema" } } }), {
+        status: 400,
+        headers: { "content-type": "application/json" },
+      });
+    };
+    try {
+      const result = await runFictionalIfsDiagnostic(invocation, {
+        workspaceRoot: process.cwd(),
+        outputRoot,
+        transportFactory: async ({ fetch }) => {
+          await assertOpenRouterNonZdrDiagnosticRouteEligible(globalThis.fetch, () => new Date("2026-10-11T00:00:00.000Z"));
+          return new OpenRouterClient({ apiKey: "test-key", fetch });
+        },
+      });
+      assert.equal(result.status, "diagnostic_stopped");
+      assert.equal(catalogChecks, 1, "OpenAI endpoint eligibility is checked before dispatch");
+      assert.equal(providerDispatches, 1, "one new C01 request is attempted; failed C01 stops before C02");
+      assert.match(requestId, /-fresh-budget-epoch-2:C01:openai-non-zdr-continuation-1:IFS:initial:openai-gpt-6-luna-max:attempt-1$/u);
+      assert.notEqual(requestId, `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID}:C01:IFS:initial:openai-gpt-6-luna-max:attempt-1`);
+      assert.deepEqual(requestPayload?.provider, GPT6_LUNA_OPENAI_NON_ZDR_DIAGNOSTIC_PROVIDER_POLICY);
+      assert.equal(Object.hasOwn(requestPayload?.provider as object, "zdr"), false, "the retry identity omits only the ZDR requirement");
+      assert.equal((requestPayload?.provider as Record<string, unknown>).data_collection, "deny");
+      assert.deepEqual((requestPayload?.provider as Record<string, unknown>).only, ["openai"]);
+      assert.equal((requestPayload?.provider as Record<string, unknown>).allow_fallbacks, false);
+      assert.equal(result.providerDispatchCount, 2, "the previous ZDR attempt remains in the durable dispatch journal");
+      assert.equal(result.budget.unknownOrInFlightReservedCostMicros, 2 * FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros);
+      assert.equal(result.budget.remainingAuthorizedMicros, FICTIONAL_IFS_DIAGNOSTIC_LIMITS.aggregateCostCapMicros - 2 * FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros);
+      assert.equal(result.continuation?.ordinal, 2);
+      assert.equal(result.continuation?.priorRunSha256, FICTIONAL_IFS_DIAGNOSTIC_EPOCH_2_ZDR_PARENT_SHA256);
+      assert.deepEqual(result.continuation?.carriedUnknownAttemptIds, [
+        `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID}:C01:IFS:initial:openai-gpt-6-luna-max:attempt-1`,
+      ]);
+      assert.equal(result.scope.retentionPolicy, "non_zdr_allowed");
+      assert.equal(result.routingQualification, "not_claimed");
+      assert.equal(result.productionActivationEffect, "none");
+      assert.equal(result.authorization.nonZdrContinuation?.promptRetentionAcknowledged, true);
+      assert.equal(result.authorization.nonZdrContinuation?.priorInvoiceStatusRemainsUnknown, true);
+      const archivedRun = await readFile(path.join(seeded.runDirectory, result.continuation!.priorRunArchiveFile));
+      assert.deepEqual(archivedRun, seeded.originalRunBytes, "the prior ZDR run remains byte-for-byte preserved");
+      const dispatches = JSON.parse(await readFile(path.join(seeded.runDirectory, "dispatches.json"), "utf8")) as {
+        entries: Array<{ idempotencyKey: string; requestVariant?: string; responseStatus?: number }>;
+      };
+      assert.equal(dispatches.entries[1]!.idempotencyKey, requestId);
+      assert.equal(dispatches.entries[1]!.requestVariant, "openai-non-zdr-continuation-1");
+      assert.equal(dispatches.entries[1]!.responseStatus, 400);
+
+      const repeated = await runFictionalIfsDiagnostic(invocation, {
+        workspaceRoot: process.cwd(),
+        outputRoot,
+        transportFactory: () => { throw new Error("an unresolved billing attempt must not initialize another provider transport"); },
+      });
+      assert.equal(repeated.status, "diagnostic_stopped");
+      assert.equal(providerDispatches, 1, "rerunning the exact privacy continuation cannot automatically repeat an unknown-cost call");
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+});
+
+test("corrected non-ZDR no-dispatch preflight records actual retention policy and hashes the embedded wire schema", async () => {
+  const runDirectory = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/live/gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011-fresh-budget-epoch-2";
+  const attempts = JSON.parse(await readFile(path.join(runDirectory, "attempts.json"), "utf8")) as {
+    attempts: Array<{ attemptId: string; requestFingerprint: string }>;
+  };
+  const document = JSON.parse(await readFile(
+    "qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-non-zdr-continuation-v2-no-dispatch-20261011.json",
+    "utf8",
+  )) as {
+    evidenceRecordRevision: number;
+    dispatchPerformed: boolean;
+    providerCalls: number;
+    exactRequests: Array<{
+      profileId: string;
+      packetSha256: string;
+      request: {
+        model: string;
+        requestFingerprint: string;
+        requestFingerprintBasis: string;
+        preparedRequestFingerprint: string;
+        observedJournalAttemptFingerprint?: string;
+        requestCorrelationHeader: { value: string };
+        wireSchemaSha256: string;
+        finalWirePayload: Record<string, unknown>;
+      };
+      privacy: { zeroDataRetentionRequested: boolean; dataCollectionDenied: boolean };
+      schemaCompatibility: { remoteAcceptance: string };
+    }>;
+    budgetEpochAuthorization: { totalUnknownReservedMicros: number; remainingAuthorizationMicros: number };
+  };
+
+  assert.equal(document.evidenceRecordRevision, 2);
+  assert.equal(document.dispatchPerformed, false);
+  assert.equal(document.providerCalls, 0);
+  assert.deepEqual(document.exactRequests.map((row) => row.profileId), ["C01", "C02"]);
+  assert.equal(document.budgetEpochAuthorization.totalUnknownReservedMicros, 230_000);
+  assert.equal(document.budgetEpochAuthorization.remainingAuthorizationMicros, 2_770_000);
+  for (const row of document.exactRequests) {
+    const responseFormat = row.request.finalWirePayload.response_format as Record<string, unknown>;
+    const jsonSchema = responseFormat.json_schema as Record<string, unknown>;
+    assert.equal(row.request.wireSchemaSha256, sha256Canonical(jsonSchema.schema));
+    assert.equal(row.privacy.zeroDataRetentionRequested, false);
+    assert.equal(row.privacy.dataCollectionDenied, true);
+    assert.equal(row.request.requestFingerprintBasis, "prepared_diagnostic_request");
+    assert.equal(row.request.preparedRequestFingerprint, row.request.requestFingerprint);
+    assert.equal(row.request.model, "openai/gpt-6-luna");
+    assert.equal(row.packetSha256, row.profileId === "C01"
+      ? "c4b8363436f22b34b28095b155158cb5716bc397d6231a284b5c6d710df4e036"
+      : "c14bbcbd4ff8b6f69c1074b12a15d9132be9d3373d5d825257ff5dcf8ad61055");
+    const provider = row.request.finalWirePayload.provider as Record<string, unknown>;
+    assert.deepEqual(provider.only, ["openai"]);
+    assert.equal(provider.data_collection, "deny");
+    assert.equal(Object.hasOwn(provider, "zdr"), false);
+    if (row.profileId === "C01") {
+      assert.match(row.schemaCompatibility.remoteAcceptance, /HTTP 400.*invalid_json_schema/u);
+      const attempt = attempts.attempts.find((entry) => entry.attemptId === row.request.requestCorrelationHeader.value);
+      assert.ok(attempt, "C01's provider attempt must be present in the durable journal");
+      assert.equal(row.request.observedJournalAttemptFingerprint, attempt.requestFingerprint);
+    } else {
+      assert.match(row.schemaCompatibility.remoteAcceptance, /NOT TESTED.*not dispatched/u);
+      assert.equal(row.request.observedJournalAttemptFingerprint, undefined);
+    }
+  }
+});
+
+test("the non-ZDR continuation rejects a modified parent journal before provider initialization", async () => {
+  await withTempDirectory(async (outputRoot) => {
+    const seeded = await seedEpoch2ZdrUnknownRun(outputRoot);
+    const runPath = path.join(seeded.runDirectory, "run.json");
+    const changed = JSON.parse((await readFile(runPath, "utf8"))) as Record<string, unknown>;
+    changed.status = "diagnostic_complete";
+    await writeFile(runPath, JSON.stringify(changed));
+    const invocation = parseFictionalIfsDiagnosticArgs([
+      ...validArgs,
+      "--owner-authorized-fresh-budget-epoch-2",
+      "--owner-authorized-allow-non-zdr-continuation",
+    ]);
+    let transportFactoryCalls = 0;
+    await assert.rejects(() => runFictionalIfsDiagnostic(invocation, {
+      workspaceRoot: process.cwd(),
+      outputRoot,
+      transportFactory: () => { transportFactoryCalls += 1; return { generate: async () => unexpectedResult() }; },
+    }));
+    assert.equal(transportFactoryCalls, 0);
   });
 });
 

@@ -18,6 +18,13 @@ export interface OpenRouterProviderPolicy {
   };
 }
 
+/** Distinct request type used only by the owner-authorized fictional diagnostic. */
+export interface OpenRouterNonZdrDiagnosticProviderPolicy extends Omit<OpenRouterProviderPolicy, "zdr"> {
+  readonly zdr?: never;
+}
+
+export type OpenRouterRequestProviderPolicy = OpenRouterProviderPolicy | OpenRouterNonZdrDiagnosticProviderPolicy;
+
 export interface OpenRouterPromptCacheOptions {
   readonly mode: "explicit";
 }
@@ -71,7 +78,7 @@ export interface OpenRouterGenerationRequest {
   readonly maxOutputTokens: number;
   readonly idempotencyKey: string;
   /** Optional request-specific provider constraints included in the serialized body. */
-  readonly providerPolicy?: OpenRouterProviderPolicy;
+  readonly providerPolicy?: OpenRouterRequestProviderPolicy;
   /** Optional provider request cache control included in the serialized body. */
   readonly promptCacheOptions?: OpenRouterPromptCacheOptions;
   /** Request usage and billing metadata explicitly when supported by OpenRouter. */
