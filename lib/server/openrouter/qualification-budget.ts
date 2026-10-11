@@ -27,6 +27,13 @@ export const GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY: OpenRouterProviderPolicy =
   max_price: GPT6_LUNA_PROVIDER_PRICE_CEILING,
 };
 
+/** Provider pin used only by the owner-authorized fictional IFS diagnostic. */
+export const GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY = {
+  ...GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY,
+  only: ["openai"],
+  allow_fallbacks: false,
+} as const satisfies OpenRouterProviderPolicy;
+
 export const GPT6_LUNA_BILLING_BASIS_SHA256 = sha256Canonical(GPT6_LUNA_BILLING_BASIS);
 
 export function validatePositiveMicros(value: unknown, name: string): asserts value is number {

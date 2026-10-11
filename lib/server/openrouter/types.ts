@@ -6,6 +6,10 @@ export interface OpenRouterProviderPolicy {
   readonly zdr: true;
   readonly data_collection: "deny";
   readonly require_parameters: true;
+  /** Restrict OpenRouter to these provider slugs when an experiment pins an upstream. */
+  readonly only?: readonly string[];
+  /** Prevent OpenRouter from falling back to a provider outside the chosen route. */
+  readonly allow_fallbacks?: boolean;
   readonly max_price?: {
     /** OpenRouter price ceiling in USD per million prompt tokens. */
     readonly prompt: number;

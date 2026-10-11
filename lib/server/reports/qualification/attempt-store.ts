@@ -3,7 +3,7 @@ import { open, mkdir, readFile, rm } from "node:fs/promises";
 import path from "node:path";
 import { sha256Canonical } from "../../../report-contracts/delivery-validator.ts";
 import { QUALIFICATION_MODEL_ORDER } from "../../openrouter/policy.ts";
-import { OpenRouterTransportError, type OpenRouterGenerationRequest, type OpenRouterGenerationResult, type OpenRouterTransport, type OpenRouterUsage } from "../../openrouter/types.ts";
+import { OpenRouterTransportError, type OpenRouterGenerationRequest, type OpenRouterGenerationResult, type OpenRouterProviderPolicy, type OpenRouterTransport, type OpenRouterUsage } from "../../openrouter/types.ts";
 import { projectOpenRouterStrictSchemaObject } from "../../openrouter/schema-projection.ts";
 import { GPT6_LUNA_BILLING_BASIS_SHA256, GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY, maximumQuotedCallCostMicros, validatePositiveMicros } from "../../openrouter/qualification-budget.ts";
 import { buildOpenRouterWirePayload, OPENROUTER_DEFAULT_ENDPOINT } from "../../openrouter/wire.ts";
@@ -323,6 +323,8 @@ export class JournaledPwrp71Transport implements OpenRouterTransport {
     readonly store: FileQualificationAttemptStore;
     readonly transport: OpenRouterTransport;
     readonly endpoint?: string;
+    /** Optional workflow-specific provider restriction; ordinary qualification keeps the default policy. */
+    readonly providerPolicy?: OpenRouterProviderPolicy;
     readonly maxCallCostMicros?: number;
     readonly aggregateCostCapMicros?: number;
     /** Legacy alias retained for existing offline/test callers. */
@@ -334,6 +336,7 @@ export class JournaledPwrp71Transport implements OpenRouterTransport {
     this.store = input.store;
     this.transport = input.transport;
     this.endpoint = input.endpoint ?? OPENROUTER_DEFAULT_ENDPOINT;
+    this.providerPolicy = input.providerPolicy ?? GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY;
     this.maxCallCostMicros = input.maxCallCostMicros ?? input.costCapMicros ?? 0;
     this.aggregateCostCapMicros = input.aggregateCostCapMicros ?? input.costCapMicros ?? 0;
     this.usageStatus = input.usageStatus ?? "reported";
@@ -343,6 +346,7 @@ export class JournaledPwrp71Transport implements OpenRouterTransport {
 
   private readonly store: FileQualificationAttemptStore;
   private readonly transport: OpenRouterTransport;
+  private readonly providerPolicy: OpenRouterProviderPolicy;
   readonly endpoint: string;
   private readonly maxCallCostMicros: number;
   private readonly aggregateCostCapMicros: number;
@@ -360,7 +364,7 @@ export class JournaledPwrp71Transport implements OpenRouterTransport {
     const wireRequest: OpenRouterGenerationRequest = {
       ...request,
       schema: projectOpenRouterStrictSchemaObject(request.schema),
-      providerPolicy: GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY,
+      providerPolicy: this.providerPolicy,
       promptCacheOptions: { mode: "explicit" },
       includeUsage: true,
     };

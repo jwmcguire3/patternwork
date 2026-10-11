@@ -5,7 +5,7 @@ import test from "node:test";
 import type { OpenRouterGenerationRequest, OpenRouterTransport } from "../../lib/server/openrouter/types.ts";
 import { OpenRouterClient } from "../../lib/server/openrouter/client.ts";
 import { OPENROUTER_DEFAULT_ENDPOINT } from "../../lib/server/openrouter/wire.ts";
-import { GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY } from "../../lib/server/openrouter/qualification-budget.ts";
+import { GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY } from "../../lib/server/openrouter/qualification-budget.ts";
 import type { JsonObject } from "../../lib/question-engine/types.ts";
 import { readPwrp71QualificationRun } from "../../lib/server/reports/qualification/runner.ts";
 import { FileQualificationAttemptStore } from "../../lib/server/reports/qualification/attempt-store.ts";
@@ -153,7 +153,7 @@ test("the pre-dispatch transport rejects changed provider parameters before fetc
     const dispatchFile = path.join(directory, "dispatches.json");
     await writeFile(dispatchFile, JSON.stringify({ schemaVersion: 1, entries: [] }));
     const store = new FileQualificationAttemptStore(path.join(directory, "attempts"));
-    const preflight = JSON.parse(await readFile("qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-no-dispatch-20261011.json", "utf8")) as {
+    const preflight = JSON.parse(await readFile("qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-no-dispatch-20261011.json", "utf8")) as {
       exactRequests: Array<{ profileId: string; request: { requestCorrelationHeader: { value: string }; finalWirePayload: Record<string, unknown> } }>;
     };
     const validPayload = preflight.exactRequests[0]!.request.finalWirePayload;
@@ -164,7 +164,10 @@ test("the pre-dispatch transport rejects changed provider parameters before fetc
       for (const mutate of [
         (payload: Record<string, unknown>) => { payload.model = "openai/gpt-6-sol"; },
         (payload: Record<string, unknown>) => { payload.reasoning = { effort: "medium" }; },
-        (payload: Record<string, unknown>) => { payload.provider = { ...GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY, data_collection: "allow" }; },
+        (payload: Record<string, unknown>) => { payload.provider = { ...GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY, data_collection: "allow" }; },
+        (payload: Record<string, unknown>) => { payload.provider = { ...GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY, only: ["azure"] }; },
+        (payload: Record<string, unknown>) => { payload.provider = { ...GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY, allow_fallbacks: true }; },
+        (payload: Record<string, unknown>) => { payload.provider = { ...GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY, only: undefined }; },
         (payload: Record<string, unknown>) => { payload.tools = []; },
       ]) {
         const payload = structuredClone(validPayload);
@@ -195,7 +198,7 @@ test("the diagnostic fetch requires an exact active journal reservation and disp
     const dispatchFile = path.join(directory, "dispatches.json");
     await writeFile(dispatchFile, JSON.stringify({ schemaVersion: 1, entries: [] }));
     const store = new FileQualificationAttemptStore(path.join(directory, "attempts"));
-    const preflight = JSON.parse(await readFile("qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-no-dispatch-20261011.json", "utf8")) as {
+    const preflight = JSON.parse(await readFile("qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-no-dispatch-20261011.json", "utf8")) as {
       exactRequests: Array<{ request: { requestCorrelationHeader: { value: string }; finalWirePayload: Record<string, unknown> } }>;
     };
     const request = preflight.exactRequests[0]!.request;
@@ -211,7 +214,7 @@ test("the diagnostic fetch requires an exact active journal reservation and disp
       schema: jsonSchema.schema as JsonObject,
       maxOutputTokens: Number(payload.max_completion_tokens),
       idempotencyKey: request.requestCorrelationHeader.value,
-      providerPolicy: payload.provider as typeof GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY,
+      providerPolicy: payload.provider as typeof GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY,
       promptCacheOptions: payload.prompt_cache_options as { mode: "explicit" },
       includeUsage: true,
     };
@@ -323,10 +326,12 @@ test("a restarted diagnostic retains dispatch evidence before a profile result w
 test("the fictional diagnostic rejects an offline/mock returned model before review or C02", async () => {
   await withTempDirectory(async (outputRoot) => {
     let generatedCalls = 0;
+    const providerPolicies: Array<OpenRouterGenerationRequest["providerPolicy"]> = [];
     const transportFactory = (): OpenRouterTransport => ({
       endpoint: OPENROUTER_DEFAULT_ENDPOINT,
-      generate: async () => {
+      generate: async (request) => {
         generatedCalls += 1;
+        providerPolicies.push(request.providerPolicy);
         return {
           ok: true,
           output: {} as import("../../lib/question-engine/types.ts").JsonObject,
@@ -353,6 +358,7 @@ test("the fictional diagnostic rejects an offline/mock returned model before rev
     assert.equal(result.results[0]!.reviewerReceipts.length, 0, "review is never called for a wrong-model result");
     assert.equal(result.attempts.length, 1);
     assert.equal(result.attempts[0]!.usage?.model, "offline/mock");
+    assert.deepEqual(providerPolicies, [GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY], "every journaled diagnostic call is pinned to OpenAI without fallbacks");
     assert.equal(result.budget.aggregateReportedCostMicros, 45_000, "known usage remains charged to the authorized budget");
     assert.equal(result.budget.remainingAuthorizedMicros, 2_955_000);
   });

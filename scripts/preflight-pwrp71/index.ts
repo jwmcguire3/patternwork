@@ -7,7 +7,7 @@ import { preparePwrp71Request } from "../../lib/server/reports/pwrp71-adapter.ts
 import { pwrp71CanonicalResponseEvidenceFromSessionState } from "../../lib/server/reports/pwrp71-response-evidence.ts";
 import { buildGenerationPrompt } from "../../lib/server/reports/prompts.ts";
 import { QUALIFICATION_MODEL_ORDER, UNQUALIFIED_MOCK_MODEL_POLICY } from "../../lib/server/openrouter/policy.ts";
-import { GPT6_LUNA_BILLING_BASIS, GPT6_LUNA_BILLING_BASIS_SHA256, GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY, maximumQuotedCallCostMicros } from "../../lib/server/openrouter/qualification-budget.ts";
+import { GPT6_LUNA_BILLING_BASIS, GPT6_LUNA_BILLING_BASIS_SHA256, GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY, GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY, maximumQuotedCallCostMicros } from "../../lib/server/openrouter/qualification-budget.ts";
 import { projectOpenRouterStrictSchemaObject } from "../../lib/server/openrouter/schema-projection.ts";
 import { buildOpenRouterWirePayload, OPENROUTER_DEFAULT_ENDPOINT } from "../../lib/server/openrouter/wire.ts";
 import { qualificationAttemptFingerprint } from "../../lib/server/reports/qualification/attempt-store.ts";
@@ -65,6 +65,9 @@ async function main(): Promise<void> {
   if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,79}$/u.test(runId)) throw new Error("--run-id must use 1–80 letters, numbers, dots, underscores or hyphens.");
   const maxCallCostMicros = parseMicros(flags.get("--max-call-cost-micros"), "--max-call-cost-micros");
   const aggregateCostCapMicros = parseMicros(flags.get("--aggregate-cost-cap-micros"), "--aggregate-cost-cap-micros");
+  const providerOnly = flags.get("--provider-only");
+  if (providerOnly !== undefined && providerOnly !== "openai") throw new Error("--provider-only currently accepts only the explicitly pinned openai provider.");
+  const providerPolicy = providerOnly === "openai" ? GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY : GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY;
   const outputFile = path.resolve(flags.get("--output") ?? OUTPUT_FILE);
   const blockers: string[] = [];
   if (maxCallCostMicros === null) blockers.push("No explicit per-call ceiling was supplied; this dry run does not create live spending authorization.");
@@ -137,7 +140,7 @@ async function main(): Promise<void> {
     const wireRequest = {
       ...request,
       schema: projectOpenRouterStrictSchemaObject(request.schema),
-      providerPolicy: GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY,
+      providerPolicy,
       promptCacheOptions: { mode: "explicit" as const },
     };
     const body = buildOpenRouterWirePayload(wireRequest);
@@ -233,7 +236,12 @@ async function main(): Promise<void> {
     providerCalls: 0,
     apiKeyRead: false,
     runId,
-    candidate: { model: modelPin.model, reasoningEffort: modelPin.reasoningEffort, reportType: REPORT_TYPE },
+    candidate: {
+      model: modelPin.model,
+      reasoningEffort: modelPin.reasoningEffort,
+      reportType: REPORT_TYPE,
+      providerSelection: providerOnly === "openai" ? "openai_only_no_fallbacks" : "openrouter_default_eligible_provider_routing",
+    },
     fixtureSet: "route-replays-v5",
     sourceManifestPins: {
       questionRelease: PWQE51_RELEASE_IDENTITY.questionRelease,

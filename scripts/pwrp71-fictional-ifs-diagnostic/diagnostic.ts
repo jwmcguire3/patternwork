@@ -7,7 +7,7 @@ import { PWQE51_RELEASE_IDENTITY, PWQE51_SOURCE_MANIFEST_SHA256 } from "../../li
 import { UNQUALIFIED_MOCK_MODEL_POLICY } from "../../lib/server/openrouter/policy.ts";
 import {
   GPT6_LUNA_BILLING_BASIS_SHA256,
-  GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY,
+  GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY,
   maximumQuotedCallCostMicros,
 } from "../../lib/server/openrouter/qualification-budget.ts";
 import { buildOpenRouterWirePayload, OPENROUTER_DEFAULT_ENDPOINT } from "../../lib/server/openrouter/wire.ts";
@@ -61,7 +61,7 @@ export const FICTIONAL_IFS_DIAGNOSTIC_PINS = {
 const APPROVAL_RELATIVE = "qualification/pwrp71/gate10-routing-budget-readiness/approval-statements/c01-c02-live-ifs-approval.md";
 const REVIEW_RELATIVE = "qualification/pwrp71/gate10-routing-budget-readiness/independent-review/c01-c02-current-scope-review.md";
 const PRICING_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/pricing-check-2026-10-11.json";
-const PREFLIGHT_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-no-dispatch-20261011.json";
+const PREFLIGHT_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-no-dispatch-20261011.json";
 const DIAGNOSTIC_LOCK_NAME = ".diagnostic-run.lock";
 
 type ProfileId = "C01" | "C02";
@@ -151,6 +151,7 @@ export interface FictionalIfsDiagnosticRun {
     readonly fixtureSet: "route-replays-v5";
     readonly model: "openai/gpt-6-luna";
     readonly reasoningEffort: "max";
+    readonly providerRestriction: "openai_only_no_fallbacks";
   };
   readonly authorization: {
     readonly operatorFlagProvided: true;
@@ -396,7 +397,7 @@ function buildRequest(input: {
   const wireRequest: OpenRouterGenerationRequest = {
     ...request,
     schema: projectOpenRouterStrictSchemaObject(request.schema),
-    providerPolicy: GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY,
+    providerPolicy: GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY,
     promptCacheOptions: { mode: "explicit" },
     includeUsage: true,
   };
@@ -466,6 +467,7 @@ function validatePreflight(input: {
   const sourcePins = preflight.sourceManifestPins;
   const exactRequests = preflight.exactRequests;
   if (!isRecord(candidate) || candidate.model !== "openai/gpt-6-luna" || candidate.reasoningEffort !== "max" || candidate.reportType !== "IFS"
+    || candidate.providerSelection !== "openai_only_no_fallbacks"
     || !isRecord(sourcePins)
     || sourcePins.currentRouterRuntimeSha256 !== input.runtimeSha256
     || sourcePins.questionSourceSha256 !== input.questionSource.manifest.source_binding.source_sha256
@@ -619,7 +621,7 @@ async function prepareDiagnostic(
   const runFingerprint = sha256Canonical({
     schemaVersion: FICTIONAL_IFS_DIAGNOSTIC_SCHEMA,
     runId: FICTIONAL_IFS_DIAGNOSTIC_RUN_ID,
-    scope: { profiles: ["C01", "C02"], reportType: "IFS", fixtureSet: "route-replays-v5", model: "openai/gpt-6-luna", reasoningEffort: "max" },
+    scope: { profiles: ["C01", "C02"], reportType: "IFS", fixtureSet: "route-replays-v5", model: "openai/gpt-6-luna", reasoningEffort: "max", providerRestriction: "openai_only_no_fallbacks" },
     authorization: { operatorFlagProvided: true, approvalSha256, reviewSha256 },
     pricingSha256,
     sourcePins,
@@ -686,7 +688,7 @@ function validateFinalWireRequest(input: string | URL | Request, init: RequestIn
     || payload.stream !== false
     || payload.max_completion_tokens !== 20_000
     || payload.reasoning.effort !== "max"
-    || sha256Canonical(payload.provider) !== sha256Canonical(GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY)
+    || sha256Canonical(payload.provider) !== sha256Canonical(GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY)
     || payload.prompt_cache_options.mode !== "explicit"
     || payload.usage.include !== true
     || !Array.isArray(messages) || messages.length !== 2
@@ -813,7 +815,7 @@ function makeRun(input: {
     outputDirectory: input.prepared.runDirectory,
     attemptsFile: "attempts.json",
     dispatchesFile: "dispatches.json",
-    scope: { profiles: ["C01", "C02"], reportType: "IFS", fixtureSet: "route-replays-v5", model: "openai/gpt-6-luna", reasoningEffort: "max" },
+    scope: { profiles: ["C01", "C02"], reportType: "IFS", fixtureSet: "route-replays-v5", model: "openai/gpt-6-luna", reasoningEffort: "max", providerRestriction: "openai_only_no_fallbacks" },
     authorization: input.prepared.authorization,
     sourcePins: input.prepared.sourcePins,
     pricing: input.prepared.pricing,
@@ -914,6 +916,7 @@ export async function runFictionalIfsDiagnostic(
         endpoint: provider.endpoint ?? OPENROUTER_DEFAULT_ENDPOINT,
         maxCallCostMicros: invocation.maxCallCostMicros,
         aggregateCostCapMicros: invocation.aggregateCostCapMicros,
+        providerPolicy: GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY,
         usageStatus: "reported",
         now,
         onResult: (_request, result) => {
