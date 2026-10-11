@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "PWRP71-OPENROUTER-NETWORK-DIAGNOSTIC-1",
+  "checkedAt": "2026-10-11T08:20:44Z",
+  "purpose": "Determine why the prior fictional IFS diagnostic received no HTTP response",
+  "probe": {
+    "url": "https://openrouter.ai/api/v1/models",
+    "method": "GET",
+    "authorizationHeaderSent": false,
+    "providerGenerationRequest": false,
+    "generationCalls": 0,
+    "providerCostMicros": 0
+  },
+  "restrictedRunner": {
+    "httpResponseReceived": false,
+    "errorName": "TypeError",
+    "causeCode": "ENOTFOUND",
+    "syscall": "getaddrinfo",
+    "hostname": "openrouter.ai"
+  },
+  "networkEnabledRunner": {
+    "httpResponseReceived": true,
+    "httpStatus": 200
+  },
+  "conclusion": "The previous no-response failure was DNS/network access in the restricted execution environment, before OpenRouter received the request. Enabling network access fixes that transport failure; the later fresh diagnostic then reached OpenRouter and encountered the separate OpenAI-only plus ZDR endpoint-policy mismatch."
+}

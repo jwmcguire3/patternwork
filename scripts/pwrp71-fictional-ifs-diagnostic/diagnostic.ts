@@ -35,6 +35,7 @@ import { renameFileWithTransientRetry } from "../../lib/server/reports/qualifica
 
 export const FICTIONAL_IFS_DIAGNOSTIC_SCHEMA = "PWRP71-FICTIONAL-IFS-DIAGNOSTIC-1" as const;
 export const FICTIONAL_IFS_DIAGNOSTIC_RUN_ID = "gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011" as const;
+export const FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID = "gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011-fresh-budget-epoch-2" as const;
 export const FICTIONAL_IFS_DIAGNOSTIC_REQUEST_LABEL = "openai-gpt-6-luna-max" as const;
 export const FICTIONAL_IFS_DIAGNOSTIC_OUTPUT_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/live" as const;
 
@@ -63,8 +64,11 @@ const REVIEW_RELATIVE = "qualification/pwrp71/gate10-routing-budget-readiness/in
 const PRICING_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/pricing-check-2026-10-11.json";
 const PREFLIGHT_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-no-dispatch-20261011.json";
 const CONTINUATION_PREFLIGHT_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-continuation-no-dispatch-20261011.json";
+const FRESH_BUDGET_EPOCH_2_PREFLIGHT_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-fresh-budget-epoch-2-no-dispatch-20261011.json";
 const DIAGNOSTIC_LOCK_NAME = ".diagnostic-run.lock";
 const CONTINUATION_FLAG = "--continue-after-unknown-provider-attempt";
+const FRESH_BUDGET_EPOCH_2_FLAG = "--owner-authorized-fresh-budget-epoch-2";
+const FRESH_BUDGET_EPOCH_2_MARKER = "fresh-budget-epoch-2";
 const LEGACY_DEFAULT_ROUTE_RUN_SHA256 = "63b73b54845e4a719603b77abddd403f7297c6d157be4a8ffbf5f1d29b2e73be";
 const LEGACY_DEFAULT_ROUTE_RUN_FINGERPRINT = "e6223344cc26baa9dea4480b31b0e8c7f1c2296f3313aed0b61c0260a901bd83";
 const LEGACY_C01_ATTEMPT_ID = `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_RUN_ID}:C01:IFS:initial:${FICTIONAL_IFS_DIAGNOSTIC_REQUEST_LABEL}:attempt-1`;
@@ -84,6 +88,8 @@ export interface FictionalIfsDiagnosticInvocation {
   readonly aggregateCostCapMicros: 3_000_000;
   /** Explicit operator signal for the reviewed OpenAI-only continuation of the prior Azure 400. */
   readonly continueAfterUnknownProviderAttempt?: boolean;
+  /** One explicitly owner-directed fresh budget epoch; previous unknown attempts remain archived in their prior run. */
+  readonly freshBudgetEpoch2?: boolean;
 }
 
 export interface FictionalIfsDiagnosticContinuation {
@@ -106,7 +112,7 @@ export interface DiagnosticHttpDispatchRecord {
   readonly idempotencyKey: string;
   readonly profileId: ProfileId;
   readonly phase: DiagnosticPhase;
-  readonly requestVariant?: typeof OPENAI_ROUTE_CONTINUATION_MARKER;
+  readonly requestVariant?: typeof OPENAI_ROUTE_CONTINUATION_MARKER | typeof FRESH_BUDGET_EPOCH_2_MARKER;
   readonly model: string;
   readonly reasoningEffort: string;
   readonly endpoint: string;
@@ -161,7 +167,7 @@ export interface FictionalIfsDiagnosticRun {
   readonly status: "prepared" | "running" | "diagnostic_complete" | "diagnostic_complete_with_prior_unknown_cost" | "diagnostic_stopped";
   readonly routingQualification: "not_claimed";
   readonly productionActivationEffect: "none";
-  readonly runId: typeof FICTIONAL_IFS_DIAGNOSTIC_RUN_ID;
+  readonly runId: string;
   readonly createdAt: string;
   readonly updatedAt: string;
   readonly runFingerprint: string;
@@ -180,6 +186,14 @@ export interface FictionalIfsDiagnosticRun {
   };
   readonly authorization: {
     readonly operatorFlagProvided: true;
+    readonly budgetEpoch: 1 | 2;
+    readonly priorRunBudgetDisposition?: {
+      readonly priorRunId: typeof FICTIONAL_IFS_DIAGNOSTIC_RUN_ID;
+      readonly priorUnknownReservedMicros: 230_000;
+      readonly excludedFromFreshEpochCap: true;
+      readonly priorInvoiceStatusRemainsUnknown: true;
+      readonly operatorDirective: "billing starts over";
+    };
     readonly recordedApprovalSha256: string;
     readonly independentScopeReviewSha256: string;
     readonly credentialInterpretation: "approval_record_is_not_a_cryptographic_credential_or_routing_receipt";
@@ -314,6 +328,12 @@ function expectedPacketSha(profileId: ProfileId): string {
   return profileId === "C01" ? FICTIONAL_IFS_DIAGNOSTIC_PINS.c01PacketSha256 : FICTIONAL_IFS_DIAGNOSTIC_PINS.c02PacketSha256;
 }
 
+function runIdFor(invocation: FictionalIfsDiagnosticInvocation): string {
+  return invocation.freshBudgetEpoch2
+    ? FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID
+    : FICTIONAL_IFS_DIAGNOSTIC_RUN_ID;
+}
+
 function validateInvocation(value: FictionalIfsDiagnosticInvocation): void {
   if (!value || value.operatorAuthorized !== true) throw new Error("An explicit --owner-authorized-fictional-diagnostic operator flag is required.");
   if (JSON.stringify(value.profiles) !== JSON.stringify(["C01", "C02"])) throw new Error("This CLI path accepts only the exact fictional C01,C02 cohort.");
@@ -322,6 +342,9 @@ function validateInvocation(value: FictionalIfsDiagnosticInvocation): void {
   if (value.maxCallCostMicros !== FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros
     || value.aggregateCostCapMicros !== FICTIONAL_IFS_DIAGNOSTIC_LIMITS.aggregateCostCapMicros) {
     throw new Error("Both explicit spend limits must exactly match the authorized $0.115 per-call and $3.00 aggregate ceilings.");
+  }
+  if (value.continueAfterUnknownProviderAttempt && value.freshBudgetEpoch2) {
+    throw new Error("A continuation of the existing budget and a fresh budget epoch cannot be requested together.");
   }
 }
 
@@ -339,6 +362,7 @@ export function parseFictionalIfsDiagnosticArgs(argv: readonly string[]): Fictio
   const values = new Map<string, string>();
   let operatorAuthorized = false;
   let continueAfterUnknownProviderAttempt = false;
+  let freshBudgetEpoch2 = false;
   for (let index = 0; index < argv.length; index += 1) {
     const name = argv[index]!;
     if (name === "--owner-authorized-fictional-diagnostic") {
@@ -349,6 +373,11 @@ export function parseFictionalIfsDiagnosticArgs(argv: readonly string[]): Fictio
     if (name === CONTINUATION_FLAG) {
       if (continueAfterUnknownProviderAttempt) throw new Error(`${name} may be specified only once.`);
       continueAfterUnknownProviderAttempt = true;
+      continue;
+    }
+    if (name === FRESH_BUDGET_EPOCH_2_FLAG) {
+      if (freshBudgetEpoch2) throw new Error(`${name} may be specified only once.`);
+      freshBudgetEpoch2 = true;
       continue;
     }
     if (!REQUIRED_VALUE_FLAGS.includes(name as typeof REQUIRED_VALUE_FLAGS[number]) || values.has(name)) {
@@ -371,6 +400,7 @@ export function parseFictionalIfsDiagnosticArgs(argv: readonly string[]): Fictio
     maxCallCostMicros: Number(values.get("--max-call-cost-micros")) as 115_000,
     aggregateCostCapMicros: Number(values.get("--aggregate-cost-cap-micros")) as 3_000_000,
     continueAfterUnknownProviderAttempt,
+    freshBudgetEpoch2,
   };
   validateInvocation(invocation);
   return invocation;
@@ -404,9 +434,10 @@ async function readBytes(workspaceRoot: string, relative: string): Promise<Buffe
   return readFile(path.join(workspaceRoot, relative));
 }
 
-function buildRequest(input: {
+export function buildFictionalDiagnosticRequest(input: {
   readonly profileId: ProfileId;
   readonly prepared: Pwrp71PreparedRequest;
+  readonly runId: string;
   readonly continuation: boolean;
 }): { readonly request: OpenRouterGenerationRequest; readonly wireRequest: OpenRouterGenerationRequest; readonly requestFingerprint: string; readonly wirePayloadSha256: string } {
   const modelPin = UNQUALIFIED_MOCK_MODEL_POLICY.IFS;
@@ -415,7 +446,7 @@ function buildRequest(input: {
     || QUALIFICATION_MODEL_ORDER_NOT_FIXED(modelPin)) {
     throw new Error("The IFS candidate policy no longer matches the approved OpenRouter model, reasoning, and output pins.");
   }
-  const invocationKey = `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_RUN_ID}:${input.profileId}${input.continuation && input.profileId === "C01" ? `:${OPENAI_ROUTE_CONTINUATION_MARKER}` : ""}`;
+  const invocationKey = `pwrp71-fictional-diagnostic:${input.runId}:${input.profileId}${input.continuation && input.profileId === "C01" ? `:${OPENAI_ROUTE_CONTINUATION_MARKER}` : ""}`;
   const request: OpenRouterGenerationRequest = {
     model: modelPin.model,
     reasoningEffort: modelPin.reasoningEffort,
@@ -490,11 +521,13 @@ function validatePreflight(input: {
   readonly reportSource: Pwrp71SourcePackage;
   readonly semanticCaseSetSha256: string;
   readonly continuation: boolean;
+  readonly freshBudgetEpoch2: boolean;
+  readonly runId: string;
 }): string {
   const preflight = input.preflight;
   if (preflight.schemaVersion !== "PWRP71-GATE10-OPENROUTER-NO-DISPATCH-PREFLIGHT-V1"
     || preflight.dispatchPerformed !== false || preflight.providerCalls !== 0 || preflight.apiKeyRead !== false
-    || preflight.runId !== FICTIONAL_IFS_DIAGNOSTIC_RUN_ID || preflight.fixtureSet !== "route-replays-v5") {
+    || preflight.runId !== input.runId || preflight.fixtureSet !== "route-replays-v5") {
     throw new Error("The regenerated no-dispatch preflight is missing or has an unexpected scope/status.");
   }
   const candidate = preflight.candidate;
@@ -502,7 +535,9 @@ function validatePreflight(input: {
   const exactRequests = preflight.exactRequests;
   if (!isRecord(candidate) || candidate.model !== "openai/gpt-6-luna" || candidate.reasoningEffort !== "max" || candidate.reportType !== "IFS"
     || candidate.providerSelection !== "openai_only_no_fallbacks"
-    || (candidate.requestVariant ?? "initial") !== (input.continuation ? OPENAI_ROUTE_CONTINUATION_MARKER : "initial")
+      || (candidate.requestVariant ?? "initial") !== (input.continuation
+        ? OPENAI_ROUTE_CONTINUATION_MARKER
+        : input.freshBudgetEpoch2 ? FRESH_BUDGET_EPOCH_2_MARKER : "initial")
     || !isRecord(sourcePins)
     || sourcePins.currentRouterRuntimeSha256 !== input.runtimeSha256
     || sourcePins.questionSourceSha256 !== input.questionSource.manifest.source_binding.source_sha256
@@ -538,6 +573,7 @@ function validatePreflight(input: {
 
 interface PreparedDiagnostic {
   readonly workspaceRoot: string;
+  readonly runId: string;
   readonly runDirectory: string;
   readonly runFingerprint: string;
   readonly preparedProfiles: readonly PreparedProfile[];
@@ -553,7 +589,10 @@ async function prepareDiagnostic(
   validateInvocation(invocation);
   const workspaceRoot = path.resolve(dependencies.workspaceRoot);
   const now = dependencies.now?.() ?? new Date();
-  const preflightRelative = invocation.continueAfterUnknownProviderAttempt ? CONTINUATION_PREFLIGHT_RELATIVE : PREFLIGHT_RELATIVE;
+  const runId = runIdFor(invocation);
+  const preflightRelative = invocation.continueAfterUnknownProviderAttempt
+    ? CONTINUATION_PREFLIGHT_RELATIVE
+    : invocation.freshBudgetEpoch2 ? FRESH_BUDGET_EPOCH_2_PREFLIGHT_RELATIVE : PREFLIGHT_RELATIVE;
   const [approvalBytes, reviewBytes, pricingBytes, preflightBytes, semanticBytes] = await Promise.all([
     readBytes(workspaceRoot, APPROVAL_RELATIVE),
     readBytes(workspaceRoot, REVIEW_RELATIVE),
@@ -619,7 +658,12 @@ async function prepareDiagnostic(
       canonicalResponseEvidence,
     });
     if (!prepared.ok) throw new Error(`${fixture.profileId} IFS packet failed current PWRP 7.1 preparation: ${prepared.issues.map((issue) => issue.code).join(", ")}.`);
-    const request = buildRequest({ profileId: fixture.profileId, prepared: prepared.value, continuation: invocation.continueAfterUnknownProviderAttempt === true });
+    const request = buildFictionalDiagnosticRequest({
+      profileId: fixture.profileId,
+      prepared: prepared.value,
+      runId,
+      continuation: invocation.continueAfterUnknownProviderAttempt === true,
+    });
     preparedProfiles.push({ fixture, prepared: prepared.value, ...request });
   }
   if (firstFixture.fixtureManifestSha256 !== secondFixture.fixtureManifestSha256
@@ -633,6 +677,8 @@ async function prepareDiagnostic(
     reportSource: firstFixture.reportSource,
     semanticCaseSetSha256,
     continuation: invocation.continueAfterUnknownProviderAttempt === true,
+    freshBudgetEpoch2: invocation.freshBudgetEpoch2 === true,
+    runId,
   });
   const sourcePins: FictionalIfsDiagnosticRun["sourcePins"] = {
     questionRelease: PWQE51_RELEASE_IDENTITY.questionRelease,
@@ -657,9 +703,9 @@ async function prepareDiagnostic(
   const reportModelPolicy = structuredClone(UNQUALIFIED_MOCK_MODEL_POLICY).IFS;
   const runFingerprint = sha256Canonical({
     schemaVersion: FICTIONAL_IFS_DIAGNOSTIC_SCHEMA,
-    runId: FICTIONAL_IFS_DIAGNOSTIC_RUN_ID,
+    runId,
     scope: { profiles: ["C01", "C02"], reportType: "IFS", fixtureSet: "route-replays-v5", model: "openai/gpt-6-luna", reasoningEffort: "max", providerRestriction: "openai_only_no_fallbacks" },
-    authorization: { operatorFlagProvided: true, approvalSha256, reviewSha256 },
+    authorization: { operatorFlagProvided: true, freshBudgetEpoch2: invocation.freshBudgetEpoch2 === true, approvalSha256, reviewSha256 },
     pricingSha256,
     sourcePins,
     requestFingerprints: preparedProfiles.map((profile) => profile.requestFingerprint),
@@ -671,12 +717,23 @@ async function prepareDiagnostic(
   const outputRoot = path.resolve(dependencies.outputRoot ?? path.join(workspaceRoot, FICTIONAL_IFS_DIAGNOSTIC_OUTPUT_RELATIVE));
   return {
     workspaceRoot,
-    runDirectory: path.join(outputRoot, FICTIONAL_IFS_DIAGNOSTIC_RUN_ID),
+    runId,
+    runDirectory: path.join(outputRoot, runId),
     runFingerprint,
     preparedProfiles,
     sourcePins,
     authorization: {
       operatorFlagProvided: true,
+      budgetEpoch: invocation.freshBudgetEpoch2 ? 2 : 1,
+      ...(invocation.freshBudgetEpoch2 ? {
+        priorRunBudgetDisposition: {
+          priorRunId: FICTIONAL_IFS_DIAGNOSTIC_RUN_ID,
+          priorUnknownReservedMicros: 230_000,
+          excludedFromFreshEpochCap: true,
+          priorInvoiceStatusRemainsUnknown: true,
+          operatorDirective: "billing starts over" as const,
+        },
+      } : {}),
       recordedApprovalSha256: approvalSha256,
       independentScopeReviewSha256: reviewSha256,
       credentialInterpretation: "approval_record_is_not_a_cryptographic_credential_or_routing_receipt",
@@ -701,7 +758,7 @@ function validateFinalWireRequest(input: string | URL | Request, init: RequestIn
   readonly model: string;
   readonly reasoningEffort: string;
   readonly payloadSha256: string;
-  readonly requestVariant?: typeof OPENAI_ROUTE_CONTINUATION_MARKER;
+  readonly requestVariant?: typeof OPENAI_ROUTE_CONTINUATION_MARKER | typeof FRESH_BUDGET_EPOCH_2_MARKER;
 } {
   const endpoint = String(input);
   const headers = new Headers(init?.headers);
@@ -710,12 +767,14 @@ function validateFinalWireRequest(input: string | URL | Request, init: RequestIn
   let payload: Record<string, unknown>;
   try { payload = JSON.parse(bodyText) as Record<string, unknown>; }
   catch { throw new Error("The final OpenRouter body is missing or is not valid JSON."); }
-  const match = idempotencyKey.match(/^pwrp71-fictional-diagnostic:gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011:(C01|C02)(?::(openai-route-continuation-1))?:IFS:(initial|repair|escalation|review|review_after_repair):openai-gpt-6-luna-max:attempt-\d+$/u);
-  const profileId = match?.[1] as ProfileId | undefined;
-  const continuationMarker = match?.[2] as typeof OPENAI_ROUTE_CONTINUATION_MARKER | undefined;
-  const phase = match?.[3] as DiagnosticPhase | undefined;
+  const match = idempotencyKey.match(/^pwrp71-fictional-diagnostic:(gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011(?:-fresh-budget-epoch-2)?):(C01|C02)(?::(openai-route-continuation-1))?:IFS:(initial|repair|escalation|review|review_after_repair):openai-gpt-6-luna-max:attempt-\d+$/u);
+  const runId = match?.[1];
+  const profileId = match?.[2] as ProfileId | undefined;
+  const continuationMarker = match?.[3] as typeof OPENAI_ROUTE_CONTINUATION_MARKER | undefined;
+  const freshBudgetMarker = runId === FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID ? FRESH_BUDGET_EPOCH_2_MARKER : undefined;
+  const phase = match?.[4] as DiagnosticPhase | undefined;
   if (init?.method !== "POST" || endpoint !== OPENROUTER_DEFAULT_ENDPOINT || !headers.get("authorization")?.startsWith("Bearer ")
-    || !profileId || (continuationMarker && profileId !== "C01") || !phase || !isRecord(payload.reasoning) || !isRecord(payload.provider) || !isRecord(payload.usage)
+    || !runId || !profileId || (continuationMarker && (profileId !== "C01" || runId !== FICTIONAL_IFS_DIAGNOSTIC_RUN_ID)) || !phase || !isRecord(payload.reasoning) || !isRecord(payload.provider) || !isRecord(payload.usage)
     || !isRecord(payload.prompt_cache_options) || !isRecord(payload.response_format) || !isRecord(payload.response_format.json_schema)) {
     throw new Error("The provider request is outside the journaled fictional diagnostic transport contract.");
   }
@@ -743,7 +802,7 @@ function validateFinalWireRequest(input: string | URL | Request, init: RequestIn
     model: String(payload.model),
     reasoningEffort: String(payload.reasoning.effort),
     payloadSha256: sha256Text(bodyText),
-    ...(continuationMarker ? { requestVariant: continuationMarker } : {}),
+    ...(continuationMarker ? { requestVariant: continuationMarker } : freshBudgetMarker ? { requestVariant: freshBudgetMarker } : {}),
   };
 }
 
@@ -849,7 +908,7 @@ function makeRun(input: {
     status: input.status,
     routingQualification: "not_claimed",
     productionActivationEffect: "none",
-    runId: FICTIONAL_IFS_DIAGNOSTIC_RUN_ID,
+    runId: input.prepared.runId,
     createdAt: input.createdAt,
     updatedAt: input.updatedAt,
     runFingerprint: input.prepared.runFingerprint,
@@ -1062,8 +1121,12 @@ export async function runFictionalIfsDiagnostic(
       manifestWriteAuthorized = true;
     }
     const newlyAuthorizedContinuation = Boolean(existing && continuation && existing.runFingerprint !== prepared.runFingerprint);
+    const safePreDispatchRetry = Boolean(existing?.status === "diagnostic_stopped"
+      && priorAttempts.length === 0
+      && dispatches.entries.length === 0
+      && existing.results.length === 0);
     if (existing?.status === "diagnostic_complete" || existing?.status === "diagnostic_complete_with_prior_unknown_cost"
-      || (existing?.status === "diagnostic_stopped" && !newlyAuthorizedContinuation)) return existing;
+      || (existing?.status === "diagnostic_stopped" && !newlyAuthorizedContinuation && !safePreDispatchRetry)) return existing;
 
     let results: FictionalIfsDiagnosticReportResult[] = newlyAuthorizedContinuation
       ? []
@@ -1109,7 +1172,7 @@ export async function runFictionalIfsDiagnostic(
       const priorResult = results.find((result) => result.profileId === profile.fixture.profileId && result.reportType === "IFS");
       if (priorResult?.status === "accepted") continue;
       if (priorResult?.status === "failed") break;
-      const profileInvocationPrefix = `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_RUN_ID}:${profile.fixture.profileId}`;
+      const profileInvocationPrefix = `pwrp71-fictional-diagnostic:${prepared.runId}:${profile.fixture.profileId}`;
       const invocationPrefix = `${profileInvocationPrefix}${continuation && profile.fixture.profileId === "C01" ? `:${OPENAI_ROUTE_CONTINUATION_MARKER}` : ""}:`;
       const attemptsBefore = await store.list();
       const spentBefore = attemptsBefore
@@ -1241,7 +1304,9 @@ export async function runFictionalIfsDiagnostic(
       dispatches,
       blockers: [error instanceof QualificationAttemptError && error.code === "attempt_uncertain"
         ? "A provider attempt has unknown billing status; its full reservation is retained and no automatic retry was attempted."
-        : error instanceof Error ? error.message : "The diagnostic stopped after an unexpected operational error."],
+        : attempts.length === 0 && dispatches.entries.length === 0
+          ? `Pre-dispatch check failed: ${error instanceof Error ? error.message : "The diagnostic stopped before provider dispatch."}`
+          : error instanceof Error ? error.message : "The diagnostic stopped after an unexpected operational error."],
       continuation,
     });
     return await saveRun(prepared.runDirectory, stopped);

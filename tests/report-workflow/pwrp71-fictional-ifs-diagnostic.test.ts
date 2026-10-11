@@ -23,6 +23,11 @@ import {
 } from "../../scripts/pwrp71-fictional-ifs-diagnostic/diagnostic.ts";
 import { loadPwrp71FictionalDiagnosticFixture } from "../../lib/server/reports/qualification/runner.ts";
 import { OpenRouterTransportError, type OpenRouterGenerationResult } from "../../lib/server/openrouter/types.ts";
+import {
+  assertOpenRouterDiagnosticRouteEligible,
+  assertOpenRouterReachable,
+  OpenRouterDiagnosticRouteIneligibleError,
+} from "../../scripts/pwrp71-fictional-ifs-diagnostic/connectivity.ts";
 
 const TEST_SCRATCH = path.join(process.cwd(), ".codex-temp", "test-runs");
 
@@ -97,6 +102,7 @@ test("diagnostic CLI requires exact owner scope, candidate, and both approved ca
     { name: "routing receipt injection", args: [...validArgs, "--routing-evidence", "receipt.json"] },
     { name: "approval manifest request", args: [...validArgs, "--activation-manifest", "approval.json"] },
     { name: "duplicate continuation flag", args: [...validArgs, "--continue-after-unknown-provider-attempt", "--continue-after-unknown-provider-attempt"] },
+    { name: "duplicate fresh budget flag", args: [...validArgs, "--owner-authorized-fresh-budget-epoch-2", "--owner-authorized-fresh-budget-epoch-2"] },
   ];
   for (const entry of cases) {
     let providerFactoryCalls = 0;
@@ -115,6 +121,97 @@ test("diagnostic CLI requires exact owner scope, candidate, and both approved ca
     assert.equal(providerFactoryCalls, 0, `${entry.name} must reject before provider initialization`);
     assert.equal(providerCalls, 0, `${entry.name} must reject before provider dispatch`);
   }
+});
+
+test("fresh budget epoch requires explicit owner authorization and cannot also request a continuation", async () => {
+  assert.equal(parseFictionalIfsDiagnosticArgs([...validArgs, "--owner-authorized-fresh-budget-epoch-2"]).freshBudgetEpoch2, true);
+  assert.throws(() => parseFictionalIfsDiagnosticArgs([
+    ...validArgs,
+    "--owner-authorized-fresh-budget-epoch-2",
+    "--continue-after-unknown-provider-attempt",
+  ]), /cannot be requested together/u);
+});
+
+test("OpenRouter reachability preflight is an unauthenticated catalog GET and reports safe DNS causes", async () => {
+  let requestedUrl = "";
+  let requestMethod = "";
+  let requestBody: BodyInit | null | undefined;
+  let requestHeaders: Headers | undefined;
+  await assertOpenRouterReachable(async (input, init) => {
+    requestedUrl = String(input);
+    requestMethod = init?.method ?? "";
+    requestBody = init?.body;
+    requestHeaders = new Headers(init?.headers);
+    return new Response("{}", { status: 200, headers: { "content-type": "application/json" } });
+  });
+  assert.equal(requestedUrl, "https://openrouter.ai/api/v1/models");
+  assert.equal(requestMethod, "GET");
+  assert.equal(requestBody, undefined);
+  assert.equal(requestHeaders?.has("authorization"), false);
+
+  const cause = Object.assign(new Error("raw local resolver details"), { code: "ENOTFOUND", syscall: "getaddrinfo", hostname: "openrouter.ai" });
+  await assert.rejects(() => assertOpenRouterReachable(async () => {
+    throw new TypeError("fetch failed", { cause });
+  }), /ENOTFOUND.*no report request was dispatched/u);
+});
+
+test("OpenRouter diagnostic route preflight blocks an empty OpenAI/ZDR intersection without credentials", async () => {
+  let requestedUrl = "";
+  let requestMethod = "";
+  let requestHeaders: Headers | undefined;
+  const noOpenAiZdrEndpoint = new Response(JSON.stringify({ data: [
+    { model_id: "openai/gpt-6-luna", provider_name: "Azure", name: "Azure | GPT-6 Luna", tag: "azure" },
+    { model_id: "openai/gpt-6-luna", provider_name: "Azure", name: "Azure | GPT-6 Luna US", tag: "azure/us" },
+    { model_id: "openai/gpt-6-luna", provider_name: "Azure", name: "Azure | GPT-6 Luna EU", tag: "azure/eu" },
+  ] }), { status: 200, headers: { "content-type": "application/json" } });
+  await assert.rejects(() => assertOpenRouterDiagnosticRouteEligible(async (input, init) => {
+    requestedUrl = String(input);
+    requestMethod = init?.method ?? "";
+    requestHeaders = new Headers(init?.headers);
+    return noOpenAiZdrEndpoint.clone();
+  }, () => new Date("2026-10-11T00:00:00.000Z")), (error: unknown) => {
+    assert.ok(error instanceof OpenRouterDiagnosticRouteIneligibleError);
+    assert.equal(error.evidence.modelEndpointCount, 3);
+    assert.equal(error.evidence.matchingEligibleEndpointCount, 0);
+    assert.deepEqual(error.evidence.providerAllowlist, ["openai"]);
+    return true;
+  });
+  assert.equal(requestedUrl, "https://openrouter.ai/api/v1/endpoints/zdr");
+  assert.equal(requestMethod, "GET");
+  assert.equal(requestHeaders?.has("authorization"), false);
+
+  const eligible = await assertOpenRouterDiagnosticRouteEligible(async () => new Response(JSON.stringify({ data: [
+    { model_id: "openai/gpt-6-luna", provider_name: "OpenAI", name: "OpenAI | GPT-6 Luna", tag: "openai" },
+    { model_id: "openai/gpt-6-luna", provider_name: "Azure", name: "Azure | GPT-6 Luna", tag: "azure" },
+  ] }), { status: 200 }), () => new Date("2026-10-11T00:00:00.000Z"));
+  assert.equal(eligible.matchingEligibleEndpointCount, 1);
+  assert.equal(eligible.matchingEligibleEndpoints[0]!.provider, "OpenAI");
+});
+
+test("an ineligible pre-dispatch route stops before reservations and safely permits a metadata recheck", async () => {
+  await withTempDirectory(async (outputRoot) => {
+    let catalogChecks = 0;
+    let generationCalls = 0;
+    const transportFactory = async (): Promise<OpenRouterTransport> => {
+      catalogChecks += 1;
+      await assertOpenRouterDiagnosticRouteEligible(async () => new Response(JSON.stringify({ data: [
+        { model_id: "openai/gpt-6-luna", provider_name: "Azure", name: "Azure | GPT-6 Luna", tag: "azure" },
+      ] }), { status: 200 }));
+      return { endpoint: OPENROUTER_DEFAULT_ENDPOINT, generate: async () => { generationCalls += 1; return unexpectedResult(); } };
+    };
+    const first = await runFictionalIfsDiagnostic(validInvocation, { workspaceRoot: process.cwd(), outputRoot, transportFactory });
+    assert.equal(first.status, "diagnostic_stopped");
+    assert.equal(first.providerDispatchCount, 0);
+    assert.equal(first.attempts.length, 0);
+    assert.equal(first.budget.unknownOrInFlightReservedCostMicros, 0);
+    assert.equal(first.budget.remainingAuthorizedMicros, 3_000_000);
+    assert.match(first.blockers[0] ?? "", /Pre-dispatch check failed:.*none from the pinned provider/u);
+
+    const second = await runFictionalIfsDiagnostic(validInvocation, { workspaceRoot: process.cwd(), outputRoot, transportFactory });
+    assert.equal(second.status, "diagnostic_stopped");
+    assert.equal(catalogChecks, 2, "a no-dispatch eligibility failure can recheck public metadata without changing run identity");
+    assert.equal(generationCalls, 0, "the generation transport is never called for an ineligible route");
+  });
 });
 
 test("the explicit continuation flag cannot authorize a fresh run without its exact prior unknown attempt", async () => {
@@ -142,6 +239,52 @@ test("the changed OpenAI route preserves the prior unknown attempt and requires 
     }), /explicit --continue-after-unknown-provider-attempt operator flag/);
     assert.equal(transportFactoryCalls, 0);
     assert.deepEqual(await readFile(path.join(seeded.runDirectory, "run.json")), seeded.originalRunBytes, "the rejected invocation cannot overwrite the existing stopped run");
+  });
+});
+
+test("a fresh owner-authorized epoch isolates its budget and retains safe transport causes", async () => {
+  await withTempDirectory(async (outputRoot) => {
+    const prior = await seedLegacyUnknownRun(outputRoot);
+    const invocation = parseFictionalIfsDiagnosticArgs([...validArgs, "--owner-authorized-fresh-budget-epoch-2"]);
+    const originalFetch = globalThis.fetch;
+    let calls = 0;
+    let requestId = "";
+    globalThis.fetch = async (_input, init) => {
+      calls += 1;
+      requestId = new Headers(init?.headers).get("x-request-id") ?? "";
+      const cause = Object.assign(new Error("resolver detail must not be retained"), { code: "ENOTFOUND", syscall: "getaddrinfo", hostname: "openrouter.ai" });
+      throw new TypeError("fetch failed", { cause });
+    };
+    try {
+      const result = await runFictionalIfsDiagnostic(invocation, {
+        workspaceRoot: process.cwd(),
+        outputRoot,
+        transportFactory: ({ fetch }) => new OpenRouterClient({ apiKey: "test-key", fetch }),
+      });
+      assert.equal(result.status, "diagnostic_stopped");
+      assert.equal(result.runId, "gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011-fresh-budget-epoch-2");
+      assert.notEqual(result.outputDirectory, prior.runDirectory);
+      assert.match(requestId, /-fresh-budget-epoch-2:C01:IFS:initial:openai-gpt-6-luna-max:attempt-1$/u);
+      assert.equal(calls, 1, "a single fresh C01 request is attempted and C02 is not sent after a no-response outcome");
+      assert.equal(result.authorization.budgetEpoch, 2);
+      assert.equal(result.authorization.priorRunBudgetDisposition?.priorUnknownReservedMicros, 230_000);
+      assert.equal(result.authorization.priorRunBudgetDisposition?.priorInvoiceStatusRemainsUnknown, true);
+      assert.equal(result.budget.unknownOrInFlightReservedCostMicros, FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros);
+      assert.equal(result.budget.remainingAuthorizedMicros, FICTIONAL_IFS_DIAGNOSTIC_LIMITS.aggregateCostCapMicros - FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros);
+      const attempts = JSON.parse(await readFile(path.join(result.outputDirectory, "attempts.json"), "utf8")) as {
+        attempts: Array<{ diagnostic?: { causeCode?: string; causeSyscall?: string; message?: string } }>;
+      };
+      assert.equal(attempts.attempts[0]?.diagnostic?.causeCode, "ENOTFOUND");
+      assert.equal(attempts.attempts[0]?.diagnostic?.causeSyscall, "getaddrinfo");
+      assert.equal(JSON.stringify(attempts.attempts[0]?.diagnostic).includes("resolver detail must not be retained"), false);
+      const dispatches = JSON.parse(await readFile(path.join(result.outputDirectory, "dispatches.json"), "utf8")) as {
+        entries: Array<{ requestVariant?: string }>;
+      };
+      assert.equal(dispatches.entries[0]?.requestVariant, "fresh-budget-epoch-2");
+      assert.deepEqual(await readFile(path.join(prior.runDirectory, "run.json")), prior.originalRunBytes, "the prior run remains byte-for-byte unchanged");
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
   });
 });
 

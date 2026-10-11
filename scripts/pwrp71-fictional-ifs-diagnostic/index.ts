@@ -1,5 +1,6 @@
 import { loadEnvConfig } from "@next/env";
 import { OpenRouterClient } from "../../lib/server/openrouter/client.ts";
+import { assertOpenRouterDiagnosticRouteEligible, assertOpenRouterReachable } from "./connectivity.ts";
 import {
   parseFictionalIfsDiagnosticArgs,
   runFictionalIfsDiagnostic,
@@ -10,10 +11,12 @@ async function main(): Promise<void> {
   const workspaceRoot = process.cwd();
   const run = await runFictionalIfsDiagnostic(invocation, {
     workspaceRoot,
-    transportFactory: ({ fetch }) => {
+    transportFactory: async ({ fetch }) => {
       // Read the credential only after the diagnostic module has checked the
       // owner scope, approvals, current source pins, packets, pricing, and
       // exact no-dispatch request identity.
+      await assertOpenRouterReachable(globalThis.fetch);
+      await assertOpenRouterDiagnosticRouteEligible(globalThis.fetch);
       loadEnvConfig(workspaceRoot);
       const apiKey = process.env.OPENROUTER_API_KEY;
       if (!apiKey) throw new Error("OPENROUTER_API_KEY is not available after local environment loading; no provider request was made.");

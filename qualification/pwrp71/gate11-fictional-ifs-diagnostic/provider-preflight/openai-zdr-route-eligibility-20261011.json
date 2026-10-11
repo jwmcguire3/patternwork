@@ -1,0 +1,183 @@
+{
+  "schemaVersion": "PWRP71-OPENROUTER-ROUTE-ELIGIBILITY-CHECK-1",
+  "purpose": "read-only route compatibility audit; no credential, prompt, or generation request used",
+  "checkedAt": "2026-10-11T08:19:01.472Z",
+  "candidate": {
+    "model": "openai/gpt-6-luna",
+    "providerPolicy": {
+      "only": [
+        "openai"
+      ],
+      "allow_fallbacks": false,
+      "zdr": true,
+      "data_collection": "deny",
+      "require_parameters": true
+    }
+  },
+  "sources": [
+    {
+      "kind": "model_endpoint_catalog",
+      "url": "https://openrouter.ai/api/v1/models/openai/gpt-6-luna/endpoints",
+      "httpStatus": 200,
+      "responseSha256": "148db410d7cb3500b31c60083e06f67a831bd08da0080531ba0bd9c3a509eec3",
+      "modelEndpointCount": 7,
+      "endpoints": [
+        {
+          "provider": "OpenAI",
+          "tag": "openai/flex",
+          "name": "OpenAI | openai/gpt-6-luna-20260922",
+          "supportedParameters": [
+            "reasoning",
+            "include_reasoning",
+            "seed",
+            "max_tokens",
+            "response_format",
+            "structured_outputs",
+            "tools",
+            "tool_choice",
+            "verbosity",
+            "reasoning_effort"
+          ]
+        },
+        {
+          "provider": "OpenAI",
+          "tag": "openai",
+          "name": "OpenAI | openai/gpt-6-luna-20260922",
+          "supportedParameters": [
+            "reasoning",
+            "include_reasoning",
+            "seed",
+            "max_tokens",
+            "response_format",
+            "structured_outputs",
+            "tools",
+            "tool_choice",
+            "verbosity",
+            "reasoning_effort"
+          ]
+        },
+        {
+          "provider": "Azure",
+          "tag": "azure",
+          "name": "Azure | openai/gpt-6-luna-20260922",
+          "supportedParameters": [
+            "reasoning",
+            "include_reasoning",
+            "max_completion_tokens",
+            "tools",
+            "tool_choice",
+            "seed",
+            "response_format",
+            "structured_outputs",
+            "verbosity",
+            "reasoning_effort"
+          ]
+        },
+        {
+          "provider": "Azure",
+          "tag": "azure/us",
+          "name": "Azure | openai/gpt-6-luna-20260922",
+          "supportedParameters": [
+            "reasoning",
+            "include_reasoning",
+            "max_completion_tokens",
+            "tools",
+            "tool_choice",
+            "seed",
+            "response_format",
+            "structured_outputs",
+            "verbosity",
+            "reasoning_effort"
+          ]
+        },
+        {
+          "provider": "Azure",
+          "tag": "azure/eu",
+          "name": "Azure | openai/gpt-6-luna-20260922",
+          "supportedParameters": [
+            "reasoning",
+            "include_reasoning",
+            "max_completion_tokens",
+            "tools",
+            "tool_choice",
+            "seed",
+            "response_format",
+            "structured_outputs",
+            "verbosity",
+            "reasoning_effort"
+          ]
+        },
+        {
+          "provider": "Amazon Bedrock",
+          "tag": "amazon-bedrock/us-east-1",
+          "name": "Amazon Bedrock | openai/gpt-6-luna-20260922",
+          "supportedParameters": [
+            "reasoning",
+            "include_reasoning",
+            "max_tokens",
+            "tools",
+            "tool_choice",
+            "response_format",
+            "structured_outputs",
+            "verbosity",
+            "reasoning_effort"
+          ]
+        },
+        {
+          "provider": "OpenAI",
+          "tag": "openai/fast",
+          "name": "OpenAI | openai/gpt-6-luna-20260922",
+          "supportedParameters": [
+            "reasoning",
+            "include_reasoning",
+            "seed",
+            "max_tokens",
+            "response_format",
+            "structured_outputs",
+            "tools",
+            "tool_choice",
+            "verbosity",
+            "reasoning_effort"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "zdr_endpoint_catalog",
+      "url": "https://openrouter.ai/api/v1/endpoints/zdr",
+      "httpStatus": 200,
+      "responseSha256": "564f90486d4bfefd0336dff55ec438a0555f844f10b58a15c3decb4415f13309",
+      "totalEndpointCount": 939,
+      "matchingModelEndpointCount": 3,
+      "matchingModelProviders": [
+        {
+          "provider": "Azure",
+          "tag": "azure",
+          "name": "Azure | openai/gpt-6-luna-20260922"
+        },
+        {
+          "provider": "Azure",
+          "tag": "azure/us",
+          "name": "Azure | openai/gpt-6-luna-20260922"
+        },
+        {
+          "provider": "Azure",
+          "tag": "azure/eu",
+          "name": "Azure | openai/gpt-6-luna-20260922"
+        }
+      ],
+      "matchingOpenAiProviderEndpointCount": 0
+    }
+  ],
+  "decision": {
+    "openAiOnlyZdrIntersectionCount": 0,
+    "eligible": false,
+    "reason": "The currently published OpenRouter ZDR catalog has no OpenAI provider endpoint for this model. OpenAI-only and required ZDR therefore have no eligible route; Azure and other providers are not allowed by the approved provider pin."
+  },
+  "dispatch": {
+    "generationRequestDispatched": false,
+    "providerInferenceCalls": 0,
+    "apiKeyRead": false,
+    "providerCostMicros": 0
+  }
+}

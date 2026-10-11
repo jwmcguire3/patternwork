@@ -54,6 +54,10 @@ export interface QualificationAttemptRecord {
     readonly providerMetadataKeys?: readonly string[];
     readonly providerHints?: readonly string[];
     readonly retryable?: boolean;
+    /** Sanitized local transport cause only; raw exception messages and request data are never persisted. */
+    readonly causeName?: string;
+    readonly causeCode?: string;
+    readonly causeSyscall?: string;
   };
   readonly validation?: { readonly ok: boolean; readonly issues: readonly { readonly code: string; readonly path: string; readonly message: string }[]; readonly draftSha256?: string };
   readonly reviewReceipt?: Record<string, unknown>;
@@ -80,6 +84,31 @@ function scrub(value: string): string {
   return value.replace(/Bearer\s+[^\s"']+/giu, "Bearer [redacted]")
     .replace(/sk-or-v1-[a-zA-Z0-9_-]{8,}/gu, "[redacted]")
     .slice(0, 1200);
+}
+
+function safeTransportCause(error: OpenRouterTransportError): {
+  readonly causeName?: string;
+  readonly causeCode?: string;
+  readonly causeSyscall?: string;
+} {
+  const safeToken = (value: unknown): string | undefined =>
+    typeof value === "string" && /^[A-Za-z0-9_.-]{1,48}$/u.test(value) ? value : undefined;
+  let current: unknown = error.cause;
+  let name: string | undefined;
+  let code: string | undefined;
+  let syscall: string | undefined;
+  for (let depth = 0; depth < 4 && current instanceof Error; depth += 1) {
+    const errno = current as NodeJS.ErrnoException;
+    name ??= safeToken(current.name);
+    code ??= safeToken(errno.code);
+    syscall ??= safeToken(errno.syscall);
+    current = current.cause;
+  }
+  return {
+    ...(name ? { causeName: name } : {}),
+    ...(code ? { causeCode: code } : {}),
+    ...(syscall ? { causeSyscall: syscall } : {}),
+  };
 }
 
 /** A single-writer, repository-local, atomic JSON attempt ledger. */
@@ -211,6 +240,7 @@ export class FileQualificationAttemptStore {
         ...(error.providerUpstreamCode === undefined ? {} : { providerUpstreamCode: error.providerUpstreamCode }),
         ...(error.providerMetadataKeys === undefined ? {} : { providerMetadataKeys: error.providerMetadataKeys }),
         ...(error.providerHints === undefined ? {} : { providerHints: error.providerHints }),
+        ...safeTransportCause(error),
         retryable: error.retryable,
       } : { kind: "unknown", message: scrub(error instanceof Error ? error.message : String(error)) };
       const unknown: QualificationAttemptRecord = {
