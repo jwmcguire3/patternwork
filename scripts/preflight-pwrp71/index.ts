@@ -67,6 +67,9 @@ async function main(): Promise<void> {
   const aggregateCostCapMicros = parseMicros(flags.get("--aggregate-cost-cap-micros"), "--aggregate-cost-cap-micros");
   const providerOnly = flags.get("--provider-only");
   if (providerOnly !== undefined && providerOnly !== "openai") throw new Error("--provider-only currently accepts only the explicitly pinned openai provider.");
+  const diagnosticContinuation = flags.get("--diagnostic-continuation");
+  if (diagnosticContinuation !== undefined && diagnosticContinuation !== "openai-route-continuation-1") throw new Error("--diagnostic-continuation only accepts the reviewed one-time OpenAI route continuation.");
+  if (diagnosticContinuation && providerOnly !== "openai") throw new Error("A diagnostic continuation preflight requires the explicit OpenAI-only provider route.");
   const providerPolicy = providerOnly === "openai" ? GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY : GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY;
   const outputFile = path.resolve(flags.get("--output") ?? OUTPUT_FILE);
   const blockers: string[] = [];
@@ -134,7 +137,7 @@ async function main(): Promise<void> {
       schemaName: "patternwork_ifs_pwrp71_candidate_1",
       schema: prepared.value.response_schema,
       maxOutputTokens: modelPin.maxOutputTokens,
-      idempotencyKey: `pwrp71-fictional-diagnostic:${runId}:${profileId}:${REPORT_TYPE}:initial:openai-gpt-6-luna-max:attempt-1`,
+      idempotencyKey: `pwrp71-fictional-diagnostic:${runId}:${profileId}${diagnosticContinuation && profileId === "C01" ? `:${diagnosticContinuation}` : ""}:${REPORT_TYPE}:initial:openai-gpt-6-luna-max:attempt-1`,
       includeUsage: true,
     } as const;
     const wireRequest = {
@@ -241,6 +244,7 @@ async function main(): Promise<void> {
       reasoningEffort: modelPin.reasoningEffort,
       reportType: REPORT_TYPE,
       providerSelection: providerOnly === "openai" ? "openai_only_no_fallbacks" : "openrouter_default_eligible_provider_routing",
+      requestVariant: diagnosticContinuation ?? "initial",
     },
     fixtureSet: "route-replays-v5",
     sourceManifestPins: {

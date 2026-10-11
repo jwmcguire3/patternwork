@@ -34,7 +34,7 @@ async function main(): Promise<void> {
     blockers: run.blockers,
     outputDirectory: run.outputDirectory,
   }, null, 2)}\n`);
-  if (run.status !== "diagnostic_complete") process.exitCode = 1;
+  if (run.status !== "diagnostic_complete" && run.status !== "diagnostic_complete_with_prior_unknown_cost") process.exitCode = 1;
 }
 
 main().catch((error: unknown) => {

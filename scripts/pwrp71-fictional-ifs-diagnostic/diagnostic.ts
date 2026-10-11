@@ -62,7 +62,13 @@ const APPROVAL_RELATIVE = "qualification/pwrp71/gate10-routing-budget-readiness/
 const REVIEW_RELATIVE = "qualification/pwrp71/gate10-routing-budget-readiness/independent-review/c01-c02-current-scope-review.md";
 const PRICING_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/pricing-check-2026-10-11.json";
 const PREFLIGHT_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-no-dispatch-20261011.json";
+const CONTINUATION_PREFLIGHT_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-continuation-no-dispatch-20261011.json";
 const DIAGNOSTIC_LOCK_NAME = ".diagnostic-run.lock";
+const CONTINUATION_FLAG = "--continue-after-unknown-provider-attempt";
+const LEGACY_DEFAULT_ROUTE_RUN_SHA256 = "63b73b54845e4a719603b77abddd403f7297c6d157be4a8ffbf5f1d29b2e73be";
+const LEGACY_DEFAULT_ROUTE_RUN_FINGERPRINT = "e6223344cc26baa9dea4480b31b0e8c7f1c2296f3313aed0b61c0260a901bd83";
+const LEGACY_C01_ATTEMPT_ID = `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_RUN_ID}:C01:IFS:initial:${FICTIONAL_IFS_DIAGNOSTIC_REQUEST_LABEL}:attempt-1`;
+const OPENAI_ROUTE_CONTINUATION_MARKER = "openai-route-continuation-1";
 
 type ProfileId = "C01" | "C02";
 type DiagnosticPhase = "initial" | "repair" | "escalation" | "review" | "review_after_repair";
@@ -76,6 +82,23 @@ export interface FictionalIfsDiagnosticInvocation {
   readonly reasoningEffort: "max";
   readonly maxCallCostMicros: 115_000;
   readonly aggregateCostCapMicros: 3_000_000;
+  /** Explicit operator signal for the reviewed OpenAI-only continuation of the prior Azure 400. */
+  readonly continueAfterUnknownProviderAttempt?: boolean;
+}
+
+export interface FictionalIfsDiagnosticContinuation {
+  readonly ordinal: 1;
+  readonly reason: "openai_only_provider_route_after_prior_azure_schema_rejection";
+  readonly operatorFlag: typeof CONTINUATION_FLAG;
+  readonly operatorDirective: "run em";
+  readonly priorRunSha256: typeof LEGACY_DEFAULT_ROUTE_RUN_SHA256;
+  readonly priorRunFingerprint: typeof LEGACY_DEFAULT_ROUTE_RUN_FINGERPRINT;
+  readonly priorRunArchiveFile: string;
+  readonly priorAttemptsArchiveFile: string;
+  readonly priorDispatchesArchiveFile: string;
+  readonly carriedUnknownAttemptIds: readonly [typeof LEGACY_C01_ATTEMPT_ID];
+  readonly carriedUnknownReservationMicros: 115_000;
+  readonly startedAt: string;
 }
 
 export interface DiagnosticHttpDispatchRecord {
@@ -83,6 +106,7 @@ export interface DiagnosticHttpDispatchRecord {
   readonly idempotencyKey: string;
   readonly profileId: ProfileId;
   readonly phase: DiagnosticPhase;
+  readonly requestVariant?: typeof OPENAI_ROUTE_CONTINUATION_MARKER;
   readonly model: string;
   readonly reasoningEffort: string;
   readonly endpoint: string;
@@ -134,13 +158,14 @@ export interface FictionalIfsDiagnosticRun {
   readonly schemaVersion: typeof FICTIONAL_IFS_DIAGNOSTIC_SCHEMA;
   readonly resultKind: "fictional_report_diagnostic";
   readonly purpose: "fictional_ifs_generation_validation_automated_review_and_semantic_evaluation";
-  readonly status: "prepared" | "running" | "diagnostic_complete" | "diagnostic_stopped";
+  readonly status: "prepared" | "running" | "diagnostic_complete" | "diagnostic_complete_with_prior_unknown_cost" | "diagnostic_stopped";
   readonly routingQualification: "not_claimed";
   readonly productionActivationEffect: "none";
   readonly runId: typeof FICTIONAL_IFS_DIAGNOSTIC_RUN_ID;
   readonly createdAt: string;
   readonly updatedAt: string;
   readonly runFingerprint: string;
+  readonly continuation?: FictionalIfsDiagnosticContinuation;
   readonly runSha256?: string;
   readonly outputDirectory: string;
   readonly attemptsFile: string;
@@ -313,11 +338,17 @@ const REQUIRED_VALUE_FLAGS = [
 export function parseFictionalIfsDiagnosticArgs(argv: readonly string[]): FictionalIfsDiagnosticInvocation {
   const values = new Map<string, string>();
   let operatorAuthorized = false;
+  let continueAfterUnknownProviderAttempt = false;
   for (let index = 0; index < argv.length; index += 1) {
     const name = argv[index]!;
     if (name === "--owner-authorized-fictional-diagnostic") {
       if (operatorAuthorized) throw new Error(`${name} may be specified only once.`);
       operatorAuthorized = true;
+      continue;
+    }
+    if (name === CONTINUATION_FLAG) {
+      if (continueAfterUnknownProviderAttempt) throw new Error(`${name} may be specified only once.`);
+      continueAfterUnknownProviderAttempt = true;
       continue;
     }
     if (!REQUIRED_VALUE_FLAGS.includes(name as typeof REQUIRED_VALUE_FLAGS[number]) || values.has(name)) {
@@ -339,6 +370,7 @@ export function parseFictionalIfsDiagnosticArgs(argv: readonly string[]): Fictio
     reasoningEffort: values.get("--reasoning-effort") as "max",
     maxCallCostMicros: Number(values.get("--max-call-cost-micros")) as 115_000,
     aggregateCostCapMicros: Number(values.get("--aggregate-cost-cap-micros")) as 3_000_000,
+    continueAfterUnknownProviderAttempt,
   };
   validateInvocation(invocation);
   return invocation;
@@ -375,6 +407,7 @@ async function readBytes(workspaceRoot: string, relative: string): Promise<Buffe
 function buildRequest(input: {
   readonly profileId: ProfileId;
   readonly prepared: Pwrp71PreparedRequest;
+  readonly continuation: boolean;
 }): { readonly request: OpenRouterGenerationRequest; readonly wireRequest: OpenRouterGenerationRequest; readonly requestFingerprint: string; readonly wirePayloadSha256: string } {
   const modelPin = UNQUALIFIED_MOCK_MODEL_POLICY.IFS;
   if (modelPin.model !== "openai/gpt-6-luna" || modelPin.reasoningEffort !== "max"
@@ -382,7 +415,7 @@ function buildRequest(input: {
     || QUALIFICATION_MODEL_ORDER_NOT_FIXED(modelPin)) {
     throw new Error("The IFS candidate policy no longer matches the approved OpenRouter model, reasoning, and output pins.");
   }
-  const invocationKey = `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_RUN_ID}:${input.profileId}`;
+  const invocationKey = `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_RUN_ID}:${input.profileId}${input.continuation && input.profileId === "C01" ? `:${OPENAI_ROUTE_CONTINUATION_MARKER}` : ""}`;
   const request: OpenRouterGenerationRequest = {
     model: modelPin.model,
     reasoningEffort: modelPin.reasoningEffort,
@@ -456,6 +489,7 @@ function validatePreflight(input: {
   readonly questionSource: Pwqe51SourcePackage;
   readonly reportSource: Pwrp71SourcePackage;
   readonly semanticCaseSetSha256: string;
+  readonly continuation: boolean;
 }): string {
   const preflight = input.preflight;
   if (preflight.schemaVersion !== "PWRP71-GATE10-OPENROUTER-NO-DISPATCH-PREFLIGHT-V1"
@@ -468,6 +502,7 @@ function validatePreflight(input: {
   const exactRequests = preflight.exactRequests;
   if (!isRecord(candidate) || candidate.model !== "openai/gpt-6-luna" || candidate.reasoningEffort !== "max" || candidate.reportType !== "IFS"
     || candidate.providerSelection !== "openai_only_no_fallbacks"
+    || (candidate.requestVariant ?? "initial") !== (input.continuation ? OPENAI_ROUTE_CONTINUATION_MARKER : "initial")
     || !isRecord(sourcePins)
     || sourcePins.currentRouterRuntimeSha256 !== input.runtimeSha256
     || sourcePins.questionSourceSha256 !== input.questionSource.manifest.source_binding.source_sha256
@@ -518,11 +553,12 @@ async function prepareDiagnostic(
   validateInvocation(invocation);
   const workspaceRoot = path.resolve(dependencies.workspaceRoot);
   const now = dependencies.now?.() ?? new Date();
+  const preflightRelative = invocation.continueAfterUnknownProviderAttempt ? CONTINUATION_PREFLIGHT_RELATIVE : PREFLIGHT_RELATIVE;
   const [approvalBytes, reviewBytes, pricingBytes, preflightBytes, semanticBytes] = await Promise.all([
     readBytes(workspaceRoot, APPROVAL_RELATIVE),
     readBytes(workspaceRoot, REVIEW_RELATIVE),
     readBytes(workspaceRoot, PRICING_RELATIVE),
-    readBytes(workspaceRoot, PREFLIGHT_RELATIVE),
+    readBytes(workspaceRoot, preflightRelative),
     readBytes(workspaceRoot, "qualification/pwrp71/SEMANTIC_CASES.json"),
   ]);
   const approvalSha256 = sha256Bytes(approvalBytes);
@@ -583,7 +619,7 @@ async function prepareDiagnostic(
       canonicalResponseEvidence,
     });
     if (!prepared.ok) throw new Error(`${fixture.profileId} IFS packet failed current PWRP 7.1 preparation: ${prepared.issues.map((issue) => issue.code).join(", ")}.`);
-    const request = buildRequest({ profileId: fixture.profileId, prepared: prepared.value });
+    const request = buildRequest({ profileId: fixture.profileId, prepared: prepared.value, continuation: invocation.continueAfterUnknownProviderAttempt === true });
     preparedProfiles.push({ fixture, prepared: prepared.value, ...request });
   }
   if (firstFixture.fixtureManifestSha256 !== secondFixture.fixtureManifestSha256
@@ -596,6 +632,7 @@ async function prepareDiagnostic(
     questionSource: firstFixture.questionSource,
     reportSource: firstFixture.reportSource,
     semanticCaseSetSha256,
+    continuation: invocation.continueAfterUnknownProviderAttempt === true,
   });
   const sourcePins: FictionalIfsDiagnosticRun["sourcePins"] = {
     questionRelease: PWQE51_RELEASE_IDENTITY.questionRelease,
@@ -664,6 +701,7 @@ function validateFinalWireRequest(input: string | URL | Request, init: RequestIn
   readonly model: string;
   readonly reasoningEffort: string;
   readonly payloadSha256: string;
+  readonly requestVariant?: typeof OPENAI_ROUTE_CONTINUATION_MARKER;
 } {
   const endpoint = String(input);
   const headers = new Headers(init?.headers);
@@ -672,15 +710,16 @@ function validateFinalWireRequest(input: string | URL | Request, init: RequestIn
   let payload: Record<string, unknown>;
   try { payload = JSON.parse(bodyText) as Record<string, unknown>; }
   catch { throw new Error("The final OpenRouter body is missing or is not valid JSON."); }
-  const match = idempotencyKey.match(/^pwrp71-fictional-diagnostic:gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011:(C01|C02):IFS:(initial|repair|escalation|review|review_after_repair):openai-gpt-6-luna-max:attempt-\d+$/u);
+  const match = idempotencyKey.match(/^pwrp71-fictional-diagnostic:gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011:(C01|C02)(?::(openai-route-continuation-1))?:IFS:(initial|repair|escalation|review|review_after_repair):openai-gpt-6-luna-max:attempt-\d+$/u);
+  const profileId = match?.[1] as ProfileId | undefined;
+  const continuationMarker = match?.[2] as typeof OPENAI_ROUTE_CONTINUATION_MARKER | undefined;
+  const phase = match?.[3] as DiagnosticPhase | undefined;
   if (init?.method !== "POST" || endpoint !== OPENROUTER_DEFAULT_ENDPOINT || !headers.get("authorization")?.startsWith("Bearer ")
-    || !match || !isRecord(payload.reasoning) || !isRecord(payload.provider) || !isRecord(payload.usage)
+    || !profileId || (continuationMarker && profileId !== "C01") || !phase || !isRecord(payload.reasoning) || !isRecord(payload.provider) || !isRecord(payload.usage)
     || !isRecord(payload.prompt_cache_options) || !isRecord(payload.response_format) || !isRecord(payload.response_format.json_schema)) {
     throw new Error("The provider request is outside the journaled fictional diagnostic transport contract.");
   }
   const expectedKeys = ["model", "messages", "stream", "max_completion_tokens", "reasoning", "provider", "prompt_cache_options", "usage", "response_format"];
-  const tierProfile = match[1] as ProfileId;
-  const phase = match[2] as DiagnosticPhase;
   const messages = payload.messages;
   const jsonSchema = payload.response_format.json_schema;
   if (Object.keys(payload).sort().join("|") !== expectedKeys.slice().sort().join("|")
@@ -699,11 +738,12 @@ function validateFinalWireRequest(input: string | URL | Request, init: RequestIn
   }
   return {
     idempotencyKey,
-    profileId: tierProfile,
+    profileId,
     phase,
     model: String(payload.model),
     reasoningEffort: String(payload.reasoning.effort),
     payloadSha256: sha256Text(bodyText),
+    ...(continuationMarker ? { requestVariant: continuationMarker } : {}),
   };
 }
 
@@ -799,6 +839,7 @@ function makeRun(input: {
   readonly attempts: readonly QualificationAttemptRecord[];
   readonly dispatches: DispatchFile;
   readonly blockers: readonly string[];
+  readonly continuation?: FictionalIfsDiagnosticContinuation;
 }): FictionalIfsDiagnosticRun {
   const totals = costAndReserve(input.attempts);
   return {
@@ -812,6 +853,7 @@ function makeRun(input: {
     createdAt: input.createdAt,
     updatedAt: input.updatedAt,
     runFingerprint: input.prepared.runFingerprint,
+    ...(input.continuation ? { continuation: input.continuation } : {}),
     outputDirectory: input.prepared.runDirectory,
     attemptsFile: "attempts.json",
     dispatchesFile: "dispatches.json",
@@ -845,6 +887,147 @@ async function loadRun(file: string): Promise<FictionalIfsDiagnosticRun | undefi
   }
 }
 
+function assertRunManifestDigest(run: FictionalIfsDiagnosticRun): void {
+  if (!run.runSha256) throw new Error("The prior diagnostic run has no integrity digest and cannot be continued.");
+  const withoutDigest = Object.fromEntries(Object.entries(run).filter(([key]) => key !== "runSha256"));
+  if (sha256Canonical(withoutDigest) !== run.runSha256) throw new Error("The prior diagnostic run manifest failed its integrity digest check.");
+}
+
+function validateLegacyContinuationParent(input: {
+  readonly existing: FictionalIfsDiagnosticRun;
+  readonly prepared: PreparedDiagnostic;
+  readonly attempts: readonly QualificationAttemptRecord[];
+  readonly dispatches: DispatchFile;
+  readonly now: Date;
+}): FictionalIfsDiagnosticContinuation {
+  const { existing, prepared, attempts, dispatches } = input;
+  assertRunManifestDigest(existing);
+  if (existing.runSha256 !== LEGACY_DEFAULT_ROUTE_RUN_SHA256
+    || existing.runFingerprint !== LEGACY_DEFAULT_ROUTE_RUN_FINGERPRINT
+    || existing.status !== "diagnostic_stopped"
+    || existing.runId !== FICTIONAL_IFS_DIAGNOSTIC_RUN_ID
+    || existing.scope.providerRestriction !== undefined
+    || existing.scope.profiles.join(",") !== "C01,C02"
+    || existing.scope.reportType !== "IFS"
+    || existing.scope.fixtureSet !== "route-replays-v5"
+    || existing.scope.model !== "openai/gpt-6-luna"
+    || existing.scope.reasoningEffort !== "max") {
+    throw new Error("The fixed run is not the exact prior default-routed diagnostic eligible for its one OpenAI-only continuation.");
+  }
+  const stableSourcePins = [
+    "questionRelease",
+    "questionSourceSha256",
+    "questionSourceManifestSha256",
+    "routerRuntimeSha256",
+    "reportRelease",
+    "reportSourceManifestSha256",
+    "semanticCaseSetSha256",
+    "fixtureManifestSha256",
+    "fixtureSetSha256",
+  ] as const;
+  for (const key of stableSourcePins) {
+    if (existing.sourcePins[key] !== prepared.sourcePins[key]) throw new Error(`The prior diagnostic source pin ${key} differs from the reviewed continuation candidate.`);
+  }
+  if (existing.sourcePins.profiles.length !== 2 || prepared.sourcePins.profiles.length !== 2) throw new Error("The prior diagnostic does not retain exactly the reviewed C01/C02 packet pair.");
+  for (const profileId of ["C01", "C02"] as const) {
+    const prior = existing.sourcePins.profiles.find((row) => row.profileId === profileId);
+    const current = prepared.sourcePins.profiles.find((row) => row.profileId === profileId);
+    if (!prior || !current
+      || prior.fixtureArtifactSha256 !== current.fixtureArtifactSha256
+      || prior.packetSha256 !== current.packetSha256
+      || prior.evidenceSha256 !== current.evidenceSha256) {
+      throw new Error(`The prior ${profileId} evidence packet differs from the source-reviewed continuation candidate.`);
+    }
+  }
+  const priorResult = existing.results;
+  if (priorResult.length !== 1
+    || priorResult[0]?.profileId !== "C01"
+    || priorResult[0]?.reportType !== "IFS"
+    || priorResult[0]?.status !== "failed"
+    || priorResult[0]?.failure?.code !== "client_error"
+    || existing.providerDispatchCount !== 1
+    || existing.budget.aggregateReportedCostMicros !== 0
+    || existing.budget.unknownOrInFlightReservedCostMicros !== FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros
+    || existing.budget.remainingAuthorizedMicros !== FICTIONAL_IFS_DIAGNOSTIC_LIMITS.aggregateCostCapMicros - FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros) {
+    throw new Error("The prior run does not have the exact single failed C01 attempt and held reservation required for continuation.");
+  }
+  const oldProfilePin = existing.sourcePins.profiles.find((row) => row.profileId === "C01");
+  const oldAttempt = attempts.length === 1 ? attempts[0] : undefined;
+  if (!oldAttempt
+    || oldAttempt.attemptId !== LEGACY_C01_ATTEMPT_ID
+    || oldAttempt.status !== "unknown"
+    || oldAttempt.usageStatus !== "unknown"
+    || oldAttempt.request.requestedModel !== "openai/gpt-6-luna"
+    || oldAttempt.request.requestedReasoningEffort !== "max"
+    || oldAttempt.request.schemaName !== "patternwork_ifs_pwrp71_candidate_1"
+    || oldAttempt.reservedCostMicros !== FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros
+    || oldAttempt.maximumCallCostMicros !== FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros
+    || oldAttempt.aggregateCostCapMicros !== FICTIONAL_IFS_DIAGNOSTIC_LIMITS.aggregateCostCapMicros
+    || oldAttempt.billingBasisSha256 !== GPT6_LUNA_BILLING_BASIS_SHA256
+    || oldAttempt.endpoint !== OPENROUTER_DEFAULT_ENDPOINT
+    || oldAttempt.wirePayloadSha256 !== oldProfilePin?.initialWirePayloadSha256
+    || oldAttempt.diagnostic?.providerName !== "Azure"
+    || oldAttempt.diagnostic?.providerUpstreamCode !== "invalid_json_schema"
+    || oldAttempt.diagnostic?.statusCode !== 400) {
+    throw new Error("The durable prior attempt does not match the single unknown-cost Azure schema rejection being continued.");
+  }
+  const priorDispatch = dispatches.entries.length === 1 ? dispatches.entries[0] : undefined;
+  if (!priorDispatch
+    || priorDispatch.idempotencyKey !== LEGACY_C01_ATTEMPT_ID
+    || priorDispatch.profileId !== "C01"
+    || priorDispatch.phase !== "initial"
+    || priorDispatch.model !== "openai/gpt-6-luna"
+    || priorDispatch.endpoint !== OPENROUTER_DEFAULT_ENDPOINT
+    || priorDispatch.outcome !== "response_received"
+    || priorDispatch.responseStatus !== 400
+    || priorDispatch.wirePayloadSha256 !== oldAttempt.wirePayloadSha256
+    || existing.providerDispatchesFileSha256 !== sha256Canonical(dispatches)) {
+    throw new Error("The durable prior dispatch does not match the exact single C01 Azure HTTP 400 attempt.");
+  }
+  const parentRunArchiveFile = `history/prior-default-route-run-${LEGACY_DEFAULT_ROUTE_RUN_SHA256}.json`;
+  return {
+    ordinal: 1,
+    reason: "openai_only_provider_route_after_prior_azure_schema_rejection",
+    operatorFlag: CONTINUATION_FLAG,
+    operatorDirective: "run em",
+    priorRunSha256: LEGACY_DEFAULT_ROUTE_RUN_SHA256,
+    priorRunFingerprint: LEGACY_DEFAULT_ROUTE_RUN_FINGERPRINT,
+    priorRunArchiveFile: parentRunArchiveFile,
+    priorAttemptsArchiveFile: `history/prior-default-route-attempts-${LEGACY_DEFAULT_ROUTE_RUN_SHA256}.json`,
+    priorDispatchesArchiveFile: `history/prior-default-route-dispatches-${LEGACY_DEFAULT_ROUTE_RUN_SHA256}.json`,
+    carriedUnknownAttemptIds: [LEGACY_C01_ATTEMPT_ID],
+    carriedUnknownReservationMicros: FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros,
+    startedAt: input.now.toISOString(),
+  };
+}
+
+async function preserveLegacyRunSnapshot(runDirectory: string, continuation: FictionalIfsDiagnosticContinuation): Promise<void> {
+  const entries = [
+    { source: "run.json", archive: continuation.priorRunArchiveFile },
+    { source: "attempts.json", archive: continuation.priorAttemptsArchiveFile },
+    { source: "dispatches.json", archive: continuation.priorDispatchesArchiveFile },
+  ] as const;
+  for (const entry of entries) {
+    const sourceBytes = await readFile(path.join(runDirectory, entry.source));
+    if (entry.source === "run.json") {
+      const sourceRun = JSON.parse(sourceBytes.toString("utf8")) as FictionalIfsDiagnosticRun;
+      assertRunManifestDigest(sourceRun);
+      if (sourceRun.runSha256 !== continuation.priorRunSha256) throw new Error("The prior run changed before its immutable continuation snapshot could be retained.");
+    }
+    const archivePath = path.join(runDirectory, entry.archive);
+    await mkdir(path.dirname(archivePath), { recursive: true });
+    try {
+      const handle = await open(archivePath, "wx");
+      try { await handle.writeFile(sourceBytes); await handle.sync(); }
+      finally { await handle.close(); }
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
+      const archivedBytes = await readFile(archivePath);
+      if (!archivedBytes.equals(sourceBytes)) throw new Error("The immutable parent-run archive path already contains different evidence.");
+    }
+  }
+}
+
 export async function runFictionalIfsDiagnostic(
   invocation: FictionalIfsDiagnosticInvocation,
   dependencies: FictionalIfsDiagnosticDependencies,
@@ -854,22 +1037,45 @@ export async function runFictionalIfsDiagnostic(
   const runPath = path.join(prepared.runDirectory, "run.json");
   const dispatchFile = path.join(prepared.runDirectory, "dispatches.json");
   const releaseLock = await acquireRunLock(prepared.runDirectory);
+  let continuation: FictionalIfsDiagnosticContinuation | undefined;
+  let carriedUnknownAttemptIds = new Set<string>();
+  let manifestWriteAuthorized = false;
   try {
     const existing = await loadRun(runPath);
-    if (existing && existing.runFingerprint !== prepared.runFingerprint) throw new Error("The fixed diagnostic run ID is already bound to different approvals, source, packet, provider request, or budget pins.");
-    if (existing?.status === "diagnostic_complete" || existing?.status === "diagnostic_stopped") return existing;
-
     const store = new FileQualificationAttemptStore(prepared.runDirectory);
     let dispatches = await readDispatchFile(dispatchFile);
-    let results: FictionalIfsDiagnosticReportResult[] = [...(existing?.results ?? [])];
-    const createdAt = existing?.createdAt ?? now().toISOString();
-    let run = makeRun({ prepared, status: existing ? "running" : "prepared", createdAt, updatedAt: now().toISOString(), results, attempts: await store.list(), dispatches, blockers: [] });
-    run = await saveRun(prepared.runDirectory, run);
     const priorAttempts = await store.list();
-    if (priorAttempts.some((attempt) => attempt.status !== "completed")) {
+    if (!existing && invocation.continueAfterUnknownProviderAttempt) throw new Error(`${CONTINUATION_FLAG} requires the exact previously stopped default-routed run; it cannot authorize a fresh or different run.`);
+    if (existing && existing.runFingerprint !== prepared.runFingerprint) {
+      if (!invocation.continueAfterUnknownProviderAttempt) throw new Error(`The fixed diagnostic run has different request pins; the explicit ${CONTINUATION_FLAG} operator flag is required to consider its one reviewed continuation.`);
+      continuation = validateLegacyContinuationParent({ existing, prepared, attempts: priorAttempts, dispatches, now: now() });
+      await preserveLegacyRunSnapshot(prepared.runDirectory, continuation);
+      carriedUnknownAttemptIds = new Set(continuation.carriedUnknownAttemptIds);
+      manifestWriteAuthorized = true;
+    } else if (existing) {
+      assertRunManifestDigest(existing);
+      continuation = existing.continuation;
+      if (continuation) carriedUnknownAttemptIds = new Set(continuation.carriedUnknownAttemptIds);
+      if (invocation.continueAfterUnknownProviderAttempt && !continuation) throw new Error("The continuation flag cannot be used to repeat a matching request or an unknown attempt without a changed OpenAI-only request identity.");
+      manifestWriteAuthorized = true;
+    } else {
+      manifestWriteAuthorized = true;
+    }
+    const newlyAuthorizedContinuation = Boolean(existing && continuation && existing.runFingerprint !== prepared.runFingerprint);
+    if (existing?.status === "diagnostic_complete" || existing?.status === "diagnostic_complete_with_prior_unknown_cost"
+      || (existing?.status === "diagnostic_stopped" && !newlyAuthorizedContinuation)) return existing;
+
+    let results: FictionalIfsDiagnosticReportResult[] = newlyAuthorizedContinuation
+      ? []
+      : [...(existing?.results ?? [])];
+    const createdAt = existing?.createdAt ?? now().toISOString();
+    let run = makeRun({ prepared, status: existing ? "running" : "prepared", createdAt, updatedAt: now().toISOString(), results, attempts: priorAttempts, dispatches, blockers: [], continuation });
+    run = await saveRun(prepared.runDirectory, run);
+    const uncarriedUnknownAttempts = priorAttempts.filter((attempt) => attempt.status !== "completed" && !carriedUnknownAttemptIds.has(attempt.attemptId));
+    if (uncarriedUnknownAttempts.length) {
       const stopped = makeRun({
         prepared, status: "diagnostic_stopped", createdAt, updatedAt: now().toISOString(), results,
-        attempts: priorAttempts, dispatches, blockers: ["A provider attempt has unknown or in-flight billing status. The reserved amount remains held and this diagnostic will not redispatch it."],
+        attempts: priorAttempts, dispatches, blockers: ["A provider attempt has unknown or in-flight billing status. The reserved amount remains held and this diagnostic will not redispatch it."], continuation,
       });
       return await saveRun(prepared.runDirectory, stopped);
     }
@@ -903,7 +1109,8 @@ export async function runFictionalIfsDiagnostic(
       const priorResult = results.find((result) => result.profileId === profile.fixture.profileId && result.reportType === "IFS");
       if (priorResult?.status === "accepted") continue;
       if (priorResult?.status === "failed") break;
-      const invocationPrefix = `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_RUN_ID}:${profile.fixture.profileId}:`;
+      const profileInvocationPrefix = `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_RUN_ID}:${profile.fixture.profileId}`;
+      const invocationPrefix = `${profileInvocationPrefix}${continuation && profile.fixture.profileId === "C01" ? `:${OPENAI_ROUTE_CONTINUATION_MARKER}` : ""}:`;
       const attemptsBefore = await store.list();
       const spentBefore = attemptsBefore
         .filter((attempt) => !attempt.attemptId.startsWith(invocationPrefix))
@@ -983,7 +1190,7 @@ export async function runFictionalIfsDiagnostic(
         };
       }
       results = [...results.filter((result) => result.profileId !== profile.fixture.profileId), reportResult];
-      const stoppedDueUnknown = attempts.some((attempt) => attempt.status !== "completed");
+      const stoppedDueUnknown = attempts.some((attempt) => attempt.status !== "completed" && !carriedUnknownAttemptIds.has(attempt.attemptId));
       const [latestAttempts, latestDispatches] = await Promise.all([store.list(), readDispatchFile(dispatchFile)]);
       dispatches = latestDispatches;
       const status: FictionalIfsDiagnosticRun["status"] = !generated.ok || stoppedDueUnknown ? "diagnostic_stopped" : "running";
@@ -996,6 +1203,7 @@ export async function runFictionalIfsDiagnostic(
         attempts: latestAttempts,
         dispatches,
         blockers: generated.ok ? [] : [`${profile.fixture.profileId} stopped after ${generated.failure.code}: ${generated.failure.message}`],
+        continuation,
       });
       run = await saveRun(prepared.runDirectory, run);
       if (status === "diagnostic_stopped") break;
@@ -1004,13 +1212,22 @@ export async function runFictionalIfsDiagnostic(
     const attempts = await store.list();
     dispatches = await readDispatchFile(dispatchFile);
     const allAccepted = ["C01", "C02"].every((profileId) => results.some((result) => result.profileId === profileId && result.status === "accepted"));
-    const hasUnknown = attempts.some((attempt) => attempt.status !== "completed");
-    const status: FictionalIfsDiagnosticRun["status"] = allAccepted && !hasUnknown ? "diagnostic_complete" : "diagnostic_stopped";
-    const blockers = status === "diagnostic_complete" ? [] : run.blockers.length ? run.blockers : [
-      hasUnknown ? "A provider attempt has unknown billing status; its reservation remains held and no retry was made." : "The approved C01/C02 diagnostic did not complete both accepted IFS outputs.",
-    ];
-    return await saveRun(prepared.runDirectory, makeRun({ prepared, status, createdAt, updatedAt: now().toISOString(), results, attempts, dispatches, blockers }));
+    const hasUnresolvedNewAttempt = attempts.some((attempt) => attempt.status !== "completed" && !carriedUnknownAttemptIds.has(attempt.attemptId));
+    const hasCarriedUnknown = attempts.some((attempt) => attempt.status !== "completed" && carriedUnknownAttemptIds.has(attempt.attemptId));
+    const workComplete = allAccepted && !hasUnresolvedNewAttempt;
+    const status: FictionalIfsDiagnosticRun["status"] = !workComplete
+      ? "diagnostic_stopped"
+      : hasCarriedUnknown ? "diagnostic_complete_with_prior_unknown_cost" : "diagnostic_complete";
+    const blockers = status === "diagnostic_complete"
+      ? []
+      : status === "diagnostic_complete_with_prior_unknown_cost"
+        ? ["Both requested reports completed. The prior Azure attempt remains an unknown $0.115 reservation in this same budget journal; it was preserved and not retried."]
+        : run.blockers.length ? run.blockers : [
+          hasUnresolvedNewAttempt ? "A new provider attempt has unknown billing status; its reservation remains held and no retry was made." : "The approved C01/C02 diagnostic did not complete both accepted IFS outputs.",
+        ];
+    return await saveRun(prepared.runDirectory, makeRun({ prepared, status, createdAt, updatedAt: now().toISOString(), results, attempts, dispatches, blockers, continuation }));
   } catch (error) {
+    if (!manifestWriteAuthorized) throw error;
     const store = new FileQualificationAttemptStore(prepared.runDirectory);
     const [attempts, dispatches] = await Promise.all([store.list().catch(() => []), readDispatchFile(dispatchFile).catch(() => ({ schemaVersion: 1 as const, entries: [] }))]);
     const prior = await loadRun(runPath).catch(() => undefined);
@@ -1025,6 +1242,7 @@ export async function runFictionalIfsDiagnostic(
       blockers: [error instanceof QualificationAttemptError && error.code === "attempt_uncertain"
         ? "A provider attempt has unknown billing status; its full reservation is retained and no automatic retry was attempted."
         : error instanceof Error ? error.message : "The diagnostic stopped after an unexpected operational error."],
+      continuation,
     });
     return await saveRun(prepared.runDirectory, stopped);
   } finally {
@@ -1073,6 +1291,7 @@ export function createDiagnosticFetch(input: {
       idempotencyKey: checked.idempotencyKey,
       profileId: checked.profileId,
       phase: checked.phase,
+      ...(checked.requestVariant ? { requestVariant: checked.requestVariant } : {}),
       model: checked.model,
       reasoningEffort: checked.reasoningEffort,
       endpoint: String(request),

@@ -1,0 +1,140 @@
+npm notice run patternwork@0.1.0 build
+npm notice run next build
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+workflows build complete (23 steps, 3 workflows, time 57ms)
+   ▲ Next.js 16.0.7 (Turbopack)
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Turbopack build encountered 3 warnings:
+./lib/server/debug/report-runner.ts:99:66
+The file pattern (<dynamic> '/lib/server/assessment/pwqe51-router.ts' | <dynamic> 'lib/server/assessment/pwqe51-router.ts' | <dynamic> '/lib/server/assessment/pwqe51-coverage.ts' | <dynamic> 'lib/server/assessment/pwqe51-coverage.ts' | <dynamic> '/lib/server/assessment/pwqe51-flags.ts' | <dynamic> 'lib/server/assessment/pwqe51-flags.ts' | <dynamic> '/lib/server/reports/pwqe51-packet.ts' | <dynamic> 'lib/server/reports/pwqe51-packet.ts' | <dynamic> '/' <dynamic> | <dynamic>) matches 13024 files in [project]/
+   97 |   const files: Record<string, string> = {};
+   98 |   for (const relative of ROUTER_IMPLEMENTATION_FILES) {
+>  99 |     files[relative] = createHash("sha256").update(await readFile(path.join(workspaceRoot, relative))).digest("hex");
+      |                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  100 |   }
+  101 |   return sha256Canonical(files);
+  102 | }
+
+Overly broad patterns can lead to build performance issues and over bundling.
+
+Import traces:
+  #1 [App Route]:
+    ./lib/server/debug/report-runner.ts
+    ./app/.well-known/workflow/v1/step/route.js
+
+  #2 [App Route]:
+    ./lib/server/debug/report-runner.ts
+    ./app/api/debug/reports/[runId]/handler.ts
+    ./app/api/[...path]/route.ts
+
+  #3 [App Route]:
+    ./lib/server/debug/report-runner.ts
+    ./lib/question-engine/source-integrity.ts
+    ./lib/server/exports/service.ts
+    ./app/response-exports/consume/route.ts
+
+
+./lib/question-engine/source-integrity.ts:179:41
+The file pattern (<dynamic> '/specs/patternwork/question-engine-v3.1' | <dynamic> 'specs/patternwork/question-engine-v3.1' | <dynamic> '/specs/patternwork/report-prompts-v4.1' | <dynamic> 'specs/patternwork/report-prompts-v4.1' | <dynamic> '/' <dynamic> | <dynamic>) matches 13024 files in [project]/
+  177 |   for (const directory of CANONICAL_DIRECTORIES) {
+  178 |     try {
+> 179 |       for (const entry of await readdir(path.join(workspaceRoot, directory), { withFileTypes: true })) {
+      |                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  180 |         if (entry.isFile()) observed.add(`${directory}/${entry.name}`);
+  181 |       }
+  182 |     } catch (error) {
+
+Overly broad patterns can lead to build performance issues and over bundling.
+
+Import traces:
+  App Route:
+    ./lib/question-engine/source-integrity.ts
+    ./lib/server/exports/service.ts
+    ./app/response-exports/consume/route.ts
+
+  Server Component:
+    ./lib/question-engine/source-integrity.ts
+    ./lib/server/exports/service.ts
+    ./app/response-exports/[assessmentId]/page.tsx
+
+
+./lib/server/reports/qualification/fixtures.ts:128:23
+The file pattern (<dynamic> | <dynamic> '/qualification/pwrp71' | '/ROOT//qualification/pwrp71' | <dynamic> 'qualification/pwrp71' | '/ROOT/qualification/pwrp71') matches 11146 files in [project]/
+  126 |   readonly fixtureRoot?: string;
+  127 | } = {}): Promise<Pwrp71QualificationFixtures> {
+> 128 |   const fixtureRoot = path.resolve(options.fixtureRoot ?? path.join(options.workspaceRoot ?? process.cwd(), FIXTURE_DIRECTORY));
+      |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  129 |   let manifest: FixtureManifest;
+  130 |   try {
+  131 |     manifest = parseJson<FixtureManifest>(await readFile(path.join(fixtureRoot, "fixture-manifest.json"), "utf8"), "PWRP71 fixture manifest");
+
+Overly broad patterns can lead to build performance issues and over bundling.
+
+Import traces:
+  #1 [App Route]:
+    ./lib/server/reports/qualification/fixtures.ts
+    ./lib/question-engine/source-integrity.ts
+    ./lib/server/exports/service.ts
+    ./app/response-exports/consume/route.ts
+
+  #2 [App Route]:
+    ./lib/server/reports/qualification/fixtures.ts
+    ./lib/server/debug/report-runner.ts
+    ./app/api/debug/reports/[runId]/handler.ts
+    ./app/api/[...path]/route.ts
+
+
+ ✓ Compiled successfully in 3.3s
+   Running TypeScript ...
+   Collecting page data using 31 workers ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Generating static pages using 31 workers (0/14) ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Generating static pages using 31 workers (3/14)
+   Generating static pages using 31 workers (6/14)
+   Generating static pages using 31 workers (10/14)
+ ✓ Generating static pages using 31 workers (14/14) in 916.0ms
+   Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /.well-known/workflow/v1/flow
+├ ƒ /.well-known/workflow/v1/step
+├ ƒ /.well-known/workflow/v1/webhook/[token]
+├ ƒ /api/[...path]
+├ ○ /assessment
+├ ○ /cannawithdrawl
+├ ○ /companion
+├ ○ /debug
+├ ○ /method
+├ ƒ /reports
+├ ƒ /reports/[assessmentId]
+├ ƒ /reports/consume
+├ ƒ /response-exports/[assessmentId]
+├ ƒ /response-exports/consume
+└ ○ /selfmap
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand

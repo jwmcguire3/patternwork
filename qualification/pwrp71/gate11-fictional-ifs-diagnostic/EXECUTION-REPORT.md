@@ -1,7 +1,7 @@
 # Gate 11 — C01/C02 fictional IFS diagnostic execution report
 
 **Date:** 2026-10-11
-**Diagnostic status:** `diagnostic_stopped` after the first provider request
+**Diagnostic status:** `diagnostic_stopped` after the owner-authorized OpenAI-only continuation received no HTTP response; C02 was not reached
 **Routing qualification:** not claimed
 **Production activation effect:** none
 
@@ -100,3 +100,31 @@ An independent read-only Sol review of the implementation found no remaining sco
 - Exact CLI output and exit status: `verification/live-diagnostic-cli.log`, `verification/live-diagnostic-cli.exit-code.txt`
 - Current no-dispatch preflight command output: `verification/final-no-dispatch-preflight.log`, `verification/final-no-dispatch-preflight.exit-code.txt`
 - Verification logs and exit statuses: `verification/`
+
+## Owner-directed OpenAI-only continuation
+
+On 2026-10-11 the owner explicitly directed the already authorized C01/C02 IFS diagnostic to continue. The CLI required `--continue-after-unknown-provider-attempt`, preserved byte-for-byte archives of the first default-routed run, attempts, and dispatch records, and used the same fixed run ID and durable budget journal. The prior Azure attempt was not replayed. Its unknown $0.115 reservation remained held.
+
+Immediately before dispatch, the diagnostic consumed `provider-preflight/c01-c02-ifs-openai-only-continuation-no-dispatch-20261011.json` (SHA-256 `7f2f2dc480863ad771d4afc023db0017727477923a5a7ff4e1ab0eca3288da79`). It prepared exactly C01 IFS followed by C02 IFS with zero calls, pinning `route-replays-v5`, runtime SHA-256 `d08a7da2c6e3119c75e3e60917da42a60bbe6615024f901ac5b11ed26fa06d7d`, C01 packet `c4b8363436f22b34b28095b155158cb5716bc397d6231a284b5c6d710df4e036`, C02 packet `c14bbcbd4ff8b6f69c1074b12a15d9132be9d3373d5d825257ff5dcf8ad61055`, and the approved model/effort. Both prepared requests included `provider.only: ["openai"]` and `allow_fallbacks: false`. A second no-dispatch preflight immediately before the live command is retained as `provider-preflight/c01-c02-ifs-openai-only-continuation-final-no-dispatch-20261011.json` (SHA-256 `80eda1bd39061a2a57631a82d97ebcf5b7c7d7e5d88ba4935accc4c1b681fae7`); it had the same C01/C02 request fingerprints and wire payload hashes as the consumed preflight. Both preflights had zero calls. Full-routing readiness remains blocked by the missing independent routing receipt; the separate approved diagnostic path does not alter that result.
+
+Current OpenRouter pricing and routing pages were checked on 2026-10-11. The model page still lists $0.10/M input and $0.50/M output, JSON-schema structured outputs, and OpenAI as a serving provider; it also lists Azure and Amazon Bedrock for ordinary routing. This run's request-level provider restriction selected OpenAI only and disabled fallbacks. [Model pricing and provider listing](https://openrouter.ai/openai/gpt-6-luna?view=api), [provider-selection documentation](https://openrouter.ai/docs/guides/routing/provider-selection). The $0.115 reservation is provider-dependent and is not an invoice maximum.
+
+The continuation sent exactly one new C01 IFS generation request through OpenRouter using request variant `openai-route-continuation-1` and wire payload SHA-256 `10c477e2220c22d0a07ba97636ed64238bcc8ded9b3d3d6d08fb2dfcb0db5b1b`. The network failed before an HTTP response arrived. Accordingly, the journal marks the attempt `unknown`; it contains no upstream provider identity, HTTP status, token usage, finish reason, generation ID, or reported cost. The OpenAI-only request restriction is known, but the upstream provider cannot be independently confirmed without a response receipt. No schema acceptance or rejection was observed. The program stopped on C01 and did not send C02.
+
+| Measure | Continuation result |
+|---|---:|
+| New request sent | 1 (C01 IFS; no HTTP response) |
+| Total durable dispatch entries | 2 (prior Azure response plus this continuation request) |
+| C02 requests | 0 |
+| Successful report drafts / validators / reviewer receipts | 0 / 0 / 0 |
+| Reported cost and usage | $0 / none returned; invoice cost remains unknown |
+| Unknown reservations held | $0.230 (the original $0.115 Azure attempt plus this $0.115 continuation attempt) |
+| Remaining authorized amount | $2.770 of $3.000 |
+
+No report prose was produced, so CQ01 report-quality evaluation remains unavailable. The pinned fictional packet still contains the previously reviewed C01/C02 distinction, but packet evidence alone cannot show how a writer would interpret it. No retry was attempted after the unknown network outcome, and the stopped run will not automatically dispatch again.
+
+The live CLI result, including its exit code 1, is retained at `verification/openai-route-continuation-cli.log` and `verification/openai-route-continuation-cli.exit-code.txt`. Current run, attempts, and dispatch file byte hashes are respectively `4ad646248ddf389a9e27d9f5a565ecd105145e56721dc7e3cfd4c1e9a7b7c225`, `1790def527b2e30f3d6fe8e59177c05c903502fb2ee684992795a0a03010d9c1`, and `76c85667172b32dca2609215105e316b91b365fd4d96671dda9de78c09209baf`.
+
+Current verification after the continuation changes: the captured rerun passed `npm test` 418/418, typecheck, focused fictional-diagnostic tests 12/12, and scoped ESLint (all exit 0). The default-sandbox build retry failed with the known SWC canonicalization/access-denied error (exit 1); the same build outside the restrictive sandbox passed (exit 0). Both build outputs and exit codes, plus the successful test/typecheck/lint logs, are retained separately under `verification/`. The current environment's API credential presence check passed without displaying the secret.
+
+A separate read-only Sol reviewer independently confirmed the two-entry dispatch journal, the single new continuation attempt with `no_http_response`, the absence of provider identity/status/usage, both unknown reservations and the remaining authorization, zero C02 attempts, and no report/validator/reviewer artifacts. The reviewer recomputed the run and dispatch digests and verified the archived first-attempt state and packet/source pins. The current embedded run digest is `12bcff8e40130b084125a24e6653a0678c7191cdebaa076daea0499cafcf2e41`; the current canonical dispatch digest is `17b16a4886e5b18ea292876efb2e7380f62007cd9a9248774caf1ab0d67c048f`. Their conclusion was that stopping without another retry is correct.

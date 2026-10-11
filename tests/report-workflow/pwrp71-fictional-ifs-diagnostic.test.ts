@@ -48,6 +48,28 @@ const validInvocation: FictionalIfsDiagnosticInvocation = {
   aggregateCostCapMicros: 3_000_000,
 };
 
+const LEGACY_RUN_ARCHIVE_SHA = "63b73b54845e4a719603b77abddd403f7297c6d157be4a8ffbf5f1d29b2e73be";
+const LEGACY_RUN_ROOT = path.join(process.cwd(), "qualification", "pwrp71", "gate11-fictional-ifs-diagnostic", "live", FICTIONAL_IFS_DIAGNOSTIC_RUN_ID);
+
+async function seedLegacyUnknownRun(outputRoot: string): Promise<{ readonly runDirectory: string; readonly originalRunBytes: Buffer<ArrayBufferLike> }> {
+  const runDirectory = path.join(outputRoot, FICTIONAL_IFS_DIAGNOSTIC_RUN_ID);
+  const archivedNames = {
+    "run.json": `prior-default-route-run-${LEGACY_RUN_ARCHIVE_SHA}.json`,
+    "attempts.json": `prior-default-route-attempts-${LEGACY_RUN_ARCHIVE_SHA}.json`,
+    "dispatches.json": `prior-default-route-dispatches-${LEGACY_RUN_ARCHIVE_SHA}.json`,
+  } as const;
+  await mkdir(runDirectory, { recursive: true });
+  let originalRunBytes: Buffer<ArrayBufferLike> = Buffer.alloc(0);
+  for (const filename of Object.keys(archivedNames) as Array<keyof typeof archivedNames>) {
+    let bytes: Buffer;
+    try { bytes = await readFile(path.join(LEGACY_RUN_ROOT, "history", archivedNames[filename])); }
+    catch { bytes = await readFile(path.join(LEGACY_RUN_ROOT, filename)); }
+    await writeFile(path.join(runDirectory, filename), Uint8Array.from(bytes));
+    if (filename === "run.json") originalRunBytes = bytes;
+  }
+  return { runDirectory, originalRunBytes };
+}
+
 async function withTempDirectory(run: (directory: string) => Promise<void>): Promise<void> {
   await mkdir(TEST_SCRATCH, { recursive: true });
   const directory = await mkdtemp(path.join(TEST_SCRATCH, "pwrp71-fictional-ifs-"));
@@ -74,6 +96,7 @@ test("diagnostic CLI requires exact owner scope, candidate, and both approved ca
     { name: "production assessment selector", args: [...validArgs, "--assessment-id", "assessment-1"] },
     { name: "routing receipt injection", args: [...validArgs, "--routing-evidence", "receipt.json"] },
     { name: "approval manifest request", args: [...validArgs, "--activation-manifest", "approval.json"] },
+    { name: "duplicate continuation flag", args: [...validArgs, "--continue-after-unknown-provider-attempt", "--continue-after-unknown-provider-attempt"] },
   ];
   for (const entry of cases) {
     let providerFactoryCalls = 0;
@@ -92,6 +115,94 @@ test("diagnostic CLI requires exact owner scope, candidate, and both approved ca
     assert.equal(providerFactoryCalls, 0, `${entry.name} must reject before provider initialization`);
     assert.equal(providerCalls, 0, `${entry.name} must reject before provider dispatch`);
   }
+});
+
+test("the explicit continuation flag cannot authorize a fresh run without its exact prior unknown attempt", async () => {
+  const invocation = parseFictionalIfsDiagnosticArgs([...validArgs, "--continue-after-unknown-provider-attempt"]);
+  assert.equal(invocation.continueAfterUnknownProviderAttempt, true);
+  await withTempDirectory(async (outputRoot) => {
+    let transportFactoryCalls = 0;
+    await assert.rejects(() => runFictionalIfsDiagnostic(invocation, {
+      workspaceRoot: process.cwd(),
+      outputRoot,
+      transportFactory: () => { transportFactoryCalls += 1; return { generate: async () => unexpectedResult() }; },
+    }), /requires the exact previously stopped default-routed run/);
+    assert.equal(transportFactoryCalls, 0);
+  });
+});
+
+test("the changed OpenAI route preserves the prior unknown attempt and requires an explicit one-time continuation", async () => {
+  await withTempDirectory(async (outputRoot) => {
+    const seeded = await seedLegacyUnknownRun(outputRoot);
+    let transportFactoryCalls = 0;
+    await assert.rejects(() => runFictionalIfsDiagnostic(validInvocation, {
+      workspaceRoot: process.cwd(),
+      outputRoot,
+      transportFactory: () => { transportFactoryCalls += 1; return { generate: async () => unexpectedResult() }; },
+    }), /explicit --continue-after-unknown-provider-attempt operator flag/);
+    assert.equal(transportFactoryCalls, 0);
+    assert.deepEqual(await readFile(path.join(seeded.runDirectory, "run.json")), seeded.originalRunBytes, "the rejected invocation cannot overwrite the existing stopped run");
+  });
+});
+
+test("an explicitly authorized OpenAI continuation allocates a fresh C01 attempt and keeps the Azure reservation", async () => {
+  await withTempDirectory(async (outputRoot) => {
+    const seeded = await seedLegacyUnknownRun(outputRoot);
+    let networkCalls = 0;
+    let requestId = "";
+    let outgoingProvider: unknown;
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = async (_input, init) => {
+      networkCalls += 1;
+      requestId = new Headers(init?.headers).get("x-request-id") ?? "";
+      const body = JSON.parse(String(init?.body)) as Record<string, unknown>;
+      outgoingProvider = body.provider;
+      return new Response(JSON.stringify({ error: { message: "Simulated OpenAI schema rejection", code: 400, metadata: { provider_name: "OpenAI", provider_error_code: "invalid_json_schema" } } }), {
+        status: 400,
+        headers: { "content-type": "application/json" },
+      });
+    };
+    try {
+      const result = await runFictionalIfsDiagnostic({ ...validInvocation, continueAfterUnknownProviderAttempt: true }, {
+        workspaceRoot: process.cwd(),
+        outputRoot,
+        transportFactory: ({ fetch }) => {
+          return new OpenRouterClient({ apiKey: "test-key", fetch });
+        },
+      });
+      assert.equal(result.status, "diagnostic_stopped");
+      assert.equal(networkCalls, 1, "only the new C01 OpenAI-only request is dispatched; the prior unknown attempt is not replayed and C02 is not reached");
+      assert.match(requestId, /:C01:openai-route-continuation-1:IFS:initial:openai-gpt-6-luna-max:attempt-1$/u);
+      assert.notEqual(requestId, `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_RUN_ID}:C01:IFS:initial:openai-gpt-6-luna-max:attempt-1`);
+      assert.deepEqual(outgoingProvider, GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY);
+      assert.equal(result.providerDispatchCount, 2);
+      assert.equal(result.budget.unknownOrInFlightReservedCostMicros, 2 * FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros);
+      assert.equal(result.budget.remainingAuthorizedMicros, FICTIONAL_IFS_DIAGNOSTIC_LIMITS.aggregateCostCapMicros - 2 * FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros);
+      assert.equal(result.attempts.length, 2);
+      assert.equal(result.attempts[0]!.attemptId, `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_RUN_ID}:C01:IFS:initial:openai-gpt-6-luna-max:attempt-1`);
+      assert.equal(result.attempts[0]!.status, "unknown");
+      assert.equal(result.attempts[1]!.attemptId, requestId);
+      assert.equal(result.attempts[1]!.status, "unknown");
+      assert.equal(result.continuation?.carriedUnknownReservationMicros, FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros);
+      const archivedRun = await readFile(path.join(seeded.runDirectory, result.continuation!.priorRunArchiveFile));
+      assert.deepEqual(archivedRun, seeded.originalRunBytes, "the exact prior run manifest is archived before its current manifest is updated");
+      const dispatches = JSON.parse(await readFile(path.join(seeded.runDirectory, "dispatches.json"), "utf8")) as { entries: Array<{ idempotencyKey: string; requestVariant?: string; responseStatus?: number }> };
+      assert.equal(dispatches.entries[0]!.idempotencyKey, result.attempts[0]!.attemptId);
+      assert.equal(dispatches.entries[1]!.idempotencyKey, requestId);
+      assert.equal(dispatches.entries[1]!.requestVariant, "openai-route-continuation-1");
+      assert.equal(dispatches.entries[1]!.responseStatus, 400);
+
+      const repeated = await runFictionalIfsDiagnostic({ ...validInvocation, continueAfterUnknownProviderAttempt: true }, {
+        workspaceRoot: process.cwd(),
+        outputRoot,
+        transportFactory: () => { throw new Error("a stopped unknown-cost continuation must not initialize another provider transport"); },
+      });
+      assert.equal(repeated.status, "diagnostic_stopped");
+      assert.equal(networkCalls, 1, "a second operator invocation cannot repeat the unknown-cost provider call");
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
 });
 
 function replaceFlag(args: readonly string[], flag: string, value: string): string[] {

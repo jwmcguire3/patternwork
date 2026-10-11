@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "attempts": [
+    {
+      "attemptId": "pwrp71-fictional-diagnostic:gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011:C01:IFS:initial:openai-gpt-6-luna-max:attempt-1",
+      "requestFingerprint": "fbd512bb40344b881ea2e3028b0b1bd62bee90ddbe85d664c1bd03aeb7a3e2e1",
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "status": "unknown",
+      "startedAt": "2026-10-11T06:19:57.748Z",
+      "request": {
+        "requestedModel": "openai/gpt-6-luna",
+        "requestedReasoningEffort": "max",
+        "schemaName": "patternwork_ifs_pwrp71_candidate_1",
+        "maxOutputTokens": 20000,
+        "idempotencyKey": "pwrp71-fictional-diagnostic:gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011:C01:IFS:initial:openai-gpt-6-luna-max:attempt-1",
+        "systemSha256": "9b5ca30210f364e0a2055f3da53b14aa1196940750b23cebbda682826fb98576",
+        "promptSha256": "5e261b258c64d1ab119d1a4bad84a0fd04d780a7b8600313871e77da819b58a4",
+        "localSchemaSha256": "704ff6838efac71106fb0b01276e13ef13ad705c4fb92b87e31b7adda59ecc87",
+        "wireSchemaSha256": "8f0f6f91d4037a2c929253bc21e35c96bc3f86c4c28193cafefe22640fb5b451"
+      },
+      "locallyEstimatedCostMicros": 115000,
+      "reservedCostMicros": 115000,
+      "maximumCallCostMicros": 115000,
+      "aggregateCostCapMicros": 3000000,
+      "billingBasisSha256": "0018d4a8c7134c82d4be2d36c603bea3ff29f9300270b46a73ed1d17fdd1f77e",
+      "wirePayloadSha256": "6ed4e11f7e3b81a302f4adc603380d4bcde17842b92dc2b5bca38465e0979c24",
+      "usageStatus": "unknown",
+      "diagnostic": {
+        "kind": "client_error",
+        "message": "Provider returned error",
+        "statusCode": 400,
+        "providerCode": "400",
+        "providerName": "Azure",
+        "providerUpstreamCode": "invalid_json_schema",
+        "providerMetadataKeys": [
+          "error.raw",
+          "error.provider_name",
+          "error.is_byok",
+          "error.provider_error_code",
+          "router.requested",
+          "router.strategy",
+          "router.region",
+          "router.summary",
+          "router.attempt",
+          "router.is_byok",
+          "router.endpoints",
+          "router.generation_time"
+        ],
+        "providerHints": [
+          "schema",
+          "model"
+        ],
+        "retryable": false
+      },
+      "completedAt": "2026-10-11T06:19:58.442Z",
+      "elapsedMs": 690
+    }
+  ]
+}
