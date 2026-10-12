@@ -37,3 +37,7 @@ C01 stopped the cohort. C02 was not sent. There is no generated draft, token usa
 - Full routing qualification, human report approval, and production activation: **not claimed; unchanged**.
 
 The fixed run remains stopped. Resolving the schema error requires a separately reviewed diagnosis of the provider's detailed schema rejection; it does not justify changing the pinned schema or repeating either unknown-cost attempt.
+
+## Error-detail capture follow-up
+
+The existing HTTP 400 receipt retained only the metadata key `error.raw`, not its value, so this rejection's exact schema path cannot be recovered from the saved local run. The dedicated fictional diagnostic CLI now opts in to retaining a bounded, credential-redacted copy of a future provider `error.raw` value in `attempts.json`. Normal provider clients keep this capture disabled. This code change does not alter the stopped run or make another request; the same unknown-cost attempts remain non-retryable.

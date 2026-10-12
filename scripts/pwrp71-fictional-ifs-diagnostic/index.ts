@@ -25,7 +25,9 @@ async function main(): Promise<void> {
       loadEnvConfig(workspaceRoot);
       const apiKey = process.env.OPENROUTER_API_KEY;
       if (!apiKey) throw new Error("OPENROUTER_API_KEY is not available after local environment loading; no provider request was made.");
-      return new OpenRouterClient({ apiKey, fetch });
+      // Retain the provider's bounded schema-rejection detail in attempts.json
+      // for this local fictional experiment; normal provider clients keep it off.
+      return new OpenRouterClient({ apiKey, fetch, captureProviderErrorDetail: true });
     },
   });
   process.stdout.write(`${JSON.stringify({

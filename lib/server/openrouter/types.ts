@@ -100,13 +100,15 @@ export class OpenRouterTransportError extends Error {
   readonly providerParam?: string;
   readonly providerName?: string;
   readonly providerUpstreamCode?: string;
+  /** Bounded upstream error.raw text, populated only by explicitly opted-in diagnostics. */
+  readonly providerErrorRaw?: string;
   readonly providerMetadataKeys?: readonly string[];
   readonly providerHints?: readonly string[];
 
   constructor(
     kind: Exclude<OpenRouterFailureKind, "invalid_json" | "refusal">,
     message: string,
-    options: { retryable: boolean; retryAfterMs?: number; statusCode?: number; providerCode?: string; providerParam?: string; providerName?: string; providerUpstreamCode?: string; providerMetadataKeys?: readonly string[]; providerHints?: readonly string[]; cause?: unknown },
+    options: { retryable: boolean; retryAfterMs?: number; statusCode?: number; providerCode?: string; providerParam?: string; providerName?: string; providerUpstreamCode?: string; providerErrorRaw?: string; providerMetadataKeys?: readonly string[]; providerHints?: readonly string[]; cause?: unknown },
   ) {
     super(message, options.cause === undefined ? undefined : { cause: options.cause });
     this.name = "OpenRouterTransportError";
@@ -118,6 +120,7 @@ export class OpenRouterTransportError extends Error {
     this.providerParam = options.providerParam;
     this.providerName = options.providerName;
     this.providerUpstreamCode = options.providerUpstreamCode;
+    this.providerErrorRaw = options.providerErrorRaw;
     this.providerMetadataKeys = options.providerMetadataKeys;
     this.providerHints = options.providerHints;
   }

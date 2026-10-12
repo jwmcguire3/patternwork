@@ -430,6 +430,49 @@ test("an ambiguous HTTP server error keeps its reservation and blocks automatic 
   });
 });
 
+test("an explicitly captured provider schema rejection is saved safely and still cannot be retried", async () => {
+  await withStore(async (store) => {
+    const idempotencyKey = `${request.idempotencyKey}:schema-rejection-detail`;
+    let dispatches = 0;
+    const client = new OpenRouterClient({
+      apiKey: "offline-test-key",
+      captureProviderErrorDetail: true,
+      fetch: async () => {
+        dispatches += 1;
+        return Response.json({
+          error: {
+            message: "Provider returned error",
+            code: 400,
+            metadata: {
+              provider_name: "OpenAI",
+              provider_error_code: "invalid_json_schema",
+              raw: JSON.stringify({
+                error: { message: "Unsupported schema keyword at $.properties.status.enum", param: "response_format.json_schema.schema.properties.status.enum" },
+                authorization: "Bearer provider-secret-value",
+              }),
+            },
+          },
+        }, { status: 400 });
+      },
+    });
+    const diagnosticRequest = { ...request, idempotencyKey };
+    const transport = journal(store, client);
+    await assert.rejects(transport.generate(diagnosticRequest), (error: unknown) =>
+      error instanceof OpenRouterTransportError && error.providerUpstreamCode === "invalid_json_schema");
+
+    const attempt = await store.get(idempotencyKey);
+    assert.equal(dispatches, 1);
+    assert.equal(attempt?.status, "unknown");
+    assert.equal(attempt?.reservedCostMicros, maximumQuotedCallCostMicros(diagnosticRequest));
+    assert.match(attempt?.diagnostic?.providerErrorRaw ?? "", /Unsupported schema keyword at \$\.properties\.status\.enum/u);
+    assert.equal(attempt?.diagnostic?.providerErrorRaw?.includes("provider-secret-value"), false);
+
+    await assert.rejects(transport.generate(diagnosticRequest), (error: unknown) =>
+      error instanceof QualificationAttemptError && error.code === "attempt_uncertain");
+    assert.equal(dispatches, 1, "retaining diagnostics must not allow an automatic retry of unknown-cost attempts");
+  });
+});
+
 test("a full-context quote covers prompt and schema size while the exact wire fingerprint distinguishes them", () => {
   const wireRequest = {
     ...request,

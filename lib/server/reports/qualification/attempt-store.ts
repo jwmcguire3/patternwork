@@ -7,6 +7,7 @@ import { OpenRouterTransportError, type OpenRouterGenerationRequest, type OpenRo
 import { projectOpenRouterStrictSchemaObject } from "../../openrouter/schema-projection.ts";
 import { GPT6_LUNA_BILLING_BASIS_SHA256, GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY, maximumQuotedCallCostMicros, validatePositiveMicros } from "../../openrouter/qualification-budget.ts";
 import { buildOpenRouterWirePayload, OPENROUTER_DEFAULT_ENDPOINT } from "../../openrouter/wire.ts";
+import { sanitizeProviderErrorDetail } from "../../openrouter/provider-error-details.ts";
 import type { Pwrp71GenerationEvent } from "../generator.ts";
 import { renameFileWithTransientRetry } from "./atomic-file.ts";
 import { authorizePwrp71BudgetedRequest, revokePwrp71BudgetAuthorization } from "./budget-authorization.ts";
@@ -51,6 +52,8 @@ export interface QualificationAttemptRecord {
     readonly providerParam?: string;
     readonly providerName?: string;
     readonly providerUpstreamCode?: string;
+    /** Captured only when the explicit CLI diagnostic option is enabled. */
+    readonly providerErrorRaw?: string;
     readonly providerMetadataKeys?: readonly string[];
     readonly providerHints?: readonly string[];
     readonly retryable?: boolean;
@@ -238,6 +241,7 @@ export class FileQualificationAttemptStore {
         ...(error.providerParam === undefined ? {} : { providerParam: error.providerParam }),
         ...(error.providerName === undefined ? {} : { providerName: error.providerName }),
         ...(error.providerUpstreamCode === undefined ? {} : { providerUpstreamCode: error.providerUpstreamCode }),
+        ...(error.providerErrorRaw === undefined ? {} : { providerErrorRaw: sanitizeProviderErrorDetail(error.providerErrorRaw) }),
         ...(error.providerMetadataKeys === undefined ? {} : { providerMetadataKeys: error.providerMetadataKeys }),
         ...(error.providerHints === undefined ? {} : { providerHints: error.providerHints }),
         ...safeTransportCause(error),

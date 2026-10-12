@@ -7,6 +7,7 @@ import {
   type OpenRouterUsage,
 } from "./types.ts";
 import { buildOpenRouterWirePayload, OPENROUTER_DEFAULT_ENDPOINT } from "./wire.ts";
+import { sanitizeProviderErrorDetail } from "./provider-error-details.ts";
 import { consumePwrp71BudgetAuthorization } from "../reports/qualification/budget-authorization.ts";
 
 type FetchLike = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
@@ -18,6 +19,8 @@ export interface OpenRouterClientOptions {
   readonly fetch?: FetchLike;
   readonly appUrl?: string;
   readonly appTitle?: string;
+  /** Persist bounded upstream error details for the explicitly authorized fictional diagnostic only. */
+  readonly captureProviderErrorDetail?: boolean;
 }
 
 function asObject(value: unknown): Record<string, unknown> | undefined {
@@ -85,7 +88,7 @@ const PROVIDER_ERROR_HINTS = [
   ["auth", /unauthorized|authentication|api.key|permission/],
 ] as const;
 
-async function responseError(response: Response): Promise<{ message: string; providerCode?: string; providerParam?: string; providerName?: string; providerUpstreamCode?: string; providerMetadataKeys?: readonly string[]; providerHints?: readonly string[] }> {
+async function responseError(response: Response, captureProviderErrorDetail: boolean): Promise<{ message: string; providerCode?: string; providerParam?: string; providerName?: string; providerUpstreamCode?: string; providerMetadataKeys?: readonly string[]; providerHints?: readonly string[]; providerErrorRaw?: string }> {
   try {
     const body = asObject(await response.json());
     const error = asObject(body?.error);
@@ -96,6 +99,7 @@ async function responseError(response: Response): Promise<{ message: string; pro
     const metadata = asObject(error?.metadata);
     const providerName = safeProviderField(metadata?.provider_name);
     const providerUpstreamCode = safeProviderField(metadata?.provider_error_code);
+    const providerErrorRaw = captureProviderErrorDetail ? sanitizeProviderErrorDetail(metadata?.raw) : undefined;
     const routerMetadata = asObject(body?.openrouter_metadata);
     const metadataKeys = [
       ...(metadata ? Object.keys(metadata).map((key) => `error.${key}`) : []),
@@ -112,6 +116,7 @@ async function responseError(response: Response): Promise<{ message: string; pro
       ...(providerParam ? { providerParam } : {}),
       ...(providerName ? { providerName } : {}),
       ...(providerUpstreamCode ? { providerUpstreamCode } : {}),
+      ...(providerErrorRaw ? { providerErrorRaw } : {}),
       ...(providerMetadataKeys?.length ? { providerMetadataKeys } : {}),
       ...(providerHints.length ? { providerHints } : {}),
     };
@@ -127,6 +132,7 @@ export class OpenRouterClient implements OpenRouterTransport {
   private readonly fetchImpl: FetchLike;
   private readonly appUrl?: string;
   private readonly appTitle?: string;
+  private readonly captureProviderErrorDetail: boolean;
 
   constructor(options: OpenRouterClientOptions = {}) {
     this.apiKey = options.apiKey ?? process.env.OPENROUTER_API_KEY ?? "";
@@ -135,6 +141,7 @@ export class OpenRouterClient implements OpenRouterTransport {
     this.fetchImpl = options.fetch ?? globalThis.fetch;
     this.appUrl = options.appUrl ?? process.env.OPENROUTER_APP_URL;
     this.appTitle = options.appTitle ?? process.env.OPENROUTER_APP_NAME;
+    this.captureProviderErrorDetail = options.captureProviderErrorDetail ?? false;
   }
 
   async generate(request: OpenRouterGenerationRequest): Promise<OpenRouterGenerationResult> {
@@ -171,13 +178,14 @@ export class OpenRouterClient implements OpenRouterTransport {
     }
 
     if (!response.ok) {
-      const providerError = await responseError(response);
+      const providerError = await responseError(response, this.captureProviderErrorDetail);
       const errorDetails = {
         statusCode: response.status,
         ...(providerError.providerCode ? { providerCode: providerError.providerCode } : {}),
         ...(providerError.providerParam ? { providerParam: providerError.providerParam } : {}),
         ...(providerError.providerName ? { providerName: providerError.providerName } : {}),
         ...(providerError.providerUpstreamCode ? { providerUpstreamCode: providerError.providerUpstreamCode } : {}),
+        ...(providerError.providerErrorRaw ? { providerErrorRaw: providerError.providerErrorRaw } : {}),
         ...(providerError.providerMetadataKeys ? { providerMetadataKeys: providerError.providerMetadataKeys } : {}),
         ...(providerError.providerHints ? { providerHints: providerError.providerHints } : {}),
       };

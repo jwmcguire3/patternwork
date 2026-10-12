@@ -143,8 +143,38 @@ test("retains bounded provider error code and parameter diagnostics without expo
     assert.ok(error instanceof OpenRouterTransportError);
     assert.equal(error.providerCode, "unsupported_parameter");
     assert.equal(error.providerParam, "reasoning.exclude");
+    assert.equal(error.providerErrorRaw, undefined, "provider error.raw stays off unless a diagnostic explicitly opts in");
     assert.deepEqual(error.providerMetadataKeys, ["error.raw"]);
     assert.deepEqual(error.providerHints, ["reasoning", "schema", "schema_keyword"]);
+    return true;
+  });
+});
+
+test("explicit diagnostic mode retains bounded sanitized upstream schema rejection detail", async () => {
+  const raw = JSON.stringify({
+    error: {
+      message: "Invalid JSON schema: unsupported keyword at $.properties.status.enum",
+      type: "invalid_request_error",
+      param: "response_format.json_schema.schema.properties.status.enum",
+      code: "invalid_json_schema",
+    },
+    authorization: "Bearer provider-secret-value",
+    api_key: "sk-proj-provider-secret-value-1234567890",
+  });
+  const client = new OpenRouterClient({
+    apiKey: "test",
+    captureProviderErrorDetail: true,
+    fetch: async () => Response.json({
+      error: { message: "Provider returned error", code: 400, metadata: { provider_name: "OpenAI", provider_error_code: "invalid_json_schema", raw } },
+    }, { status: 400 }),
+  });
+  await assert.rejects(client.generate(request), (error: unknown) => {
+    assert.ok(error instanceof OpenRouterTransportError);
+    assert.equal(error.providerUpstreamCode, "invalid_json_schema");
+    assert.ok(error.providerErrorRaw);
+    assert.match(error.providerErrorRaw, /unsupported keyword at \$\.properties\.status\.enum/u);
+    assert.match(error.providerErrorRaw, /response_format\.json_schema\.schema\.properties\.status\.enum/u);
+    assert.equal(error.providerErrorRaw.includes("provider-secret-value"), false);
     return true;
   });
 });
