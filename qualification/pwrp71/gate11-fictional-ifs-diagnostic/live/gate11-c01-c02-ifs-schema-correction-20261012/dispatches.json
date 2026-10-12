@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "index": 1,
+      "idempotencyKey": "pwrp71-fictional-diagnostic:gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011-fresh-budget-epoch-2:C01:IFS:initial:openai-gpt-6-luna-max:attempt-1",
+      "profileId": "C01",
+      "phase": "initial",
+      "model": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "wirePayloadSha256": "10c477e2220c22d0a07ba97636ed64238bcc8ded9b3d3d6d08fb2dfcb0db5b1b",
+      "dispatchedAt": "2026-10-11T08:10:09.897Z",
+      "outcome": "response_received",
+      "responseAt": "2026-10-11T08:10:10.116Z",
+      "responseStatus": 404
+    },
+    {
+      "index": 2,
+      "idempotencyKey": "pwrp71-fictional-diagnostic:gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011-fresh-budget-epoch-2:C01:openai-non-zdr-continuation-1:IFS:initial:openai-gpt-6-luna-max:attempt-1",
+      "profileId": "C01",
+      "phase": "initial",
+      "requestVariant": "openai-non-zdr-continuation-1",
+      "model": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "wirePayloadSha256": "4db2ad54d5fcb3de6d1753c0d3f90dfd169983beb668e8cf15e0a5bad93e735c",
+      "dispatchedAt": "2026-10-11T09:04:24.348Z",
+      "outcome": "response_received",
+      "responseAt": "2026-10-11T09:04:24.826Z",
+      "responseStatus": 400
+    },
+    {
+      "index": 3,
+      "idempotencyKey": "pwrp71-fictional-diagnostic:gate11-c01-error-detail-resend-20261012:C01:openai-error-detail-resend-1:IFS:initial:openai-gpt-6-luna-max:attempt-1",
+      "profileId": "C01",
+      "phase": "initial",
+      "requestVariant": "openai-error-detail-resend-1",
+      "model": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "wirePayloadSha256": "4db2ad54d5fcb3de6d1753c0d3f90dfd169983beb668e8cf15e0a5bad93e735c",
+      "dispatchedAt": "2026-10-12T18:08:36.703Z",
+      "outcome": "response_received",
+      "responseStatus": 400
+    },
+    {
+      "index": 4,
+      "idempotencyKey": "pwrp71-fictional-diagnostic:gate11-c01-c02-ifs-schema-correction-20261012:C01:openai-schema-correction-continuation-1:IFS:initial:openai-gpt-6-luna-max:attempt-1",
+      "profileId": "C01",
+      "phase": "initial",
+      "requestVariant": "openai-schema-correction-continuation-1",
+      "model": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "wirePayloadSha256": "8bcb842048e504bd4dd1cebc64ac1eeda86d2844b22ac602f06340f3595cd437",
+      "dispatchedAt": "2026-10-12T19:51:26.715Z",
+      "outcome": "response_received",
+      "responseAt": "2026-10-12T19:51:28.072Z",
+      "responseStatus": 200
+    }
+  ]
+}
