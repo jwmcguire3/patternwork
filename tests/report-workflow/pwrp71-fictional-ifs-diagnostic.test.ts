@@ -217,7 +217,10 @@ test("the manual resend CLI fixes one C01 IFS non-ZDR request and requires both 
   assert.equal(preparedResult.ok, true);
   if (!preparedResult.ok) return;
   const resend = buildFictionalDiagnosticRequest({ profileId: "C01", prepared: preparedResult.value, runId: FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID, continuation: false, errorDetailResend: true });
-  assert.equal(resend.wirePayloadSha256, FICTIONAL_IFS_ERROR_DETAIL_RESEND_WIRE_SHA256, "only the idempotency key changes; the serialized provider body is the prior rejected body");
+  assert.notEqual(resend.wirePayloadSha256, FICTIONAL_IFS_ERROR_DETAIL_RESEND_WIRE_SHA256,
+    "the corrected strict schema changes the body, so it is not the same request as the historical rejected attempt");
+  const correctedSchema = resend.wireRequest.schema.properties as Record<string, Record<string, unknown>>;
+  assert.equal(correctedSchema.report_release!.type, "string");
   assert.throws(() => buildFictionalDiagnosticRequest({ profileId: "C02", prepared: preparedResult.value, runId: FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID, continuation: false, errorDetailResend: true }), /C01-only/u);
 });
 
@@ -722,7 +725,7 @@ test("the pre-dispatch transport rejects changed provider parameters before fetc
     const dispatchFile = path.join(directory, "dispatches.json");
     await writeFile(dispatchFile, JSON.stringify({ schemaVersion: 1, entries: [] }));
     const store = new FileQualificationAttemptStore(path.join(directory, "attempts"));
-    const preflight = JSON.parse(await readFile("qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-no-dispatch-20261011.json", "utf8")) as {
+    const preflight = JSON.parse(await readFile("qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-schema-correction-no-dispatch-20261012.json", "utf8")) as {
       exactRequests: Array<{ profileId: string; request: { requestCorrelationHeader: { value: string }; finalWirePayload: Record<string, unknown> } }>;
     };
     const validPayload = preflight.exactRequests[0]!.request.finalWirePayload;
@@ -767,7 +770,7 @@ test("the diagnostic fetch requires an exact active journal reservation and disp
     const dispatchFile = path.join(directory, "dispatches.json");
     await writeFile(dispatchFile, JSON.stringify({ schemaVersion: 1, entries: [] }));
     const store = new FileQualificationAttemptStore(path.join(directory, "attempts"));
-    const preflight = JSON.parse(await readFile("qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-no-dispatch-20261011.json", "utf8")) as {
+    const preflight = JSON.parse(await readFile("qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-schema-correction-no-dispatch-20261012.json", "utf8")) as {
       exactRequests: Array<{ request: { requestCorrelationHeader: { value: string }; finalWirePayload: Record<string, unknown> } }>;
     };
     const request = preflight.exactRequests[0]!.request;
@@ -885,7 +888,7 @@ test("the exact C01 error-detail resend gets one journaled HTTP attempt and cann
       assert.equal(dispatches.entries.length, 1);
       assert.equal(dispatches.entries[0]!.profileId, "C01");
       assert.equal(dispatches.entries[0]!.requestVariant, "openai-error-detail-resend-1");
-      assert.equal(dispatches.entries[0]!.wirePayloadSha256, FICTIONAL_IFS_ERROR_DETAIL_RESEND_WIRE_SHA256);
+      assert.equal(dispatches.entries[0]!.wirePayloadSha256, request.wirePayloadSha256);
     } finally {
       globalThis.fetch = originalFetch;
     }
