@@ -19,9 +19,13 @@ import {
   FICTIONAL_IFS_DIAGNOSTIC_RUN_ID,
   FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID,
   FICTIONAL_IFS_DIAGNOSTIC_EPOCH_2_ZDR_PARENT_SHA256,
+  FICTIONAL_IFS_128K_OUTPUT_CALL_CAP_MICROS,
+  FICTIONAL_IFS_128K_OUTPUT_LIMIT,
+  FICTIONAL_IFS_128K_OUTPUT_RUN_ID,
   FICTIONAL_IFS_DIAGNOSTIC_SCHEMA,
   FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID,
   FICTIONAL_IFS_SCHEMA_CORRECTION_RUN_ID,
+  OPENAI_128K_OUTPUT_MARKER,
   OPENAI_SCHEMA_CORRECTION_MARKER,
   assertDiagnosticSourcePins,
   buildFictionalDiagnosticRequest,
@@ -185,6 +189,80 @@ test("fresh budget epoch requires explicit owner authorization and cannot also r
     "--owner-authorized-fresh-budget-epoch-2",
     "--continue-after-unknown-provider-attempt",
   ]), /cannot be requested together/u);
+});
+
+test("128k output continuation requires exact owner scope and both unchanged aggregate and explicit per-call limits", async () => {
+  const outputArgs = [
+    ...replaceFlag(validArgs, "--max-call-cost-micros", "200000"),
+    "--owner-authorized-fresh-budget-epoch-2",
+    "--owner-authorized-allow-non-zdr-continuation",
+    "--owner-authorized-128k-output-continuation",
+  ];
+  const invocation = parseFictionalIfsDiagnosticArgs(outputArgs);
+  assert.equal(invocation.outputLimit128kContinuation, true);
+  assert.equal(invocation.maxCallCostMicros, FICTIONAL_IFS_128K_OUTPUT_CALL_CAP_MICROS);
+  for (const invalidArgs of [
+    outputArgs.filter((arg) => arg !== "--owner-authorized-fictional-diagnostic"),
+    replaceFlag(outputArgs, "--profiles", "C01,C03"),
+    replaceFlag(outputArgs, "--reports", "PV"),
+    replaceFlag(outputArgs, "--model", "openai/gpt-6-sol"),
+    replaceFlag(outputArgs, "--max-call-cost-micros", "199999"),
+    replaceFlag(outputArgs, "--max-call-cost-micros", "200001"),
+    replaceFlag(outputArgs, "--aggregate-cost-cap-micros", "3000001"),
+    outputArgs.filter((arg) => arg !== "--owner-authorized-fresh-budget-epoch-2"),
+    outputArgs.filter((arg) => arg !== "--owner-authorized-allow-non-zdr-continuation"),
+    outputArgs.filter((arg) => arg !== "--owner-authorized-128k-output-continuation"),
+    [...outputArgs, "--max-output-tokens", "64000"],
+    [...outputArgs, "--owner-authorized-128k-output-continuation"],
+    [...outputArgs, "--owner-authorized-schema-correction-continuation"],
+  ]) assert.throws(() => parseFictionalIfsDiagnosticArgs(invalidArgs));
+
+  await withTempDirectory(async (directory) => {
+    for (const [name, args] of [
+      ["C03", replaceFlag(outputArgs, "--profiles", "C01,C03")],
+      ["PV", replaceFlag(outputArgs, "--reports", "PV")],
+      ["missing-cap", outputArgs.filter((arg) => arg !== "--max-call-cost-micros" && arg !== "200000")],
+      ["excess-cap", replaceFlag(outputArgs, "--max-call-cost-micros", "200001")],
+    ] as const) {
+      let factories = 0;
+      let dispatches = 0;
+      await assert.rejects(async () => {
+        const rejected = parseFictionalIfsDiagnosticArgs(args);
+        await runFictionalIfsDiagnostic(rejected, {
+          workspaceRoot: process.cwd(),
+          outputRoot: path.join(directory, name),
+          transportFactory: () => {
+            factories += 1;
+            return { generate: async () => { dispatches += 1; throw new Error("unexpected provider dispatch"); } };
+          },
+        });
+      });
+      assert.equal(factories, 0, `${name} must reject before provider initialization`);
+      assert.equal(dispatches, 0, `${name} must reject before provider dispatch`);
+    }
+  });
+});
+
+test("128k output request keeps the pinned model, provider route, and $0.20 ceiling", async () => {
+  const fixture = await loadPwrp71FictionalDiagnosticFixture({ profileId: "C01", workspaceRoot: process.cwd() });
+  const prepared = preparePwrp71Request({
+    packet: fixture.packet, reportType: "IFS", questionSource: fixture.questionSource,
+    reportSource: fixture.reportSource, canonicalResponseEvidence: fixture.canonicalResponseEvidence,
+  });
+  assert.equal(prepared.ok, true);
+  if (!prepared.ok) return;
+  const built = buildFictionalDiagnosticRequest({
+    profileId: "C01", prepared: prepared.value, runId: FICTIONAL_IFS_128K_OUTPUT_RUN_ID,
+    continuation: false, allowNonZdrContinuation: true, outputLimit128kContinuation: true,
+  });
+  assert.equal(built.request.maxOutputTokens, FICTIONAL_IFS_128K_OUTPUT_LIMIT);
+  assert.equal(built.wireRequest.maxOutputTokens, FICTIONAL_IFS_128K_OUTPUT_LIMIT);
+  assert.deepEqual(built.wireRequest.providerPolicy, GPT6_LUNA_OPENAI_NON_ZDR_DIAGNOSTIC_PROVIDER_POLICY);
+  assert.equal(built.wirePayloadSha256.length, 64);
+  assert.throws(() => buildFictionalDiagnosticRequest({
+    profileId: "C01", prepared: prepared.value, runId: FICTIONAL_IFS_SCHEMA_CORRECTION_RUN_ID,
+    continuation: false, allowNonZdrContinuation: true, outputLimit128kContinuation: true,
+  }), /unique C01\/C02/u);
 });
 
 test("the manual resend CLI fixes one C01 IFS non-ZDR request and requires both exact spending limits", async () => {
@@ -778,6 +856,87 @@ test("schema-correction continuation resumes after a no-dispatch connectivity st
       assert.equal(repeated.status, "diagnostic_stopped");
       assert.equal(providerDispatches, 1, "the one new unknown attempt is not sent again");
       assert.equal(transportFactories, 2, "the stopped run returns before provider initialization on replay");
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+});
+
+test("128k continuation carries the exact parent budget and stops after the first failed C01 request", async () => {
+  const invocation = parseFictionalIfsDiagnosticArgs([
+    ...replaceFlag(validArgs, "--max-call-cost-micros", "200000"),
+    "--owner-authorized-fresh-budget-epoch-2",
+    "--owner-authorized-allow-non-zdr-continuation",
+    "--owner-authorized-128k-output-continuation",
+  ]);
+  const fixedNow = () => new Date("2026-10-12T12:00:00.000Z");
+  await withTempDirectory(async (outputRoot) => {
+    let routeChecks = 0;
+    let providerDispatches = 0;
+    let requestId = "";
+    let payload: Record<string, unknown> | undefined;
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = async (input, init) => {
+      const url = String(input);
+      if (init?.method === "GET") {
+        routeChecks += 1;
+        if (url.endsWith("/api/v1/models")) return new Response("{}", { status: 200 });
+        assert.match(url, /\/api\/v1\/models\/openai\/gpt-6-luna\/endpoints$/u);
+        return new Response(JSON.stringify({ data: { endpoints: [{ provider_name: "OpenAI", name: "OpenAI test endpoint" }] } }), { status: 200 });
+      }
+      providerDispatches += 1;
+      requestId = new Headers(init?.headers).get("x-request-id") ?? "";
+      payload = JSON.parse(String(init?.body)) as Record<string, unknown>;
+      return new Response(JSON.stringify({ error: {
+        message: "Simulated provider schema rejection after the 128k request was dispatched",
+        code: 400,
+        metadata: { provider_name: "OpenAI", provider_error_code: "invalid_json_schema" },
+      } }), { status: 400, headers: { "content-type": "application/json" } });
+    };
+    try {
+      const result = await runFictionalIfsDiagnostic(invocation, {
+        workspaceRoot: process.cwd(),
+        outputRoot,
+        now: fixedNow,
+        transportFactory: async ({ fetch }) => {
+          await assertOpenRouterReachable(globalThis.fetch);
+          await assertOpenRouterNonZdrDiagnosticRouteEligible(globalThis.fetch, fixedNow);
+          return new OpenRouterClient({ apiKey: "test-key", fetch, captureProviderErrorDetail: true });
+        },
+      });
+      assert.equal(result.runId, FICTIONAL_IFS_128K_OUTPUT_RUN_ID);
+      assert.equal(result.status, "diagnostic_stopped");
+      assert.equal(result.routingQualification, "not_claimed");
+      assert.equal(result.productionActivationEffect, "none");
+      assert.equal(routeChecks, 2);
+      assert.equal(providerDispatches, 1, "a failed first-profile response must stop before C02");
+      assert.match(requestId, new RegExp(`:${OPENAI_128K_OUTPUT_MARKER}:IFS:initial:openai-gpt-6-luna-max:attempt-1$`, "u"));
+      assert.equal(payload?.model, "openai/gpt-6-luna");
+      assert.equal(payload?.max_completion_tokens, FICTIONAL_IFS_128K_OUTPUT_LIMIT);
+      assert.deepEqual(payload?.reasoning, { effort: "max" });
+      assert.deepEqual(payload?.provider, GPT6_LUNA_OPENAI_NON_ZDR_DIAGNOSTIC_PROVIDER_POLICY);
+      assert.equal(result.continuation?.ordinal, 4);
+      assert.equal(result.continuation?.carriedUnknownReservationMicros, 345_000);
+      assert.equal(result.continuation?.carriedUnknownAttemptIds.length, 3);
+      assert.equal(result.providerDispatchCount, 5, "all four historical dispatches and the one new call remain recorded");
+      assert.equal(result.attempts.length, 5);
+      const durableAttempts = JSON.parse(await readFile(path.join(result.outputDirectory, "attempts.json"), "utf8")) as {
+        attempts: Array<{ request: { maxOutputTokens: number }; maximumCallCostMicros: number; reservedCostMicros: number }>;
+      };
+      assert.equal(durableAttempts.attempts[4]?.request.maxOutputTokens, FICTIONAL_IFS_128K_OUTPUT_LIMIT);
+      assert.equal(durableAttempts.attempts[4]?.maximumCallCostMicros, FICTIONAL_IFS_128K_OUTPUT_CALL_CAP_MICROS);
+      assert.equal(durableAttempts.attempts[4]?.reservedCostMicros, 169_000, "the journal reserves the full-context quote under the $0.20 ceiling");
+      assert.equal(result.budget.unknownOrInFlightReservedCostMicros, 514_000);
+      assert.equal(result.budget.aggregateReportedCostMicros, 12_138);
+      assert.equal(result.budget.remainingAuthorizedMicros, 2_473_862);
+      assert.equal(result.results.some((entry) => entry.profileId === "C02"), false);
+
+      const repeated = await runFictionalIfsDiagnostic(invocation, {
+        workspaceRoot: process.cwd(), outputRoot, now: fixedNow,
+        transportFactory: () => { throw new Error("a dispatched unknown-cost attempt cannot initialize a retry transport"); },
+      });
+      assert.equal(repeated.status, "diagnostic_stopped");
+      assert.equal(providerDispatches, 1, "the fixed request ID is never automatically repeated after a provider response");
     } finally {
       globalThis.fetch = originalFetch;
     }

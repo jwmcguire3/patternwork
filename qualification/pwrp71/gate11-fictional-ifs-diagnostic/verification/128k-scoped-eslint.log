@@ -1,0 +1,2 @@
+npm notice run patternwork@0.1.0 npx
+npm notice run eslint scripts/pwrp71-fictional-ifs-diagnostic/diagnostic.ts scripts/pwrp71-fictional-ifs-diagnostic/generate-128k-output-preflight.ts tests/report-workflow/pwrp71-fictional-ifs-diagnostic.test.ts
