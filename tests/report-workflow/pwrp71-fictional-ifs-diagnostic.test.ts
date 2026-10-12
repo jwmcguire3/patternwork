@@ -693,6 +693,97 @@ test("schema-correction continuation carries all three unknown reservations and 
   });
 });
 
+test("schema-correction continuation resumes after a no-dispatch connectivity stop without replaying carried attempts", async () => {
+  const invocation = parseFictionalIfsDiagnosticArgs([
+    ...validArgs,
+    "--owner-authorized-fresh-budget-epoch-2",
+    "--owner-authorized-allow-non-zdr-continuation",
+    "--owner-authorized-schema-correction-continuation",
+  ]);
+  await withTempDirectory(async (outputRoot) => {
+    let transportFactories = 0;
+    let providerDispatches = 0;
+    const fixedNow = () => new Date("2026-10-12T12:00:00.000Z");
+    const stopped = await runFictionalIfsDiagnostic(invocation, {
+      workspaceRoot: process.cwd(),
+      outputRoot,
+      now: fixedNow,
+      transportFactory: async () => {
+        transportFactories += 1;
+        throw new Error("OpenRouter connectivity preflight failed (ENOTFOUND); no report request was dispatched.");
+      },
+    });
+    assert.equal(stopped.status, "diagnostic_stopped");
+    assert.equal(stopped.attempts.length, 3, "only the three inherited unknown attempts remain in the ledger");
+    assert.equal(stopped.providerDispatchCount, 3, "the three dispatch receipts are inherited, not new calls");
+    assert.equal(stopped.budget.unknownOrInFlightReservedCostMicros, 345_000);
+    assert.deepEqual(stopped.blockers, ["OpenRouter connectivity preflight failed (ENOTFOUND); no report request was dispatched."]);
+    assert.equal(transportFactories, 1);
+
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = async (input, init) => {
+      const url = String(input);
+      if (init?.method === "GET") {
+        if (url.endsWith("/api/v1/models")) return new Response("{}", { status: 200 });
+        assert.match(url, /\/api\/v1\/models\/openai\/gpt-6-luna\/endpoints$/u);
+        return new Response(JSON.stringify({ data: { endpoints: [{ provider_name: "OpenAI", name: "OpenAI test endpoint" }] } }), { status: 200 });
+      }
+      providerDispatches += 1;
+      return new Response(JSON.stringify({ error: {
+        message: "Simulated post-connectivity schema rejection",
+        code: 400,
+        metadata: { provider_name: "OpenAI", provider_error_code: "invalid_json_schema" },
+      } }), { status: 400, headers: { "content-type": "application/json" } });
+    };
+    try {
+      const resumed = await runFictionalIfsDiagnostic(invocation, {
+        workspaceRoot: process.cwd(),
+        outputRoot,
+        now: fixedNow,
+        transportFactory: async ({ fetch }) => {
+          transportFactories += 1;
+          await assertOpenRouterNonZdrDiagnosticRouteEligible(globalThis.fetch, fixedNow);
+          return new OpenRouterClient({ apiKey: "test-key", fetch, captureProviderErrorDetail: true });
+        },
+      });
+      assert.equal(resumed.status, "diagnostic_stopped");
+      assert.equal(providerDispatches, 1, "one new C01 request is allowed only after connectivity returns");
+      assert.equal(resumed.attempts.length, 4);
+      assert.match(resumed.attempts[3]?.attemptId ?? "", /:C01:openai-schema-correction-continuation-1:IFS:initial:/u);
+      assert.equal(resumed.providerDispatchCount, 4);
+      assert.equal(resumed.budget.unknownOrInFlightReservedCostMicros, 460_000);
+      assert.equal(resumed.budget.remainingAuthorizedMicros, 2_540_000);
+      assert.equal(resumed.results.some((result) => result.profileId === "C02"), false);
+      assert.equal(transportFactories, 2);
+
+      const retryArchives = resumed.continuation?.preDispatchStopRunArchives ?? [];
+      assert.equal(retryArchives.length, 1, "the pre-dispatch stop receipt is preserved before its blocker is cleared");
+      const archivedRun = JSON.parse(await readFile(path.join(resumed.outputDirectory, retryArchives[0]!), "utf8")) as {
+        status: string;
+        blockers: string[];
+        providerDispatchCount: number;
+        runSha256: string;
+      };
+      assert.equal(archivedRun.status, "diagnostic_stopped");
+      assert.equal(archivedRun.blockers[0], "OpenRouter connectivity preflight failed (ENOTFOUND); no report request was dispatched.");
+      assert.equal(archivedRun.providerDispatchCount, 3);
+      assert.match(retryArchives[0]!, new RegExp(archivedRun.runSha256, "u"));
+
+      const repeated = await runFictionalIfsDiagnostic(invocation, {
+        workspaceRoot: process.cwd(),
+        outputRoot,
+        now: fixedNow,
+        transportFactory: () => { throw new Error("a post-dispatch unknown attempt cannot be replayed"); },
+      });
+      assert.equal(repeated.status, "diagnostic_stopped");
+      assert.equal(providerDispatches, 1, "the one new unknown attempt is not sent again");
+      assert.equal(transportFactories, 2, "the stopped run returns before provider initialization on replay");
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+});
+
 test("corrected non-ZDR no-dispatch preflight records actual retention policy and hashes the embedded wire schema", async () => {
   const runDirectory = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/live/gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011-fresh-budget-epoch-2";
   const attempts = JSON.parse(await readFile(path.join(runDirectory, "attempts.json"), "utf8")) as {

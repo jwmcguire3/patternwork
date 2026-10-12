@@ -47,3 +47,13 @@ Four corrected no-dispatch preflights are preserved separately from their histor
 All four records mark dispatch, provider calls, and API-key reads as zero. Their C01/C02 packet pins are unchanged. The prior provider response and its old request body remain intact; corrected-schema provider acceptance is untested. Existing unknown-cost reservations were not released or retried, and this implementation work added no live spend.
 
 Verification after this correction: `npm test` passed 434/434; the focused diagnostic file passed 24/24; schema-projection tests passed 3/3; typecheck and scoped ESLint exited 0; production build exited 0. The build reported the same broad dynamic-file-pattern and stale browser-mapping warnings noted above. No live provider generation was run.
+
+## Schema-correction connectivity stop and retry guard — 2026-10-12
+
+The first invocation of the pinned schema-correction continuation stopped during the unauthenticated OpenRouter reachability preflight with `ENOTFOUND`. It created no new attempt or dispatch. The run journal contains only the three inherited C01 attempts and their dispatch receipts: all remain `unknown` for billing, `$0.345` remains reserved, `$2.655` remains under the epoch-2 authorization, and C02 was not sent. The persisted receipt is `live/gate11-c01-c02-ifs-schema-correction-20261012/run.json` (`diagnostic_stopped`; no generated results).
+
+A fresh read-only diagnosis found the failure had not reached a report request and distinguished DNS/environment access from provider or schema behavior. A single keyless Node DNS lookup plus unauthenticated `GET https://openrouter.ai/api/v1/models`, run with network permission, resolved IPv4 and returned HTTP 200. No API key or report prompt was read or sent by that probe. The ordinary restricted shell's DNS request had returned `Access is denied`.
+
+The continuation runner now permits a no-dispatch retry only when the stopped manifest has the exact schema-correction scope, zero results, the exact connectivity-preflight blocker, and exactly the three hash-pinned inherited unknown attempt/dispatch records. It preserves the stopped manifest under a SHA-addressed history path before clearing that blocker. Any additional attempt, dispatch, result, changed prefix, or different blocker prevents re-entry. The regression test proves one fresh C01 dispatch can follow that pre-dispatch stop, while C02 remains gated and the new unknown-cost attempt cannot be replayed.
+
+Verification for this guard: focused diagnostic tests passed 26/26; `npm run typecheck` exited 0; scoped ESLint on the diagnostic implementation and its focused test exited 0. The live corrected-schema report request remains untested until the controlled continuation run records its result.

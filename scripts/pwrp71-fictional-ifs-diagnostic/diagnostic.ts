@@ -133,6 +133,7 @@ export interface FictionalIfsDiagnosticContinuation {
   readonly priorPreflightArchiveFile?: string;
   readonly carriedUnknownAttemptIds: readonly string[];
   readonly carriedUnknownReservationMicros: number;
+  readonly preDispatchStopRunArchives?: readonly string[];
   readonly startedAt: string;
 }
 
@@ -1436,6 +1437,40 @@ function assertArchivedParentChain(input: {
   }
 }
 
+function isExactSchemaCorrectionPreDispatchStop(input: {
+  readonly run: FictionalIfsDiagnosticRun;
+  readonly attempts: readonly QualificationAttemptRecord[];
+  readonly dispatches: DispatchFile;
+  readonly carriedUnknownAttemptIds: ReadonlySet<string>;
+}): boolean {
+  const expectedAttemptIds = [
+    `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID}:C01:IFS:initial:${FICTIONAL_IFS_DIAGNOSTIC_REQUEST_LABEL}:attempt-1`,
+    `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID}:C01:${OPENAI_NON_ZDR_CONTINUATION_MARKER}:IFS:initial:${FICTIONAL_IFS_DIAGNOSTIC_REQUEST_LABEL}:attempt-1`,
+    `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID}:C01:${OPENAI_ERROR_DETAIL_RESEND_MARKER}:IFS:initial:${FICTIONAL_IFS_DIAGNOSTIC_REQUEST_LABEL}:attempt-1`,
+  ];
+  const expectedStatuses = [404, 400, 400];
+  return input.run.runId === FICTIONAL_IFS_SCHEMA_CORRECTION_RUN_ID
+    && input.run.status === "diagnostic_stopped"
+    && input.run.results.length === 0
+    && input.run.blockers.length === 1
+    && input.run.blockers[0]?.startsWith("OpenRouter connectivity preflight ") === true
+    && input.run.blockers[0]?.includes("no report request was dispatched") === true
+    && input.attempts.length === expectedAttemptIds.length
+    && input.attempts.every((attempt, index) => attempt.attemptId === expectedAttemptIds[index]
+      && input.carriedUnknownAttemptIds.has(attempt.attemptId)
+      && attempt.status === "unknown"
+      && attempt.usageStatus === "unknown"
+      && attempt.reservedCostMicros === FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros)
+    && input.dispatches.entries.length === expectedAttemptIds.length
+    && input.dispatches.entries.every((entry, index) => entry.idempotencyKey === expectedAttemptIds[index]
+      && entry.profileId === "C01"
+      && entry.phase === "initial"
+      && entry.outcome === "response_received"
+      && entry.responseStatus === expectedStatuses[index])
+    && input.carriedUnknownAttemptIds.size === expectedAttemptIds.length
+    && [...input.carriedUnknownAttemptIds].every((attemptId) => expectedAttemptIds.includes(attemptId));
+}
+
 async function seedSchemaCorrectionHistory(input: {
   readonly workspaceRoot: string;
   readonly runDirectory: string;
@@ -1703,11 +1738,30 @@ export async function runFictionalIfsDiagnostic(
     }
     const newlyAuthorizedContinuation = Boolean(existing && continuation && existing.runFingerprint !== prepared.runFingerprint);
     const safePreDispatchRetry = Boolean(existing?.status === "diagnostic_stopped"
-      && priorAttempts.length === 0
-      && dispatches.entries.length === 0
-      && existing.results.length === 0);
+      && existing.results.length === 0
+      && ((priorAttempts.length === 0 && dispatches.entries.length === 0)
+        || (invocation.schemaCorrectionContinuation && continuation?.ordinal === 3
+          && isExactSchemaCorrectionPreDispatchStop({
+            run: existing,
+            attempts: priorAttempts,
+            dispatches,
+            carriedUnknownAttemptIds,
+          }))));
     if (existing?.status === "diagnostic_complete" || existing?.status === "diagnostic_complete_with_prior_unknown_cost"
       || (existing?.status === "diagnostic_stopped" && !newlyAuthorizedContinuation && !safePreDispatchRetry)) return existing;
+
+    if (safePreDispatchRetry && existing && continuation?.ordinal === 3) {
+      const archiveFile = `history/pre-dispatch-stop-run-${existing.runSha256}.json`;
+      const existingBytes = await readFile(runPath);
+      const persisted = JSON.parse(existingBytes.toString("utf8")) as FictionalIfsDiagnosticRun;
+      assertRunManifestDigest(persisted);
+      if (persisted.runSha256 !== existing.runSha256) throw new Error("The pre-dispatch stop changed before its immutable retry receipt could be saved.");
+      await writeImmutableArchive(path.join(prepared.runDirectory, archiveFile), existingBytes);
+      continuation = {
+        ...continuation,
+        preDispatchStopRunArchives: [...new Set([...(continuation.preDispatchStopRunArchives ?? []), archiveFile])],
+      };
+    }
 
     let results: FictionalIfsDiagnosticReportResult[] = newlyAuthorizedContinuation
       ? []
