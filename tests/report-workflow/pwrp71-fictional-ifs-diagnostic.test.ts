@@ -4,7 +4,7 @@ import path from "node:path";
 import test from "node:test";
 import type { OpenRouterGenerationRequest, OpenRouterTransport } from "../../lib/server/openrouter/types.ts";
 import { OpenRouterClient } from "../../lib/server/openrouter/client.ts";
-import { OPENROUTER_DEFAULT_ENDPOINT } from "../../lib/server/openrouter/wire.ts";
+import { buildOpenRouterWirePayload, OPENROUTER_DEFAULT_ENDPOINT } from "../../lib/server/openrouter/wire.ts";
 import {
   GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY,
   GPT6_LUNA_OPENAI_NON_ZDR_DIAGNOSTIC_PROVIDER_POLICY,
@@ -12,6 +12,7 @@ import {
 import type { JsonObject } from "../../lib/question-engine/types.ts";
 import { readPwrp71QualificationRun } from "../../lib/server/reports/qualification/runner.ts";
 import { FileQualificationAttemptStore } from "../../lib/server/reports/qualification/attempt-store.ts";
+import { preparePwrp71Request } from "../../lib/server/reports/pwrp71-adapter.ts";
 import {
   FICTIONAL_IFS_DIAGNOSTIC_LIMITS,
   FICTIONAL_IFS_DIAGNOSTIC_PINS,
@@ -19,11 +20,13 @@ import {
   FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID,
   FICTIONAL_IFS_DIAGNOSTIC_EPOCH_2_ZDR_PARENT_SHA256,
   FICTIONAL_IFS_DIAGNOSTIC_SCHEMA,
+  FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID,
   assertDiagnosticSourcePins,
+  buildFictionalDiagnosticRequest,
   createDiagnosticFetch,
   diagnosticManifestCannotQualify,
   parseFictionalIfsDiagnosticArgs,
-  runFictionalIfsDiagnostic,
+  runFictionalIfsDiagnostic as runFictionalIfsDiagnosticImplementation,
   type FictionalIfsDiagnosticInvocation,
 } from "../../scripts/pwrp71-fictional-ifs-diagnostic/diagnostic.ts";
 import { loadPwrp71FictionalDiagnosticFixture } from "../../lib/server/reports/qualification/runner.ts";
@@ -36,6 +39,11 @@ import {
   OpenRouterNonZdrRouteIneligibleError,
 } from "../../scripts/pwrp71-fictional-ifs-diagnostic/connectivity.ts";
 import { sha256Canonical } from "../../lib/report-contracts/delivery-validator.ts";
+import {
+  FICTIONAL_IFS_ERROR_DETAIL_RESEND_WIRE_SHA256,
+  parseFictionalIfsErrorDetailResendArgs,
+  runFictionalIfsErrorDetailResend,
+} from "../../scripts/pwrp71-fictional-ifs-diagnostic/resend-error-detail.ts";
 
 const TEST_SCRATCH = path.join(process.cwd(), ".codex-temp", "test-runs");
 
@@ -63,6 +71,16 @@ const validInvocation: FictionalIfsDiagnosticInvocation = {
 
 const LEGACY_RUN_ARCHIVE_SHA = "63b73b54845e4a719603b77abddd403f7297c6d157be4a8ffbf5f1d29b2e73be";
 const LEGACY_RUN_ROOT = path.join(process.cwd(), "qualification", "pwrp71", "gate11-fictional-ifs-diagnostic", "live", FICTIONAL_IFS_DIAGNOSTIC_RUN_ID);
+
+type DiagnosticTestDependencies = Parameters<typeof runFictionalIfsDiagnosticImplementation>[1];
+
+/** Keep date-pinned pricing fixtures reproducible after the evidence date has passed. */
+function runFictionalIfsDiagnostic(invocation: FictionalIfsDiagnosticInvocation, dependencies: DiagnosticTestDependencies) {
+  return runFictionalIfsDiagnosticImplementation(invocation, {
+    ...dependencies,
+    now: dependencies.now ?? (() => new Date("2026-10-11T12:00:00.000Z")),
+  });
+}
 
 async function seedLegacyUnknownRun(outputRoot: string): Promise<{ readonly runDirectory: string; readonly originalRunBytes: Buffer<ArrayBufferLike> }> {
   const runDirectory = path.join(outputRoot, FICTIONAL_IFS_DIAGNOSTIC_RUN_ID);
@@ -165,6 +183,64 @@ test("fresh budget epoch requires explicit owner authorization and cannot also r
     "--owner-authorized-fresh-budget-epoch-2",
     "--continue-after-unknown-provider-attempt",
   ]), /cannot be requested together/u);
+});
+
+test("the manual resend CLI fixes one C01 IFS non-ZDR request and requires both exact spending limits", async () => {
+  const allowed = [
+    "--owner-authorized-c01-openai-error-detail-resend",
+    "--owner-authorized-allow-non-zdr",
+    "--max-call-cost-micros", "115000",
+    "--aggregate-cost-cap-micros", "3000000",
+  ] as const;
+  assert.deepEqual(parseFictionalIfsErrorDetailResendArgs(allowed), {
+    operatorAuthorized: true,
+    allowNonZdr: true,
+    maxCallCostMicros: 115_000,
+    aggregateCostCapMicros: 3_000_000,
+  });
+  for (const args of [
+    allowed.filter((arg) => arg !== "--owner-authorized-c01-openai-error-detail-resend"),
+    allowed.filter((arg) => arg !== "--owner-authorized-allow-non-zdr"),
+    allowed.filter((arg) => arg !== "--max-call-cost-micros" && arg !== "115000"),
+    allowed.filter((arg) => arg !== "--aggregate-cost-cap-micros" && arg !== "3000000"),
+    [...allowed, "--profile", "C02"],
+    [...allowed, "--reports", "MAP"],
+    [...allowed.slice(0, 2), "--max-call-cost-micros", "115001", "--aggregate-cost-cap-micros", "3000000"],
+    [...allowed.slice(0, 2), "--max-call-cost-micros", "115000", "--aggregate-cost-cap-micros", "3000001"],
+  ]) assert.throws(() => parseFictionalIfsErrorDetailResendArgs(args));
+
+  const fixture = await loadPwrp71FictionalDiagnosticFixture({ profileId: "C01", workspaceRoot: process.cwd() });
+  const preparedResult = preparePwrp71Request({
+    packet: fixture.packet, reportType: "IFS", questionSource: fixture.questionSource,
+    reportSource: fixture.reportSource, canonicalResponseEvidence: fixture.canonicalResponseEvidence,
+  });
+  assert.equal(preparedResult.ok, true);
+  if (!preparedResult.ok) return;
+  const resend = buildFictionalDiagnosticRequest({ profileId: "C01", prepared: preparedResult.value, runId: FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID, continuation: false, errorDetailResend: true });
+  assert.equal(resend.wirePayloadSha256, FICTIONAL_IFS_ERROR_DETAIL_RESEND_WIRE_SHA256, "only the idempotency key changes; the serialized provider body is the prior rejected body");
+  assert.throws(() => buildFictionalDiagnosticRequest({ profileId: "C02", prepared: preparedResult.value, runId: FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID, continuation: false, errorDetailResend: true }), /C01-only/u);
+});
+
+test("the fixed resend run ID refuses reuse before route checks or provider dispatch", async () => {
+  await withTempDirectory(async (directory) => {
+    const outputDirectory = path.join(directory, "gate11-c01-error-detail-resend-20261012");
+    await mkdir(outputDirectory, { recursive: true });
+    let routeChecks = 0;
+    await assert.rejects(() => runFictionalIfsErrorDetailResend(parseFictionalIfsErrorDetailResendArgs([
+      "--owner-authorized-c01-openai-error-detail-resend",
+      "--owner-authorized-allow-non-zdr",
+      "--max-call-cost-micros", "115000",
+      "--aggregate-cost-cap-micros", "3000000",
+    ]), {
+      workspaceRoot: process.cwd(),
+      outputDirectory,
+      routeCheck: async () => {
+        routeChecks += 1;
+        throw new Error("The one-shot run must stop before checking or dispatching again.");
+      },
+    }), /already exists/u);
+    assert.equal(routeChecks, 0, "a second invocation with the fixed resend ID stops before route checks and any generation call");
+  });
 });
 
 test("OpenRouter reachability preflight is an unauthenticated catalog GET and reports safe DNS causes", async () => {
@@ -752,6 +828,64 @@ test("the diagnostic fetch requires an exact active journal reservation and disp
       const dispatches = JSON.parse(await readFile(dispatchFile, "utf8")) as { entries: Array<{ idempotencyKey: string }> };
       assert.equal(dispatches.entries.length, 1);
       assert.equal(dispatches.entries[0]!.idempotencyKey, candidate.idempotencyKey);
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+});
+
+test("the exact C01 error-detail resend gets one journaled HTTP attempt and cannot be repeated", async () => {
+  await withTempDirectory(async (directory) => {
+    const dispatchFile = path.join(directory, "dispatches.json");
+    await writeFile(dispatchFile, JSON.stringify({ schemaVersion: 1, entries: [] }));
+    const store = new FileQualificationAttemptStore(directory);
+    const fixture = await loadPwrp71FictionalDiagnosticFixture({ profileId: "C01", workspaceRoot: process.cwd() });
+    const prepared = preparePwrp71Request({
+      packet: fixture.packet, reportType: "IFS", questionSource: fixture.questionSource,
+      reportSource: fixture.reportSource, canonicalResponseEvidence: fixture.canonicalResponseEvidence,
+    });
+    assert.equal(prepared.ok, true);
+    if (!prepared.ok) return;
+    const request = buildFictionalDiagnosticRequest({
+      profileId: "C01", prepared: prepared.value, runId: FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID,
+      continuation: false, errorDetailResend: true,
+    });
+    await store.begin({
+      request: request.request,
+      wireRequest: request.wireRequest,
+      maxCallCostMicros: 115_000,
+      aggregateCostCapMicros: 3_000_000,
+      usageStatus: "reported",
+      endpoint: OPENROUTER_DEFAULT_ENDPOINT,
+      startedAt: new Date("2026-10-12T12:00:00.000Z"),
+    });
+    const originalFetch = globalThis.fetch;
+    let providerCalls = 0;
+    globalThis.fetch = async () => {
+      providerCalls += 1;
+      return new Response(JSON.stringify({ error: { message: "schema rejected", metadata: { raw: "mock upstream schema detail" } } }), { status: 400 });
+    };
+    const diagnosticFetch = createDiagnosticFetch({
+      dispatchFile, store,
+      hooks: { recordResponse: async () => undefined, recordNoResponse: async () => undefined },
+      now: () => new Date("2026-10-12T12:00:00.000Z"),
+    });
+    const init = {
+      method: "POST",
+      headers: { authorization: "Bearer test-key", "x-request-id": request.request.idempotencyKey },
+      body: JSON.stringify(buildOpenRouterWirePayload(request.wireRequest)),
+    } satisfies RequestInit;
+    try {
+      const response = await diagnosticFetch(OPENROUTER_DEFAULT_ENDPOINT, init);
+      assert.equal(response.status, 400);
+      assert.equal(providerCalls, 1);
+      await assert.rejects(() => diagnosticFetch(OPENROUTER_DEFAULT_ENDPOINT, init), /one-use dispatch boundary/u);
+      assert.equal(providerCalls, 1, "a second use of the resend ID must never produce another provider request");
+      const dispatches = JSON.parse(await readFile(dispatchFile, "utf8")) as { entries: Array<{ profileId: string; requestVariant?: string; wirePayloadSha256: string }> };
+      assert.equal(dispatches.entries.length, 1);
+      assert.equal(dispatches.entries[0]!.profileId, "C01");
+      assert.equal(dispatches.entries[0]!.requestVariant, "openai-error-detail-resend-1");
+      assert.equal(dispatches.entries[0]!.wirePayloadSha256, FICTIONAL_IFS_ERROR_DETAIL_RESEND_WIRE_SHA256);
     } finally {
       globalThis.fetch = originalFetch;
     }

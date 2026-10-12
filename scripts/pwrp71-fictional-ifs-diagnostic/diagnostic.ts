@@ -75,10 +75,12 @@ const FRESH_BUDGET_EPOCH_2_FLAG = "--owner-authorized-fresh-budget-epoch-2";
 const NON_ZDR_CONTINUATION_FLAG = "--owner-authorized-allow-non-zdr-continuation";
 const FRESH_BUDGET_EPOCH_2_MARKER = "fresh-budget-epoch-2";
 const OPENAI_NON_ZDR_CONTINUATION_MARKER = "openai-non-zdr-continuation-1";
+export const OPENAI_ERROR_DETAIL_RESEND_MARKER = "openai-error-detail-resend-1" as const;
 const LEGACY_DEFAULT_ROUTE_RUN_SHA256 = "63b73b54845e4a719603b77abddd403f7297c6d157be4a8ffbf5f1d29b2e73be";
 const LEGACY_DEFAULT_ROUTE_RUN_FINGERPRINT = "e6223344cc26baa9dea4480b31b0e8c7f1c2296f3313aed0b61c0260a901bd83";
 const LEGACY_C01_ATTEMPT_ID = `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_RUN_ID}:C01:IFS:initial:${FICTIONAL_IFS_DIAGNOSTIC_REQUEST_LABEL}:attempt-1`;
 const OPENAI_ROUTE_CONTINUATION_MARKER = "openai-route-continuation-1";
+export const FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID = "gate11-c01-error-detail-resend-20261012" as const;
 export const FICTIONAL_IFS_DIAGNOSTIC_EPOCH_2_ZDR_PARENT_SHA256 = "f64878238c24e42cc8a4ce149eab22002e92fbab0eb28dc52731d94eb255b314" as const;
 const FRESH_EPOCH_2_ZDR_RUN_FINGERPRINT = "47f4481c127b1546745d3089207e8eda46f38f4ce530b2e2a76cf8616092b928";
 const FRESH_EPOCH_2_C01_ATTEMPT_ID = `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID}:C01:IFS:initial:${FICTIONAL_IFS_DIAGNOSTIC_REQUEST_LABEL}:attempt-1`;
@@ -123,7 +125,7 @@ export interface DiagnosticHttpDispatchRecord {
   readonly idempotencyKey: string;
   readonly profileId: ProfileId;
   readonly phase: DiagnosticPhase;
-  readonly requestVariant?: typeof OPENAI_ROUTE_CONTINUATION_MARKER | typeof FRESH_BUDGET_EPOCH_2_MARKER | typeof OPENAI_NON_ZDR_CONTINUATION_MARKER;
+  readonly requestVariant?: typeof OPENAI_ROUTE_CONTINUATION_MARKER | typeof FRESH_BUDGET_EPOCH_2_MARKER | typeof OPENAI_NON_ZDR_CONTINUATION_MARKER | typeof OPENAI_ERROR_DETAIL_RESEND_MARKER;
   readonly model: string;
   readonly reasoningEffort: string;
   readonly endpoint: string;
@@ -471,6 +473,7 @@ export function buildFictionalDiagnosticRequest(input: {
   readonly runId: string;
   readonly continuation: boolean;
   readonly allowNonZdrContinuation?: boolean;
+  readonly errorDetailResend?: boolean;
 }): { readonly request: OpenRouterGenerationRequest; readonly wireRequest: OpenRouterGenerationRequest; readonly requestFingerprint: string; readonly wirePayloadSha256: string } {
   const modelPin = UNQUALIFIED_MOCK_MODEL_POLICY.IFS;
   if (modelPin.model !== "openai/gpt-6-luna" || modelPin.reasoningEffort !== "max"
@@ -478,7 +481,12 @@ export function buildFictionalDiagnosticRequest(input: {
     || QUALIFICATION_MODEL_ORDER_NOT_FIXED(modelPin)) {
     throw new Error("The IFS candidate policy no longer matches the approved OpenRouter model, reasoning, and output pins.");
   }
-  const requestVariant = input.allowNonZdrContinuation
+  if (input.errorDetailResend && (input.profileId !== "C01" || input.runId !== FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID)) {
+    throw new Error("The error-detail resend request is fixed to the separately authorized C01-only follow-up run.");
+  }
+  const requestVariant = input.errorDetailResend
+    ? OPENAI_ERROR_DETAIL_RESEND_MARKER
+    : input.allowNonZdrContinuation
     ? OPENAI_NON_ZDR_CONTINUATION_MARKER
     : input.continuation && input.profileId === "C01" ? OPENAI_ROUTE_CONTINUATION_MARKER : undefined;
   const invocationKey = `pwrp71-fictional-diagnostic:${input.runId}:${input.profileId}${requestVariant ? `:${requestVariant}` : ""}`;
@@ -496,7 +504,7 @@ export function buildFictionalDiagnosticRequest(input: {
   const wireRequest: OpenRouterGenerationRequest = {
     ...request,
     schema: projectOpenRouterStrictSchemaObject(request.schema),
-    providerPolicy: input.allowNonZdrContinuation
+    providerPolicy: input.allowNonZdrContinuation || input.errorDetailResend
       ? GPT6_LUNA_OPENAI_NON_ZDR_DIAGNOSTIC_PROVIDER_POLICY
       : GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY,
     promptCacheOptions: { mode: "explicit" },
@@ -823,7 +831,7 @@ function validateFinalWireRequest(input: string | URL | Request, init: RequestIn
   readonly model: string;
   readonly reasoningEffort: string;
   readonly payloadSha256: string;
-  readonly requestVariant?: typeof OPENAI_ROUTE_CONTINUATION_MARKER | typeof FRESH_BUDGET_EPOCH_2_MARKER | typeof OPENAI_NON_ZDR_CONTINUATION_MARKER;
+  readonly requestVariant?: typeof OPENAI_ROUTE_CONTINUATION_MARKER | typeof FRESH_BUDGET_EPOCH_2_MARKER | typeof OPENAI_NON_ZDR_CONTINUATION_MARKER | typeof OPENAI_ERROR_DETAIL_RESEND_MARKER;
 } {
   const endpoint = String(input);
   const headers = new Headers(init?.headers);
@@ -832,17 +840,19 @@ function validateFinalWireRequest(input: string | URL | Request, init: RequestIn
   let payload: Record<string, unknown>;
   try { payload = JSON.parse(bodyText) as Record<string, unknown>; }
   catch { throw new Error("The final OpenRouter body is missing or is not valid JSON."); }
-  const match = idempotencyKey.match(/^pwrp71-fictional-diagnostic:(gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011(?:-fresh-budget-epoch-2)?):(C01|C02)(?::(openai-route-continuation-1|openai-non-zdr-continuation-1))?:IFS:(initial|repair|escalation|review|review_after_repair):openai-gpt-6-luna-max:attempt-\d+$/u);
+  const match = idempotencyKey.match(/^pwrp71-fictional-diagnostic:(gate11-c01-error-detail-resend-20261012|gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011(?:-fresh-budget-epoch-2)?):(C01|C02)(?::(openai-route-continuation-1|openai-non-zdr-continuation-1|openai-error-detail-resend-1))?:IFS:(initial|repair|escalation|review|review_after_repair):openai-gpt-6-luna-max:attempt-\d+$/u);
   const runId = match?.[1];
   const profileId = match?.[2] as ProfileId | undefined;
-  const requestVariantMarker = match?.[3] as typeof OPENAI_ROUTE_CONTINUATION_MARKER | typeof OPENAI_NON_ZDR_CONTINUATION_MARKER | undefined;
-  const freshBudgetMarker = runId === FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID && requestVariantMarker !== OPENAI_NON_ZDR_CONTINUATION_MARKER
+  const requestVariantMarker = match?.[3] as typeof OPENAI_ROUTE_CONTINUATION_MARKER | typeof OPENAI_NON_ZDR_CONTINUATION_MARKER | typeof OPENAI_ERROR_DETAIL_RESEND_MARKER | undefined;
+  const freshBudgetMarker = runId === FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID && requestVariantMarker !== OPENAI_NON_ZDR_CONTINUATION_MARKER && requestVariantMarker !== OPENAI_ERROR_DETAIL_RESEND_MARKER
     ? FRESH_BUDGET_EPOCH_2_MARKER : undefined;
   const phase = match?.[4] as DiagnosticPhase | undefined;
   if (init?.method !== "POST" || endpoint !== OPENROUTER_DEFAULT_ENDPOINT || !headers.get("authorization")?.startsWith("Bearer ")
     || !runId || !profileId
     || (requestVariantMarker === OPENAI_ROUTE_CONTINUATION_MARKER && (profileId !== "C01" || runId !== FICTIONAL_IFS_DIAGNOSTIC_RUN_ID))
     || (requestVariantMarker === OPENAI_NON_ZDR_CONTINUATION_MARKER && runId !== FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID)
+    || (requestVariantMarker === OPENAI_ERROR_DETAIL_RESEND_MARKER && (profileId !== "C01" || runId !== FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID))
+    || (requestVariantMarker === OPENAI_ERROR_DETAIL_RESEND_MARKER && phase !== "initial")
     || !phase || !isRecord(payload.reasoning) || !isRecord(payload.provider) || !isRecord(payload.usage)
     || !isRecord(payload.prompt_cache_options) || !isRecord(payload.response_format) || !isRecord(payload.response_format.json_schema)) {
     throw new Error("The provider request is outside the journaled fictional diagnostic transport contract.");
@@ -855,7 +865,7 @@ function validateFinalWireRequest(input: string | URL | Request, init: RequestIn
     || payload.stream !== false
     || payload.max_completion_tokens !== 20_000
     || payload.reasoning.effort !== "max"
-    || sha256Canonical(payload.provider) !== sha256Canonical(requestVariantMarker === OPENAI_NON_ZDR_CONTINUATION_MARKER
+    || sha256Canonical(payload.provider) !== sha256Canonical(requestVariantMarker === OPENAI_NON_ZDR_CONTINUATION_MARKER || requestVariantMarker === OPENAI_ERROR_DETAIL_RESEND_MARKER
       ? GPT6_LUNA_OPENAI_NON_ZDR_DIAGNOSTIC_PROVIDER_POLICY
       : GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY)
     || payload.prompt_cache_options.mode !== "explicit"
@@ -863,6 +873,7 @@ function validateFinalWireRequest(input: string | URL | Request, init: RequestIn
     || !Array.isArray(messages) || messages.length !== 2
     || !messages.every((message) => isRecord(message) && typeof message.content === "string")
     || !["patternwork_ifs_pwrp71_candidate_1", "patternwork_ifs_pwrp71_review_candidate_1"].includes(String(jsonSchema.name))
+    || (requestVariantMarker === OPENAI_ERROR_DETAIL_RESEND_MARKER && jsonSchema.name !== "patternwork_ifs_pwrp71_candidate_1")
     || jsonSchema.strict !== true || !isRecord(jsonSchema.schema)) {
     throw new Error("The serialized model, reasoning, data policy, usage, schema, or generation limits differ from the authorized request.");
   }
