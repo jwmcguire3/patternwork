@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
-import { mkdir, open, readFile, rm } from "node:fs/promises";
+import { mkdir, open, readFile, readdir, rm } from "node:fs/promises";
 import path from "node:path";
 import { sha256Canonical, normalizeLf } from "../../lib/report-contracts/delivery-validator.ts";
 import type { JsonObject, ValidationIssue } from "../../lib/question-engine/types.ts";
@@ -37,6 +37,7 @@ import { renameFileWithTransientRetry } from "../../lib/server/reports/qualifica
 export const FICTIONAL_IFS_DIAGNOSTIC_SCHEMA = "PWRP71-FICTIONAL-IFS-DIAGNOSTIC-1" as const;
 export const FICTIONAL_IFS_DIAGNOSTIC_RUN_ID = "gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011" as const;
 export const FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID = "gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011-fresh-budget-epoch-2" as const;
+export const FICTIONAL_IFS_SCHEMA_CORRECTION_RUN_ID = "gate11-c01-c02-ifs-schema-correction-20261012" as const;
 export const FICTIONAL_IFS_DIAGNOSTIC_REQUEST_LABEL = "openai-gpt-6-luna-max" as const;
 export const FICTIONAL_IFS_DIAGNOSTIC_OUTPUT_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/live" as const;
 
@@ -57,6 +58,8 @@ export const FICTIONAL_IFS_DIAGNOSTIC_PINS = {
   priorNoDispatchPreflightSha256: "2aae9c58d9305129da5f42ad69578933dbcafc3e4ea04ce0c01b8e72a041143b",
   currentPricingCheckSha256: "2fa98427307b6bfcbab46674261bef83b05f6d1cd7b697809a6838ed8e5ed4c0",
   nonZdrPricingCheckSha256: "fd34d59b4bdf49f7dc1fa6b5b43af7953a45c6a50c457b09db4c00a92f0b4b57",
+  schemaCorrectionPricingCheckSha256: "a22eef221ee00fe65183f5310e4690532ae1d83c6d1839c0f5da5d6cbd41116c",
+  schemaCorrectionPreflightSha256: "70b7adc162141b7b09bbc323df14b7b08ad1d92d791b907e0124e921a20bcda2",
   c01PacketSha256: "c4b8363436f22b34b28095b155158cb5716bc397d6231a284b5c6d710df4e036",
   c02PacketSha256: "c14bbcbd4ff8b6f69c1074b12a15d9132be9d3373d5d825257ff5dcf8ad61055",
 } as const;
@@ -69,13 +72,23 @@ const PREFLIGHT_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic
 const CONTINUATION_PREFLIGHT_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-continuation-schema-correction-no-dispatch-20261012.json";
 const FRESH_BUDGET_EPOCH_2_PREFLIGHT_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-fresh-budget-epoch-2-schema-correction-no-dispatch-20261012.json";
 const NON_ZDR_CONTINUATION_PREFLIGHT_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-non-zdr-continuation-schema-correction-no-dispatch-20261012.json";
+const SCHEMA_CORRECTION_PREFLIGHT_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/provider-preflight/c01-c02-ifs-openai-only-schema-correction-continuation-no-dispatch-20261012.json";
+const SCHEMA_CORRECTION_PRICING_RELATIVE = "qualification/pwrp71/gate11-fictional-ifs-diagnostic/pricing-check-2026-10-12-openai-non-zdr-c01-c02-schema-correction.json";
 const DIAGNOSTIC_LOCK_NAME = ".diagnostic-run.lock";
 const CONTINUATION_FLAG = "--continue-after-unknown-provider-attempt";
 const FRESH_BUDGET_EPOCH_2_FLAG = "--owner-authorized-fresh-budget-epoch-2";
 const NON_ZDR_CONTINUATION_FLAG = "--owner-authorized-allow-non-zdr-continuation";
+const SCHEMA_CORRECTION_CONTINUATION_FLAG = "--owner-authorized-schema-correction-continuation";
 const FRESH_BUDGET_EPOCH_2_MARKER = "fresh-budget-epoch-2";
 const OPENAI_NON_ZDR_CONTINUATION_MARKER = "openai-non-zdr-continuation-1";
 export const OPENAI_ERROR_DETAIL_RESEND_MARKER = "openai-error-detail-resend-1" as const;
+export const OPENAI_SCHEMA_CORRECTION_MARKER = "openai-schema-correction-continuation-1" as const;
+export const FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256 = "ea14e8ce48894bc13509f0cbf47843bd4151e2626a62d4893be0b266a5858288" as const;
+const SCHEMA_CORRECTION_PARENT_ATTEMPT_LEDGER_SHA256 = "9581a49c928dbad61ae612e7e9634cb5113110dc5cb22eac845030f197e26f62";
+const SCHEMA_CORRECTION_PARENT_DISPATCHES_SHA256 = "428d1ad1717d5eb5898ee227d17c1b4d42cab34678fba73756f32091f500a372";
+const SCHEMA_CORRECTION_PARENT_PREFLIGHT_SHA256 = "ddd63d80b561b4fa294f7d677c00d199eb71f906a56e28da2c2be95c793c7a2e";
+const SCHEMA_CORRECTION_PARENT_UNKNOWN_RESERVED_MICROS = 345_000;
+const SCHEMA_CORRECTION_PREVIOUS_WIRE_SCHEMA_SHA256 = "8f0f6f91d4037a2c929253bc21e35c96bc3f86c4c28193cafefe22640fb5b451";
 const LEGACY_DEFAULT_ROUTE_RUN_SHA256 = "63b73b54845e4a719603b77abddd403f7297c6d157be4a8ffbf5f1d29b2e73be";
 const LEGACY_DEFAULT_ROUTE_RUN_FINGERPRINT = "e6223344cc26baa9dea4480b31b0e8c7f1c2296f3313aed0b61c0260a901bd83";
 const LEGACY_C01_ATTEMPT_ID = `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_RUN_ID}:C01:IFS:initial:${FICTIONAL_IFS_DIAGNOSTIC_REQUEST_LABEL}:attempt-1`;
@@ -103,20 +116,23 @@ export interface FictionalIfsDiagnosticInvocation {
   readonly freshBudgetEpoch2?: boolean;
   /** Owner-authorized OpenAI-only non-ZDR continuation of the exact epoch-2 ZDR route rejection. */
   readonly allowNonZdrContinuation?: boolean;
+  /** One new C01/C02 request pair after the pinned OpenAI schema rejection was corrected. */
+  readonly schemaCorrectionContinuation?: boolean;
 }
 
 export interface FictionalIfsDiagnosticContinuation {
-  readonly ordinal: 1 | 2;
-  readonly reason: "openai_only_provider_route_after_prior_azure_schema_rejection" | "owner_authorized_non_zdr_after_openai_zdr_route_rejection";
-  readonly operatorFlag: typeof CONTINUATION_FLAG | typeof NON_ZDR_CONTINUATION_FLAG;
-  readonly operatorDirective: "run em" | "allow non zdr";
+  readonly ordinal: 1 | 2 | 3;
+  readonly reason: "openai_only_provider_route_after_prior_azure_schema_rejection" | "owner_authorized_non_zdr_after_openai_zdr_route_rejection" | "owner_authorized_schema_correction_after_openai_schema_rejection";
+  readonly operatorFlag: typeof CONTINUATION_FLAG | typeof NON_ZDR_CONTINUATION_FLAG | typeof SCHEMA_CORRECTION_CONTINUATION_FLAG;
+  readonly operatorDirective: "run em" | "allow non zdr" | "run requests for c01 and c02";
   readonly priorRunSha256: string;
-  readonly priorRunFingerprint: string;
+  readonly priorRunFingerprint: string | null;
   readonly priorRunArchiveFile: string;
   readonly priorAttemptsArchiveFile: string;
   readonly priorDispatchesArchiveFile: string;
-  readonly carriedUnknownAttemptIds: readonly [string];
-  readonly carriedUnknownReservationMicros: 115_000 | 230_000;
+  readonly priorPreflightArchiveFile?: string;
+  readonly carriedUnknownAttemptIds: readonly string[];
+  readonly carriedUnknownReservationMicros: number;
   readonly startedAt: string;
 }
 
@@ -125,7 +141,7 @@ export interface DiagnosticHttpDispatchRecord {
   readonly idempotencyKey: string;
   readonly profileId: ProfileId;
   readonly phase: DiagnosticPhase;
-  readonly requestVariant?: typeof OPENAI_ROUTE_CONTINUATION_MARKER | typeof FRESH_BUDGET_EPOCH_2_MARKER | typeof OPENAI_NON_ZDR_CONTINUATION_MARKER | typeof OPENAI_ERROR_DETAIL_RESEND_MARKER;
+  readonly requestVariant?: typeof OPENAI_ROUTE_CONTINUATION_MARKER | typeof FRESH_BUDGET_EPOCH_2_MARKER | typeof OPENAI_NON_ZDR_CONTINUATION_MARKER | typeof OPENAI_ERROR_DETAIL_RESEND_MARKER | typeof OPENAI_SCHEMA_CORRECTION_MARKER;
   readonly model: string;
   readonly reasoningEffort: string;
   readonly endpoint: string;
@@ -213,6 +229,14 @@ export interface FictionalIfsDiagnosticRun {
       readonly priorEpoch2UnknownReservedMicros: 115_000;
       readonly priorInvoiceStatusRemainsUnknown: true;
       readonly promptRetentionAcknowledged: true;
+    };
+    readonly schemaCorrectionContinuation?: {
+      readonly operatorDirective: "run requests for c01 and c02";
+      readonly priorRunId: typeof FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID;
+      readonly priorRunSha256: typeof FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256;
+      readonly priorEpoch2UnknownReservedMicros: 345_000;
+      readonly priorInvoiceStatusRemainsUnknown: true;
+      readonly providerAcceptanceBeforeThisRun: "untested_after_schema_correction";
     };
     readonly recordedApprovalSha256: string;
     readonly independentScopeReviewSha256: string;
@@ -305,6 +329,8 @@ interface PricingEvidence {
   readonly maxCompletionTokens: number;
   readonly structuredOutputJsonSchema: boolean;
   readonly providerRouting: {
+    readonly providerAllowlist?: readonly string[];
+    readonly providerFallbacks?: boolean;
     readonly requireParameters: boolean;
     readonly dataCollection: string;
     readonly zeroDataRetention: boolean;
@@ -318,6 +344,13 @@ interface PricingEvidence {
     readonly pwrp71IfsMaxOutputTokens: number;
     readonly perCallReservationMicros: number;
     readonly aggregateAuthorizationMicros: number;
+  };
+  readonly privacyAcknowledgement?: {
+    readonly ownerDirective?: string;
+    readonly latestOwnerDirective?: string;
+    readonly scope?: string;
+    readonly providerMayRetainPrompts?: boolean;
+    readonly accountWideSettingsMayStillRestrictTheRoute?: boolean;
   };
 }
 
@@ -349,6 +382,7 @@ function expectedPacketSha(profileId: ProfileId): string {
 }
 
 function runIdFor(invocation: FictionalIfsDiagnosticInvocation): string {
+  if (invocation.schemaCorrectionContinuation) return FICTIONAL_IFS_SCHEMA_CORRECTION_RUN_ID;
   return invocation.freshBudgetEpoch2 || invocation.allowNonZdrContinuation
     ? FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID
     : FICTIONAL_IFS_DIAGNOSTIC_RUN_ID;
@@ -372,6 +406,13 @@ function validateInvocation(value: FictionalIfsDiagnosticInvocation): void {
   if (value.allowNonZdrContinuation && value.continueAfterUnknownProviderAttempt) {
     throw new Error("The epoch-2 non-ZDR continuation cannot be combined with the legacy continuation.");
   }
+  if (value.schemaCorrectionContinuation
+    && (!value.freshBudgetEpoch2 || !value.allowNonZdrContinuation || value.continueAfterUnknownProviderAttempt)) {
+    throw new Error("Schema-correction continuation requires the existing epoch-2 and non-ZDR owner directives and cannot combine with an earlier continuation.");
+  }
+  if (value.schemaCorrectionContinuation && value.freshBudgetEpoch2 !== true) {
+    throw new Error("Schema-correction continuation cannot create a new budget epoch or reset prior reservations.");
+  }
 }
 
 const REQUIRED_VALUE_FLAGS = [
@@ -390,6 +431,7 @@ export function parseFictionalIfsDiagnosticArgs(argv: readonly string[]): Fictio
   let continueAfterUnknownProviderAttempt = false;
   let freshBudgetEpoch2 = false;
   let allowNonZdrContinuation = false;
+  let schemaCorrectionContinuation = false;
   for (let index = 0; index < argv.length; index += 1) {
     const name = argv[index]!;
     if (name === "--owner-authorized-fictional-diagnostic") {
@@ -410,6 +452,11 @@ export function parseFictionalIfsDiagnosticArgs(argv: readonly string[]): Fictio
     if (name === NON_ZDR_CONTINUATION_FLAG) {
       if (allowNonZdrContinuation) throw new Error(`${name} may be specified only once.`);
       allowNonZdrContinuation = true;
+      continue;
+    }
+    if (name === SCHEMA_CORRECTION_CONTINUATION_FLAG) {
+      if (schemaCorrectionContinuation) throw new Error(`${name} may be specified only once.`);
+      schemaCorrectionContinuation = true;
       continue;
     }
     if (!REQUIRED_VALUE_FLAGS.includes(name as typeof REQUIRED_VALUE_FLAGS[number]) || values.has(name)) {
@@ -434,6 +481,7 @@ export function parseFictionalIfsDiagnosticArgs(argv: readonly string[]): Fictio
     continueAfterUnknownProviderAttempt,
     freshBudgetEpoch2,
     allowNonZdrContinuation,
+    schemaCorrectionContinuation,
   };
   validateInvocation(invocation);
   return invocation;
@@ -474,6 +522,7 @@ export function buildFictionalDiagnosticRequest(input: {
   readonly continuation: boolean;
   readonly allowNonZdrContinuation?: boolean;
   readonly errorDetailResend?: boolean;
+  readonly schemaCorrectionContinuation?: boolean;
 }): { readonly request: OpenRouterGenerationRequest; readonly wireRequest: OpenRouterGenerationRequest; readonly requestFingerprint: string; readonly wirePayloadSha256: string } {
   const modelPin = UNQUALIFIED_MOCK_MODEL_POLICY.IFS;
   if (modelPin.model !== "openai/gpt-6-luna" || modelPin.reasoningEffort !== "max"
@@ -484,8 +533,14 @@ export function buildFictionalDiagnosticRequest(input: {
   if (input.errorDetailResend && (input.profileId !== "C01" || input.runId !== FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID)) {
     throw new Error("The error-detail resend request is fixed to the separately authorized C01-only follow-up run.");
   }
+  if (input.schemaCorrectionContinuation
+    && (input.runId !== FICTIONAL_IFS_SCHEMA_CORRECTION_RUN_ID || !input.allowNonZdrContinuation)) {
+    throw new Error("The schema-correction request requires its unique run ID and the previously authorized OpenAI-only non-ZDR route.");
+  }
   const requestVariant = input.errorDetailResend
     ? OPENAI_ERROR_DETAIL_RESEND_MARKER
+    : input.schemaCorrectionContinuation
+      ? OPENAI_SCHEMA_CORRECTION_MARKER
     : input.allowNonZdrContinuation
     ? OPENAI_NON_ZDR_CONTINUATION_MARKER
     : input.continuation && input.profileId === "C01" ? OPENAI_ROUTE_CONTINUATION_MARKER : undefined;
@@ -504,7 +559,7 @@ export function buildFictionalDiagnosticRequest(input: {
   const wireRequest: OpenRouterGenerationRequest = {
     ...request,
     schema: projectOpenRouterStrictSchemaObject(request.schema),
-    providerPolicy: input.allowNonZdrContinuation || input.errorDetailResend
+    providerPolicy: input.allowNonZdrContinuation || input.errorDetailResend || input.schemaCorrectionContinuation
       ? GPT6_LUNA_OPENAI_NON_ZDR_DIAGNOSTIC_PROVIDER_POLICY
       : GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY,
     promptCacheOptions: { mode: "explicit" },
@@ -533,9 +588,11 @@ function QUALIFICATION_MODEL_ORDER_NOT_FIXED(modelPin: typeof UNQUALIFIED_MOCK_M
   return modelPin.escalationModel !== "openai/gpt-6-luna" || modelPin.escalationReasoningEffort !== "max";
 }
 
-function validatePricing(value: PricingEvidence, hash: string, now: Date, allowNonZdr = false): void {
-  const expectedHash = allowNonZdr
-    ? FICTIONAL_IFS_DIAGNOSTIC_PINS.nonZdrPricingCheckSha256
+function validatePricing(value: PricingEvidence, hash: string, now: Date, allowNonZdr = false, schemaCorrection = false): void {
+  const expectedHash = schemaCorrection
+    ? FICTIONAL_IFS_DIAGNOSTIC_PINS.schemaCorrectionPricingCheckSha256
+    : allowNonZdr
+      ? FICTIONAL_IFS_DIAGNOSTIC_PINS.nonZdrPricingCheckSha256
     : FICTIONAL_IFS_DIAGNOSTIC_PINS.currentPricingCheckSha256;
   if (hash !== expectedHash
     || value.schemaVersion !== "PWRP71-OPENROUTER-PRICING-CHECK-1"
@@ -559,6 +616,16 @@ function validatePricing(value: PricingEvidence, hash: string, now: Date, allowN
     || value.limits.aggregateAuthorizationMicros !== FICTIONAL_IFS_DIAGNOSTIC_LIMITS.aggregateCostCapMicros) {
     throw new Error("Current pricing or provider-policy evidence is missing, stale, changed, or outside the approved scope.");
   }
+  if (schemaCorrection && (value.providerRouting.providerAllowlist?.length !== 1
+    || value.providerRouting.providerAllowlist[0] !== "OpenAI"
+    || value.providerRouting.providerFallbacks !== false
+    || value.privacyAcknowledgement?.ownerDirective !== "allow non zdr"
+    || value.privacyAcknowledgement.latestOwnerDirective !== "run requests for c01 and c02"
+    || value.privacyAcknowledgement.scope !== "fictional C01/C02 IFS only; schema-corrected continuation"
+    || value.privacyAcknowledgement.providerMayRetainPrompts !== true
+    || value.privacyAcknowledgement.accountWideSettingsMayStillRestrictTheRoute !== true)) {
+    throw new Error("The schema-correction pricing evidence does not retain the exact owner-authorized OpenAI-only, non-ZDR C01/C02 scope.");
+  }
 }
 
 function validatePreflight(input: {
@@ -571,6 +638,7 @@ function validatePreflight(input: {
   readonly continuation: boolean;
   readonly freshBudgetEpoch2: boolean;
   readonly allowNonZdrContinuation: boolean;
+  readonly schemaCorrectionContinuation: boolean;
   readonly runId: string;
 }): string {
   const preflight = input.preflight;
@@ -585,7 +653,7 @@ function validatePreflight(input: {
   if (!isRecord(candidate) || candidate.model !== "openai/gpt-6-luna" || candidate.reasoningEffort !== "max" || candidate.reportType !== "IFS"
     || candidate.providerSelection !== "openai_only_no_fallbacks"
       || (candidate.requestVariant ?? "initial") !== (input.allowNonZdrContinuation
-        ? OPENAI_NON_ZDR_CONTINUATION_MARKER
+        ? input.schemaCorrectionContinuation ? OPENAI_SCHEMA_CORRECTION_MARKER : OPENAI_NON_ZDR_CONTINUATION_MARKER
         : input.continuation
         ? OPENAI_ROUTE_CONTINUATION_MARKER
         : input.freshBudgetEpoch2 ? FRESH_BUDGET_EPOCH_2_MARKER : "initial")
@@ -597,6 +665,39 @@ function validatePreflight(input: {
     || sourcePins.semanticCaseSetSha256 !== input.semanticCaseSetSha256
     || !Array.isArray(exactRequests) || exactRequests.length !== 2) {
     throw new Error("The regenerated no-dispatch preflight does not bind the exact current sources and C01/C02 scope.");
+  }
+  if (input.schemaCorrectionContinuation) {
+    const correction = preflight.schemaCorrectionContinuation;
+    if (!isRecord(correction)
+      || correction.parentRunId !== FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID
+      || correction.parentRunSha256 !== FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256
+      || correction.priorAttemptLedgerSha256 !== SCHEMA_CORRECTION_PARENT_ATTEMPT_LEDGER_SHA256
+      || correction.priorDispatchLedgerSha256 !== SCHEMA_CORRECTION_PARENT_DISPATCHES_SHA256
+      || correction.priorUnknownReservedMicros !== SCHEMA_CORRECTION_PARENT_UNKNOWN_RESERVED_MICROS
+      || correction.remainingBeforeThisRunMicros !== FICTIONAL_IFS_DIAGNOSTIC_LIMITS.aggregateCostCapMicros - SCHEMA_CORRECTION_PARENT_UNKNOWN_RESERVED_MICROS
+      || correction.operatorDirective !== "run requests for c01 and c02"
+      || correction.dispatchPerformed !== false || correction.providerCalls !== 0 || correction.apiKeyRead !== false) {
+      throw new Error("The schema-correction preflight does not carry the exact stopped parent, unknown reservations, current C01/C02 instruction, and no-dispatch boundary.");
+    }
+    const budget = preflight.budgetEpochAuthorization;
+    const privacy = preflight.ownerAuthorizedPrivacyContinuation;
+    const schemaCorrection = preflight.schemaCorrection;
+    if (!isRecord(budget)
+      || budget.continuationParentRunId !== FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID
+      || budget.continuationParentRunSha256 !== FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256
+      || budget.priorAttemptLedgerSha256 !== SCHEMA_CORRECTION_PARENT_ATTEMPT_LEDGER_SHA256
+      || budget.priorDispatchLedgerSha256 !== SCHEMA_CORRECTION_PARENT_DISPATCHES_SHA256
+      || budget.totalUnknownReservedMicros !== SCHEMA_CORRECTION_PARENT_UNKNOWN_RESERVED_MICROS
+      || budget.remainingAuthorizationMicros !== FICTIONAL_IFS_DIAGNOSTIC_LIMITS.aggregateCostCapMicros - SCHEMA_CORRECTION_PARENT_UNKNOWN_RESERVED_MICROS
+      || !Array.isArray(budget.retainedUnknownAttempts) || budget.retainedUnknownAttempts.length !== 3
+      || !isRecord(privacy) || privacy.reportScope !== "fictional C01/C02 IFS only; corrected-schema continuation"
+      || privacy.latestOwnerDirective !== "run requests for c01 and c02"
+      || !isRecord(schemaCorrection) || schemaCorrection.sourceSchemasChanged !== false
+      || schemaCorrection.reportPromptsChanged !== false || schemaCorrection.fixtureEvidenceChanged !== false
+      || schemaCorrection.providerAcceptance !== "untested" || schemaCorrection.dispatchPerformed !== false
+      || schemaCorrection.providerCalls !== 0 || schemaCorrection.apiKeyRead !== false) {
+      throw new Error("The schema-correction preflight does not retain the exact budget journal and limited owner scope.");
+    }
   }
   for (const profile of input.profiles) {
     const row = exactRequests.find((entry) => isRecord(entry) && entry.profileId === profile.fixture.profileId);
@@ -641,8 +742,12 @@ async function prepareDiagnostic(
   const workspaceRoot = path.resolve(dependencies.workspaceRoot);
   const now = dependencies.now?.() ?? new Date();
   const runId = runIdFor(invocation);
-  const pricingRelative = invocation.allowNonZdrContinuation ? NON_ZDR_PRICING_RELATIVE : PRICING_RELATIVE;
-  const preflightRelative = invocation.continueAfterUnknownProviderAttempt
+  const pricingRelative = invocation.schemaCorrectionContinuation
+    ? SCHEMA_CORRECTION_PRICING_RELATIVE
+    : invocation.allowNonZdrContinuation ? NON_ZDR_PRICING_RELATIVE : PRICING_RELATIVE;
+  const preflightRelative = invocation.schemaCorrectionContinuation
+    ? SCHEMA_CORRECTION_PREFLIGHT_RELATIVE
+    : invocation.continueAfterUnknownProviderAttempt
     ? CONTINUATION_PREFLIGHT_RELATIVE
     : invocation.allowNonZdrContinuation ? NON_ZDR_CONTINUATION_PREFLIGHT_RELATIVE
       : invocation.freshBudgetEpoch2 ? FRESH_BUDGET_EPOCH_2_PREFLIGHT_RELATIVE : PREFLIGHT_RELATIVE;
@@ -669,7 +774,7 @@ async function prepareDiagnostic(
     FICTIONAL_IFS_DIAGNOSTIC_PINS.c02PacketSha256,
   ]) if (!reviewText.includes(term)) throw new Error("The independent current-scope review no longer binds the exact diagnostic source and packet pins.");
   const pricing = JSON.parse(pricingBytes.toString("utf8")) as PricingEvidence;
-  validatePricing(pricing, pricingSha256, now, invocation.allowNonZdrContinuation === true);
+  validatePricing(pricing, pricingSha256, now, invocation.allowNonZdrContinuation === true, invocation.schemaCorrectionContinuation === true);
 
   const semanticCaseSetSha256 = sha256Text(normalizeLf(semanticBytes.toString("utf8")));
   if (semanticCaseSetSha256 !== PWRP71_SEMANTIC_CASE_SET_SHA256) throw new Error("The semantic case bytes do not match the PWRP 7.1 readiness pin.");
@@ -717,6 +822,7 @@ async function prepareDiagnostic(
       runId,
       continuation: invocation.continueAfterUnknownProviderAttempt === true,
       allowNonZdrContinuation: invocation.allowNonZdrContinuation === true,
+      schemaCorrectionContinuation: invocation.schemaCorrectionContinuation === true,
     });
     preparedProfiles.push({ fixture, prepared: prepared.value, ...request });
   }
@@ -733,8 +839,12 @@ async function prepareDiagnostic(
     continuation: invocation.continueAfterUnknownProviderAttempt === true,
     freshBudgetEpoch2: invocation.freshBudgetEpoch2 === true,
     allowNonZdrContinuation: invocation.allowNonZdrContinuation === true,
+    schemaCorrectionContinuation: invocation.schemaCorrectionContinuation === true,
     runId,
   });
+  if (invocation.schemaCorrectionContinuation && preflightSha256 !== FICTIONAL_IFS_DIAGNOSTIC_PINS.schemaCorrectionPreflightSha256) {
+    throw new Error("The schema-correction no-dispatch preflight digest differs from the reviewed request identity.");
+  }
   const sourcePins: FictionalIfsDiagnosticRun["sourcePins"] = {
     questionRelease: PWQE51_RELEASE_IDENTITY.questionRelease,
     questionSourceSha256: firstFixture.questionSource.manifest.source_binding.source_sha256,
@@ -768,6 +878,8 @@ async function prepareDiagnostic(
       operatorFlagProvided: true,
       freshBudgetEpoch2: invocation.freshBudgetEpoch2 === true,
       allowNonZdrContinuation: invocation.allowNonZdrContinuation === true,
+      schemaCorrectionContinuation: invocation.schemaCorrectionContinuation === true,
+      ...(invocation.schemaCorrectionContinuation ? { schemaCorrectionParentSha256: FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256 } : {}),
       approvalSha256,
       reviewSha256,
     },
@@ -807,6 +919,16 @@ async function prepareDiagnostic(
           promptRetentionAcknowledged: true as const,
         },
       } : {}),
+      ...(invocation.schemaCorrectionContinuation ? {
+        schemaCorrectionContinuation: {
+          operatorDirective: "run requests for c01 and c02" as const,
+          priorRunId: FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID,
+          priorRunSha256: FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256,
+          priorEpoch2UnknownReservedMicros: 345_000 as const,
+          priorInvoiceStatusRemainsUnknown: true as const,
+          providerAcceptanceBeforeThisRun: "untested_after_schema_correction" as const,
+        },
+      } : {}),
       recordedApprovalSha256: approvalSha256,
       independentScopeReviewSha256: reviewSha256,
       credentialInterpretation: "approval_record_is_not_a_cryptographic_credential_or_routing_receipt",
@@ -831,7 +953,7 @@ function validateFinalWireRequest(input: string | URL | Request, init: RequestIn
   readonly model: string;
   readonly reasoningEffort: string;
   readonly payloadSha256: string;
-  readonly requestVariant?: typeof OPENAI_ROUTE_CONTINUATION_MARKER | typeof FRESH_BUDGET_EPOCH_2_MARKER | typeof OPENAI_NON_ZDR_CONTINUATION_MARKER | typeof OPENAI_ERROR_DETAIL_RESEND_MARKER;
+  readonly requestVariant?: typeof OPENAI_ROUTE_CONTINUATION_MARKER | typeof FRESH_BUDGET_EPOCH_2_MARKER | typeof OPENAI_NON_ZDR_CONTINUATION_MARKER | typeof OPENAI_ERROR_DETAIL_RESEND_MARKER | typeof OPENAI_SCHEMA_CORRECTION_MARKER;
 } {
   const endpoint = String(input);
   const headers = new Headers(init?.headers);
@@ -840,17 +962,20 @@ function validateFinalWireRequest(input: string | URL | Request, init: RequestIn
   let payload: Record<string, unknown>;
   try { payload = JSON.parse(bodyText) as Record<string, unknown>; }
   catch { throw new Error("The final OpenRouter body is missing or is not valid JSON."); }
-  const match = idempotencyKey.match(/^pwrp71-fictional-diagnostic:(gate11-c01-error-detail-resend-20261012|gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011(?:-fresh-budget-epoch-2)?):(C01|C02)(?::(openai-route-continuation-1|openai-non-zdr-continuation-1|openai-error-detail-resend-1))?:IFS:(initial|repair|escalation|review|review_after_repair):openai-gpt-6-luna-max:attempt-\d+$/u);
+  const match = idempotencyKey.match(/^pwrp71-fictional-diagnostic:(gate11-c01-error-detail-resend-20261012|gate11-c01-c02-ifs-schema-correction-20261012|gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011(?:-fresh-budget-epoch-2)?):(C01|C02)(?::(openai-route-continuation-1|openai-non-zdr-continuation-1|openai-error-detail-resend-1|openai-schema-correction-continuation-1))?:IFS:(initial|repair|escalation|review|review_after_repair):openai-gpt-6-luna-max:attempt-\d+$/u);
   const runId = match?.[1];
   const profileId = match?.[2] as ProfileId | undefined;
-  const requestVariantMarker = match?.[3] as typeof OPENAI_ROUTE_CONTINUATION_MARKER | typeof OPENAI_NON_ZDR_CONTINUATION_MARKER | typeof OPENAI_ERROR_DETAIL_RESEND_MARKER | undefined;
+  const requestVariantMarker = match?.[3] as typeof OPENAI_ROUTE_CONTINUATION_MARKER | typeof OPENAI_NON_ZDR_CONTINUATION_MARKER | typeof OPENAI_ERROR_DETAIL_RESEND_MARKER | typeof OPENAI_SCHEMA_CORRECTION_MARKER | undefined;
   const freshBudgetMarker = runId === FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID && requestVariantMarker !== OPENAI_NON_ZDR_CONTINUATION_MARKER && requestVariantMarker !== OPENAI_ERROR_DETAIL_RESEND_MARKER
     ? FRESH_BUDGET_EPOCH_2_MARKER : undefined;
   const phase = match?.[4] as DiagnosticPhase | undefined;
   if (init?.method !== "POST" || endpoint !== OPENROUTER_DEFAULT_ENDPOINT || !headers.get("authorization")?.startsWith("Bearer ")
     || !runId || !profileId
+    || (runId === FICTIONAL_IFS_SCHEMA_CORRECTION_RUN_ID
+      && (requestVariantMarker !== OPENAI_SCHEMA_CORRECTION_MARKER || (profileId !== "C01" && profileId !== "C02")))
     || (requestVariantMarker === OPENAI_ROUTE_CONTINUATION_MARKER && (profileId !== "C01" || runId !== FICTIONAL_IFS_DIAGNOSTIC_RUN_ID))
     || (requestVariantMarker === OPENAI_NON_ZDR_CONTINUATION_MARKER && runId !== FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID)
+    || (requestVariantMarker === OPENAI_SCHEMA_CORRECTION_MARKER && runId !== FICTIONAL_IFS_SCHEMA_CORRECTION_RUN_ID)
     || (requestVariantMarker === OPENAI_ERROR_DETAIL_RESEND_MARKER && (profileId !== "C01" || runId !== FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID))
     || (requestVariantMarker === OPENAI_ERROR_DETAIL_RESEND_MARKER && phase !== "initial")
     || !phase || !isRecord(payload.reasoning) || !isRecord(payload.provider) || !isRecord(payload.usage)
@@ -865,7 +990,7 @@ function validateFinalWireRequest(input: string | URL | Request, init: RequestIn
     || payload.stream !== false
     || payload.max_completion_tokens !== 20_000
     || payload.reasoning.effort !== "max"
-    || sha256Canonical(payload.provider) !== sha256Canonical(requestVariantMarker === OPENAI_NON_ZDR_CONTINUATION_MARKER || requestVariantMarker === OPENAI_ERROR_DETAIL_RESEND_MARKER
+    || sha256Canonical(payload.provider) !== sha256Canonical(requestVariantMarker === OPENAI_NON_ZDR_CONTINUATION_MARKER || requestVariantMarker === OPENAI_ERROR_DETAIL_RESEND_MARKER || requestVariantMarker === OPENAI_SCHEMA_CORRECTION_MARKER
       ? GPT6_LUNA_OPENAI_NON_ZDR_DIAGNOSTIC_PROVIDER_POLICY
       : GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY)
     || payload.prompt_cache_options.mode !== "explicit"
@@ -1271,6 +1396,199 @@ async function preserveLegacyRunSnapshot(runDirectory: string, continuation: Fic
   }
 }
 
+interface SchemaCorrectionSeed {
+  readonly attempts: readonly QualificationAttemptRecord[];
+  readonly dispatches: DispatchFile;
+  readonly continuation: FictionalIfsDiagnosticContinuation;
+}
+
+async function writeImmutableArchive(file: string, bytes: Buffer): Promise<void> {
+  await mkdir(path.dirname(file), { recursive: true });
+  try {
+    const handle = await open(file, "wx");
+    try { await handle.writeFile(bytes); await handle.sync(); }
+    finally { await handle.close(); }
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
+    if (!(await readFile(file)).equals(bytes)) throw new Error("A schema-correction history archive already exists with different bytes.");
+  }
+}
+
+function assertArchivedParentChain(input: {
+  readonly parentRunBytes: Buffer;
+  readonly parentAttemptsBytes: Buffer;
+  readonly parentDispatchesBytes: Buffer;
+  readonly expectedParentRunSha256: string;
+  readonly currentAttemptsPrefix: readonly QualificationAttemptRecord[];
+  readonly currentDispatchesPrefix: readonly DiagnosticHttpDispatchRecord[];
+}): void {
+  const parentRun = JSON.parse(input.parentRunBytes.toString("utf8")) as Record<string, unknown>;
+  const parentWithoutDigest = Object.fromEntries(Object.entries(parentRun).filter(([key]) => key !== "runSha256"));
+  const parentAttempts = JSON.parse(input.parentAttemptsBytes.toString("utf8")) as { schemaVersion?: unknown; attempts?: unknown };
+  const parentDispatches = JSON.parse(input.parentDispatchesBytes.toString("utf8")) as DispatchFile;
+  if (parentRun.runSha256 !== input.expectedParentRunSha256
+    || sha256Canonical(parentWithoutDigest) !== input.expectedParentRunSha256
+    || parentAttempts.schemaVersion !== 1 || !Array.isArray(parentAttempts.attempts)
+    || parentDispatches.schemaVersion !== 1 || !Array.isArray(parentDispatches.entries)
+    || sha256Canonical(parentAttempts) !== sha256Canonical({ schemaVersion: 1, attempts: input.currentAttemptsPrefix })
+    || sha256Canonical(parentDispatches) !== sha256Canonical({ schemaVersion: 1, entries: input.currentDispatchesPrefix })) {
+    throw new Error("The archived parent lineage does not match its pinned run digest and preserved attempt/dispatch prefixes.");
+  }
+}
+
+async function seedSchemaCorrectionHistory(input: {
+  readonly workspaceRoot: string;
+  readonly runDirectory: string;
+  readonly prepared: PreparedDiagnostic;
+  readonly now: Date;
+}): Promise<SchemaCorrectionSeed> {
+  const parentDirectory = path.join(input.workspaceRoot, FICTIONAL_IFS_DIAGNOSTIC_OUTPUT_RELATIVE, FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID);
+  const parentHistoryDirectory = path.join(parentDirectory, "history");
+  const [runBytes, attemptsBytes, dispatchesBytes, preflightBytes, historicalParentRun, historicalParentAttempts, historicalParentDispatches] = await Promise.all([
+    readFile(path.join(parentDirectory, "run.json")),
+    readFile(path.join(parentDirectory, "attempts.json")),
+    readFile(path.join(parentDirectory, "dispatches.json")),
+    readFile(path.join(parentDirectory, "preflight.json")),
+    readFile(path.join(parentHistoryDirectory, "parent-run.json")),
+    readFile(path.join(parentHistoryDirectory, "parent-attempts.json")),
+    readFile(path.join(parentHistoryDirectory, "parent-dispatches.json")),
+  ]);
+  const parent = JSON.parse(runBytes.toString("utf8")) as Record<string, unknown>;
+  const withoutDigest = Object.fromEntries(Object.entries(parent).filter(([key]) => key !== "runSha256"));
+  const parentRunConditions = [
+    parent.schemaVersion === "PWRP71-C01-IFS-ERROR-DETAIL-RESEND-1",
+    parent.resultKind === "fictional_report_diagnostic_resend",
+    parent.status === "provider_rejected",
+    parent.runId === FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID,
+    parent.runSha256 === FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256,
+    sha256Canonical(withoutDigest) === FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256,
+    parent.parentRunSha256 === "3959ea731dc6effa86703060023007bb1a9f97fbbb8a0c3eff1d0f0a0ea254c6",
+  ];
+  if (parentRunConditions.includes(false)) {
+    throw new Error(`The latest parent is not the exact byte-pinned OpenAI schema-rejection run eligible for schema correction (${parentDirectory}).`);
+  }
+  const scope = parent.scope;
+  const sourcePins = parent.sourcePins;
+  const cost = parent.cost;
+  const diagnostic = parent.providerDiagnostic;
+  if (!isRecord(scope) || scope.profileId !== "C01" || scope.reportType !== "IFS" || scope.fixtureSet !== "route-replays-v5"
+    || scope.model !== "openai/gpt-6-luna" || scope.reasoningEffort !== "max"
+    || scope.providerRestriction !== "openai_only_no_fallbacks" || scope.privacyMode !== "non_zdr_allowed"
+    || !isRecord(sourcePins) || !isRecord(cost) || !isRecord(diagnostic)
+    || diagnostic.providerName !== "OpenAI" || diagnostic.providerUpstreamCode !== "invalid_json_schema"
+    || typeof diagnostic.providerErrorRaw !== "string" || !diagnostic.providerErrorRaw.includes("properties', 'report_release')")
+    || cost.reportedMicros !== 0 || cost.reservedUnknownMicros !== SCHEMA_CORRECTION_PARENT_UNKNOWN_RESERVED_MICROS
+    || cost.remainingAuthorizedMicros !== FICTIONAL_IFS_DIAGNOSTIC_LIMITS.aggregateCostCapMicros - SCHEMA_CORRECTION_PARENT_UNKNOWN_RESERVED_MICROS
+    || parent.attemptLedgerSha256 !== SCHEMA_CORRECTION_PARENT_ATTEMPT_LEDGER_SHA256
+    || parent.providerDispatchesSha256 !== SCHEMA_CORRECTION_PARENT_DISPATCHES_SHA256
+    || parent.preflightSha256 !== sha256Canonical(JSON.parse(preflightBytes.toString("utf8")))
+    || parent.preflightSha256 !== SCHEMA_CORRECTION_PARENT_PREFLIGHT_SHA256) {
+    throw new Error("The stopped parent does not preserve the exact OpenAI schema rejection, current budget, source pins, and preflight digest.");
+  }
+  for (const key of [
+    "questionSourceSha256", "questionSourceManifestSha256", "routerRuntimeSha256",
+    "reportSourceManifestSha256", "semanticCaseSetSha256", "fixtureManifestSha256", "fixtureSetSha256",
+  ] as const) {
+    if (sourcePins[key] !== input.prepared.sourcePins[key]) throw new Error(`The schema-correction parent source pin ${key} differs from the current reviewed candidate.`);
+  }
+  const currentC01 = input.prepared.sourcePins.profiles.find((profile) => profile.profileId === "C01");
+  if (!currentC01 || sourcePins.packetSha256 !== currentC01.packetSha256
+    || sourcePins.evidenceSha256 !== currentC01.evidenceSha256
+    || sourcePins.fixtureArtifactSha256 !== currentC01.fixtureArtifactSha256) {
+    throw new Error("The latest rejected C01 request did not use the current reviewed fictional packet.");
+  }
+
+  const attemptFile = JSON.parse(attemptsBytes.toString("utf8")) as { readonly schemaVersion?: unknown; readonly attempts?: unknown };
+  const dispatches = JSON.parse(dispatchesBytes.toString("utf8")) as DispatchFile;
+  if (attemptFile.schemaVersion !== 1 || !Array.isArray(attemptFile.attempts)
+    || dispatches.schemaVersion !== 1 || dispatches.entries.length !== 3
+    || sha256Canonical(attemptFile) !== SCHEMA_CORRECTION_PARENT_ATTEMPT_LEDGER_SHA256
+    || sha256Canonical(dispatches) !== SCHEMA_CORRECTION_PARENT_DISPATCHES_SHA256) {
+    throw new Error("The prior attempt and dispatch journal hashes changed; unknown reservations cannot be carried safely.");
+  }
+  const attempts = attemptFile.attempts as QualificationAttemptRecord[];
+  const expectedAttemptIds = [
+    `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID}:C01:IFS:initial:${FICTIONAL_IFS_DIAGNOSTIC_REQUEST_LABEL}:attempt-1`,
+    `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID}:C01:${OPENAI_NON_ZDR_CONTINUATION_MARKER}:IFS:initial:${FICTIONAL_IFS_DIAGNOSTIC_REQUEST_LABEL}:attempt-1`,
+    `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID}:C01:${OPENAI_ERROR_DETAIL_RESEND_MARKER}:IFS:initial:${FICTIONAL_IFS_DIAGNOSTIC_REQUEST_LABEL}:attempt-1`,
+  ];
+  const expectedStatuses = [404, 400, 400];
+  if (attempts.length !== expectedAttemptIds.length || dispatches.entries.length !== expectedAttemptIds.length
+    || attempts.some((attempt, index) => attempt.attemptId !== expectedAttemptIds[index]
+      || attempt.status !== "unknown" || attempt.usageStatus !== "unknown"
+      || attempt.reservedCostMicros !== FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros
+      || attempt.maximumCallCostMicros !== FICTIONAL_IFS_DIAGNOSTIC_LIMITS.maxCallCostMicros
+      || attempt.aggregateCostCapMicros !== FICTIONAL_IFS_DIAGNOSTIC_LIMITS.aggregateCostCapMicros
+      || attempt.request.requestedModel !== "openai/gpt-6-luna"
+      || attempt.request.requestedReasoningEffort !== "max"
+      || attempt.request.schemaName !== "patternwork_ifs_pwrp71_candidate_1"
+      || attempt.request.wireSchemaSha256 !== SCHEMA_CORRECTION_PREVIOUS_WIRE_SCHEMA_SHA256
+      || attempt.endpoint !== OPENROUTER_DEFAULT_ENDPOINT)
+    || dispatches.entries.some((entry, index) => entry.index !== index + 1
+      || entry.idempotencyKey !== expectedAttemptIds[index]
+      || entry.profileId !== "C01" || entry.phase !== "initial"
+      || entry.model !== "openai/gpt-6-luna" || entry.reasoningEffort !== "max"
+      || entry.endpoint !== OPENROUTER_DEFAULT_ENDPOINT || entry.outcome !== "response_received"
+      || entry.responseStatus !== expectedStatuses[index])
+    || dispatches.entries[2]?.requestVariant !== OPENAI_ERROR_DETAIL_RESEND_MARKER
+    || attempts[2]?.diagnostic?.providerUpstreamCode !== "invalid_json_schema"
+    || attempts.some((attempt) => attempt.attemptId.includes(":C02:"))) {
+    throw new Error("The parent must contain exactly three prior unknown C01 IFS attempts; none may be replayed or mislabeled.");
+  }
+  if (attempts[0]?.diagnostic?.statusCode !== 404
+    || attempts[0]?.diagnostic?.message.toLowerCase().includes("zero data retention") !== true
+    || attempts[1]?.diagnostic?.statusCode !== 400
+    || attempts[1]?.diagnostic?.providerName !== "OpenAI"
+    || attempts[1]?.diagnostic?.providerUpstreamCode !== "invalid_json_schema"
+    || attempts[2]?.diagnostic?.statusCode !== 400
+    || attempts[2]?.diagnostic?.providerName !== "OpenAI"
+    || attempts[2]?.diagnostic?.providerUpstreamCode !== "invalid_json_schema") {
+    throw new Error("The carried reservations do not match the exact prior ZDR route rejection followed by two OpenAI schema rejections.");
+  }
+  assertArchivedParentChain({
+    parentRunBytes: historicalParentRun,
+    parentAttemptsBytes: historicalParentAttempts,
+    parentDispatchesBytes: historicalParentDispatches,
+    expectedParentRunSha256: String(parent.parentRunSha256),
+    currentAttemptsPrefix: attempts.slice(0, 2),
+    currentDispatchesPrefix: dispatches.entries.slice(0, 2),
+  });
+  const currentEntries = await readdir(input.runDirectory);
+  if (currentEntries.some((entry) => entry !== DIAGNOSTIC_LOCK_NAME)) {
+    throw new Error("The unique schema-correction output directory already contains state; refusing to overwrite or adopt it.");
+  }
+
+  const continuation: FictionalIfsDiagnosticContinuation = {
+    ordinal: 3,
+    reason: "owner_authorized_schema_correction_after_openai_schema_rejection",
+    operatorFlag: SCHEMA_CORRECTION_CONTINUATION_FLAG,
+    operatorDirective: "run requests for c01 and c02",
+    priorRunSha256: FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256,
+    priorRunFingerprint: null,
+    priorRunArchiveFile: `history/prior-schema-rejection-run-${FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256}.json`,
+    priorAttemptsArchiveFile: `history/prior-schema-rejection-attempts-${FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256}.json`,
+    priorDispatchesArchiveFile: `history/prior-schema-rejection-dispatches-${FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256}.json`,
+    priorPreflightArchiveFile: `history/prior-schema-rejection-preflight-${FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256}.json`,
+    carriedUnknownAttemptIds: expectedAttemptIds,
+    carriedUnknownReservationMicros: SCHEMA_CORRECTION_PARENT_UNKNOWN_RESERVED_MICROS,
+    startedAt: input.now.toISOString(),
+  };
+  await Promise.all([
+    writeImmutableArchive(path.join(input.runDirectory, continuation.priorRunArchiveFile), runBytes),
+    writeImmutableArchive(path.join(input.runDirectory, continuation.priorAttemptsArchiveFile), attemptsBytes),
+    writeImmutableArchive(path.join(input.runDirectory, continuation.priorDispatchesArchiveFile), dispatchesBytes),
+    writeImmutableArchive(path.join(input.runDirectory, continuation.priorPreflightArchiveFile!), preflightBytes),
+    writeImmutableArchive(path.join(input.runDirectory, "history/prior-schema-rejection-parent-run.json"), historicalParentRun),
+    writeImmutableArchive(path.join(input.runDirectory, "history/prior-schema-rejection-parent-attempts.json"), historicalParentAttempts),
+    writeImmutableArchive(path.join(input.runDirectory, "history/prior-schema-rejection-parent-dispatches.json"), historicalParentDispatches),
+  ]);
+  await Promise.all([
+    atomicWrite(path.join(input.runDirectory, "attempts.json"), attemptsBytes.toString("utf8")),
+    atomicWrite(path.join(input.runDirectory, "dispatches.json"), dispatchesBytes.toString("utf8")),
+  ]);
+  return { attempts, dispatches, continuation };
+}
+
 export async function runFictionalIfsDiagnostic(
   invocation: FictionalIfsDiagnosticInvocation,
   dependencies: FictionalIfsDiagnosticDependencies,
@@ -1287,8 +1605,79 @@ export async function runFictionalIfsDiagnostic(
     const existing = await loadRun(runPath);
     const store = new FileQualificationAttemptStore(prepared.runDirectory);
     let dispatches = await readDispatchFile(dispatchFile);
-    const priorAttempts = await store.list();
-    if (!existing && (invocation.continueAfterUnknownProviderAttempt || invocation.allowNonZdrContinuation)) {
+    let priorAttempts = await store.list();
+    if (invocation.schemaCorrectionContinuation && existing && existing.runFingerprint !== prepared.runFingerprint) {
+      throw new Error("The unique schema-correction run already exists with different current pins; it cannot be repurposed or redispatched.");
+    }
+    if (invocation.schemaCorrectionContinuation && !existing) {
+      if (priorAttempts.length !== 0 || dispatches.entries.length !== 0) {
+        throw new Error("The unique schema-correction directory contains a partial attempt journal; refusing to overwrite or adopt it.");
+      }
+      const seed = await seedSchemaCorrectionHistory({
+        workspaceRoot: prepared.workspaceRoot,
+        runDirectory: prepared.runDirectory,
+        prepared,
+        now: now(),
+      });
+      continuation = seed.continuation;
+      carriedUnknownAttemptIds = new Set(seed.continuation.carriedUnknownAttemptIds);
+      priorAttempts = [...seed.attempts];
+      dispatches = seed.dispatches;
+      manifestWriteAuthorized = true;
+    } else if (invocation.schemaCorrectionContinuation && existing) {
+      assertRunManifestDigest(existing);
+      if (existing.continuation?.ordinal !== 3
+        || existing.continuation.reason !== "owner_authorized_schema_correction_after_openai_schema_rejection"
+        || existing.continuation.operatorFlag !== SCHEMA_CORRECTION_CONTINUATION_FLAG
+        || existing.continuation.operatorDirective !== "run requests for c01 and c02"
+        || existing.continuation.priorRunSha256 !== FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256
+        || existing.continuation.priorAttemptsArchiveFile !== `history/prior-schema-rejection-attempts-${FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256}.json`
+        || existing.continuation.priorDispatchesArchiveFile !== `history/prior-schema-rejection-dispatches-${FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256}.json`
+        || existing.continuation.priorRunArchiveFile !== `history/prior-schema-rejection-run-${FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256}.json`
+        || existing.continuation.priorPreflightArchiveFile !== `history/prior-schema-rejection-preflight-${FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256}.json`
+        || existing.continuation.carriedUnknownReservationMicros !== SCHEMA_CORRECTION_PARENT_UNKNOWN_RESERVED_MICROS
+        || existing.continuation.carriedUnknownAttemptIds.join("\n") !== [
+          `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID}:C01:IFS:initial:${FICTIONAL_IFS_DIAGNOSTIC_REQUEST_LABEL}:attempt-1`,
+          `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_DIAGNOSTIC_FRESH_BUDGET_EPOCH_2_RUN_ID}:C01:${OPENAI_NON_ZDR_CONTINUATION_MARKER}:IFS:initial:${FICTIONAL_IFS_DIAGNOSTIC_REQUEST_LABEL}:attempt-1`,
+          `pwrp71-fictional-diagnostic:${FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID}:C01:${OPENAI_ERROR_DETAIL_RESEND_MARKER}:IFS:initial:${FICTIONAL_IFS_DIAGNOSTIC_REQUEST_LABEL}:attempt-1`,
+        ].join("\n")
+        || existing.authorization.schemaCorrectionContinuation?.priorRunSha256 !== FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256) {
+        throw new Error("The existing run ID is not the exact schema-correction continuation and cannot be reused.");
+      }
+      const archivedAttemptsBytes = await readFile(path.join(prepared.runDirectory, existing.continuation.priorAttemptsArchiveFile));
+      const archivedDispatchesBytes = await readFile(path.join(prepared.runDirectory, existing.continuation.priorDispatchesArchiveFile));
+      const archivedPreflightBytes = await readFile(path.join(prepared.runDirectory, existing.continuation.priorPreflightArchiveFile));
+      const [archivedHistoryRunBytes, archivedHistoryAttemptsBytes, archivedHistoryDispatchesBytes] = await Promise.all([
+        readFile(path.join(prepared.runDirectory, "history/prior-schema-rejection-parent-run.json")),
+        readFile(path.join(prepared.runDirectory, "history/prior-schema-rejection-parent-attempts.json")),
+        readFile(path.join(prepared.runDirectory, "history/prior-schema-rejection-parent-dispatches.json")),
+      ]);
+      if (sha256Canonical(JSON.parse(archivedAttemptsBytes.toString("utf8"))) !== SCHEMA_CORRECTION_PARENT_ATTEMPT_LEDGER_SHA256
+        || sha256Canonical(JSON.parse(archivedDispatchesBytes.toString("utf8"))) !== SCHEMA_CORRECTION_PARENT_DISPATCHES_SHA256
+        || sha256Canonical(JSON.parse(archivedPreflightBytes.toString("utf8"))) !== SCHEMA_CORRECTION_PARENT_PREFLIGHT_SHA256
+        || sha256Canonical({ schemaVersion: 1, attempts: priorAttempts.slice(0, 3) }) !== SCHEMA_CORRECTION_PARENT_ATTEMPT_LEDGER_SHA256
+        || sha256Canonical({ schemaVersion: 1, entries: dispatches.entries.slice(0, 3) }) !== SCHEMA_CORRECTION_PARENT_DISPATCHES_SHA256) {
+        throw new Error("The resumed schema-correction journal no longer begins with the byte-pinned three unknown parent attempts and dispatch receipts.");
+      }
+      const archivedParentRun = JSON.parse(await readFile(path.join(prepared.runDirectory, existing.continuation.priorRunArchiveFile), "utf8")) as Record<string, unknown>;
+      const archivedParentWithoutDigest = Object.fromEntries(Object.entries(archivedParentRun).filter(([key]) => key !== "runSha256"));
+      if (archivedParentRun.runSha256 !== FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256
+        || sha256Canonical(archivedParentWithoutDigest) !== FICTIONAL_IFS_SCHEMA_CORRECTION_PARENT_SHA256) {
+        throw new Error("The resumed schema-correction run has lost its immutable parent record or active attempt journal.");
+      }
+      assertArchivedParentChain({
+        parentRunBytes: archivedHistoryRunBytes,
+        parentAttemptsBytes: archivedHistoryAttemptsBytes,
+        parentDispatchesBytes: archivedHistoryDispatchesBytes,
+        expectedParentRunSha256: "3959ea731dc6effa86703060023007bb1a9f97fbbb8a0c3eff1d0f0a0ea254c6",
+        currentAttemptsPrefix: priorAttempts.slice(0, 2),
+        currentDispatchesPrefix: dispatches.entries.slice(0, 2),
+      });
+      continuation = existing.continuation;
+      carriedUnknownAttemptIds = new Set(continuation.carriedUnknownAttemptIds);
+      manifestWriteAuthorized = true;
+    }
+    if (!existing && (invocation.continueAfterUnknownProviderAttempt || (invocation.allowNonZdrContinuation && !invocation.schemaCorrectionContinuation))) {
       throw new Error("An explicitly authorized continuation requires the exact previously stopped default-routed run; it cannot authorize a fresh or different run.");
     }
     if (existing && existing.runFingerprint !== prepared.runFingerprint) {
@@ -1307,7 +1696,7 @@ export async function runFictionalIfsDiagnostic(
       continuation = existing.continuation;
       if (continuation) carriedUnknownAttemptIds = new Set(continuation.carriedUnknownAttemptIds);
       if (invocation.continueAfterUnknownProviderAttempt && !continuation) throw new Error("The continuation flag cannot be used to repeat a matching request or an unknown attempt without a changed OpenAI-only request identity.");
-      if (invocation.allowNonZdrContinuation && continuation?.ordinal !== 2) throw new Error("The non-ZDR continuation flag requires the already recorded ordinal-2 privacy continuation.");
+      if (invocation.allowNonZdrContinuation && !invocation.schemaCorrectionContinuation && continuation?.ordinal !== 2) throw new Error("The non-ZDR continuation flag requires the already recorded ordinal-2 privacy continuation.");
       manifestWriteAuthorized = true;
     } else {
       manifestWriteAuthorized = true;
@@ -1365,7 +1754,9 @@ export async function runFictionalIfsDiagnostic(
       if (priorResult?.status === "accepted") continue;
       if (priorResult?.status === "failed") break;
       const profileInvocationPrefix = `pwrp71-fictional-diagnostic:${prepared.runId}:${profile.fixture.profileId}`;
-      const requestVariant = continuation?.ordinal === 2
+      const requestVariant = continuation?.ordinal === 3
+        ? OPENAI_SCHEMA_CORRECTION_MARKER
+        : continuation?.ordinal === 2
         ? OPENAI_NON_ZDR_CONTINUATION_MARKER
         : continuation && profile.fixture.profileId === "C01" ? OPENAI_ROUTE_CONTINUATION_MARKER : undefined;
       const invocationPrefix = `${profileInvocationPrefix}${requestVariant ? `:${requestVariant}` : ""}:`;

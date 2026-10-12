@@ -21,6 +21,8 @@ import {
   FICTIONAL_IFS_DIAGNOSTIC_EPOCH_2_ZDR_PARENT_SHA256,
   FICTIONAL_IFS_DIAGNOSTIC_SCHEMA,
   FICTIONAL_IFS_ERROR_DETAIL_RESEND_RUN_ID,
+  FICTIONAL_IFS_SCHEMA_CORRECTION_RUN_ID,
+  OPENAI_SCHEMA_CORRECTION_MARKER,
   assertDiagnosticSourcePins,
   buildFictionalDiagnosticRequest,
   createDiagnosticFetch,
@@ -573,6 +575,118 @@ test("owner-authorized non-ZDR continuation changes only retention policy, retai
       });
       assert.equal(repeated.status, "diagnostic_stopped");
       assert.equal(providerDispatches, 1, "rerunning the exact privacy continuation cannot automatically repeat an unknown-cost call");
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+});
+
+test("schema-correction continuation carries all three unknown reservations and sends only a fresh C01 request on rejection", async () => {
+  const correctionArgs = [
+    ...validArgs,
+    "--owner-authorized-fresh-budget-epoch-2",
+    "--owner-authorized-allow-non-zdr-continuation",
+    "--owner-authorized-schema-correction-continuation",
+  ];
+  const invocation = parseFictionalIfsDiagnosticArgs(correctionArgs);
+  assert.equal(invocation.schemaCorrectionContinuation, true);
+  for (const invalidArgs of [
+    correctionArgs.filter((arg) => arg !== "--owner-authorized-fresh-budget-epoch-2"),
+    correctionArgs.filter((arg) => arg !== "--owner-authorized-allow-non-zdr-continuation"),
+    [...correctionArgs, "--owner-authorized-schema-correction-continuation"],
+    replaceFlag(correctionArgs, "--profiles", "C01,C03"),
+    replaceFlag(correctionArgs, "--reports", "MAP"),
+    replaceFlag(correctionArgs, "--model", "openai/gpt-6-sol"),
+    replaceFlag(correctionArgs, "--max-call-cost-micros", "115001"),
+    replaceFlag(correctionArgs, "--aggregate-cost-cap-micros", "3000001"),
+  ]) assert.throws(() => parseFictionalIfsDiagnosticArgs(invalidArgs));
+
+  await withTempDirectory(async (outputRoot) => {
+    let metadataChecks = 0;
+    let providerDispatches = 0;
+    let requestId = "";
+    let payload: Record<string, unknown> | undefined;
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = async (input, init) => {
+      const url = String(input);
+      if (init?.method === "GET") {
+        metadataChecks += 1;
+        if (url.endsWith("/api/v1/models")) return new Response("{}", { status: 200 });
+        assert.match(url, /\/api\/v1\/models\/openai\/gpt-6-luna\/endpoints$/u);
+        return new Response(JSON.stringify({ data: { endpoints: [{ provider_name: "OpenAI", name: "OpenAI test endpoint" }] } }), { status: 200 });
+      }
+      providerDispatches += 1;
+      requestId = new Headers(init?.headers).get("x-request-id") ?? "";
+      payload = JSON.parse(String(init?.body)) as Record<string, unknown>;
+      return new Response(JSON.stringify({ error: {
+        message: "Simulated rejection after schema correction",
+        code: 400,
+        metadata: { provider_name: "OpenAI", provider_error_code: "invalid_json_schema" },
+      } }), { status: 400, headers: { "content-type": "application/json" } });
+    };
+    try {
+      const result = await runFictionalIfsDiagnostic(invocation, {
+        workspaceRoot: process.cwd(),
+        outputRoot,
+        now: () => new Date("2026-10-12T12:00:00.000Z"),
+        transportFactory: async ({ fetch }) => {
+          await assertOpenRouterNonZdrDiagnosticRouteEligible(globalThis.fetch, () => new Date("2026-10-12T12:00:00.000Z"));
+          return new OpenRouterClient({ apiKey: "test-key", fetch, captureProviderErrorDetail: true });
+        },
+      });
+      assert.equal(result.runId, FICTIONAL_IFS_SCHEMA_CORRECTION_RUN_ID);
+      assert.equal(result.status, "diagnostic_stopped");
+      assert.equal(result.routingQualification, "not_claimed");
+      assert.equal(result.productionActivationEffect, "none");
+      assert.equal(metadataChecks, 1, "the OpenAI-only non-ZDR endpoint eligibility check precedes dispatch");
+      assert.equal(providerDispatches, 1, "the failed C01 attempt stops before C02");
+      assert.match(requestId, new RegExp(`:${OPENAI_SCHEMA_CORRECTION_MARKER}:IFS:initial:openai-gpt-6-luna-max:attempt-1$`, "u"));
+      assert.equal(payload?.model, "openai/gpt-6-luna");
+      assert.deepEqual(payload?.provider, GPT6_LUNA_OPENAI_NON_ZDR_DIAGNOSTIC_PROVIDER_POLICY);
+      const responseFormat = payload?.response_format as { json_schema: { schema: Record<string, unknown> } };
+      const reportProperties = responseFormat.json_schema.schema.properties as Record<string, Record<string, unknown>>;
+      assert.equal(reportProperties.report_release!.type, "string");
+      assert.equal(result.continuation?.ordinal, 3);
+      assert.equal(result.continuation?.carriedUnknownReservationMicros, 345_000);
+      assert.equal(result.continuation?.carriedUnknownAttemptIds.length, 3);
+      assert.equal(result.providerDispatchCount, 4, "three historical dispatches and one fresh dispatch are retained");
+      assert.equal(result.attempts.length, 4, "all three historical attempt IDs stay in the new durable journal");
+      assert.equal(result.budget.unknownOrInFlightReservedCostMicros, 460_000);
+      assert.equal(result.budget.remainingAuthorizedMicros, 2_540_000);
+      assert.equal(result.results.some((entry) => entry.profileId === "C02"), false);
+
+      const runDirectory = result.outputDirectory;
+      const priorAttemptArchive = await readFile(path.join(runDirectory, result.continuation!.priorAttemptsArchiveFile));
+      const priorDispatchArchive = await readFile(path.join(runDirectory, result.continuation!.priorDispatchesArchiveFile));
+      const seededAttemptFile = JSON.parse(await readFile(path.join(runDirectory, "attempts.json"), "utf8")) as { attempts: Array<{ attemptId: string; status: string }> };
+      assert.equal(seededAttemptFile.attempts[0]?.status, "unknown");
+      assert.deepEqual(seededAttemptFile.attempts.slice(0, 3).map((attempt) => attempt.attemptId), result.continuation!.carriedUnknownAttemptIds);
+      assert.equal(JSON.parse(priorAttemptArchive.toString("utf8")).attempts.length, 3);
+      assert.equal(JSON.parse(priorDispatchArchive.toString("utf8")).entries.length, 3);
+
+      const repeated = await runFictionalIfsDiagnostic(invocation, {
+        workspaceRoot: process.cwd(),
+        outputRoot,
+        now: () => new Date("2026-10-12T12:00:00.000Z"),
+        transportFactory: () => { throw new Error("a rejected schema-correction request cannot be repeated"); },
+      });
+      assert.equal(repeated.status, "diagnostic_stopped");
+      assert.equal(providerDispatches, 1, "the fixed schema-correction run and attempt IDs cannot be replayed");
+
+      const archivedAttemptsPath = path.join(runDirectory, result.continuation!.priorAttemptsArchiveFile);
+      const originalArchive = await readFile(archivedAttemptsPath);
+      const corruptedArchive = JSON.parse(originalArchive.toString("utf8")) as { attempts: Array<Record<string, unknown>> };
+      corruptedArchive.attempts[0]!.reservedCostMicros = 0;
+      await writeFile(archivedAttemptsPath, JSON.stringify(corruptedArchive));
+      let factoryCallsAfterArchiveTamper = 0;
+      await assert.rejects(() => runFictionalIfsDiagnostic(invocation, {
+        workspaceRoot: process.cwd(),
+        outputRoot,
+        now: () => new Date("2026-10-12T12:00:00.000Z"),
+        transportFactory: () => { factoryCallsAfterArchiveTamper += 1; throw new Error("tampered history must stop before provider initialization"); },
+      }), /byte-pinned three unknown parent attempts/u);
+      assert.equal(factoryCallsAfterArchiveTamper, 0);
+      assert.equal(providerDispatches, 1, "tampered continuation history is rejected before another request can be created");
     } finally {
       globalThis.fetch = originalFetch;
     }
