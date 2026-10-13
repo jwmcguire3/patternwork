@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "PWRP71-C01-C02-NARRATIVE-EXPERIMENT-V1",
+  "profileId": "C01",
+  "sourceReportId": "pwrp71_4d9ac25c9a7ad89f1bc1cd06ae84",
+  "sourceArtifactSha256": "b41a0ee49f92ba78377f7307b4c046fcabbcca85e0a71a685f7e0f813de48314",
+  "sourceEvidenceSha256": "7171b823f3be7044eeeb33d2779fc3fe66c235535807c8771d0b96e7c4c75b3d",
+  "title": "The help you needed but could not quite ask for",
+  "titleClaimIds": [
+    "C01",
+    "C02",
+    "C03",
+    "C06"
+  ],
+  "nameChanges": [
+    {
+      "nameId": "N2",
+      "from": "Keep the request small",
+      "to": "Minimizer"
+    },
+    {
+      "nameId": "N3",
+      "from": "Push the need away",
+      "to": "Suppressor"
+    }
+  ],
+  "sections": [
+    {
+      "id": "S01",
+      "heading": "The need got smaller",
+      "text": "You were already short on time, energy, or support, and you needed help with something you couldn't manage alone. But you asked for less than you needed. You were thinking about what the other person could carry and trying not to give them more responsibility than they could handle.\n\nThat's the Minimizer at work. In this moment, it made the request smaller before it reached the other person. In trying to spare them extra responsibility, you left some of what you needed out of the conversation.",
+      "claimIds": [
+        "C02",
+        "C06"
+      ]
+    },
+    {
+      "id": "S02",
+      "heading": "When needing care feels wrong",
+      "text": "There was more going on than consideration for the other person. You wanted comfort or care, but being seen needing it was difficult. You judged yourself for having the feeling. At one point, needing something felt wrong.\n\nWhen that need came up again, you pushed it away, and it became harder to notice. That's the Suppressor: a response that tries to quiet a feeling that's already uncomfortable.\n\nThe Minimizer made the need less visible to the other person. The Suppressor made it harder for you to stay with the feeling yourself. In this moment, both responses left less room for the part of you that wanted care. The hard part wasn't just asking for less. It was how difficult it became to let yourself feel the need at all.",
+      "claimIds": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05"
+      ]
+    },
+    {
+      "id": "S03",
+      "heading": "Help was offered. Something still went unsaid.",
+      "text": "The other person offered to help with what you asked for. You still needed more, but you didn't say so.\n\nThat is where the pattern had a consequence. The offer was made to the smaller request. The fuller need stayed unspoken. You had been trying not to put too much on someone else, while continuing to carry something you couldn't bring yourself to ask for.\n\nYou were also under real practical strain. This wasn't simply a feeling appearing out of nowhere. But the strain and the pressure to keep the need small were both present in the same moment.",
+      "claimIds": [
+        "C01",
+        "C02",
+        "C03",
+        "C06"
+      ]
+    },
+    {
+      "id": "S04",
+      "heading": "This is one part of the picture",
+      "text": "You don't respond this way in every situation. In another moment, you said what you could and couldn't manage. In a different one, you let someone take some of the load.\n\nOther situations show practical judgment rather than the same protective response. You checked the requirements of a task and left it there. You corrected what you could after a mistake and learned from it. When you had to wait for information, you waited rather than forcing a decision or reply. And when you wanted to get something right and also be finished, you found room for both wishes.\n\nThose moments don't erase what happened in the help request. They show that the Minimizer and the Suppressor aren't the whole story of how you handle things.",
+      "claimIds": [
+        "C07",
+        "C08",
+        "C09",
+        "C10",
+        "C11"
+      ]
+    }
+  ],
+  "reflectionQuestions": []
+}

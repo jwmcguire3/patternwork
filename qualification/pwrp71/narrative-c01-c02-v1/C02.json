@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "PWRP71-C01-C02-NARRATIVE-EXPERIMENT-V1",
+  "profileId": "C02",
+  "sourceReportId": "pwrp71_6d54c908112ecb67ced9c9e75d88",
+  "sourceArtifactSha256": "bf0cb2eb544b9d502c9ec558f4ee2bd8a9b5f4cdb4bb033b2a7faddde6b37d22",
+  "sourceEvidenceSha256": "3dac1972a62b994a969c5cb2f65154c1d388b471c67ed5ac6f43c991417e2333",
+  "title": "You made the request smaller, not the need",
+  "titleClaimIds": [
+    "C1",
+    "C2",
+    "C3",
+    "C4"
+  ],
+  "nameChanges": [
+    {
+      "nameId": "N1",
+      "from": "Load-Limiting Manager",
+      "to": "Minimizer"
+    }
+  ],
+  "sections": [
+    {
+      "id": "S01",
+      "heading": "The Minimizer pays attention to what others can carry",
+      "text": "You needed help, and you were already short on time, energy, or support. Still, you asked for less than you needed. You were worried about putting too much on the other person. You expected they might feel responsible for more than they could carry.\n\nThat's the Minimizer. It watches what someone else might be able to handle and tries to keep your request within those limits. In this situation, it made you careful about how much you asked for. Being seen needing that much was uncomfortable, too.",
+      "claimIds": [
+        "C1"
+      ]
+    },
+    {
+      "id": "S02",
+      "heading": "But you didn't turn against the need",
+      "text": "Here's the important difference: you still knew what you needed.\n\nYou could acknowledge wanting comfort or care and let the feeling stay for a while, even when showing it was uncomfortable. You didn't have to push it away to make the request smaller. You could pause with the feeling and consider more than one way to respond.\n\nThe Minimizer had a concern worth hearing, but it didn't get to decide whether you were allowed to need help.",
+      "claimIds": [
+        "C2",
+        "C4"
+      ]
+    },
+    {
+      "id": "S03",
+      "heading": "You could say there was more",
+      "text": "The other person offered the help you asked for. Some need remained, and you said so.\n\nThat's a small moment with an important difference. You could be considerate of someone else's limits without pretending yours had disappeared. Keeping a request manageable didn't mean losing your voice about what was still needed.",
+      "claimIds": [
+        "C1",
+        "C2",
+        "C3",
+        "C4"
+      ]
+    },
+    {
+      "id": "S04",
+      "heading": "You have more than one way of responding",
+      "text": "Other moments in your responses belong to their own situations. You checked what a task actually required and left it there. You waited for information when you couldn't take the next practical step. In another wait, you thought the other person might simply be busy and moved on once you had the information.\n\nYou also stated a boundary in one situation and accepted someone's help in another. When you wanted both to get something right and to be finished, you found a compromise. After a mistake, you corrected what you could and learned from it. None of these moments needs to be explained as the Minimizer taking charge of everything.\n\nHere, the Minimizer made your request smaller. It didn't make your need disappear.",
+      "claimIds": [
+        "C5",
+        "C6",
+        "C7",
+        "C8",
+        "C9"
+      ]
+    }
+  ],
+  "reflectionQuestions": []
+}
