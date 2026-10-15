@@ -1,0 +1,216 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-C10-OMISSION-ONLY-CURATION-V1",
+  "status": "source_validation_and_independent_review_required",
+  "profileId": "C10",
+  "reportType": "IFS",
+  "fixtureSet": "route-replays-v5",
+  "packetSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+  "experimentSha256": "eecb94ff118569ff44288fc81333aa42d0dee6dd868b514e02d3f0e09b47db33",
+  "sourceIdentity": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "sourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb",
+    "authoredFixtureFile": "C10.json",
+    "authoredFixtureSha256": "db6e0b9e8296741324c1aef0e4b481f70468ce4114a599ee8c2907df944d3b81",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5"
+  },
+  "provider": "OpenAI direct API",
+  "model": "gpt-6-luna",
+  "reasoningEffort": "max",
+  "providerCallId": "379e8908-4d6e-4288-a1ea-9e3a20b274dc",
+  "providerResponseId": "resp_0e7771f7e3a27457016ad0dbe9235887d29dca94744a027101",
+  "providerOutputFile": "outputs/C10.interpretation.json",
+  "providerOutputFileSha256": "820e9ac8990099329f9e4783dbb184b08af468357f42c9fc63610b98ef511f54",
+  "providerOutputCompactSha256": "fa09d005db917c0abcdf7713c2c3d53dbe1051395888d816b157c490367f38a2",
+  "providerResponseFile": "responses/C10.interpretation.response.json",
+  "providerResponseFileSha256": "8421204c7783f082b894beb4e31b0fcb18d526b8e07a8760298ff514916c6358",
+  "journalFile": "BUDGET_JOURNAL.json",
+  "journalFileSha256": "091692241c510a67402271d69efbe39d0c5e00286fdac4b85781832993175f6b",
+  "originalValidationFile": "outputs/C10.interpretation.validation.json",
+  "originalValidationFileSha256": "4b09cb6de097b09e1848a56f6e56cf6d892ab8d446bcb3dd5b5b46f76fa6302a",
+  "sourceObservationIndexFile": "outputs/C10.source-observation-index-v3.json",
+  "sourceObservationIndexFileSha256": "d2765bfe4008dd49bc5e6a2c719178f8466adb81af03422506f48a5121289676",
+  "curatedOutputFile": "outputs/C10.interpretation.curated-v2.json",
+  "curatedOutputFileSha256": "9dbdec37ef62751717c975506c8fa71944bd6b4d0ec9326b7e09572f077f6889",
+  "curatedOutputCompactSha256": "604e691593d96c890237690284f66e4c3689f9417dcf4713391bbec360191521",
+  "curationPolicy": "omission_only_c10_source_recovery_v1",
+  "guarantees": {
+    "providerOutputNotMutated": true,
+    "retainedClaimTextAndEvidenceSequenceReferencesCopiedVerbatim": true,
+    "danglingDependenciesToOmittedClaimsPrunedAndRecorded": true,
+    "syntheticObservationsCannotSupportRetainedGraphRecords": true,
+    "noClaimsAddedOrReworded": true,
+    "noEvidenceOrSequenceEdgesAdded": true,
+    "noQuestionPromptOrSchemaChanged": true
+  },
+  "omittedRecords": [
+    {
+      "collection": "claims",
+      "originalIndex": 2,
+      "recordId": "C10-C02",
+      "evidenceIds": [
+        "O0658ae705c4c7f122eba",
+        "O397375211099023b504b"
+      ],
+      "claimIds": [
+        "C10-C02"
+      ],
+      "reason": "Whole claim omitted after independent review found its rationale and uncertainty text refer to a separately reported synthetic stopping response, despite the claim's authored evidence IDs. The contaminated prose was not edited."
+    },
+    {
+      "collection": "claims",
+      "originalIndex": 4,
+      "recordId": "C10-C03",
+      "evidenceIds": [
+        "O8478a00e94684f39abae",
+        "O05717d3bacb2f7eda689",
+        "O929cbaf357c5d2854ed9",
+        "Oc2946f9ba4b05c7e5f65",
+        "Occa453554150fe009f5b",
+        "O5a0b22af174f55b11f1c",
+        "O543a044c866cd15b9573",
+        "Ob22586b29466b74ea49b",
+        "O5aa856c65a707f3cecad"
+      ],
+      "claimIds": [
+        "C10-C03"
+      ],
+      "reason": "Whole claim omitted; its graph contains synthetic source evidence and its narrative/support basis cannot be safely repaired by deleting citations."
+    },
+    {
+      "collection": "claims",
+      "originalIndex": 7,
+      "recordId": "C10-C07",
+      "evidenceIds": [
+        "O3b1065e57d34c66256a2"
+      ],
+      "claimIds": [
+        "C10-C07"
+      ],
+      "reason": "Whole claim omitted; its graph contains synthetic source evidence and its narrative/support basis cannot be safely repaired by deleting citations."
+    },
+    {
+      "collection": "claim_dependencies",
+      "originalIndex": null,
+      "recordId": "C10-C04",
+      "evidenceIds": [],
+      "claimIds": [
+        "C10-C02"
+      ],
+      "reason": "Dangling dependency edge removed because its target claim was omitted from this derivative; claim text, evidence IDs, and sequence edges remain unchanged."
+    },
+    {
+      "collection": "name_registry",
+      "originalIndex": 1,
+      "recordId": "C10-N01",
+      "evidenceIds": [],
+      "claimIds": [
+        "C10-C03"
+      ],
+      "reason": "Whole record omitted because it relies on synthetic/non-authored observations or a claim/name omitted from this derivative; record text and references were not edited."
+    },
+    {
+      "collection": "observed_strengths",
+      "originalIndex": 1,
+      "recordId": null,
+      "evidenceIds": [
+        "O8478a00e94684f39abae",
+        "O05717d3bacb2f7eda689"
+      ],
+      "claimIds": [
+        "C10-C03"
+      ],
+      "reason": "Whole record omitted because it relies on synthetic/non-authored observations or a claim/name omitted from this derivative; record text and references were not edited."
+    },
+    {
+      "collection": "counterexamples",
+      "originalIndex": 1,
+      "recordId": null,
+      "evidenceIds": [
+        "O5aa856c65a707f3cecad"
+      ],
+      "claimIds": [
+        "C10-C03"
+      ],
+      "reason": "Whole record omitted because it relies on synthetic/non-authored observations or a claim/name omitted from this derivative; record text and references were not edited."
+    },
+    {
+      "collection": "counterexamples",
+      "originalIndex": 4,
+      "recordId": null,
+      "evidenceIds": [
+        "O0658ae705c4c7f122eba",
+        "O397375211099023b504b",
+        "O3b1065e57d34c66256a2"
+      ],
+      "claimIds": [
+        "C10-C02",
+        "C10-C07"
+      ],
+      "reason": "Whole record omitted because it relies on synthetic/non-authored observations or a claim/name omitted from this derivative; record text and references were not edited."
+    },
+    {
+      "collection": "open_questions",
+      "originalIndex": 1,
+      "recordId": null,
+      "evidenceIds": [
+        "O8478a00e94684f39abae",
+        "O05717d3bacb2f7eda689",
+        "O929cbaf357c5d2854ed9",
+        "O5aa856c65a707f3cecad",
+        "Oc2946f9ba4b05c7e5f65",
+        "Occa453554150fe009f5b",
+        "O5a0b22af174f55b11f1c"
+      ],
+      "claimIds": [],
+      "reason": "Whole record omitted because it relies on synthetic/non-authored observations or a claim/name omitted from this derivative; record text and references were not edited."
+    },
+    {
+      "collection": "open_questions",
+      "originalIndex": 2,
+      "recordId": null,
+      "evidenceIds": [
+        "O3b1065e57d34c66256a2",
+        "O0658ae705c4c7f122eba",
+        "O397375211099023b504b",
+        "O8478a00e94684f39abae"
+      ],
+      "claimIds": [],
+      "reason": "Whole record omitted because it relies on synthetic/non-authored observations or a claim/name omitted from this derivative; record text and references were not edited."
+    },
+    {
+      "collection": "open_questions",
+      "originalIndex": 4,
+      "recordId": null,
+      "evidenceIds": [
+        "O20773d476bcbb179d2ef"
+      ],
+      "claimIds": [],
+      "reason": "Whole record omitted because it relies on synthetic/non-authored observations or a claim/name omitted from this derivative; record text and references were not edited."
+    },
+    {
+      "collection": "open_questions",
+      "originalIndex": 6,
+      "recordId": null,
+      "evidenceIds": [
+        "O8478a00e94684f39abae",
+        "O05717d3bacb2f7eda689"
+      ],
+      "claimIds": [],
+      "reason": "Whole record omitted because it relies on synthetic/non-authored observations or a claim/name omitted from this derivative; record text and references were not edited."
+    },
+    {
+      "collection": "open_questions",
+      "originalIndex": 9,
+      "recordId": null,
+      "evidenceIds": [],
+      "claimIds": [],
+      "reason": "Whole record omitted because it relies on synthetic/non-authored observations or a claim/name omitted from this derivative; record text and references were not edited."
+    }
+  ],
+  "interpretation": "Experimental derivative only. The raw provider output remains preserved and rejected. This derivative does not qualify routing, grant human approval, or authorize production use."
+}

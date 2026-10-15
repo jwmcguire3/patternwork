@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "PATTERNWORK-C10-COMPOSITION-OUTPUT-RECOVERY-SOL-REVIEW-V1",
+  "recordedAt": "2026-10-15T14:42:11Z",
+  "reviewerType": "independent_read_only_sol_subagent_review",
+  "reviewer": "sol_review_c10_packet",
+  "verdict": "accepted_for_one_bounded_dispatch",
+  "scope": {
+    "profile": "C10",
+    "reportType": "IFS",
+    "stage": "composition",
+    "attempt": 3,
+    "diagnosticOnly": true
+  },
+  "humanApproval": false,
+  "reportApproval": false,
+  "routingQualification": false,
+  "productionApproval": false,
+  "reviewedArtifacts": {
+    "scripts/dispatch-openai-experiment.mjs": "779729f40a3af69d5b41ba21a4149a6638affad290f2ed243559eb762607372f",
+    "scripts/check-c10-composition-output-recovery.mjs": "fe3ceeedd1794ac93ee7ab707fb07936d1c2ba6fd26fc4e062af69c9de373026",
+    "C10-COMPOSITION-ATTEMPT3-PREFLIGHT.json": "d067bd7e9669305ee1c4ff0600fe800f96f8d3be4eee021204a7568412f0aec0",
+    "C10-COMPOSITION-OUTPUT-RECOVERY-GUARDS.json": "fbcdd5bda68da5348d986e29bfc6fa3285cca95346c9cc7d930546cffb8e8f8c",
+    "BUDGET_JOURNAL.json": "8165c42cb76ac1ae551484ef561a097ba7e62e254db6fb2ada56865968cfc052",
+    "RUN_PROTOCOL.md": "1b97988b9600b24a8f0192ce5c3b6918c2c223c2fb12172a2936b501a5013176"
+  },
+  "reviewedInputPins": {
+    "attempt2RequestSha256": "7f101eb0a1c5294d65496c912e6c86832d3aaa9cd70148d7f32c054d22370e59",
+    "attempt2ResponseSha256": "c82d6365ffffa098604750c078e3e112abdf7aeb31ab1c05bb83a0168e6ae0fb",
+    "attempt2ResponseId": "resp_08af161d252dc5f5016ad0e3dbfd3887d2a9b37e7319eb7628",
+    "attempt3RequestSha256": "5bfcb80db651d1cdb025e3bc761a73e5bb8e7061dc68ea79fd97c3b6f1212e9b",
+    "packetSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+    "sourceObservationIndexSha256": "d2765bfe4008dd49bc5e6a2c719178f8466adb81af03422506f48a5121289676",
+    "curatedInterpretationSha256": "9dbdec37ef62751717c975506c8fa71944bd6b4d0ec9326b7e09572f077f6889",
+    "curationReceiptSha256": "6a5fc18983ba96ed891ca2255eaff9180ffdbd510b3970e382310f3ccdebd8d9",
+    "composerContractSha256": "70d85bc8e4cd9707ec23122a0b5a2d28ba00585f8b5c5ef37e3c010a03bbb163",
+    "compositionTemplateSha256": "74cd491a25757eeab1c72ad1172d2e479b55d5b341568378b1270a9d7e0e119f"
+  },
+  "reviewedInvariants": {
+    "attempt2IsExactIncompleteHttp200MaxOutputResponse": true,
+    "attempt2Used12000OutputTokensAllReasoningAndNoDraft": true,
+    "attempt3ChangesOnlyMaxOutputTokensFrom12000To128000": true,
+    "sourcePacketAndCuratedGraphRemainPinned": true,
+    "conservativeQuoteFits300000MicrodollarReserve": true,
+    "allThreePriorP02UnknownReservesRemainLocked": true,
+    "aggregateAuthorizationRemains3000000Microdollars": true,
+    "exactPreflightRecordsZeroProviderDispatches": true,
+    "invalidScopeAndReplayGuardsPassed": true,
+    "resultsRemainFictionalDiagnosticOnly": true
+  },
+  "preflight": {
+    "status": "fictional_c10_composition_attempt3_preflight_passed_no_dispatch",
+    "attemptNumber": 3,
+    "maxOutputTokens": 128000,
+    "inputEnvelopeBytes": 40135,
+    "quotedReservationUpperBoundMicrodollars": 106034,
+    "lockedPriorUnknownReservationsMicrodollars": 900000,
+    "settledUpperBoundMicrodollars": 133248,
+    "newReservationMicrodollars": 300000,
+    "remainingAuthorizationAfterReservationMicrodollars": 1666752,
+    "providerDispatches": 0
+  },
+  "limitations": [
+    "This model review is not human report approval or production approval.",
+    "The per-call quote is provider-price-dependent and does not guarantee the invoice amount.",
+    "The reviewer did not dispatch or authorize a provider request."
+  ]
+}

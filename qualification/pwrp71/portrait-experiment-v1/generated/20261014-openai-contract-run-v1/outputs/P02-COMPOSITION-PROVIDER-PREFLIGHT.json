@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-P02-PROVIDER-CONNECTIVITY-PREFLIGHT-V1",
+  "status": "passed",
+  "checkedAt": "2026-10-15T15:12:46.8518625+00:00",
+  "method": "GET",
+  "endpoint": "https://api.openai.com/v1/models",
+  "httpStatus": 200,
+  "model": "gpt-6-luna",
+  "modelVisible": true,
+  "generationRequests": 0,
+  "providerCostMicrodollars": 0,
+  "apiKeyValueRecorded": false,
+  "purpose": "Post-failure, zero-cost connectivity and model-visibility check; not a generation call, billing receipt, or qualification result."
+}

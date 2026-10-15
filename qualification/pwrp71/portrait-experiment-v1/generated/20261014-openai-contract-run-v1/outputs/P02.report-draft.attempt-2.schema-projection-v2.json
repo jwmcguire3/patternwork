@@ -1,0 +1,179 @@
+{
+  "report_release": "PWRP-7.1.0-candidate.1",
+  "release_id": "PWQE-5.1.0-candidate.1",
+  "snapshot_id": "fictional-P02-deepening",
+  "evidence_sha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+  "report_type": "IFS",
+  "title": "When conflict raises the possibility of losing contact",
+  "title_claim_ids": [
+    "c_conflict_preventive_explaining"
+  ],
+  "content_status": "complete",
+  "sections": [
+    {
+      "id": "n_explainer",
+      "heading": "The Explainer: trying to keep the connection clear",
+      "text": "When a conflict raises the possibility of losing contact or not knowing where you stand, the Explainer keeps explaining your point. Its job is preventive: it tries to influence what happens next and protect against that feared loss of contact or uncertainty. This is a way of managing the relationship through words; the feared outcome is an expectation, not proof that it was imminent or that the explaining prevented it.",
+      "claim_ids": [
+        "c_conflict_preventive_explaining"
+      ]
+    },
+    {
+      "id": "n_exit",
+      "heading": "The Exit: seeking immediate relief",
+      "text": "When continued explaining is not helping, the Exit can interrupt the exchange by leaving or ending it, with the immediate aim of easing the feeling. In this instance, the feeling became easier to bear; that fits a short-term relief function, but it does not show that leaving caused the easing or tell you what happened afterward.",
+      "claim_ids": [
+        "c_conflict_reported_sequence",
+        "c_conflict_exit_relief"
+      ]
+    },
+    {
+      "id": "responses_together",
+      "heading": "How these responses relate",
+      "text": "These responses address different concerns: the Explainer tries to prevent a feared loss of contact or uncertainty about where you stand, while the Exit aims for the feeling to ease right then. In one conflict, leaving or ending the exchange followed the explanation after it was not helping. That timing does not show that the Explainer caused the Exit, or whether the two functions belong to distinct parts or one response changing direction.",
+      "claim_ids": [
+        "c_conflict_preventive_explaining",
+        "c_conflict_reported_sequence",
+        "c_conflict_exit_relief"
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "id": "c_conflict_preventive_explaining",
+      "text": "In this single represented conflict occurrence, continued explanation of the point was explicitly aimed at preventing what might happen next; the recorded anticipated outcome was losing contact or not knowing where they stood. This supports a preventive relational-management function in that event, not proof that the feared outcome was imminent or prevented.",
+      "kind": "supported_interpretation",
+      "constructs": [
+        "protective_function",
+        "description",
+        "working_expectation"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled conflict occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "Ofc7b7fb668294601fe78",
+        "Oee9a23929c717af918cc",
+        "O46dfe0bb601014cf6dcf"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": [
+        "direct_report",
+        "stated_aim",
+        "remembered_expectation",
+        "inferred_function"
+      ],
+      "rationale": "The explicit aim to prevent what might happen next aligns with the respondent's recorded prediction of losing contact or not knowing where they stood. The function is supported by the reported aim, not inferred from a plausible effect.",
+      "remaining_uncertainty": [
+        "The practical context was unresolved, so concurrent aims cannot be ruled out. The prediction is the respondent's expectation, not evidence of another person's motives or an established threat. No underlying vulnerable experience, effectiveness, recurrence, or distinct enduring part identity is established."
+      ]
+    },
+    {
+      "id": "c_conflict_reported_sequence",
+      "text": "In the same occurrence, leaving or ending the exchange was reported as beginning after the explanation was not helping. This is one reported temporal relation, not proof of causation, a handoff between distinct parts, or a recurrent loop.",
+      "kind": "reported",
+      "constructs": [
+        "description",
+        "state_transition"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled conflict occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "Ofc7b7fb668294601fe78",
+        "O024600260948d26c8645",
+        "Oa6147904a3dbc2821d38"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [
+        "edge:pwr_cbcda3040bd22d070ab9ce0cc901ab53f9b973f2:D08.after_failed"
+      ],
+      "depends_on_claim_ids": [],
+      "support_basis": [
+        "direct_report",
+        "actual_sequence"
+      ],
+      "rationale": "The selected sequence relation states that the second response began after the first was not helping. It supports order in this occurrence only.",
+      "remaining_uncertainty": [
+        "Only one such sequence is represented. The edge does not establish why the response changed, whether the responses belong to one or more parts, or whether this order recurs."
+      ]
+    },
+    {
+      "id": "c_conflict_exit_relief",
+      "text": "In this occurrence, the next action was leaving or ending the exchange. The stated next aim was for the feeling to ease right then, and the reported next effect was that it became easier to bear. The action, aim, and effect support a local reactive, relief-oriented interruption function.",
+      "kind": "supported_interpretation",
+      "constructs": [
+        "protective_function",
+        "description"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled conflict occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "O024600260948d26c8645",
+        "O482ef6dc44094628b660",
+        "O52b1a40eb779285046f1"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [
+        "c_conflict_reported_sequence"
+      ],
+      "support_basis": [
+        "direct_report",
+        "stated_aim",
+        "reported_effect",
+        "inferred_function"
+      ],
+      "rationale": "The stated aim of immediate feeling relief and the reported easing support interpreting this particular exit as relief-oriented. The function is not inferred from leaving alone.",
+      "remaining_uncertainty": [
+        "The reported easing does not prove the exit caused it or establish the degree of choice or control. Return to the exchange and what followed are unresolved. This finding does not make every leaving response protective."
+      ]
+    }
+  ],
+  "name_registry": [
+    {
+      "name_id": "n_explainer",
+      "name": "Explainer",
+      "entity_kind": "descriptive_pattern",
+      "role": "descriptive_pattern",
+      "author_generated": true,
+      "supporting_claim_ids": [
+        "c_conflict_preventive_explaining"
+      ]
+    },
+    {
+      "name_id": "n_exit",
+      "name": "Exit",
+      "entity_kind": "descriptive_pattern",
+      "role": "descriptive_pattern",
+      "author_generated": true,
+      "supporting_claim_ids": [
+        "c_conflict_exit_relief"
+      ]
+    }
+  ],
+  "relationships": [],
+  "reflection_questions": [
+    "When a conflict brings up the possibility of losing contact or not knowing where you stand, what are you hoping the Explainer's continued explanation will prevent?",
+    "When explanation stops helping, what do you want the Exit to ease—and what happens for you after the exchange ends?",
+    "Do the Explainer and Exit feel like distinct responses to you, one response changing direction, or something else?"
+  ]
+}

@@ -1,0 +1,906 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-INTERPRETATION-SOURCE-VALIDATION-V1",
+  "validationMode": "intermediate_interpretation_graph_source_lineage",
+  "status": "source_reference_checks_failed",
+  "checkedAt": "2026-10-15T13:55:35.331Z",
+  "profileId": "P02",
+  "attemptNumber": 5,
+  "packetSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+  "experimentSha256": "eecb94ff118569ff44288fc81333aa42d0dee6dd868b514e02d3f0e09b47db33",
+  "sourceIdentity": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "sourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb",
+    "authoredFixtureFile": "P02.json",
+    "authoredFixtureSha256": "b47d80f9f0194055c8461145d75c559422abf34a0377682aa8cfa22e8ac990dc",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5"
+  },
+  "modelOutputFile": "outputs/P02.interpretation.attempt-5.json",
+  "modelOutputFileSha256": "c967d35a2a5e139f0d31db3b568b523274eefdc019f899412e8c94d8b7824d2f",
+  "modelOutputCompactSha256": "9d22a10690c62c021c3a603b12da8f009a50bf685840f5b38513bd2db5543533",
+  "sourceObservationIndexFile": "outputs/P02.source-observation-index-v3.json",
+  "sourceObservationIndexFileSha256": "6902ae1ace97a48ff8ea49e99c4ffc6a155bcfea6bcad570a5854587ff1f7417",
+  "reportManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+  "reportDraftSchemaSha256": "14e880841aab064593b777b9d113376a30338968e4b0375a38955b174e55b4ba",
+  "claimEvidence": [
+    {
+      "claimId": "c_conflict_preventive_explaining",
+      "kind": "interpretation",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+      ],
+      "citedSourceObservations": [
+        {
+          "observationId": "Ofc7b7fb668294601fe78",
+          "sourceResponseId": "P02-A01",
+          "responseId": "pwr_72c429e78df9ad4ea0d4b01962258c806581ff4a",
+          "itemId": "D61",
+          "optionId": "D61.explain",
+          "occurrenceId": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3",
+          "stepId": "first",
+          "basis": "actual_recalled",
+          "capture": "first_action",
+          "targetIds": [
+            "entry:conflict"
+          ]
+        },
+        {
+          "observationId": "Oee9a23929c717af918cc",
+          "sourceResponseId": "P02-A02",
+          "responseId": "pwr_8b628e8b5d506ad22656c5a36b3b00c9e454d6d8",
+          "itemId": "D02",
+          "optionId": "D02.prevent",
+          "occurrenceId": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3",
+          "stepId": "first",
+          "basis": "actual_recalled",
+          "capture": "aim",
+          "targetIds": [
+            "function:pwep_14b3844b-40fc-4f28-a241-6c812b592dd3:first"
+          ]
+        },
+        {
+          "observationId": "O46dfe0bb601014cf6dcf",
+          "sourceResponseId": "P02-A03",
+          "responseId": "pwr_708571a497f267efd1af429a11c37a3911e3216b",
+          "itemId": "D03",
+          "optionId": "D03.connection",
+          "occurrenceId": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3",
+          "stepId": "first",
+          "basis": "remembered_expectation",
+          "capture": "prediction",
+          "targetIds": [
+            "prediction:pwep_14b3844b-40fc-4f28-a241-6c812b592dd3:first"
+          ]
+        }
+      ]
+    },
+    {
+      "claimId": "c_conflict_reported_sequence",
+      "kind": "observation",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+      ],
+      "citedSourceObservations": [
+        {
+          "observationId": "Ofc7b7fb668294601fe78",
+          "sourceResponseId": "P02-A01",
+          "responseId": "pwr_72c429e78df9ad4ea0d4b01962258c806581ff4a",
+          "itemId": "D61",
+          "optionId": "D61.explain",
+          "occurrenceId": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3",
+          "stepId": "first",
+          "basis": "actual_recalled",
+          "capture": "first_action",
+          "targetIds": [
+            "entry:conflict"
+          ]
+        },
+        {
+          "observationId": "O024600260948d26c8645",
+          "sourceResponseId": "P02-A04",
+          "responseId": "pwr_9cbd5f6cb6d36fe0360aafed3781303245bb847f",
+          "itemId": "D07",
+          "optionId": "D07.leave",
+          "occurrenceId": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3",
+          "stepId": "next",
+          "basis": "actual_recalled",
+          "capture": "next_action",
+          "targetIds": [
+            "next_move:pwep_14b3844b-40fc-4f28-a241-6c812b592dd3:first"
+          ]
+        },
+        {
+          "observationId": "Oa6147904a3dbc2821d38",
+          "sourceResponseId": "P02-A05",
+          "responseId": "pwr_cbcda3040bd22d070ab9ce0cc901ab53f9b973f2",
+          "itemId": "D08",
+          "optionId": "D08.after_failed",
+          "occurrenceId": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3",
+          "stepId": "edge",
+          "basis": "actual_recalled",
+          "capture": "sequence_relation",
+          "targetIds": [
+            "sequence_relation:pwep_14b3844b-40fc-4f28-a241-6c812b592dd3:next"
+          ]
+        }
+      ]
+    },
+    {
+      "claimId": "c_conflict_exit_relief",
+      "kind": "interpretation",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+      ],
+      "citedSourceObservations": [
+        {
+          "observationId": "O024600260948d26c8645",
+          "sourceResponseId": "P02-A04",
+          "responseId": "pwr_9cbd5f6cb6d36fe0360aafed3781303245bb847f",
+          "itemId": "D07",
+          "optionId": "D07.leave",
+          "occurrenceId": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3",
+          "stepId": "next",
+          "basis": "actual_recalled",
+          "capture": "next_action",
+          "targetIds": [
+            "next_move:pwep_14b3844b-40fc-4f28-a241-6c812b592dd3:first"
+          ]
+        },
+        {
+          "observationId": "O482ef6dc44094628b660",
+          "sourceResponseId": "P02-A06",
+          "responseId": "pwr_c3d540de4e343ac22ab638f56916d733f4a106f6",
+          "itemId": "D09",
+          "optionId": "D09.relief",
+          "occurrenceId": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3",
+          "stepId": "next",
+          "basis": "actual_recalled",
+          "capture": "next_aim",
+          "targetIds": [
+            "goal_change:pwep_14b3844b-40fc-4f28-a241-6c812b592dd3:next"
+          ]
+        },
+        {
+          "observationId": "O52b1a40eb779285046f1",
+          "sourceResponseId": "P02-A07",
+          "responseId": "pwr_ab20c58469617aad5fac525bc03fa65aba149b43",
+          "itemId": "D10",
+          "optionId": "D10.relief",
+          "occurrenceId": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3",
+          "stepId": "next",
+          "basis": "actual_recalled",
+          "capture": "next_effect",
+          "targetIds": [
+            "next_effect:pwep_14b3844b-40fc-4f28-a241-6c812b592dd3:next"
+          ]
+        }
+      ]
+    },
+    {
+      "claimId": "c_overload_practical_adjustment",
+      "kind": "alternative",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_7f3434c8-a150-4bd0-bc8b-db121ed17953"
+      ],
+      "citedSourceObservations": []
+    },
+    {
+      "claimId": "c_overload_later_capacity",
+      "kind": "observation",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_7f3434c8-a150-4bd0-bc8b-db121ed17953"
+      ],
+      "citedSourceObservations": []
+    },
+    {
+      "claimId": "c_evaluation_bounded_check",
+      "kind": "alternative",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_d6d380fd-bb2a-4fb5-8b59-e4fea936d319"
+      ],
+      "citedSourceObservations": []
+    },
+    {
+      "claimId": "c_mistake_learning",
+      "kind": "observation",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_16be0c6a-dabd-4ca9-8cc2-00eb6e592fbd"
+      ],
+      "citedSourceObservations": []
+    },
+    {
+      "claimId": "c_boundary_limit",
+      "kind": "observation",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_d2668a55-2bcb-4dec-97bc-dca5d48507f9"
+      ],
+      "citedSourceObservations": []
+    },
+    {
+      "claimId": "c_reply_wait_ordinary_alternative",
+      "kind": "alternative",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_a2ce2362-3769-4fcd-a1ab-06aca26f5f5d"
+      ],
+      "citedSourceObservations": []
+    },
+    {
+      "claimId": "c_practical_pause",
+      "kind": "alternative",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_5ed17c8a-8b95-435f-9f9a-9d59be6d7088"
+      ],
+      "citedSourceObservations": []
+    },
+    {
+      "claimId": "c_exception_stopping",
+      "kind": "observation",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_6641c9ef-313f-4264-88a2-e59e84518ad5"
+      ],
+      "citedSourceObservations": []
+    },
+    {
+      "claimId": "c_internal_compromise",
+      "kind": "observation",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_93d057d3-8207-4aec-8896-bbcef401a1e4"
+      ],
+      "citedSourceObservations": []
+    },
+    {
+      "claimId": "c_help_request",
+      "kind": "observation",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_487f1c9e-3d29-4833-a116-11460fe9a4d0"
+      ],
+      "citedSourceObservations": []
+    },
+    {
+      "claimId": "c_receiving_care",
+      "kind": "observation",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_ff69335b-edf6-414a-8011-12af5780fd2d"
+      ],
+      "citedSourceObservations": []
+    },
+    {
+      "claimId": "c_repair_offered",
+      "kind": "observation",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_921ee1eb-b229-43c4-8364-e066fbbd57f6"
+      ],
+      "citedSourceObservations": []
+    },
+    {
+      "claimId": "c_repair_received",
+      "kind": "observation",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_8be3e67b-d4cb-4c7e-80dd-0d7980d90b32"
+      ],
+      "citedSourceObservations": []
+    },
+    {
+      "claimId": "c_planned_stop",
+      "kind": "observation",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_4e4c7bc9-a066-4f8e-810c-c90a7b97cb93"
+      ],
+      "citedSourceObservations": []
+    },
+    {
+      "claimId": "c_praise_response",
+      "kind": "observation",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_27c56ec7-0562-4acd-a571-7b17f2580310"
+      ],
+      "citedSourceObservations": []
+    },
+    {
+      "claimId": "c_ordinary_rest",
+      "kind": "observation",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_dc9b940c-6728-46cc-8601-e9379bf24bfb"
+      ],
+      "citedSourceObservations": []
+    }
+  ],
+  "checks": {
+    "onlyCurrentSourceAuthoredObservations": true,
+    "syntheticAnswersCannotSupportClaims": true,
+    "oneOccurrenceCannotSupportRecurrence": true,
+    "sequenceEdgesRequirePacketAndSourceIndexLineage": true,
+    "productionClaimSchema": "pinned_for_composed_draft_validation; not applied to intermediate graph",
+    "noHumanApprovalOrRoutingQualification": true
+  },
+  "issues": [
+    {
+      "code": "sequence_lineage_mismatch",
+      "message": "Sequence edge and all of its source observations must match the packet edge in the same occurrence.",
+      "claimId": "c_conflict_exit_relief"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_overload_practical_adjustment"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_overload_practical_adjustment"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_overload_practical_adjustment"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_overload_practical_adjustment"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_overload_later_capacity"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_overload_later_capacity"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_evaluation_bounded_check"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_evaluation_bounded_check"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_mistake_learning"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_mistake_learning"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_mistake_learning"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_boundary_limit"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_boundary_limit"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_reply_wait_ordinary_alternative"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_reply_wait_ordinary_alternative"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_reply_wait_ordinary_alternative"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_practical_pause"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_practical_pause"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_exception_stopping"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_exception_stopping"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_exception_stopping"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_internal_compromise"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_internal_compromise"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_help_request"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_help_request"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_receiving_care"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_repair_offered"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_repair_received"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_planned_stop"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_praise_response"
+    },
+    {
+      "code": "non_authored_or_missing_evidence",
+      "message": "Claim cites an observation outside the source-cross-checked authored evidence set.",
+      "claimId": "c_ordinary_rest"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_direct_communication"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_direct_communication"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_direct_communication"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_direct_communication"
+    },
+    {
+      "code": "graph_occurrence_scope_mismatch",
+      "message": "observed_strengths occurrence_ids do not match its current authored evidence.",
+      "claimId": "s_direct_communication"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_practical_learning_and_adjustment"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_practical_learning_and_adjustment"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_practical_learning_and_adjustment"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_practical_learning_and_adjustment"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_practical_learning_and_adjustment"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_practical_learning_and_adjustment"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_practical_learning_and_adjustment"
+    },
+    {
+      "code": "graph_occurrence_scope_mismatch",
+      "message": "observed_strengths occurrence_ids do not match its current authored evidence.",
+      "claimId": "s_practical_learning_and_adjustment"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_reported_choice_and_stopping"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_reported_choice_and_stopping"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_reported_choice_and_stopping"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_reported_choice_and_stopping"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_reported_choice_and_stopping"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_reported_choice_and_stopping"
+    },
+    {
+      "code": "graph_occurrence_scope_mismatch",
+      "message": "observed_strengths occurrence_ids do not match its current authored evidence.",
+      "claimId": "s_reported_choice_and_stopping"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_compromise"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_compromise"
+    },
+    {
+      "code": "graph_occurrence_scope_mismatch",
+      "message": "observed_strengths occurrence_ids do not match its current authored evidence.",
+      "claimId": "s_compromise"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_support_and_repair_actions"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_support_and_repair_actions"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "observed_strengths cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "s_support_and_repair_actions"
+    },
+    {
+      "code": "graph_occurrence_scope_mismatch",
+      "message": "observed_strengths occurrence_ids do not match its current authored evidence.",
+      "claimId": "s_support_and_repair_actions"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_practical_alternatives"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_practical_alternatives"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_practical_alternatives"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_practical_alternatives"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_practical_alternatives"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_practical_alternatives"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_practical_alternatives"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_practical_alternatives"
+    },
+    {
+      "code": "graph_occurrence_scope_mismatch",
+      "message": "counterexamples occurrence_ids do not match its current authored evidence.",
+      "claimId": "cx_practical_alternatives"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_reply_wait"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_reply_wait"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_reply_wait"
+    },
+    {
+      "code": "graph_occurrence_scope_mismatch",
+      "message": "counterexamples occurrence_ids do not match its current authored evidence.",
+      "claimId": "cx_reply_wait"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_stopping_available"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_stopping_available"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_stopping_available"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_stopping_available"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_stopping_available"
+    },
+    {
+      "code": "graph_occurrence_scope_mismatch",
+      "message": "counterexamples occurrence_ids do not match its current authored evidence.",
+      "claimId": "cx_stopping_available"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_compromise_not_fixed_polarity"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_compromise_not_fixed_polarity"
+    },
+    {
+      "code": "graph_occurrence_scope_mismatch",
+      "message": "counterexamples occurrence_ids do not match its current authored evidence.",
+      "claimId": "cx_compromise_not_fixed_polarity"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_varied_relational_actions"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_varied_relational_actions"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_varied_relational_actions"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_varied_relational_actions"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_varied_relational_actions"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_varied_relational_actions"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_varied_relational_actions"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_varied_relational_actions"
+    },
+    {
+      "code": "graph_occurrence_scope_mismatch",
+      "message": "counterexamples occurrence_ids do not match its current authored evidence.",
+      "claimId": "cx_varied_relational_actions"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_processing_slowing_not_a_chosen_protector"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "counterexamples cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "cx_processing_slowing_not_a_chosen_protector"
+    },
+    {
+      "code": "graph_occurrence_scope_mismatch",
+      "message": "counterexamples occurrence_ids do not match its current authored evidence.",
+      "claimId": "cx_processing_slowing_not_a_chosen_protector"
+    },
+    {
+      "code": "graph_sequence_lineage_mismatch",
+      "message": "open_questions sequence edge lacks exact current same-occurrence authored evidence.",
+      "claimId": "oq_exit_return_and_access"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "open_questions cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "oq_overload_detail"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "open_questions cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "oq_overload_detail"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "open_questions cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "oq_overload_detail"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "open_questions cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "oq_overload_detail"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "open_questions cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "oq_overload_detail"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "open_questions cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "oq_self_stance"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "open_questions cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "oq_self_stance"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "open_questions cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "oq_self_stance"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "open_questions cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "oq_self_stance"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "open_questions cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "oq_internal_polarization"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "open_questions cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "oq_internal_polarization"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "open_questions cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "oq_help_and_care_meaning"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "open_questions cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "oq_help_and_care_meaning"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "open_questions cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "oq_help_and_care_meaning"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "open_questions cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "oq_repair_detail"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "open_questions cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "oq_repair_detail"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "open_questions cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "oq_other_person_motives"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "open_questions cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "oq_other_person_motives"
+    },
+    {
+      "code": "graph_non_authored_or_stale_evidence",
+      "message": "open_questions cites missing, synthetic, superseded, invalidated, or mismatched evidence.",
+      "claimId": "oq_other_person_motives"
+    }
+  ]
+}

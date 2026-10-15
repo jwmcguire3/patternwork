@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "PATTERNWORK-C10-COMPOSITION-OUTPUT-RECOVERY-GUARDS-V1",
+  "status": "passed",
+  "executedAt": "2026-10-15T14:39:52.452Z",
+  "profile": "C10",
+  "stage": "composition",
+  "reportType": "IFS",
+  "attemptNumber": 3,
+  "diagnosticOnly": true,
+  "providerDispatches": 0,
+  "sourceRequestSha256": "7f101eb0a1c5294d65496c912e6c86832d3aaa9cd70148d7f32c054d22370e59",
+  "requestedMaxOutputTokens": 128000,
+  "scenarios": [
+    {
+      "id": "missing_explicit_operator_authorization",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "Explicit --operator-authorized yes is required."
+    },
+    {
+      "id": "missing_recovery_authorization",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "C10 composition already has a dispatched or reconciled attempt; a separate exact no-dispatch recovery authorization is required."
+    },
+    {
+      "id": "missing_curated_graph_authorization",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "C10 composition requires explicit use of the source-validated omission-only derivative."
+    },
+    {
+      "id": "missing_locked-unknown_continuation_authorization",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "The one-time 128,000-token incomplete-output recovery is limited to C10 curated composition and requires the existing bounded continuation authorization."
+    },
+    {
+      "id": "out_of_scope_profile_c03",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "Only P02/C10 interpretation and composition are in scope."
+    },
+    {
+      "id": "wrong_stage",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "The omission-only derivative authorization is limited to C10 IFS composition."
+    },
+    {
+      "id": "enlarged_aggregate_limit",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "The only accepted explicit limits are $3.00 aggregate and $0.30 per request."
+    },
+    {
+      "id": "changed_per_call_reservation",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "The only accepted explicit limits are $3.00 aggregate and $0.30 per request."
+    },
+    {
+      "id": "provider_override",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "Unsupported argument: --provider"
+    },
+    {
+      "id": "model_override",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "Unsupported argument: --model"
+    },
+    {
+      "id": "output_cap_override",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "Unsupported argument: --max-output-tokens"
+    },
+    {
+      "id": "mix_no_dispatch_and_incomplete_recovery",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "C10 no-dispatch and incomplete-output recoveries are distinct one-time authorizations and cannot be combined."
+    },
+    {
+      "id": "changed_attempt2_response_identity",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "C10 output recovery requires the exact reconciled attempt 1, incomplete attempt 2, unchanged source chain, retained P02 unknown-cost reserves, and unused attempt-3 artifacts."
+    },
+    {
+      "id": "changed_attempt2_packet_pin",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "C10 output recovery requires the exact reconciled attempt 1, incomplete attempt 2, unchanged source chain, retained P02 unknown-cost reserves, and unused attempt-3 artifacts."
+    },
+    {
+      "id": "released_prior_unknown_cost_reserve",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "Budget journal counters do not reconcile to durable call records or the authorized cap."
+    },
+    {
+      "id": "changed_prior_serialized_request",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "C10 output recovery requires the exact reconciled attempt 1, incomplete attempt 2, unchanged source chain, retained P02 unknown-cost reserves, and unused attempt-3 artifacts."
+    },
+    {
+      "id": "changed_prior_provider_response",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "C10 output recovery requires the exact reconciled attempt 1, incomplete attempt 2, unchanged source chain, retained P02 unknown-cost reserves, and unused attempt-3 artifacts."
+    },
+    {
+      "id": "one_time_attempt_replay",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "Continuation is allowed only with the exact attempt-1, attempt-3 and attempt-4 unknown-cost reserves retained."
+    },
+    {
+      "id": "exact_attempt3_preflight_no_dispatch",
+      "exitCode": 0,
+      "status": "fictional_c10_composition_attempt3_preflight_passed_no_dispatch",
+      "attemptNumber": 3,
+      "maxOutputTokens": 128000,
+      "requestBodySha256": "5bfcb80db651d1cdb025e3bc761a73e5bb8e7061dc68ea79fd97c3b6f1212e9b",
+      "expectedRequestSha256": "5bfcb80db651d1cdb025e3bc761a73e5bb8e7061dc68ea79fd97c3b6f1212e9b",
+      "quotedReservationUpperBoundMicrodollars": 106034,
+      "retainedUnknownReservationMicrodollars": 900000,
+      "additionalReservationMicrodollars": 300000,
+      "remainingAfterReservationMicrodollars": 1666752,
+      "providerDispatches": 0
+    }
+  ],
+  "invalidRequestsRejected": true,
+  "exactPreflightPassed": true,
+  "sideEffectsAbsent": true,
+  "note": "Mutated predecessor records and bytes were restored in finally blocks. All invocations were no-dispatch preflights with OPENAI_API_KEY removed."
+}

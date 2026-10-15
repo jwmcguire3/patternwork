@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-P02-ATTEMPT5-DIAGNOSTIC-V1",
+  "profile": "P02",
+  "reportType": "IFS",
+  "stage": "interpretation",
+  "qualificationStatus": "FICTIONAL_DIAGNOSTIC_ONLY_NOT_ROUTING_QUALIFICATION_OR_PRODUCTION_APPROVAL",
+  "callId": "189f5e43-b80e-4f50-9f84-ce8fd605468d",
+  "responseId": "resp_00c09462f20e87f3016ad0d6c7df0087d2afaae132b1f87871",
+  "provider": "OpenAI direct Responses API",
+  "model": "gpt-6-luna",
+  "reasoningEffort": "max",
+  "serviceTier": "default",
+  "maxOutputTokens": 128000,
+  "responseStatus": 200,
+  "finishStatus": "completed",
+  "usage": {
+    "inputTokens": 30597,
+    "outputTokens": 52952,
+    "reasoningTokens": 40323,
+    "totalTokens": 83549
+  },
+  "usageCostUpperBoundMicrodollars": 47364,
+  "costKind": "conservative_usage_estimate_not_invoice",
+  "requestBodySha256": "f8c36e20ba9043a8bfc4392c7b11c174f6766d60b796ab175c4ee29cdd5b9cb6",
+  "packetSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+  "providerResponseFile": "responses/P02.interpretation.attempt-5.response.json",
+  "providerOutputFile": "outputs/P02.interpretation.attempt-5.json",
+  "rawTextFile": "outputs/P02.interpretation.attempt-5.raw-output.txt",
+  "firstValidation": {
+    "status": "source_reference_checks_failed",
+    "issueCount": 142,
+    "irrelevantFinalReportSchemaProbeIssues": 110,
+    "sourceEvidenceIssues": 32,
+    "receipt": "outputs/P02.interpretation.attempt-5.validation.json"
+  },
+  "stageSpecificRecheck": {
+    "status": "source_reference_checks_failed",
+    "issueCount": 113,
+    "issueTypes": {
+      "non_authored_or_missing_evidence": 31,
+      "sequence_lineage_mismatch": 1,
+      "graph_non_authored_or_stale_evidence": 69,
+      "graph_occurrence_scope_mismatch": 11,
+      "graph_sequence_lineage_mismatch": 1
+    },
+    "receipt": "outputs/P02.interpretation.attempt-5.validation.source-recheck.json"
+  },
+  "independentReview": {
+    "reviewType": "model_review_not_human_approval",
+    "status": "rejected_for_composition",
+    "receipt": "outputs/P02.interpretation.attempt-5.sol-review.json",
+    "text": "outputs/P02.interpretation.attempt-5.sol-review.md"
+  },
+  "compositionEligible": false,
+  "humanApproval": "pending"
+}

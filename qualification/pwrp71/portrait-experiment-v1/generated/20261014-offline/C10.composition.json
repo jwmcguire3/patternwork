@@ -1,0 +1,328 @@
+{
+  "schemaVersion": "PATTERNWORK-IFS-SYSTEM-PORTRAIT-COMPOSITION-EXPERIMENTAL-V1",
+  "status": "COMPOSITION_CANDIDATE_AWAITING_INDEPENDENT_REVIEW",
+  "execution": {
+    "mode": "offline_in_session_model",
+    "providerDispatch": false,
+    "providerCostMicrodollars": 0,
+    "modelIdentity": "Codex conversational model; no external provider model ID claimed"
+  },
+  "profileId": "C10",
+  "fixtureSet": "route-replays-v5",
+  "packetSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+  "frozenInterpretationPath": "C10.interpretation.json",
+  "compositionContract": "02_IFS_NARRATIVE_COMPOSER.md",
+  "paragraphClaimBindings": [
+    {
+      "paragraphId": "c10_narrowed_access",
+      "claimIds": [
+        "C10-C1",
+        "C10-C2"
+      ]
+    },
+    {
+      "paragraphId": "c10_function_and_ease",
+      "claimIds": [
+        "C10-C3"
+      ]
+    },
+    {
+      "paragraphId": "c10_recovery",
+      "claimIds": [
+        "C10-C4",
+        "C10-C5",
+        "C10-C6"
+      ]
+    },
+    {
+      "paragraphId": "c10_appraisal_and_choice",
+      "claimIds": [
+        "C10-C7"
+      ]
+    }
+  ],
+  "draft": {
+    "report_release": "PWRP-7.1.0-candidate.1",
+    "release_id": "PWQE-5.1.0-candidate.1",
+    "snapshot_id": "fictional-C10-deepening",
+    "evidence_sha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+    "report_type": "IFS",
+    "title": "Functioning before things feel settled",
+    "title_claim_ids": [
+      "C10-C3"
+    ],
+    "content_status": "complete",
+    "sections": [
+      {
+        "id": "c10_narrowed_access",
+        "heading": "Strain can build while access narrows",
+        "text": "When pressure builds gradually, your attention narrows to one thing while your energy feels keyed up and drained at once. Words can be hard to reach even when you know what you mean and want to speak, and you may recognize the change only afterward. You wanted to speak; the words were not available.",
+        "claim_ids": [
+          "C10-C1",
+          "C10-C2"
+        ]
+      },
+      {
+        "id": "c10_function_and_ease",
+        "heading": "Functioning is not the same as feeling settled",
+        "text": "A familiar task can remain doable while you look steady and feel strained inside. You can function before feeling settled; carrying on does not mean the strain has passed. Feeling on edge remained difficult even once the task could be done.",
+        "claim_ids": [
+          "C10-C3"
+        ]
+      },
+      {
+        "id": "c10_recovery",
+        "heading": "How easing arrived",
+        "text": "The first easing came more than two hours after you first noticed the pressure, within the same day. Around a later attempt to get some room back, the setting had become quieter or less demanding. In the remembered sequence, less input or demand came before words became easier, and clearer thinking followed the easier words.",
+        "claim_ids": [
+          "C10-C4",
+          "C10-C5",
+          "C10-C6"
+        ]
+      },
+      {
+        "id": "c10_appraisal_and_choice",
+        "heading": "Room can return without dismissing the concern",
+        "text": "As easing continued, the concern still made sense, but felt less urgent. Some things became easier, though not everything, and an early sign of more room was being able to consider more than one next step. The return of choice did not require dismissing the concern.",
+        "claim_ids": [
+          "C10-C7"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "C10-C1",
+        "text": "As pressure built gradually, your attention narrowed to one thing, your energy felt keyed up and drained at once, and you recognized the changes afterward.",
+        "kind": "reported",
+        "constructs": [
+          "state_pattern",
+          "description"
+        ],
+        "scope": {
+          "level": "occurrence",
+          "occurrence_ids": [
+            "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+          ],
+          "person_ids": [],
+          "description": "One actual-recalled overload occurrence."
+        },
+        "evidence_ids": [
+          "Off8cd05760c5de43ae55",
+          "Oc1adc6f70b7c9cc1f73d",
+          "O95b9431fbdc556acbb2a",
+          "Ocdd69071862c457438ee"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [],
+        "support_basis": [
+          "direct_report"
+        ],
+        "rationale": "D29.narrow, D32.both, D33.later, and D82.gradual directly record narrowed attention, simultaneous keyed-up/drained energy, after-the-fact recognition, and gradual build.",
+        "remaining_uncertainty": [
+          "This is one recalled occurrence and does not establish frequency, cause, or a general condition."
+        ]
+      },
+      {
+        "id": "C10-C2",
+        "text": "You knew what you meant and wanted to speak, but could not get the words out.",
+        "kind": "reported",
+        "constructs": [
+          "state_pattern",
+          "description"
+        ],
+        "scope": {
+          "level": "occurrence",
+          "occurrence_ids": [
+            "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+          ],
+          "person_ids": [],
+          "description": "Speech access within the same actual-recalled overload occurrence."
+        },
+        "evidence_ids": [
+          "O0658ae705c4c7f122eba",
+          "O397375211099023b504b"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [],
+        "support_basis": [
+          "direct_report"
+        ],
+        "rationale": "D30.stuck says the respondent knew what they meant but could not get it out. D34.words says they wanted to speak but could not get words out.",
+        "remaining_uncertainty": [
+          "The packet does not identify a protective intention behind this loss of access."
+        ]
+      },
+      {
+        "id": "C10-C3",
+        "text": "A familiar task remained available and you looked steady while feeling strained; you could function before feeling settled, while feeling settled remained difficult.",
+        "kind": "reported",
+        "constructs": [
+          "capacity",
+          "state_pattern",
+          "description"
+        ],
+        "scope": {
+          "level": "occurrence",
+          "occurrence_ids": [
+            "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+          ],
+          "person_ids": [],
+          "description": "Capacity, outward/inward comparison, and ease within one actual-recalled overload occurrence."
+        },
+        "evidence_ids": [
+          "O183651e61cbf852b3de7",
+          "O6076a569a7a3123d3aa8",
+          "O8d4de3c2dd3c05d5ebe0",
+          "O94831d634b022e5d26f4"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [],
+        "support_basis": [
+          "direct_report"
+        ],
+        "rationale": "D80.task retains the ability to carry out a familiar task; D81.steady_strained separates appearance from felt strain; D85.function_first places functioning before settling; D83.settle records residual difficulty feeling settled.",
+        "remaining_uncertainty": [
+          "Task performance does not identify a motive or show that the strain had ended."
+        ]
+      },
+      {
+        "id": "C10-C4",
+        "text": "The first easing was estimated as more than two hours after the pressure was first noticed, but within the same day.",
+        "kind": "reported",
+        "constructs": [
+          "recovery",
+          "description"
+        ],
+        "scope": {
+          "level": "occurrence",
+          "occurrence_ids": [
+            "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+          ],
+          "person_ids": [],
+          "description": "Respondent estimate of time to first easing in one actual-recalled overload occurrence."
+        },
+        "evidence_ids": [
+          "O36b8ab6657f1876670d8"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [],
+        "support_basis": [
+          "direct_report"
+        ],
+        "rationale": "D84.later_day selects more than two hours but within the same day for time from first noticing pressure to first remembered easing.",
+        "remaining_uncertainty": [
+          "This is an approximate time to first easing, not a total recovery duration or evidence of full recovery."
+        ]
+      },
+      {
+        "id": "C10-C5",
+        "text": "Around a later attempt to get room back, the setting had become quieter or less demanding.",
+        "kind": "reported",
+        "constructs": [
+          "practical_explanation",
+          "recovery",
+          "description"
+        ],
+        "scope": {
+          "level": "occurrence",
+          "occurrence_ids": [
+            "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+          ],
+          "person_ids": [],
+          "description": "A respondent-identified environmental condition in the same recovery episode."
+        },
+        "evidence_ids": [
+          "O929cbaf357c5d2854ed9"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [],
+        "support_basis": [
+          "direct_report"
+        ],
+        "rationale": "D86.setting identifies the setting as quieter or less demanding after the later attempt to get some room back.",
+        "remaining_uncertainty": [
+          "The response records a surrounding condition; it does not show that this condition caused any specific recovery change."
+        ]
+      },
+      {
+        "id": "C10-C6",
+        "text": "In the remembered recovery order, less input or demand came before words became easier, and clearer thinking followed the easier words.",
+        "kind": "reported",
+        "constructs": [
+          "recovery",
+          "state_transition"
+        ],
+        "scope": {
+          "level": "occurrence",
+          "occurrence_ids": [
+            "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+          ],
+          "person_ids": [],
+          "description": "Only the two adjacent before relations encoded for D36 in one actual-recalled recovery sequence."
+        },
+        "evidence_ids": [
+          "Oc2946f9ba4b05c7e5f65",
+          "Occa453554150fe009f5b",
+          "O5a0b22af174f55b11f1c"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [
+          "recovery:pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b:D36.input:D36.words",
+          "recovery:pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b:D36.words:D36.think"
+        ],
+        "depends_on_claim_ids": [],
+        "support_basis": [
+          "direct_report",
+          "actual_sequence"
+        ],
+        "rationale": "The selected D36 options and both current packet edges preserve input before words and words before thinking. No other order is added.",
+        "remaining_uncertainty": [
+          "These edges record remembered temporal order, not that reduced input caused the later changes."
+        ]
+      },
+      {
+        "id": "C10-C7",
+        "text": "As more room returned, you could consider more than one next step and some things became easier but not all; the concern still made sense, but felt less urgent.",
+        "kind": "reported",
+        "constructs": [
+          "recovery",
+          "capacity",
+          "state_transition",
+          "description"
+        ],
+        "scope": {
+          "level": "occurrence",
+          "occurrence_ids": [
+            "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+          ],
+          "person_ids": [],
+          "description": "First recovery marker, partial return, and post-easing appraisal within the same actual-recalled overload occurrence."
+        },
+        "evidence_ids": [
+          "Ob22586b29466b74ea49b",
+          "O5ad2538a19201ee5851d",
+          "O20773d476bcbb179d2ef"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [],
+        "support_basis": [
+          "direct_report",
+          "reported_effect"
+        ],
+        "rationale": "D35.choice records being able to consider more than one next step; D37.part records partial ease; D100.same_less records an unchanged-validity concern with reduced urgency.",
+        "remaining_uncertainty": [
+          "The response does not establish a full recovery endpoint or a general change in beliefs."
+        ]
+      }
+    ],
+    "name_registry": [],
+    "relationships": [],
+    "reflection_questions": []
+  }
+}

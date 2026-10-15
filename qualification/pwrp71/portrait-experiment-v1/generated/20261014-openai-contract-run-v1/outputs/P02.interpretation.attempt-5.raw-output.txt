@@ -1,0 +1,1100 @@
+{
+  "profile_id": "P02",
+  "packet_sha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+  "claims": [
+    {
+      "id": "c_conflict_preventive_explaining",
+      "text": "In this single represented conflict occurrence, continued explanation of the point was explicitly aimed at preventing what might happen next; the recorded anticipated outcome was losing contact or not knowing where they stood. This supports a preventive relational-management function in that event, not proof that the feared outcome was imminent or prevented.",
+      "kind": "interpretation",
+      "constructs": [
+        "preventive_protection",
+        "relational_management",
+        "anticipated_disconnection_or_uncertainty"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled conflict occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "Ofc7b7fb668294601fe78",
+        "Oee9a23929c717af918cc",
+        "O46dfe0bb601014cf6dcf"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Converging actual-recalled first-action and prevention-aim selections plus a remembered expectation/prediction; synthetic fictional evidence only.",
+      "rationale": "The explicit aim to prevent what might happen next aligns with the respondent's recorded prediction of losing contact or not knowing where they stood. The function is supported by the reported aim, not inferred from a plausible effect.",
+      "remaining_uncertainty": "The practical context was unresolved, so concurrent aims cannot be ruled out. The prediction is the respondent's expectation, not evidence of another person's motives or an established threat. No underlying vulnerable experience, effectiveness, recurrence, or distinct enduring part identity is established."
+    },
+    {
+      "id": "c_conflict_reported_sequence",
+      "text": "In the same occurrence, leaving or ending the exchange was reported as beginning after the explanation was not helping. This is one reported temporal relation, not proof of causation, a handoff between distinct parts, or a recurrent loop.",
+      "kind": "observation",
+      "constructs": [
+        "reported_temporal_order",
+        "response_change"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled conflict occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "Ofc7b7fb668294601fe78",
+        "O024600260948d26c8645",
+        "Oa6147904a3dbc2821d38"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [
+        "edge:pwr_cbcda3040bd22d070ab9ce0cc901ab53f9b973f2:D08.after_failed"
+      ],
+      "depends_on_claim_ids": [],
+      "support_basis": "The recalled first and next actions are paired with an explicit reported temporal relation; the packet defines the edge as temporal, not causal.",
+      "rationale": "The selected sequence relation states that the second response began after the first was not helping. It supports order in this occurrence only.",
+      "remaining_uncertainty": "Only one such sequence is represented. The edge does not establish why the response changed, whether the responses belong to one or more parts, or whether this order recurs."
+    },
+    {
+      "id": "c_conflict_exit_relief",
+      "text": "In this occurrence, after the respondent reported that explaining was not helping, the next action was leaving or ending the exchange. The stated next aim was for the feeling to ease right then, and the reported next effect was that it became easier to bear. The action, aim, and effect support a local reactive, relief-oriented interruption function.",
+      "kind": "interpretation",
+      "constructs": [
+        "reactive_interruption",
+        "protective_function",
+        "immediate_relief",
+        "leaving_or_ending_exchange"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled conflict occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "O024600260948d26c8645",
+        "O482ef6dc44094628b660",
+        "O52b1a40eb779285046f1"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [
+        "edge:pwr_cbcda3040bd22d070ab9ce0cc901ab53f9b973f2:D08.after_failed"
+      ],
+      "depends_on_claim_ids": [
+        "c_conflict_reported_sequence"
+      ],
+      "support_basis": "Actual-recalled next action, explicit next aim, and reported next effect, together with the sourced temporal edge; synthetic fictional evidence only.",
+      "rationale": "The stated aim of immediate feeling relief and the reported easing support interpreting this particular exit as relief-oriented. The function is not inferred from leaving alone.",
+      "remaining_uncertainty": "The reported easing does not prove the exit caused it or establish the degree of choice or control. Return to the exchange and what followed are unresolved. This finding does not make every leaving response protective."
+    },
+    {
+      "id": "c_overload_practical_adjustment",
+      "text": "One overload occurrence records needing longer to take things in, reducing what was being attempted, a practical problem as the stated aim, and clearer thinking as the reported immediate effect. This supports a local practical task-scope adjustment as an ordinary explanation; the slowed processing itself is not evidence of a chosen protector.",
+      "kind": "alternative",
+      "constructs": [
+        "practical_load_adjustment",
+        "processing_slow",
+        "task_scope_reduction",
+        "ordinary_contextual_alternative"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_7f3434c8-a150-4bd0-bc8b-db121ed17953"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled overload occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "Ob589b33ba20c04c38e31",
+        "Oef61eebe61948296a47e",
+        "Odc14b1581c831295e913",
+        "O9f618c31d32c0ab50e73"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Actual-recalled experience, action, aim, and immediate-effect selections; the packet records this functional reading as an ordinary/contextual alternative.",
+      "rationale": "The practical problem is the stated aim, and reducing the attempted scope is a reported action alongside clearer thinking. This grounds a practical regulation interpretation without assigning a relational or part-based function.",
+      "remaining_uncertainty": "The onset, remaining capacity, inward or outward experience, and recovery conditions were not established. No sourced edge establishes that task reduction caused clearer thinking."
+    },
+    {
+      "id": "c_overload_later_capacity",
+      "text": "The same overload occurrence also records later-phase reports of resting or sleeping and having more room to think and choose. This is a local report of capacity and choice, not proof that rest produced the effect, that recovery was complete, or that the response was self-led.",
+      "kind": "observation",
+      "constructs": [
+        "reported_rest",
+        "reported_choice_capacity"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_7f3434c8-a150-4bd0-bc8b-db121ed17953"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled overload occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "O596a46ce67fc34263c57",
+        "O37669b1117dd1b32020c"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Actual-recalled later-phase action and effect selections; no explicit sequence edge links rest to the reported choice.",
+      "rationale": "The source records both rest or sleep and more room to think and choose in the later phase. The claim preserves the report without assigning a causal mechanism.",
+      "remaining_uncertainty": "The relation between resting, easing, and the reported choice is not established. Recovery meaning, conditions, and timing beyond the source's later-phase label remain unknown."
+    },
+    {
+      "id": "c_evaluation_bounded_check",
+      "text": "In one evaluation occurrence, the response was to check what was needed and leave it there, with the explicit aim of meeting the actual requirements. This fits bounded practical checking; no threat-management function is established.",
+      "kind": "alternative",
+      "constructs": [
+        "bounded_checking",
+        "practical_requirements",
+        "ordinary_contextual_alternative"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_d6d380fd-bb2a-4fb5-8b59-e4fea936d319"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled evaluation occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "Ob65cd6896165ae595582",
+        "O07d9111896d5da12968e"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Actual-recalled first action and explicit practical aim; the packet records an ordinary/contextual alternative.",
+      "rationale": "The response was described as checking what was needed and stopping there, and the stated aim was meeting actual requirements. This supports a bounded task account rather than an inferred protective motive.",
+      "remaining_uncertainty": "No further context, internal experience, or effect is recorded; other concurrent motives are not assessed."
+    },
+    {
+      "id": "c_mistake_learning",
+      "text": "In one mistake occurrence, the response included correcting what could be corrected, trying to identify what could be learned, and reporting greater clarity in dealing with the mistake. This supports local problem-solving and learning capacity, not a self-led conclusion or a protective-part identity.",
+      "kind": "observation",
+      "constructs": [
+        "problem_solving",
+        "learning_orientation",
+        "reported_clarity"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_16be0c6a-dabd-4ca9-8cc2-00eb6e592fbd"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled mistake occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "Oc82f251a66d5ed134bc8",
+        "O350626359a5828de2e1a",
+        "Ofd97ec9b62eab96c9ea5"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Actual-recalled action, self-response, and reported-effect selections; the self-stance discriminator was unresolved.",
+      "rationale": "The selected responses directly report correction, consideration of learning, and clearer dealing with the mistake. They support a local capacity observation without assuming the internal stance behind it.",
+      "remaining_uncertainty": "The internal tone, available choice, and self-relationship were not established. Clearer thinking and constructive action alone do not establish self-leadership."
+    },
+    {
+      "id": "c_boundary_limit",
+      "text": "In one boundary occurrence, the response was to state what could and could not be managed, alongside a remembered expectation that the other person would work around it. This is a direct limit-setting report plus an expectation, not evidence that the other person actually did so or why the limit was set.",
+      "kind": "observation",
+      "constructs": [
+        "boundary_communication",
+        "remembered_expectation"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_d2668a55-2bcb-4dec-97bc-dca5d48507f9"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled boundary occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "O9d8a2a67a81932bbc42c",
+        "Occfcc8b3e9a4aaf185d1"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Actual-recalled first action and remembered expectation.",
+      "rationale": "The source records a stated limit and a prediction about how the other person would respond. The expectation is kept distinct from the other person's actual motives or behavior.",
+      "remaining_uncertainty": "The response, outcome, and purpose of the boundary are not established beyond the reported expectation."
+    },
+    {
+      "id": "c_reply_wait_ordinary_alternative",
+      "text": "In one close-relationship reply-wait occurrence, the respondent waited without changing what they were doing, attributed the nonreply to likely busyness, and reported having the information and moving on. This is a context-specific ordinary alternative to treating every wait as relational threat or protective withdrawal; busyness is the respondent's expectation, not a verified motive.",
+      "kind": "alternative",
+      "constructs": [
+        "waiting",
+        "ordinary_attribution",
+        "information_resolution"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_a2ce2362-3769-4fcd-a1ab-06aca26f5f5d"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled close-relationship reply-wait occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "O98c5f9c2edcf94e56d68",
+        "O082cf3e2283d0bfa9b34",
+        "Offc285d670a266686f79"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Actual-recalled action and reported effect, with the meaning of the nonreply recorded as a respondent expectation.",
+      "rationale": "The response in this separate occurrence does not match an assumed universal pattern of alarm or withdrawal. It supplies a local ordinary interpretation, not evidence about the other person's actual reason for not replying.",
+      "remaining_uncertainty": "The respondent's broader relational self-expectation and the other person's actual circumstances were not assessed."
+    },
+    {
+      "id": "c_practical_pause",
+      "text": "In one practical-uncertainty occurrence, the response was to leave the decision alone until more was known, and the reported meaning was that the next practical step could not be taken. This supports a practical information or stakes constraint, not protective avoidance by itself.",
+      "kind": "alternative",
+      "constructs": [
+        "practical_uncertainty",
+        "deferred_decision",
+        "ordinary_contextual_alternative"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_5ed17c8a-8b95-435f-9f9a-9d59be6d7088"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled practical-uncertainty occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "Oc824aa9b21d34d4832b7",
+        "Of6050e3583e51c090dd5"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Actual-recalled action and reported practical meaning; the packet records an ordinary/contextual alternative.",
+      "rationale": "The source connects the pause with not being able to take the next practical step. No additional protective aim is reported.",
+      "remaining_uncertainty": "The practical circumstances and what information was needed remain unspecified."
+    },
+    {
+      "id": "c_exception_stopping",
+      "text": "One exception occurrence records stopping once enough had been done, clearer knowledge of what was expected, and more room for what came next. This supports the availability of stopping and reported choice in that context, not proof that clearer expectations caused the stop or that the response was self-led.",
+      "kind": "observation",
+      "constructs": [
+        "available_stopping",
+        "clear_expectations",
+        "reported_choice_capacity"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_6641c9ef-313f-4264-88a2-e59e84518ad5"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled exception occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "Odf7c08717aacbea59fd4",
+        "O0d9a5609b1fcef50a803",
+        "O5d7b3ad0e34d83e9bc7b"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Actual-recalled stopping action, context difference, and immediate-effect selections.",
+      "rationale": "The same occurrence records stopping, clearer expectations, and more room for what came next. The evidence supports local availability of stopping and choice without establishing their causal order.",
+      "remaining_uncertainty": "The self-stance discriminator was unresolved. Ease, internal stance, and whether clearer expectations enabled stopping are not established."
+    },
+    {
+      "id": "c_internal_compromise",
+      "text": "One internal-conflict occurrence records wanting to get it right and wanting to be done, alongside finding a way to allow some of both. This supports coexisting pulls and a compromise response, not two distinct parts, a stable polarization relation, or a fixed pair.",
+      "kind": "observation",
+      "constructs": [
+        "competing_wants",
+        "compromise",
+        "internal_conflict"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_93d057d3-8207-4aec-8896-bbcef401a1e4"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled internal-conflict occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "O091b1a115b810e9b4815",
+        "O0118f1c5fd12221a3e09"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Actual-recalled competing-wants and response selections in the same occurrence.",
+      "rationale": "The competing wants and compromise are directly reported. The source's polarization-relation discriminator was unresolved, so the account does not assign separate parts or an internal relationship.",
+      "remaining_uncertainty": "Whether these pulls reflect distinct parts, one shifting response, or another account is not established; recurrence and enduring identity are not assessed."
+    },
+    {
+      "id": "c_help_request",
+      "text": "In one help-request occurrence, the response was to ask for what was needed, with an expectation that the other person would say what they could do. This supports direct asking and an expectation of clarity; it does not establish the other person's response or the motive for asking.",
+      "kind": "observation",
+      "constructs": [
+        "help_request",
+        "clear_offer_expectation"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_487f1c9e-3d29-4833-a116-11460fe9a4d0"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled help-request occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "Ocd3f56fc084818db004b",
+        "O3bc2c3b182b20d41c998"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Actual-recalled first action and stated expectation.",
+      "rationale": "The source records both making a request and expecting a clear statement of the help available. The response and outcome remain unresolved.",
+      "remaining_uncertainty": "The help-response discriminator was unresolved. No conclusion is supported about refusal, burden, obligation, or actual assistance."
+    },
+    {
+      "id": "c_receiving_care",
+      "text": "In one receiving-care occurrence, the respondent reported being able to let the other person take some of the load. This supports one instance of allowing support; its social meaning and motive are not established.",
+      "kind": "observation",
+      "constructs": [
+        "receiving_support",
+        "load_sharing"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_ff69335b-edf6-414a-8011-12af5780fd2d"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled receiving-care occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "O3cd3cf7df5607461bd01"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Direct actual-recalled experience selection.",
+      "rationale": "The selected response describes allowing another person to take some of the load. No function is inferred from this single report.",
+      "remaining_uncertainty": "The social feature and meaning of receiving care were unresolved; no broader capacity or recurring pattern is established."
+    },
+    {
+      "id": "c_repair_offered",
+      "text": "In one repair-offered occurrence, the response was to name what had been done and apologize. Only the action is recorded; its aim, reception, and effect are not established.",
+      "kind": "observation",
+      "constructs": [
+        "apology",
+        "naming_action"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_921ee1eb-b229-43c4-8364-e066fbbd57f6"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled repair-offered occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "O7f82a58b7dd2adcb59aa"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Direct actual-recalled first-action selection.",
+      "rationale": "The evidence supports the reported apology action, not an inferred motive or successful repair.",
+      "remaining_uncertainty": "The repair feature, other person's response, and effect were not recorded."
+    },
+    {
+      "id": "c_repair_received",
+      "text": "In a separate repair-received occurrence, the respondent reported that it helped even though there was more to discuss. This is a local reported benefit, not evidence of full repair or a connection to the separate apology occurrence.",
+      "kind": "observation",
+      "constructs": [
+        "reported_repair_benefit",
+        "remaining_discussion"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_8be3e67b-d4cb-4c7e-80dd-0d7980d90b32"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled repair-received occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "Oe17bf428a4cea2439816"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Direct actual-recalled experience selection.",
+      "rationale": "The source reports that the repair helped while explicitly retaining that more remained to discuss.",
+      "remaining_uncertainty": "The repair feature and what remained to discuss were unresolved; no link to another repair occurrence is supported."
+    },
+    {
+      "id": "c_planned_stop",
+      "text": "One rest-context occurrence records stopping where planned. No motive, difficulty, or outcome is supplied, so no protective function is inferred.",
+      "kind": "observation",
+      "constructs": [
+        "planned_stopping",
+        "rest_context"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_4e4c7bc9-a066-4f8e-810c-c90a7b97cb93"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled rest occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "O9467851ae9d397cb417f"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Direct actual-recalled first-action selection.",
+      "rationale": "The report supports stopping at the planned point in this occurrence only.",
+      "remaining_uncertainty": "The aim, felt ease, and effect of stopping are not assessed."
+    },
+    {
+      "id": "c_praise_response",
+      "text": "One visibility or praise occurrence records thanking the other person and letting the praise stand. This is an observed response; no internal experience or function is available.",
+      "kind": "observation",
+      "constructs": [
+        "acknowledgment_response",
+        "positive_visibility"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_27c56ec7-0562-4acd-a571-7b17f2580310"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled praise occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "Of11b31366442bde08f1b"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Direct actual-recalled first-action selection.",
+      "rationale": "The selected action is thanking and letting the praise stand. The evidence does not describe how it felt or what it meant.",
+      "remaining_uncertainty": "Internal response, motive, and later effect were not assessed."
+    },
+    {
+      "id": "c_ordinary_rest",
+      "text": "One ordinary-context occurrence records letting oneself rest. No aim, preceding pressure, or effect is reported, so no protector, need, or recurring preference is inferred.",
+      "kind": "observation",
+      "constructs": [
+        "rest_action",
+        "ordinary_context"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_dc9b940c-6728-46cc-8601-e9379bf24bfb"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled ordinary occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "O8a957ef4e0bf7084f155"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Direct actual-recalled experience selection.",
+      "rationale": "The source records allowing rest without a stated aim or effect; the claim stays descriptive.",
+      "remaining_uncertainty": "The context beyond ordinary rest, associated need, and effect are not assessed."
+    }
+  ],
+  "name_registry": [
+    {
+      "name_id": "n_explainer",
+      "name": "Explainer",
+      "entity_kind": "candidate_response_function",
+      "role": "preventive relational protection",
+      "author_generated": true,
+      "supporting_claim_ids": [
+        "c_conflict_preventive_explaining"
+      ]
+    },
+    {
+      "name_id": "n_exit",
+      "name": "Exit",
+      "entity_kind": "candidate_response_function",
+      "role": "reactive immediate-relief interruption",
+      "author_generated": true,
+      "supporting_claim_ids": [
+        "c_conflict_exit_relief"
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "r_conflict_reported_sequence",
+      "from_name_id": "n_explainer",
+      "to_name_id": "n_exit",
+      "relation": "reported_temporal_sequence",
+      "claim_ids": [
+        "c_conflict_reported_sequence"
+      ]
+    }
+  ],
+  "priority_claim_ids": [
+    "c_conflict_preventive_explaining",
+    "c_conflict_reported_sequence",
+    "c_conflict_exit_relief",
+    "c_overload_practical_adjustment",
+    "c_overload_later_capacity",
+    "c_evaluation_bounded_check",
+    "c_practical_pause",
+    "c_reply_wait_ordinary_alternative",
+    "c_exception_stopping",
+    "c_internal_compromise",
+    "c_mistake_learning",
+    "c_boundary_limit"
+  ],
+  "observed_strengths": [
+    {
+      "id": "s_direct_communication",
+      "claim_ids": [
+        "c_boundary_limit",
+        "c_help_request"
+      ],
+      "evidence_ids": [
+        "O9d8a2a67a81932bbc42c",
+        "Occfcc8b3e9a4aaf185d1",
+        "Ocd3f56fc084818db004b",
+        "O3bc2c3b182b20d41c998"
+      ],
+      "occurrence_ids": [
+        "pwep_d2668a55-2bcb-4dec-97bc-dca5d48507f9",
+        "pwep_487f1c9e-3d29-4833-a116-11460fe9a4d0"
+      ],
+      "text": "Separate single occurrences record directly stating a limit and asking for needed help while expecting clarity about what the other person could do. These are local communication capacities, not evidence of a stable general trait or of the other person's response."
+    },
+    {
+      "id": "s_practical_learning_and_adjustment",
+      "claim_ids": [
+        "c_mistake_learning",
+        "c_overload_practical_adjustment"
+      ],
+      "evidence_ids": [
+        "Oc82f251a66d5ed134bc8",
+        "O350626359a5828de2e1a",
+        "Ofd97ec9b62eab96c9ea5",
+        "Ob589b33ba20c04c38e31",
+        "Oef61eebe61948296a47e",
+        "Odc14b1581c831295e913",
+        "O9f618c31d32c0ab50e73"
+      ],
+      "occurrence_ids": [
+        "pwep_16be0c6a-dabd-4ca9-8cc2-00eb6e592fbd",
+        "pwep_7f3434c8-a150-4bd0-bc8b-db121ed17953"
+      ],
+      "text": "In separate occurrences, the packet records learning-oriented problem solving around a mistake and reducing attempted scope in the face of overload with clearer thinking reported. These are local practical capacities; slowed processing itself is not treated as a chosen response."
+    },
+    {
+      "id": "s_reported_choice_and_stopping",
+      "claim_ids": [
+        "c_overload_later_capacity",
+        "c_exception_stopping",
+        "c_planned_stop"
+      ],
+      "evidence_ids": [
+        "O596a46ce67fc34263c57",
+        "O37669b1117dd1b32020c",
+        "Odf7c08717aacbea59fd4",
+        "O0d9a5609b1fcef50a803",
+        "O5d7b3ad0e34d83e9bc7b",
+        "O9467851ae9d397cb417f"
+      ],
+      "occurrence_ids": [
+        "pwep_7f3434c8-a150-4bd0-bc8b-db121ed17953",
+        "pwep_6641c9ef-313f-4264-88a2-e59e84518ad5",
+        "pwep_4e4c7bc9-a066-4f8e-810c-c90a7b97cb93"
+      ],
+      "text": "Separate reports include stopping at a planned point, stopping once enough was done, and having more room to think and choose. These support local availability of stopping or choice, not a global self-led or effortless mode."
+    },
+    {
+      "id": "s_compromise",
+      "claim_ids": [
+        "c_internal_compromise"
+      ],
+      "evidence_ids": [
+        "O091b1a115b810e9b4815",
+        "O0118f1c5fd12221a3e09"
+      ],
+      "occurrence_ids": [
+        "pwep_93d057d3-8207-4aec-8896-bbcef401a1e4"
+      ],
+      "text": "One occurrence records allowing some of both competing wants. This is a local compromise response; it does not establish separate parts or their relationship."
+    },
+    {
+      "id": "s_support_and_repair_actions",
+      "claim_ids": [
+        "c_receiving_care",
+        "c_repair_offered",
+        "c_repair_received"
+      ],
+      "evidence_ids": [
+        "O3cd3cf7df5607461bd01",
+        "O7f82a58b7dd2adcb59aa",
+        "Oe17bf428a4cea2439816"
+      ],
+      "occurrence_ids": [
+        "pwep_ff69335b-edf6-414a-8011-12af5780fd2d",
+        "pwep_921ee1eb-b229-43c4-8364-e066fbbd57f6",
+        "pwep_8be3e67b-d4cb-4c7e-80dd-0d7980d90b32"
+      ],
+      "text": "Separate occurrences record allowing some load-sharing, offering an apology, and experiencing a repair as helpful despite more discussion remaining. Their separate identities and limited reports do not establish one linked repair sequence."
+    }
+  ],
+  "counterexamples": [
+    {
+      "id": "cx_practical_alternatives",
+      "claim_ids": [
+        "c_overload_practical_adjustment",
+        "c_evaluation_bounded_check",
+        "c_practical_pause"
+      ],
+      "evidence_ids": [
+        "Ob589b33ba20c04c38e31",
+        "Oef61eebe61948296a47e",
+        "Odc14b1581c831295e913",
+        "O9f618c31d32c0ab50e73",
+        "Ob65cd6896165ae595582",
+        "O07d9111896d5da12968e",
+        "Oc824aa9b21d34d4832b7",
+        "Of6050e3583e51c090dd5"
+      ],
+      "occurrence_ids": [
+        "pwep_7f3434c8-a150-4bd0-bc8b-db121ed17953",
+        "pwep_d6d380fd-bb2a-4fb5-8b59-e4fea936d319",
+        "pwep_5ed17c8a-8b95-435f-9f9a-9d59be6d7088"
+      ],
+      "text": "These separate overload, evaluation, and practical-wait cases have grounded task or information accounts. They do not contradict the conflict-specific interpretation, but they limit any claim that similar-looking pauses or adjustments are necessarily protective."
+    },
+    {
+      "id": "cx_reply_wait",
+      "claim_ids": [
+        "c_reply_wait_ordinary_alternative"
+      ],
+      "evidence_ids": [
+        "O98c5f9c2edcf94e56d68",
+        "O082cf3e2283d0bfa9b34",
+        "Offc285d670a266686f79"
+      ],
+      "occurrence_ids": [
+        "pwep_a2ce2362-3769-4fcd-a1ab-06aca26f5f5d"
+      ],
+      "text": "In this separate close-relationship occurrence, waiting was accompanied by a likely-busy interpretation and a report of moving on with information. This limits generalization from the conflict case; the other person's actual motive remains unknown."
+    },
+    {
+      "id": "cx_stopping_available",
+      "claim_ids": [
+        "c_exception_stopping",
+        "c_planned_stop",
+        "c_ordinary_rest"
+      ],
+      "evidence_ids": [
+        "Odf7c08717aacbea59fd4",
+        "O0d9a5609b1fcef50a803",
+        "O5d7b3ad0e34d83e9bc7b",
+        "O9467851ae9d397cb417f",
+        "O8a957ef4e0bf7084f155"
+      ],
+      "occurrence_ids": [
+        "pwep_6641c9ef-313f-4264-88a2-e59e84518ad5",
+        "pwep_4e4c7bc9-a066-4f8e-810c-c90a7b97cb93",
+        "pwep_dc9b940c-6728-46cc-8601-e9379bf24bfb"
+      ],
+      "text": "Separate rest and exception cases record planned stopping, stopping once enough was done, or letting oneself rest. These constrain any global claim of inability to stop; the reports do not establish ease or a stable trait."
+    },
+    {
+      "id": "cx_compromise_not_fixed_polarity",
+      "claim_ids": [
+        "c_internal_compromise"
+      ],
+      "evidence_ids": [
+        "O091b1a115b810e9b4815",
+        "O0118f1c5fd12221a3e09"
+      ],
+      "occurrence_ids": [
+        "pwep_93d057d3-8207-4aec-8896-bbcef401a1e4"
+      ],
+      "text": "The reported response to competing wants was to allow some of both. This cautions against interpreting the occurrence as proof of a fixed pair of polarized parts."
+    },
+    {
+      "id": "cx_varied_relational_actions",
+      "claim_ids": [
+        "c_boundary_limit",
+        "c_help_request",
+        "c_receiving_care",
+        "c_repair_offered",
+        "c_repair_received",
+        "c_praise_response"
+      ],
+      "evidence_ids": [
+        "O9d8a2a67a81932bbc42c",
+        "Occfcc8b3e9a4aaf185d1",
+        "Ocd3f56fc084818db004b",
+        "O3bc2c3b182b20d41c998",
+        "O3cd3cf7df5607461bd01",
+        "O7f82a58b7dd2adcb59aa",
+        "Oe17bf428a4cea2439816",
+        "Of11b31366442bde08f1b"
+      ],
+      "occurrence_ids": [
+        "pwep_d2668a55-2bcb-4dec-97bc-dca5d48507f9",
+        "pwep_487f1c9e-3d29-4833-a116-11460fe9a4d0",
+        "pwep_ff69335b-edf6-414a-8011-12af5780fd2d",
+        "pwep_921ee1eb-b229-43c4-8364-e066fbbd57f6",
+        "pwep_8be3e67b-d4cb-4c7e-80dd-0d7980d90b32",
+        "pwep_27c56ec7-0562-4acd-a571-7b17f2580310"
+      ],
+      "text": "Separate relational contexts include stating a limit, asking for help, allowing some load-sharing, apologizing, receiving a repair as helpful, and accepting praise. These reports prevent the single conflict sequence from standing for all relational behavior."
+    },
+    {
+      "id": "cx_processing_slowing_not_a_chosen_protector",
+      "claim_ids": [
+        "c_overload_practical_adjustment"
+      ],
+      "evidence_ids": [
+        "Ob589b33ba20c04c38e31",
+        "Oef61eebe61948296a47e"
+      ],
+      "occurrence_ids": [
+        "pwep_7f3434c8-a150-4bd0-bc8b-db121ed17953"
+      ],
+      "text": "Needing longer to take things in is a reported experience, not itself a chosen protective action. The separately recorded reduction in attempted scope is the action; the packet does not establish the mechanism linking them."
+    }
+  ],
+  "open_questions": [
+    {
+      "id": "oq_conflict_practical_context",
+      "status": "open_question",
+      "source_state": "unresolved",
+      "question": "What concrete practical or interactional context was present in the conflict, and was preventing the anticipated loss of contact or standing the only aim or one of several?",
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": []
+      },
+      "evidence_ids": [
+        "Ofc7b7fb668294601fe78",
+        "Oee9a23929c717af918cc",
+        "O46dfe0bb601014cf6dcf"
+      ],
+      "sequence_edge_ids": [],
+      "related_claim_ids": [
+        "c_conflict_preventive_explaining"
+      ]
+    },
+    {
+      "id": "oq_vulnerable_experience",
+      "status": "open_question",
+      "source_state": "open",
+      "question": "Whether the anticipated loss of contact or uncertainty connects to an underlying vulnerable experience or need, and whether any such experience has an exile role, is not established.",
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": []
+      },
+      "evidence_ids": [
+        "O46dfe0bb601014cf6dcf"
+      ],
+      "sequence_edge_ids": [],
+      "related_claim_ids": [
+        "c_conflict_preventive_explaining"
+      ]
+    },
+    {
+      "id": "oq_exit_return_and_access",
+      "status": "open_question",
+      "source_states": [
+        "unresolved",
+        "open"
+      ],
+      "question": "What happened after leaving, whether contact or access returned, and how the exit unfolded remain unknown.",
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": []
+      },
+      "evidence_ids": [
+        "O024600260948d26c8645",
+        "O482ef6dc44094628b660",
+        "O52b1a40eb779285046f1"
+      ],
+      "sequence_edge_ids": [
+        "edge:pwr_cbcda3040bd22d070ab9ce0cc901ab53f9b973f2:D08.after_failed"
+      ],
+      "related_claim_ids": [
+        "c_conflict_reported_sequence",
+        "c_conflict_exit_relief"
+      ]
+    },
+    {
+      "id": "oq_conflict_recurrence",
+      "status": "not_assessed",
+      "source_state": "abandoned_low_value",
+      "question": "Whether the explanation-to-exit sequence recurs across independently confirmed episodes or characterizes behavior beyond this one recalled conflict is not assessed.",
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": []
+      },
+      "evidence_ids": [
+        "Ofc7b7fb668294601fe78",
+        "O024600260948d26c8645",
+        "Oa6147904a3dbc2821d38"
+      ],
+      "sequence_edge_ids": [
+        "edge:pwr_cbcda3040bd22d070ab9ce0cc901ab53f9b973f2:D08.after_failed"
+      ],
+      "related_claim_ids": [
+        "c_conflict_reported_sequence"
+      ]
+    },
+    {
+      "id": "oq_function_identity",
+      "status": "not_assessed",
+      "source_state": "not_established",
+      "question": "Whether the named preventive and reactive response functions reflect one shifting response, distinct parts, or another account is not established. Their reported temporal relation does not establish a part handoff or enduring identity.",
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": []
+      },
+      "evidence_ids": [
+        "Ofc7b7fb668294601fe78",
+        "O024600260948d26c8645",
+        "Oa6147904a3dbc2821d38",
+        "O482ef6dc44094628b660",
+        "O52b1a40eb779285046f1"
+      ],
+      "sequence_edge_ids": [
+        "edge:pwr_cbcda3040bd22d070ab9ce0cc901ab53f9b973f2:D08.after_failed"
+      ],
+      "related_claim_ids": [
+        "c_conflict_preventive_explaining",
+        "c_conflict_reported_sequence",
+        "c_conflict_exit_relief"
+      ]
+    },
+    {
+      "id": "oq_overload_detail",
+      "status": "not_assessed",
+      "source_states": [
+        "open",
+        "abandoned_low_value"
+      ],
+      "question": "The onset and outward or inward form of the overload response, remaining capacity, easing order and meaning, recovery conditions, and relation between rest and reported choice were not established.",
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_7f3434c8-a150-4bd0-bc8b-db121ed17953"
+        ],
+        "person_ids": []
+      },
+      "evidence_ids": [
+        "Ob589b33ba20c04c38e31",
+        "Oef61eebe61948296a47e",
+        "Odc14b1581c831295e913",
+        "O596a46ce67fc34263c57",
+        "O37669b1117dd1b32020c"
+      ],
+      "sequence_edge_ids": [],
+      "related_claim_ids": [
+        "c_overload_practical_adjustment",
+        "c_overload_later_capacity"
+      ]
+    },
+    {
+      "id": "oq_self_stance",
+      "status": "not_assessed",
+      "source_state": "unresolved",
+      "question": "The inner stance and available choice in the mistake and exception occurrences were unresolved; constructive action, calmness, or clearer thought do not establish self-leadership.",
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_16be0c6a-dabd-4ca9-8cc2-00eb6e592fbd",
+          "pwep_6641c9ef-313f-4264-88a2-e59e84518ad5"
+        ],
+        "person_ids": []
+      },
+      "evidence_ids": [
+        "O350626359a5828de2e1a",
+        "Ofd97ec9b62eab96c9ea5",
+        "Odf7c08717aacbea59fd4",
+        "O5d7b3ad0e34d83e9bc7b"
+      ],
+      "sequence_edge_ids": [],
+      "related_claim_ids": [
+        "c_mistake_learning",
+        "c_exception_stopping"
+      ]
+    },
+    {
+      "id": "oq_internal_polarization",
+      "status": "open_question",
+      "source_state": "unresolved",
+      "question": "Whether the competing wants in the internal-conflict occurrence correspond to distinct parts or an enduring polarization was not resolved.",
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_93d057d3-8207-4aec-8896-bbcef401a1e4"
+        ],
+        "person_ids": []
+      },
+      "evidence_ids": [
+        "O091b1a115b810e9b4815",
+        "O0118f1c5fd12221a3e09"
+      ],
+      "sequence_edge_ids": [],
+      "related_claim_ids": [
+        "c_internal_compromise"
+      ]
+    },
+    {
+      "id": "oq_help_and_care_meaning",
+      "status": "open_question",
+      "source_state": "unresolved",
+      "question": "The actual response to the help request and the social meaning of receiving care remain unknown; no motive or other person's capacity should be inferred.",
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_487f1c9e-3d29-4833-a116-11460fe9a4d0",
+          "pwep_ff69335b-edf6-414a-8011-12af5780fd2d"
+        ],
+        "person_ids": []
+      },
+      "evidence_ids": [
+        "Ocd3f56fc084818db004b",
+        "O3bc2c3b182b20d41c998",
+        "O3cd3cf7df5607461bd01"
+      ],
+      "sequence_edge_ids": [],
+      "related_claim_ids": [
+        "c_help_request",
+        "c_receiving_care"
+      ]
+    },
+    {
+      "id": "oq_repair_detail",
+      "status": "open_question",
+      "source_state": "unresolved",
+      "question": "The specific repair feature and the outcome of the apology are not known, and the repair-offered and repair-received occurrences are not linked.",
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_921ee1eb-b229-43c4-8364-e066fbbd57f6",
+          "pwep_8be3e67b-d4cb-4c7e-80dd-0d7980d90b32"
+        ],
+        "person_ids": []
+      },
+      "evidence_ids": [
+        "O7f82a58b7dd2adcb59aa",
+        "Oe17bf428a4cea2439816"
+      ],
+      "sequence_edge_ids": [],
+      "related_claim_ids": [
+        "c_repair_offered",
+        "c_repair_received"
+      ]
+    },
+    {
+      "id": "oq_other_person_motives",
+      "status": "not_assessed",
+      "source_state": "remembered_expectations_only",
+      "question": "The actual motives or behavior of other people in the boundary, reply-wait, and help-request occurrences were not established by the respondent's expectations.",
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_d2668a55-2bcb-4dec-97bc-dca5d48507f9",
+          "pwep_a2ce2362-3769-4fcd-a1ab-06aca26f5f5d",
+          "pwep_487f1c9e-3d29-4833-a116-11460fe9a4d0"
+        ],
+        "person_ids": []
+      },
+      "evidence_ids": [
+        "Occfcc8b3e9a4aaf185d1",
+        "O082cf3e2283d0bfa9b34",
+        "O3bc2c3b182b20d41c998"
+      ],
+      "sequence_edge_ids": [],
+      "related_claim_ids": [
+        "c_boundary_limit",
+        "c_reply_wait_ordinary_alternative",
+        "c_help_request"
+      ]
+    },
+    {
+      "id": "oq_packet_coverage",
+      "status": "not_assessed",
+      "source_state": "mapping_coverage_incomplete",
+      "question": "Mapping coverage is incomplete and some discriminators remain open, unresolved, or unasked. These gaps are not evidence that an experience, motive, or capacity is absent.",
+      "scope": {
+        "level": "packet",
+        "occurrence_ids": [],
+        "person_ids": []
+      },
+      "evidence_ids": [],
+      "sequence_edge_ids": [],
+      "related_claim_ids": []
+    },
+    {
+      "id": "oq_independent_validation",
+      "status": "not_assessed",
+      "source_state": "pending",
+      "question": "Independent validation of these fictional intermediate records is required before any composition or release.",
+      "scope": {
+        "level": "packet",
+        "occurrence_ids": [],
+        "person_ids": []
+      },
+      "evidence_ids": [],
+      "sequence_edge_ids": [],
+      "related_claim_ids": []
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "PATTERNWORK-C10-INDEPENDENT-AFTER-P02-REJECTION-GUARDS-V1",
+  "status": "passed",
+  "executedAt": "2026-10-15T13:57:49.772Z",
+  "providerDispatches": 0,
+  "rejectedCases": [
+    {
+      "id": "missing_operator_authorization",
+      "exitCode": 1,
+      "rejected": true,
+      "providerDispatches": 0,
+      "stderr": "Explicit --operator-authorized yes is required."
+    },
+    {
+      "id": "out_of_scope_profile",
+      "exitCode": 1,
+      "rejected": true,
+      "providerDispatches": 0,
+      "stderr": "Only P02/C10 interpretation and composition are in scope."
+    },
+    {
+      "id": "enlarged_aggregate_cap",
+      "exitCode": 1,
+      "rejected": true,
+      "providerDispatches": 0,
+      "stderr": "The only accepted explicit limits are $3.00 aggregate and $0.30 per request."
+    },
+    {
+      "id": "enlarged_per_call_reservation",
+      "exitCode": 1,
+      "rejected": true,
+      "providerDispatches": 0,
+      "stderr": "The only accepted explicit limits are $3.00 aggregate and $0.30 per request."
+    },
+    {
+      "id": "provider_override",
+      "exitCode": 1,
+      "rejected": true,
+      "providerDispatches": 0,
+      "stderr": "Unsupported argument: --provider"
+    },
+    {
+      "id": "composition_before_c10_interpretation",
+      "exitCode": 1,
+      "rejected": true,
+      "providerDispatches": 0,
+      "stderr": "C10 composition requires a current C10 interpretation plus reviewed P02 composition or the exact recorded P02 source-evidence rejection, and may run only once."
+    },
+    {
+      "id": "continuation_authorization_missing",
+      "exitCode": 1,
+      "rejected": true,
+      "providerDispatches": 0,
+      "stderr": "No-dispatch preflight requires one explicit recovery or continuation authorization."
+    },
+    {
+      "id": "preflight_only_missing",
+      "exitCode": 1,
+      "rejected": true,
+      "providerDispatches": 0,
+      "stderr": "OPENAI_API_KEY is unavailable; no request was prepared or dispatched."
+    }
+  ],
+  "c10IndependentPreflightPassed": true,
+  "preflight": {
+    "status": "authorized_recovery_preflight_passed_no_dispatch",
+    "qualificationStatus": "FICTIONAL_DIAGNOSTIC_ONLY_NOT_ROUTING_QUALIFICATION_OR_PRODUCTION_APPROVAL",
+    "profile": "C10",
+    "reportType": "IFS",
+    "stage": "interpretation",
+    "attemptNumber": 1,
+    "recoveryOfCallId": "48899da5-ce4e-45f2-a493-21ed1db01d8b",
+    "recoveryAfterCallId": null,
+    "packetSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+    "sourceObservationIndexSha256": "d2765bfe4008dd49bc5e6a2c719178f8466adb81af03422506f48a5121289676",
+    "requestBodySha256": "a264e2bbd73d44c8f0694755b0f645ef21ef4df9b14696cf6b57592609eb4139",
+    "maxOutputTokens": 128000,
+    "inputEnvelopeBytes": 134593,
+    "quotedReservationUpperBoundMicrodollars": 129649,
+    "expectedRequestSha256": "a264e2bbd73d44c8f0694755b0f645ef21ef4df9b14696cf6b57592609eb4139",
+    "matchesApprovedRequest": true,
+    "model": "gpt-6-luna",
+    "reasoningEffort": "max",
+    "serviceTier": "default",
+    "clientTimeoutMilliseconds": 1800000,
+    "existingUnknownReservationMicrodollars": 900000,
+    "carriedUnknownCostCallIds": [
+      "017fbfd7-ec20-47a1-bb09-2f5242debd0b",
+      "48899da5-ce4e-45f2-a493-21ed1db01d8b",
+      "e6f9fe4c-500c-4a80-a6e2-230d2ed63fb9"
+    ],
+    "additionalReservationMicrodollars": 300000,
+    "remainingAuthorizationAfterReservationMicrodollars": 1732986,
+    "providerDispatches": 0
+  },
+  "sideEffectsAbsent": true,
+  "journalSha256": "6dc9ca4e3c7f54eff881badd5068e971f8876ffc89f4435902444f4453588c44",
+  "preparedC10InputSha256": "69517fd068f991ef625e6fed2e6dbd6e6801e3fc67008c09017341d6e68b58d6"
+}

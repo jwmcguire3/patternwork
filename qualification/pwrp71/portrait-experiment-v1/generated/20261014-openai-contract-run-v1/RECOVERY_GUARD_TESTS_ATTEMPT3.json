@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-ATTEMPT3-DISPATCH-GUARD-TESTS-V1",
+  "status": "failed",
+  "executedAt": "2026-10-15T12:53:15.836Z",
+  "providerDispatches": 0,
+  "journalSha256Before": "14e3a556c69c16a4a597d9fe5fab3ccae39fded51baf428a3c8a439774200c39",
+  "journalSha256After": "14e3a556c69c16a4a597d9fe5fab3ccae39fded51baf428a3c8a439774200c39",
+  "sideEffectsAbsent": true,
+  "scenarioCount": 11,
+  "scenarios": [
+    {
+      "scenario": "missing_explicit_operator_authorization",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "Explicit --operator-authorized yes is required."
+    },
+    {
+      "scenario": "enlarged_aggregate_limit",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "The only accepted explicit limits are $3.00 aggregate and $0.30 per request."
+    },
+    {
+      "scenario": "changed_per_call_reservation",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "The only accepted explicit limits are $3.00 aggregate and $0.30 per request."
+    },
+    {
+      "scenario": "out_of_scope_c03",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "Only P02/C10 interpretation and composition are in scope."
+    },
+    {
+      "scenario": "recovery_on_wrong_profile",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "The owner-authorized incomplete-output recovery applies only to P02 interpretation attempt 3."
+    },
+    {
+      "scenario": "recovery_on_wrong_stage",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "The owner-authorized incomplete-output recovery applies only to P02 interpretation attempt 3."
+    },
+    {
+      "scenario": "continuation_out_of_order_before_p02_composition",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "Continuation is allowed only with the original P02 unknown-cost reserve as the sole unresolved call."
+    },
+    {
+      "scenario": "continuation_wrong_stage",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "Continuation is allowed only with the original P02 unknown-cost reserve as the sole unresolved call."
+    },
+    {
+      "scenario": "provider_or_model_override_rejected",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "Unsupported argument: --provider"
+    },
+    {
+      "scenario": "dispatch_requires_provider_key",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "OPENAI_API_KEY is unavailable; no request was prepared or dispatched."
+    },
+    {
+      "scenario": "exact_attempt3_preflight_no_dispatch",
+      "exitCode": 1,
+      "rejected": false
+    }
+  ],
+  "note": "All cases used no-dispatch preflight or rejected CLI input with OPENAI_API_KEY removed; no request was sent."
+}

@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "PATTERNWORK-P02-COMPOSITION-TRANSPORT-READ-ONLY-REVIEW-V1",
+  "reviewedAt": "2026-10-15T15:12:40Z",
+  "reviewType": "read_only_model_transport_assessment",
+  "status": "supports_failed_before_provider_http_dispatch_reconciliation",
+  "callId": "c1a9db49-3d79-4f4a-bfd4-f7eb962c5329",
+  "profileId": "P02",
+  "stage": "composition",
+  "humanApproval": false,
+  "routingQualification": false,
+  "reportApproval": false,
+  "providerRequestMadeByThisReview": false,
+  "journalChangedByThisReview": false,
+  "bindings": {
+    "journalFile": "BUDGET_JOURNAL.json",
+    "journalSnapshotSha256": "5ef5b471e6f0100effc50cf750d8d6dc8125c5b59528fbdd9fb0fafd97e530c5",
+    "dispatchImplementationFile": "scripts/dispatch-openai-experiment.mjs",
+    "dispatchImplementationSha256": "98b0358969b6c626fd21f54b15de1cd3299724c9b836ffcd63a507a2d728b742",
+    "requestFile": "requests/P02.composition.request.json",
+    "requestFileSha256": "952e7c4588a2b88b8eb740dcc44c192071874c6d6203cea052753d51b103447b",
+    "installedUndiciVersion": "7.28.0",
+    "installedUndiciPackageSha256": "c960701448bdc5935114768e2721d42554bc9ae83e087d05bac133662c11ab2b",
+    "installedUndiciConnectorSha256": "67956a204fe3982edbf032dd44ff9c1c391daaa85c05e9750d245bdfb2b87fe0",
+    "installedUndiciAgentSha256": "7cbf227ccf6337e109ce567ebef036a6bab04eb81b3de3645adee5256aa79bf6",
+    "sameFamilyPrecedentFile": "C10-COMPOSITION-NO-DISPATCH-RECONCILIATION.json",
+    "sameFamilyPrecedentSha256": "1b6bd990c5b38cb80f4893390deb8895abebe32da21eed66fdcb8e29340ec6ff"
+  },
+  "observedFailure": {
+    "journalStatus": "unknown_cost",
+    "outerError": "TypeError: fetch failed",
+    "nestedError": "Error: getaddrinfo ENOTFOUND api.openai.com",
+    "nestedCode": "ENOTFOUND",
+    "nestedSyscall": "getaddrinfo",
+    "hostname": "api.openai.com",
+    "reservationCreatedAt": "2026-10-15T15:10:52.044Z",
+    "finishedAt": "2026-10-15T15:10:52.115Z",
+    "elapsedMilliseconds": 71,
+    "httpStatus": null,
+    "responseId": null,
+    "responseArtifactFound": false,
+    "usageFound": false,
+    "reservationMicrodollars": 300000
+  },
+  "transportFinding": {
+    "conclusion": "The exact nested DNS lookup failure, fresh per-call Undici Agent, and absence of a provider HTTP response are adequate technical evidence that this POST failed before an HTTP request reached api.openai.com.",
+    "mechanism": "The pinned dispatch code constructs a new Undici Agent immediately before the POST. Undici's installed HTTPS connector calls tls.connect with host api.openai.com; getaddrinfo ENOTFOUND is emitted while resolving that host, before a TCP/TLS connection can carry HTTP bytes. The catch branch records unknown_cost conservatively for all transport errors.",
+    "elapsedTimeRole": "The 71 ms elapsed time corroborates an early lookup failure; it is not independently decisive.",
+    "proves": [
+      "This local attempt did not obtain an HTTP status, provider response ID, or token usage.",
+      "The recorded failure occurred at DNS resolution for the direct API hostname, before this attempt could transmit an HTTP POST through the fresh connection."
+    ],
+    "doesNotProve": [
+      "An invoice amount or account-wide billing state.",
+      "The outcome or billing of earlier unknown-cost calls.",
+      "That DNS, authentication, or model availability has since recovered.",
+      "That a later retry will complete, be accepted, or pass composition review."
+    ],
+    "billingClaim": "No invoice or provider billing amount is asserted by this assessment."
+  },
+  "recommendedNextCheck": {
+    "action": "One authenticated GET /v1/models against the same API hostname, with no generation request.",
+    "purpose": "Check current DNS/connectivity, authentication, and visibility of gpt-6-luna before considering a new POST.",
+    "interpretation": "A successful GET is a recovery preflight, not retroactive proof of the failed POST's billing and not a composition result. If it fails, stop any retry and retain the failure evidence."
+  },
+  "journalAndRetryTreatment": {
+    "immediateState": "Keep the current unknown_cost record and $0.30 reservation unchanged during this read-only review.",
+    "reconciliation": "After checking that the journal, request, dispatcher, cause chain, and absent response artifact still match these hashes, record an explicit no-provider-HTTP-dispatch correction for this call. Preserve its original unknown_cost state in correction history, set the corrected call status to failed_before_provider_dispatch, release only its $0.30 reservation, and recompute counters from the then-current journal. Do not release any earlier unknown-cost reservations.",
+    "snapshotCounterEffectIfUnchanged": {
+      "reservedMicrodollarsBefore": 1200000,
+      "reservedMicrodollarsAfter": 900000,
+      "remainingAuthorizationMicrodollarsBefore": 1647811,
+      "remainingAuthorizationMicrodollarsAfter": 1947811,
+      "settledUpperBoundMicrodollarsUnchanged": 152189
+    },
+    "retry": "A new P02 composition POST is a fresh call with a fresh call ID and reservation under the existing explicit user authorization, aggregate $3 cap, call-count limit, exact reviewed graph/request, and no-automatic-retry rule. Dispatch only after a successful authenticated model-list preflight and an independently recorded no-dispatch reconciliation. If either gate fails, stop."
+  },
+  "comparisonNote": "The C10 composition case has the same ENOTFOUND/getaddrinfo family and an existing no-dispatch reconciliation; it is supporting precedent, not proof about this P02 attempt."
+}

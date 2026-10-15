@@ -1,0 +1,193 @@
+{
+  "schemaVersion": "PATTERNWORK-C10-PWRP71-COMPOSITION-NORMALIZATION-V1",
+  "status": "normalized_without_changing_provider_artifacts",
+  "profileId": "C10",
+  "reportType": "IFS",
+  "packetSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+  "sourceCompositionFileSha256": "f868a52b9aff9a2fa244c78527dbd62da6e8b1593431108e508cf997f21b32c6",
+  "sourceInterpretationFileSha256": "9dbdec37ef62751717c975506c8fa71944bd6b4d0ec9326b7e09572f077f6889",
+  "normalizationRules": {
+    "observationKind": "observation -> reported",
+    "customConstructs": "versioned C10 aliases map to pinned PWRP enum labels; original labels remain in the immutable source graph and this receipt",
+    "supportBasis": "direct source-indexed observation prose -> direct_report; append actual_sequence only when explicit source sequence-edge IDs exist",
+    "remainingUncertainty": "a nonempty source string becomes a singleton array; existing arrays are preserved",
+    "contentStatus": "complete only when nonempty reader-facing title and section text and at least one current source claim exist; otherwise insufficient_evidence",
+    "reflectionQuestions": "bound objects are projected to schema strings only after every claim binding resolves; bindings are retained in this receipt"
+  },
+  "sourceContentStatus": "Draft, not release-ready. Nonclinical reflection, not a diagnosis or treatment recommendation. Based only on one fictional recalled occurrence; no named parts or part-to-part relationships are supported. Canonical reconstruction, source-bound validation, artifact-hash regeneration, and fresh semantic review are still required before release.",
+  "reportContentStatus": "complete",
+  "claimTransforms": [
+    {
+      "claimId": "C10-C01",
+      "sourceKind": "observation",
+      "reportKind": "reported",
+      "constructMappings": [
+        {
+          "source": "overload_context",
+          "report": "description",
+          "rule": "versioned_c10_semantic_alias"
+        },
+        {
+          "source": "gradual_onset",
+          "report": "description",
+          "rule": "versioned_c10_semantic_alias"
+        },
+        {
+          "source": "attention_narrowing",
+          "report": "description",
+          "rule": "versioned_c10_semantic_alias"
+        },
+        {
+          "source": "mixed_energy",
+          "report": "description",
+          "rule": "versioned_c10_semantic_alias"
+        },
+        {
+          "source": "delayed_recognition",
+          "report": "description",
+          "rule": "versioned_c10_semantic_alias"
+        }
+      ],
+      "supportBasisMapping": "source_observation_to_direct_report",
+      "sourceSupportBasis": "Direct source-indexed actual_recalled selections; convergence within one occurrence.",
+      "reportSupportBasis": [
+        "direct_report"
+      ],
+      "uncertaintyMapping": "single_uncertainty_string_to_singleton_list"
+    },
+    {
+      "claimId": "C10-C04",
+      "sourceKind": "observation",
+      "reportKind": "reported",
+      "constructMappings": [
+        {
+          "source": "reported_recovery_order",
+          "report": "recovery",
+          "rule": "versioned_c10_semantic_alias"
+        },
+        {
+          "source": "speech_access_return",
+          "report": "recovery",
+          "rule": "versioned_c10_semantic_alias"
+        },
+        {
+          "source": "cognitive_clarity",
+          "report": "recovery",
+          "rule": "versioned_c10_semantic_alias"
+        },
+        {
+          "source": "choice_capacity",
+          "report": "capacity",
+          "rule": "versioned_c10_semantic_alias"
+        }
+      ],
+      "supportBasisMapping": "source_observation_to_direct_report",
+      "sourceSupportBasis": "Direct source-indexed actual_recalled ordered report with explicit reported_recovery_order edges.",
+      "reportSupportBasis": [
+        "direct_report",
+        "actual_sequence"
+      ],
+      "uncertaintyMapping": "single_uncertainty_string_to_singleton_list"
+    },
+    {
+      "claimId": "C10-C05",
+      "sourceKind": "observation",
+      "reportKind": "reported",
+      "constructMappings": [
+        {
+          "source": "functional_capacity",
+          "report": "capacity",
+          "rule": "versioned_c10_semantic_alias"
+        },
+        {
+          "source": "felt_ease",
+          "report": "context_contrast",
+          "rule": "versioned_c10_semantic_alias"
+        },
+        {
+          "source": "residual_strain",
+          "report": "context_contrast",
+          "rule": "versioned_c10_semantic_alias"
+        },
+        {
+          "source": "outward_inward_difference",
+          "report": "context_contrast",
+          "rule": "versioned_c10_semantic_alias"
+        }
+      ],
+      "supportBasisMapping": "source_observation_to_direct_report",
+      "sourceSupportBasis": "Direct source-indexed actual_recalled reports contrasting capacity with felt state.",
+      "reportSupportBasis": [
+        "direct_report"
+      ],
+      "uncertaintyMapping": "single_uncertainty_string_to_singleton_list"
+    },
+    {
+      "claimId": "C10-C06",
+      "sourceKind": "observation",
+      "reportKind": "reported",
+      "constructMappings": [
+        {
+          "source": "partial_easing",
+          "report": "recovery",
+          "rule": "versioned_c10_semantic_alias"
+        },
+        {
+          "source": "recovery_context",
+          "report": "recovery",
+          "rule": "versioned_c10_semantic_alias"
+        },
+        {
+          "source": "coarse_easing_time",
+          "report": "recovery",
+          "rule": "versioned_c10_semantic_alias"
+        },
+        {
+          "source": "concern_salience_change",
+          "report": "state_transition",
+          "rule": "versioned_c10_semantic_alias"
+        }
+      ],
+      "supportBasisMapping": "source_observation_to_direct_report",
+      "sourceSupportBasis": "Direct source-indexed actual_recalled recovery and meaning-after-easing selections.",
+      "reportSupportBasis": [
+        "direct_report"
+      ],
+      "uncertaintyMapping": "single_uncertainty_string_to_singleton_list"
+    }
+  ],
+  "reflectionQuestionBindings": [
+    {
+      "index": 0,
+      "text": "As the strain built gradually, what pressure or need, if any, was present?",
+      "claim_ids": [
+        "C10-C01"
+      ]
+    },
+    {
+      "index": 1,
+      "text": "Looking back, what signs show the difference between being able to carry on and feeling settled?",
+      "claim_ids": [
+        "C10-C05"
+      ]
+    },
+    {
+      "index": 2,
+      "text": "As things eased, which change stood out most: less input or demand, easier words, clearer thinking, or more room to choose?",
+      "claim_ids": [
+        "C10-C04"
+      ]
+    },
+    {
+      "index": 3,
+      "text": "When the concern felt less urgent, what still made sense about it?",
+      "claim_ids": [
+        "C10-C06"
+      ]
+    }
+  ],
+  "sourceGraphClaimCount": 4,
+  "reportClaimCount": 4,
+  "providerOutputUnmodified": true,
+  "interpretationGraphUnmodified": true
+}

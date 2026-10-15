@@ -1,0 +1,149 @@
+{
+  "schemaVersion": "PATTERNWORK-P02-PWRP71-COMPOSITION-NORMALIZATION-V2",
+  "status": "normalized_without_changing_provider_artifacts",
+  "profileId": "P02",
+  "reportType": "IFS",
+  "packetSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+  "sourceCompositionFileSha256": "04cb8c6d351805ea664d0cd8f2d44ad78078623d0809cab2d1a9f8c3fc0a2e5a",
+  "sourceInterpretationFileSha256": "18e4e22a60cb02528c94192247c99bbc005047920483782b2ac80942fd63bc96",
+  "normalizationRules": {
+    "observationKind": "observation -> reported",
+    "customConstructs": "versioned profile-specific aliases map to pinned PWRP enum labels; original labels remain in the immutable source graph and this receipt",
+    "supportBasis": "direct source-indexed observation prose -> direct_report; append actual_sequence only when explicit source sequence-edge IDs exist",
+    "remainingUncertainty": "a nonempty source string becomes a singleton array; existing arrays are preserved",
+    "contentStatus": "complete only when nonempty reader-facing title and section text and at least one current source claim exist; otherwise insufficient_evidence",
+    "nameRegistry": "P02 candidate response functions are mapped to bounded descriptive patterns; no IFS part identity is implied",
+    "relationships": "P02 reported temporal sequence is omitted from the closed relationship enum; sequence edge remains bound to its claim and text; unknown relations fail closed",
+    "reflectionQuestions": "bound objects are projected to schema strings only after every claim binding resolves; bindings are retained in this receipt"
+  },
+  "sourceContentStatus": "Draft; nonclinical reflection, not a diagnosis; not validated for release.",
+  "reportContentStatus": "complete",
+  "claimTransforms": [
+    {
+      "claimId": "c_conflict_preventive_explaining",
+      "sourceKind": "interpretation",
+      "reportKind": "supported_interpretation",
+      "constructMappings": [
+        {
+          "source": "preventive_protection",
+          "report": "protective_function",
+          "rule": "versioned_p02_semantic_alias"
+        },
+        {
+          "source": "relational_management",
+          "report": "description",
+          "rule": "versioned_p02_semantic_alias"
+        },
+        {
+          "source": "anticipated_disconnection_or_uncertainty",
+          "report": "working_expectation",
+          "rule": "versioned_p02_semantic_alias"
+        }
+      ],
+      "supportBasisMapping": "reviewed_p02_claim_id_and_source_index_support_projection",
+      "sourceSupportBasis": "Original authored fictional D61 first action, D02 prevention aim, and D03 remembered expectation/prediction, all bound to the same recalled conflict occurrence.",
+      "reportSupportBasis": [
+        "direct_report",
+        "stated_aim",
+        "remembered_expectation",
+        "inferred_function"
+      ],
+      "uncertaintyMapping": "single_uncertainty_string_to_singleton_list"
+    },
+    {
+      "claimId": "c_conflict_reported_sequence",
+      "sourceKind": "observation",
+      "reportKind": "reported",
+      "constructMappings": [
+        {
+          "source": "reported_temporal_order",
+          "report": "description",
+          "rule": "versioned_p02_semantic_alias"
+        },
+        {
+          "source": "response_change",
+          "report": "state_transition",
+          "rule": "versioned_p02_semantic_alias"
+        }
+      ],
+      "supportBasisMapping": "reviewed_p02_claim_id_and_source_index_support_projection",
+      "sourceSupportBasis": "The recalled first and next actions are paired with an explicit reported temporal relation; the packet defines the edge as temporal, not causal.",
+      "reportSupportBasis": [
+        "direct_report",
+        "actual_sequence"
+      ],
+      "uncertaintyMapping": "single_uncertainty_string_to_singleton_list"
+    },
+    {
+      "claimId": "c_conflict_exit_relief",
+      "sourceKind": "interpretation",
+      "reportKind": "supported_interpretation",
+      "constructMappings": [
+        {
+          "source": "reactive_interruption",
+          "report": "protective_function",
+          "rule": "versioned_p02_semantic_alias"
+        },
+        {
+          "source": "protective_function",
+          "report": "protective_function",
+          "rule": "unchanged_allowed_enum"
+        },
+        {
+          "source": "immediate_relief",
+          "report": "description",
+          "rule": "versioned_p02_semantic_alias"
+        },
+        {
+          "source": "leaving_or_ending_exchange",
+          "report": "description",
+          "rule": "versioned_p02_semantic_alias"
+        }
+      ],
+      "supportBasisMapping": "reviewed_p02_claim_id_and_source_index_support_projection",
+      "sourceSupportBasis": "Original authored fictional D07 next action, D09 next aim, and D10 reported next effect, all bound to the same recalled conflict occurrence.",
+      "reportSupportBasis": [
+        "direct_report",
+        "stated_aim",
+        "reported_effect",
+        "inferred_function"
+      ],
+      "uncertaintyMapping": "single_uncertainty_string_to_singleton_list"
+    }
+  ],
+  "reflectionQuestionBindings": [],
+  "sourceGraphClaimCount": 3,
+  "reportClaimCount": 3,
+  "nameRegistryMappings": [
+    {
+      "nameId": "n_explainer",
+      "sourceEntityKind": "candidate_response_function",
+      "sourceRole": "preventive relational protection",
+      "reportEntityKind": "descriptive_pattern",
+      "reportRole": "descriptive_pattern",
+      "rule": "candidate_response_function_to_descriptive_pattern; do not imply an IFS part or fixed role"
+    },
+    {
+      "nameId": "n_exit",
+      "sourceEntityKind": "candidate_response_function",
+      "sourceRole": "reactive immediate-relief interruption",
+      "reportEntityKind": "descriptive_pattern",
+      "reportRole": "descriptive_pattern",
+      "rule": "candidate_response_function_to_descriptive_pattern; do not imply an IFS part or fixed role"
+    }
+  ],
+  "sourceRelationshipCount": 1,
+  "reportRelationshipCount": 0,
+  "relationshipOmissions": [
+    {
+      "relationshipId": "r_conflict_reported_sequence",
+      "sourceRelation": "reported_temporal_sequence",
+      "claimIds": [
+        "c_conflict_reported_sequence"
+      ],
+      "rule": "omitted_from_report_relationship_enum; temporal order remains in the cited claim and section prose"
+    }
+  ],
+  "providerOutputUnmodified": true,
+  "interpretationGraphUnmodified": true
+}

@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-P02-COMPOSITION-PRICING-PREFLIGHT-V1",
+  "status": "passed",
+  "checkedAt": "2026-10-15T15:25:45Z",
+  "provider": "OpenAI direct API",
+  "endpoint": "https://api.openai.com/v1/responses",
+  "model": "gpt-6-luna",
+  "reasoningEffort": "max",
+  "serviceTier": "default",
+  "maxOutputTokens": 128000,
+  "requestBodySha256": "952e7c4588a2b88b8eb740dcc44c192071874c6d6203cea052753d51b103447b",
+  "inputEnvelopeBytes": 24892,
+  "officialPricing": {
+    "source": "https://developers.openai.com/api/docs/models/gpt-6-luna",
+    "pricingPage": "https://developers.openai.com/api/docs/pricing?tab=suite",
+    "standardShortContextPerMillionTokens": {
+      "inputUsd": 0.1,
+      "cachedInputUsd": 0.01,
+      "cacheWriteUsd": 0.125,
+      "outputUsd": 0.5
+    },
+    "standardLongContextPerMillionTokens": {
+      "inputUsd": 0.2,
+      "cachedInputUsd": 0.02,
+      "cacheWriteUsd": 0.25,
+      "outputUsd": 0.75
+    },
+    "longContextThresholdInputTokens": 272000,
+    "maxOutputTokens": 128000,
+    "supportedReasoningEffort": "max"
+  },
+  "reservationQuote": {
+    "formula": "ceil(inputEnvelopeBytes * 0.25 + maxOutputTokens * 0.75) microdollars",
+    "quotedUpperBoundMicrodollars": 102223,
+    "perCallReservationMicrodollars": 300000,
+    "aggregateAuthorizationMicrodollars": 3000000,
+    "quoteWithinPerCallReservation": true,
+    "quoteIsGuaranteedInvoiceMaximum": false,
+    "actualInputTokenCountAvailableBeforeDispatch": false
+  },
+  "checks": {
+    "currentOpenAiModelCatalogGetPassed": true,
+    "modelVisibleToCredential": true,
+    "generationRequestsForModelCatalogGet": 0,
+    "generationCostForModelCatalogGetMicrodollars": 0,
+    "providerFallbacks": false,
+    "automaticRetries": false
+  },
+  "scope": "Fictional P02 IFS composition attempt 2 only; no routing qualification or production approval."
+}

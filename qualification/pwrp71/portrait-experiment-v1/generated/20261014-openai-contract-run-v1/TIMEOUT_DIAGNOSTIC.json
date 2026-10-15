@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-OPENAI-TIMEOUT-DIAGNOSTIC-V1",
+  "status": "unknown_cost_stop",
+  "scope": {
+    "profile": "P02",
+    "reportType": "IFS",
+    "stage": "interpretation",
+    "fixtureSet": "route-replays-v5",
+    "model": "gpt-6-luna",
+    "reasoningEffort": "max",
+    "serviceTier": "default",
+    "provider": "direct OpenAI Responses API"
+  },
+  "attempt": {
+    "callId": "48899da5-ce4e-45f2-a493-21ed1db01d8b",
+    "requestFile": "requests/P02.interpretation.request.json",
+    "requestBodySha256": "25135d71e43d53433c583177342d69f6dbdbbdb757292d54d118d139edf03cd9",
+    "requestBytes": 99483,
+    "inputCharacters": 86667,
+    "maxOutputTokens": 16000,
+    "clientTimeoutMilliseconds": 180000,
+    "providerHttpStatus": null,
+    "providerResponseId": null,
+    "transportError": "The operation was aborted due to timeout",
+    "billingOutcome": "unknown",
+    "reservedMicrodollars": 300000,
+    "settledUpperBoundMicrodollars": 0,
+    "remainingAuthorizationMicrodollars": 2700000
+  },
+  "recovery": {
+    "automaticRetry": false,
+    "sameStageRetryDispatched": false,
+    "unknownCostReservationRetained": true,
+    "organizationUsageReconciliation": "not available; OPENAI_ADMIN_KEY was absent in the execution environment",
+    "likelyTechnicalCause": "The local 180-second deadline expired without an HTTP response. The request is moderately sized; max reasoning may have exceeded the client deadline, but the absent response cannot establish whether the provider accepted, completed, or billed it.",
+    "nextSafeStep": "Reconcile usage through an authorized OpenAI organization admin account or obtain explicit direction for a separately reserved attempt with a longer client deadline. Any unresolved $0.30 reserve remains counted against the $3 aggregate authorization."
+  },
+  "productionActivation": false,
+  "routingQualification": "unchanged; not established by this experiment"
+}

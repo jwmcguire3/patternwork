@@ -1,0 +1,547 @@
+{
+  "profile_id": "C10",
+  "packet_sha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+  "claims": [
+    {
+      "id": "C10-C01",
+      "text": "In the one source-indexed fictional actual-recalled overload occurrence, the reported changes built gradually; answering people became harder, attention narrowed to one thing, and the respondent felt keyed up and drained at the same time. They also reported recognizing the changes only afterward.",
+      "kind": "observation",
+      "constructs": [
+        "overload_context",
+        "gradual_onset",
+        "attention_narrowing",
+        "mixed_energy",
+        "delayed_recognition"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "One fictional, source-indexed actual_recalled overload occurrence; per-question recall has no fixed lookback. Occurrence-level only, not a recurring person-level pattern."
+      },
+      "evidence_ids": [
+        "Ocdd69071862c457438ee",
+        "O8426258b9708c505f5a0",
+        "Off8cd05760c5de43ae55",
+        "Oc1adc6f70b7c9cc1f73d",
+        "O95b9431fbdc556acbb2a"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Direct source-indexed actual_recalled selections; convergence within one occurrence.",
+      "rationale": "The observations directly report gradual onset, harder answering, narrowed attention, mixed energy, and delayed recognition. The first-notice response and the afterward response are both retained without resolving a more precise awareness timeline. No specific external trigger, relational demand, or physiological mechanism is described. Confidence is high for this local description only.",
+      "remaining_uncertainty": "This is one fictional recalled episode, not a typicality or recurrence finding. The specific pressure or need, trigger, and surrounding context are unknown; no physiological measurement or diagnosis is supported."
+    },
+    {
+      "id": "C10-C02",
+      "text": "The word and speech difficulty was reported as knowing what was meant and wanting to speak while being unable to get words out. This supports a local access limitation; it does not make the access loss itself a chosen quieting response.",
+      "kind": "observation",
+      "constructs": [
+        "speech_access",
+        "word_retrieval",
+        "volition_vs_access"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "One fictional, source-indexed actual_recalled overload occurrence; per-question recall has no fixed lookback. Occurrence-level only."
+      },
+      "evidence_ids": [
+        "O0658ae705c4c7f122eba",
+        "O397375211099023b504b"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Direct source-indexed actual_recalled selections describing intended speech and inability to express it.",
+      "rationale": "Both observations distinguish knowing or wanting the words from being able to produce them. This access difficulty should not be personified as a choosing protector. The separately reported stopping of responses is not assumed to be the same behavior.",
+      "remaining_uncertainty": "This is a subjective report of access difficulty, not evidence of a mechanism. Its relationship to the separately reported stopping of responses is unknown."
+    },
+    {
+      "id": "C10-C04",
+      "text": "In the recovery report, less input or demand was reported before words came more easily, and words came more easily before thinking became clearer. Separately, later and recovery responses report more room to think and choose and the ability to consider more than one next step. This records available capacity, not a Self-led or part-to-part process.",
+      "kind": "observation",
+      "constructs": [
+        "reported_recovery_order",
+        "speech_access_return",
+        "cognitive_clarity",
+        "choice_capacity"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "One fictional, source-indexed actual_recalled overload occurrence; the order stated is limited to the reported recovery sequence."
+      },
+      "evidence_ids": [
+        "Oc2946f9ba4b05c7e5f65",
+        "Occa453554150fe009f5b",
+        "O5a0b22af174f55b11f1c",
+        "O543a044c866cd15b9573",
+        "Ob22586b29466b74ea49b"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [
+        "recovery:pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b:D36.input:D36.words",
+        "recovery:pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b:D36.words:D36.think"
+      ],
+      "depends_on_claim_ids": [
+        "C10-C02"
+      ],
+      "support_basis": "Direct source-indexed actual_recalled ordered report with explicit reported_recovery_order edges.",
+      "rationale": "The two edges support only the stated order: less input before easier words, then clearer thinking. The separate choice reports support a return of options, not a causal claim, a handoff between parts, or a Self-led finding. Confidence is high for the reported order and limited for any explanation of it.",
+      "remaining_uncertainty": "The sequence is self-reported and does not establish causation or exact timing relative to other actions in the occurrence. No internal relational stance is described, and no recurrence is established."
+    },
+    {
+      "id": "C10-C03",
+      "text": "The occurrence includes moving somewhere with less input and, in a later step, spending time with less noise or fewer demands; the recovery setting was also described as quieter or less demanding. The behavior-level function of reducing input is supported. It may have served local regulation and made easier access or choice more possible, but a consciously chosen protective goal is not established.",
+      "kind": "interpretation",
+      "constructs": [
+        "environmental_input_reduction",
+        "possible_contextual_regulation",
+        "possible_support_for_access_and_choice"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "One fictional overload occurrence. The action and recovery-setting observations are source-indexed; the supplementary synthetic deepening answer used as counterevidence is not source-indexed original evidence."
+      },
+      "evidence_ids": [
+        "O8478a00e94684f39abae",
+        "O05717d3bacb2f7eda689",
+        "O929cbaf357c5d2854ed9",
+        "Oc2946f9ba4b05c7e5f65",
+        "Occa453554150fe009f5b",
+        "O5a0b22af174f55b11f1c",
+        "O543a044c866cd15b9573",
+        "Ob22586b29466b74ea49b"
+      ],
+      "counterevidence_ids": [
+        "O5aa856c65a707f3cecad"
+      ],
+      "sequence_edge_ids": [
+        "recovery:pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b:D36.input:D36.words",
+        "recovery:pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b:D36.words:D36.think"
+      ],
+      "depends_on_claim_ids": [
+        "C10-C04"
+      ],
+      "support_basis": "Cautious functional inference from source-indexed actual_recalled actions, setting, and recovery reports; the no-specific-aim qualifier is a supplementary synthetic deepening response.",
+      "rationale": "The actions directly describe lower-input surroundings, while the recovery sequence places reduced input before easier words and clearer thinking; separate responses report more room for choice. This supports naming the behavior-level function, with lower confidence in any further protective interpretation. The supplementary synthetic deepening observation O5aa reports no specific intended change; it limits claims about conscious aim but is not independent or source-indexed corroboration. The recovery edges do not connect the initial move to the recovery sequence.",
+      "remaining_uncertainty": "It is unknown whether the actions were deliberate, practical, preventive, or reactive; whether they formed one continuing response; or what, if anything, they protected from. Do not infer a specific protective target or distinct enduring part identity."
+    },
+    {
+      "id": "C10-C05",
+      "text": "Capacity and felt ease diverged: the respondent could carry on and reported capacity for a familiar task, and could function before feeling settled, while also reporting no immediate improvement and difficulty feeling settled. They looked steady while feeling strained inside.",
+      "kind": "observation",
+      "constructs": [
+        "functional_capacity",
+        "felt_ease",
+        "residual_strain",
+        "outward_inward_difference"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "One fictional, source-indexed actual_recalled overload occurrence; these are local reports, not a person-level functioning or ease trait."
+      },
+      "evidence_ids": [
+        "Od5373f2188ec6a5cd687",
+        "O183651e61cbf852b3de7",
+        "O94831d634b022e5d26f4",
+        "O8d4de3c2dd3c05d5ebe0",
+        "O6076a569a7a3123d3aa8"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Direct source-indexed actual_recalled reports contrasting capacity with felt state.",
+      "rationale": "The responses support preserved task capacity alongside strain and lack of immediate ease. Looking steady is reported appearance, not evidence of feeling settled or of intentionally concealing strain. Confidence is high for the reported contrast, not for its cause.",
+      "remaining_uncertainty": "The familiar task is reported as remaining capacity, not independently confirmed performance. The extent of strain and the reason for the outward-inward difference are not established."
+    },
+    {
+      "id": "C10-C06",
+      "text": "Easing was reported as partial: some things were easier but not all. The selected easing-time estimate was more than two hours but within the same day; the setting had become quieter or less demanding; and the concern still made sense but felt less urgent.",
+      "kind": "observation",
+      "constructs": [
+        "partial_easing",
+        "recovery_context",
+        "coarse_easing_time",
+        "concern_salience_change"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "One fictional, source-indexed actual_recalled recovery account; no complete recovery or exact duration is asserted."
+      },
+      "evidence_ids": [
+        "O5ad2538a19201ee5851d",
+        "O36b8ab6657f1876670d8",
+        "O929cbaf357c5d2854ed9",
+        "O20773d476bcbb179d2ef"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Direct source-indexed actual_recalled recovery and meaning-after-easing selections.",
+      "rationale": "The reports support partial easing, a coarsely estimated time to easing, a quieter or less demanding setting, and reduced urgency without erasure of the concern. The setting is a plausible ordinary contextual factor; coincidence does not establish causation.",
+      "remaining_uncertainty": "The estimate is not an exact recovery duration, and the endpoint of recovery is not observed. The concern's content is unknown; neither its persistence nor the quieter setting establishes an internal part or causal mechanism."
+    },
+    {
+      "id": "C10-C07",
+      "text": "A separate next-action selection within the same occurrence records that the respondent stopped responding. No source-reported aim or sequence edge links this action to the word-access difficulty or the move to less input.",
+      "kind": "observation",
+      "constructs": [
+        "stopping_response",
+        "local_action",
+        "intent_unknown",
+        "sequence_uncertainty"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "Same fictional occurrence; the evidence is one supplementary synthetic deepening response, not source-indexed original evidence."
+      },
+      "evidence_ids": [
+        "O3b1065e57d34c66256a2"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "One supplementary synthetic deepening actual_recalled selection; it supports only that this response is recorded in the fictional packet.",
+      "rationale": "The response is not linked by an available sequence edge to the speech-access difficulty or input-reducing actions. It could be a deliberate pause, a practical response, or related to access difficulty; the record does not distinguish these possibilities.",
+      "remaining_uncertainty": "Its timing, aim, effect, relation to other responses, and role are unknown. No protector or distinct part identity is assigned."
+    }
+  ],
+  "name_registry": [
+    {
+      "name_id": "C10-N01",
+      "name": "Input Reducer",
+      "entity_kind": "response_function_candidate",
+      "role": "Input-reducing environmental response; possible local regulatory function, with protective intent and distinct part identity unestablished.",
+      "author_generated": true,
+      "supporting_claim_ids": [
+        "C10-C03"
+      ]
+    }
+  ],
+  "relationships": [],
+  "priority_claim_ids": [
+    "C10-C03",
+    "C10-C02",
+    "C10-C04",
+    "C10-C05",
+    "C10-C01",
+    "C10-C06",
+    "C10-C07"
+  ],
+  "observed_strengths": [
+    {
+      "text": "Episode-specific adjustment of surroundings is reported: the respondent went somewhere with less input and later spent time with less noise or fewer demands. This is an observed action, not evidence of a stable trait or conscious protective aim.",
+      "evidence_ids": [
+        "O8478a00e94684f39abae",
+        "O05717d3bacb2f7eda689"
+      ],
+      "claim_ids": [
+        "C10-C03"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "Local example within one fictional recalled occurrence."
+      }
+    },
+    {
+      "text": "Practical capacity was retained in this episode: the respondent could carry on, reported capacity for a familiar task, and could function before feeling more settled.",
+      "evidence_ids": [
+        "Od5373f2188ec6a5cd687",
+        "O183651e61cbf852b3de7",
+        "O94831d634b022e5d26f4"
+      ],
+      "claim_ids": [
+        "C10-C05"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "Local capacity example; does not establish felt ease or enduring ability."
+      }
+    },
+    {
+      "text": "Later reports describe clearer thinking, more room to think and choose, and capacity to consider more than one next step. This is an observed return of options, not a Self-led finding.",
+      "evidence_ids": [
+        "O5a0b22af174f55b11f1c",
+        "O543a044c866cd15b9573",
+        "Ob22586b29466b74ea49b"
+      ],
+      "claim_ids": [
+        "C10-C04"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "Local recovery capacity example within one fictional recalled occurrence."
+      }
+    }
+  ],
+  "counterexamples": [
+    {
+      "text": "A supplementary synthetic deepening response reports no specific change was being pursued. It weighs against claiming a consciously intended protective goal; it is not source-indexed original evidence or independent corroboration.",
+      "evidence_ids": [
+        "O5aa856c65a707f3cecad"
+      ],
+      "claim_ids": [
+        "C10-C03"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "Supplementary synthetic deepening qualification within the fictional occurrence."
+      }
+    },
+    {
+      "text": "Function and outward steadiness did not equal ease: the respondent could carry on and had familiar-task capacity while reporting no immediate improvement, difficulty settling, and strain inside despite looking steady.",
+      "evidence_ids": [
+        "Od5373f2188ec6a5cd687",
+        "O183651e61cbf852b3de7",
+        "O94831d634b022e5d26f4",
+        "O8d4de3c2dd3c05d5ebe0",
+        "O6076a569a7a3123d3aa8"
+      ],
+      "claim_ids": [
+        "C10-C05"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "Local counterexample to equating capacity or appearance with felt ease."
+      }
+    },
+    {
+      "text": "After easing, the concern still made sense but felt less urgent, and only some things were easier. This counters claims that the concern was erased or full recovery was observed.",
+      "evidence_ids": [
+        "O20773d476bcbb179d2ef",
+        "O5ad2538a19201ee5851d"
+      ],
+      "claim_ids": [
+        "C10-C06"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "Local recovery limitation within one fictional recalled occurrence."
+      }
+    },
+    {
+      "text": "The word-access difficulty was reported as inability despite wanting or knowing what to say, while a separate supplementary response records stopping responding. These should not be collapsed into one assumed choice or one assumed mechanism.",
+      "evidence_ids": [
+        "O0658ae705c4c7f122eba",
+        "O397375211099023b504b",
+        "O3b1065e57d34c66256a2"
+      ],
+      "claim_ids": [
+        "C10-C02",
+        "C10-C07"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "The stopping-response observation is supplementary synthetic deepening evidence; its relation to speech access is unresolved."
+      }
+    }
+  ],
+  "open_questions": [
+    {
+      "status": "open_question",
+      "question": "Was the movement to lower input a deliberate protective or regulatory response, a practical environmental adjustment, or an action without a specific aim? If deliberate, what was it protecting from or making possible? The lower-input reports and recovery order support a candidate function, but do not establish a chosen goal or causal link.",
+      "evidence_ids": [
+        "O8478a00e94684f39abae",
+        "O05717d3bacb2f7eda689",
+        "O929cbaf357c5d2854ed9",
+        "O5aa856c65a707f3cecad",
+        "Oc2946f9ba4b05c7e5f65",
+        "Occa453554150fe009f5b",
+        "O5a0b22af174f55b11f1c"
+      ],
+      "sequence_edge_ids": [
+        "recovery:pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b:D36.input:D36.words",
+        "recovery:pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b:D36.words:D36.think"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "The sequence edges apply to the reported recovery order; they do not connect the initial movement to that order."
+      }
+    },
+    {
+      "status": "open_question",
+      "question": "Was stopping responses a chosen pause or boundary, a consequence of word-access difficulty, or another practical response? No available sequence edge or reported aim links it to the other actions, so no role or relationship is assigned.",
+      "evidence_ids": [
+        "O3b1065e57d34c66256a2",
+        "O0658ae705c4c7f122eba",
+        "O397375211099023b504b",
+        "O8478a00e94684f39abae"
+      ],
+      "sequence_edge_ids": [],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "The stopping-response observation is a supplementary synthetic deepening selection; its relation to source-indexed observations is not established."
+      }
+    },
+    {
+      "status": "not_assessed",
+      "question": "What specific pressure or need brought this episode forward, and what was the concern that still made sense after easing? The packet does not describe a concrete trigger, the concern's content, or another person's motives.",
+      "evidence_ids": [
+        "O8426258b9708c505f5a0",
+        "O20773d476bcbb179d2ef"
+      ],
+      "sequence_edge_ids": [],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "The question is limited to the one fictional recalled overload occurrence."
+      }
+    },
+    {
+      "status": "not_assessed",
+      "question": "Does the continuing concern represent a vulnerable experience or an exile, and is it related to Input Reducer? Its content and any internal relationship are not described; no part-to-part or protector-to-vulnerability relationship is asserted.",
+      "evidence_ids": [
+        "O20773d476bcbb179d2ef"
+      ],
+      "sequence_edge_ids": [],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "No named vulnerable entity or relationship is supported by this local report."
+      }
+    },
+    {
+      "status": "not_assessed",
+      "question": "Does the return of thinking and choice reflect a Self-led stance or an internal relationship with parts? The packet records functional options but no relational stance; available choice alone does not establish Self-led presence.",
+      "evidence_ids": [
+        "O5a0b22af174f55b11f1c",
+        "O543a044c866cd15b9573",
+        "Ob22586b29466b74ea49b"
+      ],
+      "sequence_edge_ids": [],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "Only episode-specific capacity and recovery markers are available."
+      }
+    },
+    {
+      "status": "not_assessed",
+      "question": "Is Input Reducer recurring across distinct occasions or an enduring part? The source-indexed evidence used here covers one original-authored occurrence. Additional synthetic Mapping scaffolds are fixture context and are not corroboration of a person's life or evidence of recurrence.",
+      "evidence_ids": [
+        "O8478a00e94684f39abae",
+        "O05717d3bacb2f7eda689"
+      ],
+      "sequence_edge_ids": [],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "The candidate name describes one local behavior, not an established stable pattern or distinct enduring part."
+      }
+    },
+    {
+      "status": "not_assessed",
+      "question": "Did easing reach full recovery, and what was its exact duration? Only a coarse estimate of more than two hours but within the same day and a report of partial easing are available; neither an exact recovery duration nor full recovery is observed.",
+      "evidence_ids": [
+        "O36b8ab6657f1876670d8",
+        "O5ad2538a19201ee5851d"
+      ],
+      "sequence_edge_ids": [],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "The estimate concerns easing, not a defined recovery endpoint."
+      }
+    },
+    {
+      "status": "not_assessed",
+      "question": "Was looking steady intentional concealment, ordinary outward functioning, or something else? The report establishes an outward-inward difference but gives no intent.",
+      "evidence_ids": [
+        "O6076a569a7a3123d3aa8"
+      ],
+      "sequence_edge_ids": [],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+        ],
+        "person_ids": [],
+        "description": "Appearance and felt strain are reported for one occurrence only."
+      }
+    },
+    {
+      "status": "not_assessed",
+      "question": "Independent validation of this proposed intermediate ledger remains required before any reader-facing composition; it is not a released report or an empirical discovery.",
+      "evidence_ids": [],
+      "sequence_edge_ids": []
+    }
+  ]
+}

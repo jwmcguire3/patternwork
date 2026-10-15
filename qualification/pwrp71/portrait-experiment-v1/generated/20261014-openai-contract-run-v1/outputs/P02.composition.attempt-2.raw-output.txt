@@ -1,0 +1,30 @@
+{
+  "title": "When conflict raises the possibility of losing contact",
+  "title_claim_ids": ["c_conflict_preventive_explaining"],
+  "content_status": "Draft; nonclinical reflection, not a diagnosis; not validated for release.",
+  "sections": [
+    {
+      "id": "n_explainer",
+      "heading": "The Explainer: trying to keep the connection clear",
+      "text": "When a conflict raises the possibility of losing contact or not knowing where you stand, the Explainer keeps explaining your point. Its job is preventive: it tries to influence what happens next and protect against that feared loss of contact or uncertainty. This is a way of managing the relationship through words; the feared outcome is an expectation, not proof that it was imminent or that the explaining prevented it.",
+      "claim_ids": ["c_conflict_preventive_explaining"]
+    },
+    {
+      "id": "n_exit",
+      "heading": "The Exit: seeking immediate relief",
+      "text": "When continued explaining is not helping, the Exit can interrupt the exchange by leaving or ending it, with the immediate aim of easing the feeling. In this instance, the feeling became easier to bear; that fits a short-term relief function, but it does not show that leaving caused the easing or tell you what happened afterward.",
+      "claim_ids": ["c_conflict_reported_sequence", "c_conflict_exit_relief"]
+    },
+    {
+      "id": "responses_together",
+      "heading": "How these responses relate",
+      "text": "These responses address different concerns: the Explainer tries to prevent a feared loss of contact or uncertainty about where you stand, while the Exit aims for the feeling to ease right then. In one conflict, leaving or ending the exchange followed the explanation after it was not helping. That timing does not show that the Explainer caused the Exit, or whether the two functions belong to distinct parts or one response changing direction.",
+      "claim_ids": ["c_conflict_preventive_explaining", "c_conflict_reported_sequence", "c_conflict_exit_relief"]
+    }
+  ],
+  "reflection_questions": [
+    "When a conflict brings up the possibility of losing contact or not knowing where you stand, what are you hoping the Explainer's continued explanation will prevent?",
+    "When explanation stops helping, what do you want the Exit to ease—and what happens for you after the exchange ends?",
+    "Do the Explainer and Exit feel like distinct responses to you, one response changing direction, or something else?"
+  ]
+}

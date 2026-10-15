@@ -1,0 +1,78 @@
+{
+  "title": "One Stretch of Overload and Partial Easing",
+  "title_claim_ids": [
+    "C10-C01",
+    "C10-C06"
+  ],
+  "content_status": "Draft, not release-ready. Nonclinical reflection, not a diagnosis or treatment recommendation. Based only on one fictional recalled occurrence; no named parts or part-to-part relationships are supported. Canonical reconstruction, source-bound validation, artifact-hash regeneration, and fresh semantic review are still required before release.",
+  "sections": [
+    {
+      "id": "gradual-build",
+      "heading": "When the strain builds",
+      "text": "In one stretch of overload, the changes built gradually. Answering people became harder, your attention narrowed to one thing, and you felt keyed up and drained at once. You recognized the changes only afterward. What set them in motion isn't clear from this stretch.",
+      "claim_ids": [
+        "C10-C01"
+      ]
+    },
+    {
+      "id": "capacity-and-ease",
+      "heading": "Function is not the same as ease",
+      "text": "Being able to carry on did not mean feeling better. A familiar task remained within reach, and you could function before you felt settled; you looked steady while feeling strained inside. In this stretch, practical capacity and outward steadiness were not the same as feeling at ease.",
+      "claim_ids": [
+        "C10-C05"
+      ]
+    },
+    {
+      "id": "return-of-options",
+      "heading": "Words and choices return",
+      "text": "As things eased, less input or demand came first; words then came more easily, followed by clearer thinking. Later, you had more room to think and choose and could consider more than one next step. Recovery included a return of options, not only the ability to carry on.",
+      "claim_ids": [
+        "C10-C04"
+      ]
+    },
+    {
+      "id": "partial-easing",
+      "heading": "Easing does not erase the concern",
+      "text": "Easing was partial: some things were easier, but not all. The setting had become quieter or less demanding, while the concern still made sense and felt less urgent. This was not proof that the concern had disappeared or that recovery was complete.",
+      "claim_ids": [
+        "C10-C06"
+      ]
+    },
+    {
+      "id": "overall-shape",
+      "heading": "What to keep separate",
+      "text": "The main distinction in this stretch is between capacity, felt ease, and choice. You could function before feeling settled; later, words and clearer thinking returned in sequence and more than one next step became possible. Some things eased, while the concern remained meaningful even as its urgency softened.",
+      "claim_ids": [
+        "C10-C04",
+        "C10-C05",
+        "C10-C06"
+      ]
+    }
+  ],
+  "reflection_questions": [
+    {
+      "text": "As the strain built gradually, what pressure or need, if any, was present?",
+      "claim_ids": [
+        "C10-C01"
+      ]
+    },
+    {
+      "text": "Looking back, what signs show the difference between being able to carry on and feeling settled?",
+      "claim_ids": [
+        "C10-C05"
+      ]
+    },
+    {
+      "text": "As things eased, which change stood out most: less input or demand, easier words, clearer thinking, or more room to choose?",
+      "claim_ids": [
+        "C10-C04"
+      ]
+    },
+    {
+      "text": "When the concern felt less urgent, what still made sense about it?",
+      "claim_ids": [
+        "C10-C06"
+      ]
+    }
+  ]
+}

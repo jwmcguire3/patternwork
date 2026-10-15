@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-ATTEMPT5-TRANSPORT-RECOVERY-GUARDS-V1",
+  "status": "passed",
+  "execution": "CLI no-dispatch checks; no provider credential used and zero provider dispatches",
+  "providerDispatches": 0,
+  "scenarios": [
+    {
+      "name": "exact_authorized_attempt5_preflight",
+      "accepted": true,
+      "providerDispatches": 0,
+      "result": {
+        "status": "fictional_diagnostic_attempt5_preflight_passed_no_dispatch",
+        "qualificationStatus": "FICTIONAL_DIAGNOSTIC_ONLY_NOT_ROUTING_QUALIFICATION_OR_PRODUCTION_APPROVAL",
+        "profile": "P02",
+        "reportType": "IFS",
+        "stage": "interpretation",
+        "attemptNumber": 5,
+        "recoveryOfCallId": "017fbfd7-ec20-47a1-bb09-2f5242debd0b",
+        "recoveryAfterCallId": "e6f9fe4c-500c-4a80-a6e2-230d2ed63fb9",
+        "packetSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+        "requestBodySha256": "f8c36e20ba9043a8bfc4392c7b11c174f6766d60b796ab175c4ee29cdd5b9cb6",
+        "maxOutputTokens": 128000,
+        "inputEnvelopeBytes": 99303,
+        "quotedReservationUpperBoundMicrodollars": 120826,
+        "expectedRequestSha256": "f8c36e20ba9043a8bfc4392c7b11c174f6766d60b796ab175c4ee29cdd5b9cb6",
+        "matchesApprovedRequest": true,
+        "model": "gpt-6-luna",
+        "reasoningEffort": "max",
+        "serviceTier": "default",
+        "clientTimeoutMilliseconds": 1800000,
+        "existingUnknownReservationMicrodollars": 900000,
+        "carriedUnknownCostCallIds": [
+          "017fbfd7-ec20-47a1-bb09-2f5242debd0b",
+          "48899da5-ce4e-45f2-a493-21ed1db01d8b",
+          "e6f9fe4c-500c-4a80-a6e2-230d2ed63fb9"
+        ],
+        "additionalReservationMicrodollars": 300000,
+        "remainingAuthorizationAfterReservationMicrodollars": 1780350,
+        "providerDispatches": 0
+      }
+    },
+    {
+      "name": "missing_operator_authorization",
+      "rejected": true,
+      "exitCode": 1,
+      "providerDispatches": 0,
+      "error": "Explicit --operator-authorized yes is required."
+    },
+    {
+      "name": "operator_authorization_not_yes",
+      "rejected": true,
+      "exitCode": 1,
+      "providerDispatches": 0,
+      "error": "Explicit --operator-authorized yes is required."
+    },
+    {
+      "name": "out_of_scope_profile_c03",
+      "rejected": true,
+      "exitCode": 1,
+      "providerDispatches": 0,
+      "error": "Only P02/C10 interpretation and composition are in scope."
+    },
+    {
+      "name": "out_of_scope_report_stage",
+      "rejected": true,
+      "exitCode": 1,
+      "providerDispatches": 0,
+      "error": "Only P02/C10 interpretation and composition are in scope."
+    },
+    {
+      "name": "missing_aggregate_limit",
+      "rejected": true,
+      "exitCode": 1,
+      "providerDispatches": 0,
+      "error": "The only accepted explicit limits are $3.00 aggregate and $0.30 per request."
+    },
+    {
+      "name": "enlarged_aggregate_limit",
+      "rejected": true,
+      "exitCode": 1,
+      "providerDispatches": 0,
+      "error": "The only accepted explicit limits are $3.00 aggregate and $0.30 per request."
+    },
+    {
+      "name": "missing_per_call_limit",
+      "rejected": true,
+      "exitCode": 1,
+      "providerDispatches": 0,
+      "error": "The only accepted explicit limits are $3.00 aggregate and $0.30 per request."
+    },
+    {
+      "name": "enlarged_per_call_limit",
+      "rejected": true,
+      "exitCode": 1,
+      "providerDispatches": 0,
+      "error": "The only accepted explicit limits are $3.00 aggregate and $0.30 per request."
+    },
+    {
+      "name": "invalid_transport_authorization",
+      "rejected": true,
+      "exitCode": 1,
+      "providerDispatches": 0,
+      "error": "--owner-authorized-transport-recovery, when supplied, must be exactly yes."
+    },
+    {
+      "name": "conflicting_recovery_authorizations",
+      "rejected": true,
+      "exitCode": 1,
+      "providerDispatches": 0,
+      "error": "Recovery and continuation authorizations are mutually exclusive."
+    },
+    {
+      "name": "provider_dispatch_without_preflight_or_key",
+      "rejected": true,
+      "exitCode": 1,
+      "providerDispatches": 0,
+      "error": "OPENAI_API_KEY is unavailable; no request was prepared or dispatched."
+    }
+  ],
+  "journalSha256": "169f37bdf31174955cc225cc92034ec0e17422bc5602182333a03bb3b6bef8d2",
+  "preparedInputSha256": "5cb46749aa39edabd3e8f6cf9a1e753c4c4c6aad8a14065c51dadbed7e8012de"
+}

@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-P02-COMPOSITION-NO-DISPATCH-RECONCILIATION-V1",
+  "status": "failed_before_provider_dispatch",
+  "reconciliationId": "f2066972-e92e-447c-ae04-8f311b035387",
+  "recordedAt": "2026-10-15T15:18:05.848Z",
+  "diagnosticOnly": true,
+  "qualificationStatus": "FICTIONAL_DIAGNOSTIC_ONLY_NOT_ROUTING_QUALIFICATION_OR_PRODUCTION_APPROVAL",
+  "profileId": "P02",
+  "reportType": "IFS",
+  "stage": "composition",
+  "fixtureSet": "route-replays-v5",
+  "provider": "OpenAI direct API",
+  "model": "gpt-6-luna",
+  "callId": "c1a9db49-3d79-4f4a-bfd4-f7eb962c5329",
+  "packetSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+  "requestBodySha256": "952e7c4588a2b88b8eb740dcc44c192071874c6d6203cea052753d51b103447b",
+  "requestFileSha256": "952e7c4588a2b88b8eb740dcc44c192071874c6d6203cea052753d51b103447b",
+  "dispatcherSha256": "98b0358969b6c626fd21f54b15de1cd3299724c9b836ffcd63a507a2d728b742",
+  "independentReviewFile": "outputs/P02-COMPOSITION-TRANSPORT-REVIEW.json",
+  "independentReviewFileSha256": "15c71ec3501e8c1776ade0c0e33764a1f062646d8db0dd033aa45df231ef3f30",
+  "providerPreflightFile": "outputs/P02-COMPOSITION-PROVIDER-PREFLIGHT.json",
+  "providerPreflightFileSha256": "52514fef4e5ce3eaa4be0c8ca11c0321e8cb14056d79e6b2cbcf8aa7cf101f13",
+  "failure": {
+    "code": "ENOTFOUND",
+    "syscall": "getaddrinfo",
+    "hostname": "api.openai.com",
+    "elapsedMilliseconds": 71,
+    "httpStatus": null,
+    "responseId": null,
+    "responseArtifactExists": false
+  },
+  "disposition": {
+    "providerGenerationRequests": 0,
+    "generationCostMicrodollars": 0,
+    "costStatement": "The exact POST failed before provider HTTP dispatch; no generation request reached the provider. No invoice amount is asserted.",
+    "invoiceAmountAssertion": false,
+    "releasedReservationMicrodollars": 300000,
+    "humanApproval": false,
+    "routingQualification": false,
+    "productionApproval": false
+  },
+  "journalBeforeSha256": "5ef5b471e6f0100effc50cf750d8d6dc8125c5b59528fbdd9fb0fafd97e530c5",
+  "budgetBefore": {
+    "reservedMicrodollars": 1200000,
+    "settledUpperBoundMicrodollars": 152189,
+    "remainingAuthorizationMicrodollars": 1647811
+  },
+  "budgetAfter": {
+    "reservedMicrodollars": 900000,
+    "settledUpperBoundMicrodollars": 152189,
+    "remainingAuthorizationMicrodollars": 1947811
+  }
+}

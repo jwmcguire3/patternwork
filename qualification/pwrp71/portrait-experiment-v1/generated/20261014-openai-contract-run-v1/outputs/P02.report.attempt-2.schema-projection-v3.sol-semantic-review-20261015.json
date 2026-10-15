@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-INDEPENDENT-SEMANTIC-REVIEW-V1",
+  "reviewId": "P02-report-attempt-2-schema-projection-v3-sol-semantic-review-20261015",
+  "reviewType": "independent_model_semantic_review",
+  "reviewedAt": "2026-10-15",
+  "reviewer": "independent model reviewer",
+  "verdict": "revise",
+  "verdictScope": "semantic fidelity of this fictional P02 report draft; not a human, routing, release, or production approval",
+  "summary": "The report is readable and retains the bounded temporal sequence without claiming causation or a proven part handoff. It over-connects the first action's broad stated aim to the separately reported concern about losing contact, and it omits the unresolved practical context and possible concurrent aims from the reader-facing account. Revise those points before treating the narrative as semantically accepted.",
+  "reviewedSubjects": [
+    {
+      "path": "outputs/P02.report.attempt-2.schema-projection-v3.md",
+      "sha256": "ddbdd50d2fd526219c44c54765db1b356b8fa9628fef371d2d9cf61d9e760be9"
+    },
+    {
+      "path": "outputs/P02.composition.attempt-2.schema-projection-v3.validation.json",
+      "sha256": "85ebca868ce2dee19a955f5388d5cbf773468376b72cd86b2a4bf8f2666c4ca8"
+    },
+    {
+      "path": "outputs/P02.validated-artifact.attempt-2.schema-projection-v3.json",
+      "sha256": "0420bd95e5a97ce4677ea2b244fcf2ee70e22676dcf240415a14afec7c902299"
+    },
+    {
+      "path": "outputs/P02.report-draft.attempt-2.schema-projection-v3.json",
+      "sha256": "74ea9feb40148356ab0b9d5c62a1d43f4e9b58c23e0a471d1aeed68e325b97da"
+    },
+    {
+      "path": "outputs/P02.interpretation.curated-v1.json",
+      "sha256": "18e4e22a60cb02528c94192247c99bbc005047920483782b2ac80942fd63bc96"
+    },
+    {
+      "path": "outputs/P02.interpretation.curated-v1.derivation.json",
+      "sha256": "c79f2e1f8c947bd0cd39069cf9963213376270eda072a0c240ef59e9c2ca883c"
+    },
+    {
+      "path": "outputs/P02.interpretation.attempt-5.validation.p02-curated-v1.json",
+      "sha256": "cad97f19959d2e5b8becc680fa66c9a6dee6cc6b4ccd2e2758b280282466ab12"
+    },
+    {
+      "path": "outputs/P02.source-observation-index-v3.json",
+      "sha256": "6902ae1ace97a48ff8ea49e99c4ffc6a155bcfea6bcad570a5854587ff1f7417"
+    },
+    {
+      "path": "prepared/P02.interpretation.input.json",
+      "sha256": "5cb46749aa39edabd3e8f6cf9a1e753c4c4c6aad8a14065c51dadbed7e8012de"
+    },
+    {
+      "path": "qualification/pwrp71/route_replays_v5/P02.json",
+      "sha256": "47611cccd841a7598daa9b88ebbb715872c10c1242fcc48be8923443710b229c"
+    }
+  ],
+  "sourceBinding": {
+    "packetSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+    "sourceAuthoredFixtureSha256": "b47d80f9f0194055c8461145d75c559422abf34a0377682aa8cfa22e8ac990dc",
+    "validationReceiptStatus": "source_reference_checks_passed",
+    "validationReceiptIssues": [],
+    "compositionValidationStatus": "pwrp71_draft_validated",
+    "compositionValidationOk": true
+  },
+  "findings": [
+    {
+      "id": "S1",
+      "severity": "moderate",
+      "category": "aim_and_expectation_linkage",
+      "locations": [
+        "The Explainer: trying to keep the connection clear",
+        "How these responses relate"
+      ],
+      "reportText": "Its job is preventive: it tries to influence what happens next and protect against that feared loss of contact or uncertainty.",
+      "sourceEvidence": [
+        {
+          "observationId": "Oee9a23929c717af918cc",
+          "itemId": "D02",
+          "capture": "aim",
+          "selectedText": "What might happen next."
+        },
+        {
+          "observationId": "O46dfe0bb601014cf6dcf",
+          "itemId": "D03",
+          "capture": "prediction",
+          "basis": "remembered_expectation",
+          "selectedText": "Losing contact or not knowing where I stood."
+        }
+      ],
+      "assessment": "The source separately records a broad aim to change what happens next and an outcome of concern. Their co-occurrence makes the report's preventive relational reading plausible, but does not establish that this specific outcome was what the explaining aimed to prevent. The report states that linkage as the function, while the graph itself says the two selections align and retains uncertainty about concurrent aims.",
+      "recommendation": "Keep the stated aim and remembered concern distinct in reader-facing wording. If retaining the connection as an interpretation, label it as a possible alignment rather than the confirmed target of the explaining."
+    },
+    {
+      "id": "S2",
+      "severity": "moderate",
+      "category": "material_context_omission",
+      "locations": [
+        "The Explainer: trying to keep the connection clear",
+        "To notice"
+      ],
+      "sourceEvidence": [
+        {
+          "openQuestionId": "oq_conflict_practical_context",
+          "sourceState": "unresolved",
+          "question": "What concrete practical or interactional context was present in the conflict, and was preventing the anticipated loss of contact or standing the only aim or one of several?"
+        }
+      ],
+      "assessment": "The body calls the response a way of managing the relationship through words and says it protects against the feared loss, but does not surface that the practical context and exclusivity of that aim are unresolved. The reflection questions ask what the reader hopes to prevent but do not invite the practical context that could qualify this reading.",
+      "recommendation": "Add a short caveat that the disagreement's practical context and whether this was the only aim are unknown, or otherwise phrase the relationship-protection account as one possible function. Do not invent a specific ordinary explanation."
+    }
+  ],
+  "positiveChecks": {
+    "authoredSourceLinks": "The three report claims bind to current authored D61/D02/D03, D61/D07/D08, and D07/D09/D10 observations in the same occurrence; the source validation receipt lists no issues.",
+    "temporalSequence": "The report states that leaving followed explanation after it was not helping, explicitly localizes this to one conflict, and says timing does not establish causation.",
+    "effectVersusCause": "The report distinguishes the reported easing from proof that leaving caused it.",
+    "recurrenceAndIdentity": "The prose does not assert recurrence, developmental history, or two established enduring parts; it explicitly leaves open distinct functions versus one changing response.",
+    "names": "Explainer and Exit are used as readable functional handles. The named headings mildly invite personification, but the text repeatedly calls them responses/functions and asks about identity; this is not a material reification defect.",
+    "ordinaryAlternatives": "No unsupported practical story or ordinary motive is invented. The material issue is that the unresolved context is not made visible in the prose.",
+    "relationshipNormalization": "The normalized artifact has no structured relationship because the pinned enum excludes reported_temporal_sequence. The source-linked temporal claim remains in the report's claim bindings and narrative, so the report remains faithful on sequence despite this projection."
+  },
+  "reviewLimitations": [
+    "This is a model review of a fictional qualification artifact.",
+    "The production validation receipt confirms structural and source-bound validation but does not replace semantic review.",
+    "No provider call was made and no source, report, or validation artifact was edited."
+  ]
+}

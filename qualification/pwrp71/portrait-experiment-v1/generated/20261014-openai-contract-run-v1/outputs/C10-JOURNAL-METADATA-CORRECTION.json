@@ -1,0 +1,26 @@
+{
+  "correctionId": "74d7399c-125c-4703-9c14-b48e84bbff4e",
+  "correctedAt": "2026-10-15T14:14:27.021Z",
+  "artifactType": "append_only_journal_metadata_correction",
+  "callId": "379e8908-4d6e-4288-a1ea-9e3a20b274dc",
+  "field": "carriedUnknownCostCallIds",
+  "previousValue": [
+    "48899da5-ce4e-45f2-a493-21ed1db01d8b",
+    "e6f9fe4c-500c-4a80-a6e2-230d2ed63fb9"
+  ],
+  "correctedValue": [
+    "017fbfd7-ec20-47a1-bb09-2f5242debd0b",
+    "48899da5-ce4e-45f2-a493-21ed1db01d8b",
+    "e6f9fe4c-500c-4a80-a6e2-230d2ed63fb9"
+  ],
+  "omittedCallId": "017fbfd7-ec20-47a1-bb09-2f5242debd0b",
+  "reason": "The C10 interpretation journal entry omitted the fourth, transport-timeout P02 call from its carried unknown-cost metadata. All three $0.30 unknown-cost reservations were present in aggregate budget counters; this corrects only the provenance list.",
+  "monetaryCountersChanged": false,
+  "monetaryCounters": {
+    "reservedMicrodollars": 900000,
+    "settledUpperBoundMicrodollars": 121677,
+    "remainingAuthorizationMicrodollars": 1978323
+  },
+  "journalFileAfterSha256": "34e1695c69736f4392ce0ff17bb1e73107f98f62870a66e53122555a7530bfed",
+  "journalFileBeforeSha256": "091692241c510a67402271d69efbe39d0c5e00286fdac4b85781832993175f6b"
+}

@@ -1,0 +1,220 @@
+{
+  "artifact_type": "pwrp71_report",
+  "report_release": "PWRP-7.1.0-candidate.1",
+  "source_manifest_sha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+  "report_id": "pwrp71_977776d1dbbb6339444224d35ea0",
+  "report_type": "IFS",
+  "release_id": "PWQE-5.1.0-candidate.1",
+  "snapshot_id": "fictional-C10-deepening",
+  "evidence_sha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+  "report_markdown": "# One Stretch of Overload and Partial Easing\n\n*Patternwork is nonclinical self-reflection. Parts and state names are working interpretations, not diagnoses or physiological measurements.*\n\n## When the strain builds\n\nIn one stretch of overload, the changes built gradually. Answering people became harder, your attention narrowed to one thing, and you felt keyed up and drained at once. You recognized the changes only afterward. What set them in motion isn't clear from this stretch.\n\n## Function is not the same as ease\n\nBeing able to carry on did not mean feeling better. A familiar task remained within reach, and you could function before you felt settled; you looked steady while feeling strained inside. In this stretch, practical capacity and outward steadiness were not the same as feeling at ease.\n\n## Words and choices return\n\nAs things eased, less input or demand came first; words then came more easily, followed by clearer thinking. Later, you had more room to think and choose and could consider more than one next step. Recovery included a return of options, not only the ability to carry on.\n\n## Easing does not erase the concern\n\nEasing was partial: some things were easier, but not all. The setting had become quieter or less demanding, while the concern still made sense and felt less urgent. This was not proof that the concern had disappeared or that recovery was complete.\n\n## What to keep separate\n\nThe main distinction in this stretch is between capacity, felt ease, and choice. You could function before feeling settled; later, words and clearer thinking returned in sequence and more than one next step became possible. Some things eased, while the concern remained meaningful even as its urgency softened.\n\n## To notice\n\nAs the strain built gradually, what pressure or need, if any, was present?\n\nLooking back, what signs show the difference between being able to carry on and feeling settled?\n\nAs things eased, which change stood out most: less input or demand, easier words, clearer thinking, or more room to choose?\n\nWhen the concern felt less urgent, what still made sense about it?\n",
+  "draft": {
+    "report_release": "PWRP-7.1.0-candidate.1",
+    "release_id": "PWQE-5.1.0-candidate.1",
+    "snapshot_id": "fictional-C10-deepening",
+    "evidence_sha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+    "report_type": "IFS",
+    "title": "One Stretch of Overload and Partial Easing",
+    "title_claim_ids": [
+      "C10-C01",
+      "C10-C06"
+    ],
+    "content_status": "complete",
+    "sections": [
+      {
+        "id": "gradual-build",
+        "heading": "When the strain builds",
+        "text": "In one stretch of overload, the changes built gradually. Answering people became harder, your attention narrowed to one thing, and you felt keyed up and drained at once. You recognized the changes only afterward. What set them in motion isn't clear from this stretch.",
+        "claim_ids": [
+          "C10-C01"
+        ]
+      },
+      {
+        "id": "capacity-and-ease",
+        "heading": "Function is not the same as ease",
+        "text": "Being able to carry on did not mean feeling better. A familiar task remained within reach, and you could function before you felt settled; you looked steady while feeling strained inside. In this stretch, practical capacity and outward steadiness were not the same as feeling at ease.",
+        "claim_ids": [
+          "C10-C05"
+        ]
+      },
+      {
+        "id": "return-of-options",
+        "heading": "Words and choices return",
+        "text": "As things eased, less input or demand came first; words then came more easily, followed by clearer thinking. Later, you had more room to think and choose and could consider more than one next step. Recovery included a return of options, not only the ability to carry on.",
+        "claim_ids": [
+          "C10-C04"
+        ]
+      },
+      {
+        "id": "partial-easing",
+        "heading": "Easing does not erase the concern",
+        "text": "Easing was partial: some things were easier, but not all. The setting had become quieter or less demanding, while the concern still made sense and felt less urgent. This was not proof that the concern had disappeared or that recovery was complete.",
+        "claim_ids": [
+          "C10-C06"
+        ]
+      },
+      {
+        "id": "overall-shape",
+        "heading": "What to keep separate",
+        "text": "The main distinction in this stretch is between capacity, felt ease, and choice. You could function before feeling settled; later, words and clearer thinking returned in sequence and more than one next step became possible. Some things eased, while the concern remained meaningful even as its urgency softened.",
+        "claim_ids": [
+          "C10-C04",
+          "C10-C05",
+          "C10-C06"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "C10-C01",
+        "text": "In the one source-indexed fictional actual-recalled overload occurrence, the reported changes built gradually; answering people became harder, attention narrowed to one thing, and the respondent felt keyed up and drained at the same time. They also reported recognizing the changes only afterward.",
+        "kind": "reported",
+        "constructs": [
+          "description"
+        ],
+        "scope": {
+          "level": "occurrence",
+          "occurrence_ids": [
+            "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+          ],
+          "person_ids": [],
+          "description": "One fictional, source-indexed actual_recalled overload occurrence; per-question recall has no fixed lookback. Occurrence-level only, not a recurring person-level pattern."
+        },
+        "evidence_ids": [
+          "Ocdd69071862c457438ee",
+          "O8426258b9708c505f5a0",
+          "Off8cd05760c5de43ae55",
+          "Oc1adc6f70b7c9cc1f73d",
+          "O95b9431fbdc556acbb2a"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [],
+        "support_basis": [
+          "direct_report"
+        ],
+        "rationale": "The observations directly report gradual onset, harder answering, narrowed attention, mixed energy, and delayed recognition. The first-notice response and the afterward response are both retained without resolving a more precise awareness timeline. No specific external trigger, relational demand, or physiological mechanism is described. Confidence is high for this local description only.",
+        "remaining_uncertainty": [
+          "This is one fictional recalled episode, not a typicality or recurrence finding. The specific pressure or need, trigger, and surrounding context are unknown; no physiological measurement or diagnosis is supported."
+        ]
+      },
+      {
+        "id": "C10-C04",
+        "text": "In the recovery report, less input or demand was reported before words came more easily, and words came more easily before thinking became clearer. Separately, later and recovery responses report more room to think and choose and the ability to consider more than one next step. This records available capacity, not a Self-led or part-to-part process.",
+        "kind": "reported",
+        "constructs": [
+          "recovery",
+          "capacity"
+        ],
+        "scope": {
+          "level": "occurrence",
+          "occurrence_ids": [
+            "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+          ],
+          "person_ids": [],
+          "description": "One fictional, source-indexed actual_recalled overload occurrence; the order stated is limited to the reported recovery sequence."
+        },
+        "evidence_ids": [
+          "Oc2946f9ba4b05c7e5f65",
+          "Occa453554150fe009f5b",
+          "O5a0b22af174f55b11f1c",
+          "O543a044c866cd15b9573",
+          "Ob22586b29466b74ea49b"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [
+          "recovery:pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b:D36.input:D36.words",
+          "recovery:pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b:D36.words:D36.think"
+        ],
+        "depends_on_claim_ids": [],
+        "support_basis": [
+          "direct_report",
+          "actual_sequence"
+        ],
+        "rationale": "The two edges support only the stated order: less input before easier words, then clearer thinking. The separate choice reports support a return of options, not a causal claim, a handoff between parts, or a Self-led finding. Confidence is high for the reported order and limited for any explanation of it.",
+        "remaining_uncertainty": [
+          "The sequence is self-reported and does not establish causation or exact timing relative to other actions in the occurrence. No internal relational stance is described, and no recurrence is established."
+        ]
+      },
+      {
+        "id": "C10-C05",
+        "text": "Capacity and felt ease diverged: the respondent could carry on and reported capacity for a familiar task, and could function before feeling settled, while also reporting no immediate improvement and difficulty feeling settled. They looked steady while feeling strained inside.",
+        "kind": "reported",
+        "constructs": [
+          "capacity",
+          "context_contrast"
+        ],
+        "scope": {
+          "level": "occurrence",
+          "occurrence_ids": [
+            "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+          ],
+          "person_ids": [],
+          "description": "One fictional, source-indexed actual_recalled overload occurrence; these are local reports, not a person-level functioning or ease trait."
+        },
+        "evidence_ids": [
+          "Od5373f2188ec6a5cd687",
+          "O183651e61cbf852b3de7",
+          "O94831d634b022e5d26f4",
+          "O8d4de3c2dd3c05d5ebe0",
+          "O6076a569a7a3123d3aa8"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [],
+        "support_basis": [
+          "direct_report"
+        ],
+        "rationale": "The responses support preserved task capacity alongside strain and lack of immediate ease. Looking steady is reported appearance, not evidence of feeling settled or of intentionally concealing strain. Confidence is high for the reported contrast, not for its cause.",
+        "remaining_uncertainty": [
+          "The familiar task is reported as remaining capacity, not independently confirmed performance. The extent of strain and the reason for the outward-inward difference are not established."
+        ]
+      },
+      {
+        "id": "C10-C06",
+        "text": "Easing was reported as partial: some things were easier but not all. The selected easing-time estimate was more than two hours but within the same day; the setting had become quieter or less demanding; and the concern still made sense but felt less urgent.",
+        "kind": "reported",
+        "constructs": [
+          "recovery",
+          "state_transition"
+        ],
+        "scope": {
+          "level": "occurrence",
+          "occurrence_ids": [
+            "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+          ],
+          "person_ids": [],
+          "description": "One fictional, source-indexed actual_recalled recovery account; no complete recovery or exact duration is asserted."
+        },
+        "evidence_ids": [
+          "O5ad2538a19201ee5851d",
+          "O36b8ab6657f1876670d8",
+          "O929cbaf357c5d2854ed9",
+          "O20773d476bcbb179d2ef"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [],
+        "support_basis": [
+          "direct_report"
+        ],
+        "rationale": "The reports support partial easing, a coarsely estimated time to easing, a quieter or less demanding setting, and reduced urgency without erasure of the concern. The setting is a plausible ordinary contextual factor; coincidence does not establish causation.",
+        "remaining_uncertainty": [
+          "The estimate is not an exact recovery duration, and the endpoint of recovery is not observed. The concern's content is unknown; neither its persistence nor the quieter setting establishes an internal part or causal mechanism."
+        ]
+      }
+    ],
+    "name_registry": [],
+    "relationships": [],
+    "reflection_questions": [
+      "As the strain built gradually, what pressure or need, if any, was present?",
+      "Looking back, what signs show the difference between being able to carry on and feeling settled?",
+      "As things eased, which change stood out most: less input or demand, easier words, clearer thinking, or more room to choose?",
+      "When the concern felt less urgent, what still made sense about it?"
+    ]
+  },
+  "digests": {
+    "artifact_sha256": "30f798f7a618323c5272954fb4cbc63a89b70c8b0ce8ccb8665650acc1b8e3e1",
+    "report_markdown_sha256": "b205626a09f16999898b8e837611d3b273e52a2c99a23d927c049beb7380ab4d"
+  }
+}
