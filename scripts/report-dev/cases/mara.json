@@ -1,0 +1,300 @@
+{
+  "schema": "patternwork-answer-plan-1",
+  "id": "mara",
+  "rootBasis": "actual_recalled",
+  "referentRole": "other_person",
+  "optedInTopics": [],
+  "focus": "all",
+  "details": [
+    "state",
+    "body",
+    "urge",
+    "feeling",
+    "texture",
+    "recurrence",
+    "contrast"
+  ],
+  "answers": [
+    {
+      "phase": "mapping",
+      "questionId": "M01",
+      "optionText": "I kept finding things I ought to do."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M02",
+      "optionText": "I asked someone else to look it over."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M03",
+      "optionText": "Get a sign that it was good enough."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M04",
+      "optionText": "I told whoever needed to know."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M05",
+      "optionText": "I set stricter rules for myself."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M06",
+      "optionText": "I worked harder to prevent another one."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M07",
+      "optionText": "I passed the credit to someone else."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M08",
+      "optionText": "I agreed to do it."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M09",
+      "optionText": "They would be disappointed in me."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M10",
+      "optionText": "I needed longer to take things in."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M11",
+      "optionText": "I asked for help or company."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M12",
+      "optionText": "I could carry on, but did not feel better."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M13",
+      "optionText": "I spent time with someone I wanted to be with."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M14",
+      "optionText": "I got a break, but it faded when I stopped."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M15",
+      "optionText": "I asked for an update."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M16",
+      "optionText": "Money, time, or another real opportunity was at stake."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M17",
+      "optionText": "I sent another message."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M18",
+      "optionText": "I mattered less to them than I wanted to."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M19",
+      "optionText": "I kept looking for what the reply really meant."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M20",
+      "optionText": "I asked for less than I needed."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M21",
+      "optionText": "I did not want to add to what they were carrying."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M22",
+      "optionText": "I kept managing how they helped."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M23",
+      "optionText": "I named what I had done and apologized."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M25",
+      "optionText": "I kept adding one more thing."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M26",
+      "optionText": "I wanted help, and I wanted to manage alone."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M27",
+      "optionText": "I acted on the first want in that pair."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M24",
+      "optionText": "It helped, even though there was more to discuss."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M28",
+      "status": "skip"
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D16",
+      "optionText": "I was short of time, energy, or support."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D43",
+      "optionText": "I wanted them to notice that I was affected."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D42",
+      "optionText": "I did not believe the explanation."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D44",
+      "optionText": "There had been a real unresolved difficulty between us."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D28",
+      "optionText": "I felt more exposed than pleased."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D16",
+      "optionText": "I was short of time, energy, or support."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D16",
+      "optionText": "I was short of time, energy, or support."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D02",
+      "optionText": "What might happen next."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D16",
+      "optionText": "I was short of time, energy, or support."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D39",
+      "optionText": "Asking me to explain more than I could."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D12",
+      "optionText": "Acting on either made the other harder to ignore."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D49",
+      "optionText": "Not making things worse before we could talk."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D16",
+      "optionText": "I was short of time, energy, or support."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D04",
+      "optionText": "I got a sign that things were okay."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D07",
+      "optionText": "The situation changed before I needed another move."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D13",
+      "optionText": "I would get something wrong or leave it unfinished."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D35",
+      "optionText": "I could consider more than one next step."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D14",
+      "optionText": "I would have to keep carrying too much."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D83",
+      "optionText": "Feeling settled rather than on edge."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D76",
+      "optionText": "They were concerned about different outcomes."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D87",
+      "optionText": "I felt more settled."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D65",
+      "optionText": "I judged myself for reacting that way."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D03",
+      "optionText": "Losing contact or not knowing where I stood."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D66",
+      "optionText": "I noticed it, but still felt driven to act one way."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D18",
+      "optionText": "How much I needed help or care."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D69",
+      "optionText": "I became less aware of it."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D19",
+      "optionText": "They would feel responsible for more than they could carry."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D20",
+      "optionText": "I needed something I could not provide alone."
+    }
+  ],
+  "missingStatus": "not_sure"
+}

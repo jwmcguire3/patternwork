@@ -1,3 +1,4 @@
+import { assertNoRespondentClassification } from "./content-boundary.ts";
 import { createHash } from "node:crypto";
 import Ajv2020 from "ajv/dist/2020.js";
 import type { JsonObject, ReportType, ValidationIssue, ValidationResult } from "../../question-engine/types.ts";
@@ -368,6 +369,13 @@ function validatePacket(
       && confirmedPairs.has([...pair].sort().join("\u0000"));
     const invalidComparisons = pair.length > 0 && !hasPair;
     const permittedOccurrences = hasPair ? new Set(pair) : new Set([target.occurrence_id]);
+    // Match runtime target lineage for explicitly linked follow-ups. This does
+    // not assert distinctness, recurrence, chronology, or a shared event.
+    if (["known_distance", "reassurance_duration", "ordinary_contrast", "recurrence", "social_feature"].includes(String(target.target_id))) {
+      for (const episode of episodes) {
+        if (episode.basis === "actual_recalled" && episode.linked_from === target.occurrence_id) permittedOccurrences.add(episode.id);
+      }
+    }
     const invalidObservation = refs.some((id) => {
       const observation = typeof id === "string" ? observationIndex.get(id) : undefined;
       return !observation || !permittedOccurrences.has(observation.occurrence_id);
@@ -448,6 +456,8 @@ function validateAcceptedLayers(layers: Readonly<Record<string, JsonObject>>, pa
 
 /** Builds the PWRP 7.1 provider view from an authenticated server-owned PWQE 5.1 packet. */
 export function preparePwrp71Request(input: PreparePwrp71RequestInput): ValidationResult<Pwrp71PreparedRequest> {
+  try { assertNoRespondentClassification(input.packet); }
+  catch { return { ok: false, issues: [{ code: "respondent_classification", path: "$.packet", message: "Rebuild this packet from canonical selections without retired respondent classification." }] }; }
   const issues: ValidationIssue[] = [];
   validateSourceBindings(input, issues);
   if (!REPORT_TYPES.has(input.reportType) || !(input.reportType in input.reportSource.policy.layer_prompts)) {

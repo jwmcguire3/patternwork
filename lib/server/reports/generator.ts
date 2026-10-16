@@ -227,7 +227,7 @@ export async function generateCanonicalReport(options: GenerateCanonicalReportOp
       path: `$.review.issues.${String(item.id ?? "unknown")}`,
       message: `${String(item.reason ?? "Reviewer requested revision.")} ${String(item.requested_change ?? "")}`.trim(),
     }));
-    currentPrompt = buildPwrp71RepairPrompt(options.reportType, providerInput, feedback, artifact.draft);
+    currentPrompt = buildPwrp71RepairPrompt(options.reportType, providerInput, feedback, artifact.draft, firstReview.review);
     const repairedResult = await call(config.pinnedTier, "repair");
     if (repairedResult.finishReason !== "stop") {
       return failure(options.reportType, "incomplete_generation", `PWRP 7.1 repair is incomplete (finish reason: ${repairedResult.finishReason ?? "missing"}).`, [{ code: "finish_reason", path: "$.finish_reason", message: "A PWRP 7.1 response requires provider finishReason 'stop'." }], usages);
@@ -310,18 +310,18 @@ function hashCanonical(value: unknown): string {
 }
 
 function buildPwrp71RepairPrompt(
-  reportType: ReportType,
-  input: JsonObject,
-  issues: readonly ValidationIssue[],
-  previousOutput?: JsonObject,
+  reportType: ReportType, input: JsonObject, issues: readonly ValidationIssue[],
+  previousOutput?: JsonObject, review?: JsonObject,
 ): string {
+  const feedback = {
+    validator_feedback: issues.slice(0, 50).map(({ code, path, message }) => ({ code, path, message })),
+    rejected_output: previousOutput ?? null,
+    semantic_review: review ?? null,
+  } as unknown as JsonObject;
   return [
     buildGenerationPrompt(reportType, input),
-    "The prior output was rejected. Return a complete replacement draft and correct the deterministic validation issues below.",
-    JSON.stringify({
-      validator_feedback: issues.slice(0, 50).map(({ code, path, message }) => ({ code, path, message })),
-      rejected_output: previousOutput ?? null,
-    }),
+    "Return a complete replacement. Re-derive supported assertions from the original evidence; restore material omissions and remove only unsupported assertions.",
+    buildGenerationPrompt(reportType, feedback),
   ].join("\n\n");
 }
 

@@ -3,7 +3,7 @@
   "additionalProperties": false,
   "properties": {
     "review_contract": {
-      "const": "PWRP-REVIEW-7.0.0-candidate.1"
+      "const": "PWRP-REVIEW-7.1.0-candidate.2"
     },
     "report_release": {
       "const": "PWRP-7.1.0-candidate.1"
@@ -112,6 +112,121 @@
     "summary": {
       "type": "string",
       "minLength": 1
+    },
+    "quality_assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_fidelity": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "adequate",
+                "revise"
+              ]
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "rationale"
+          ]
+        },
+        "semantic_completeness": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "adequate",
+                "revise"
+              ]
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "rationale"
+          ]
+        },
+        "narrative_quality": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "adequate",
+                "revise"
+              ]
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "rationale"
+          ]
+        }
+      },
+      "required": [
+        "source_fidelity",
+        "semantic_completeness",
+        "narrative_quality"
+      ]
+    },
+    "evidence_coverage": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "evidence_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "disposition": {
+            "enum": [
+              "represented",
+              "context",
+              "not_material",
+              "missing"
+            ]
+          },
+          "claim_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "evidence_ids",
+          "disposition",
+          "claim_ids",
+          "rationale"
+        ]
+      }
     }
   },
   "required": [
@@ -121,7 +236,9 @@
     "reviewed_evidence_sha256",
     "verdict",
     "issues",
-    "summary"
+    "summary",
+    "quality_assessment",
+    "evidence_coverage"
   ],
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Patternwork semantic review v7"

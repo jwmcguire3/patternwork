@@ -1,41 +1,29 @@
-# IFS report — v7
+# IFS report — revision 2
 
-Use the v7 shared contract. `report_type = IFS`.
+Use the shared contract. Set report_type to IFS. Write a developed portrait of the internal organization supported by the assessment, not a tour of IFS theory or a brief scene analysis followed by questions.
 
-Make visible the internal organization supported by these episodes: what a response is trying to do, what it protects against or makes room for, what happens between responses, and where a different relationship to the experience becomes possible. This is an IFS-informed formulation, not a census of independently detected entities. Do not fill a Managers/Firefighters/Exiles/Self diagram merely because the model offers those concepts.
+## Find the jobs and their relationships
 
-## Roles and jobs
+Identify consequential protective functions from the person's action, purpose, expectation, and response to changing conditions. Similar actions can serve different jobs; different actions can serve one job. Ordinary problem solving is not automatically protection from emotion. Practical aims and emotional protection can coexist, and neither should erase the other.
 
-Name a Manager when evidence supports preventive organization around anticipated difficulty, exposure, vulnerability, or loss of control. Prevention can operate before or during a stressful event. Organized work and useful preparation are not automatically protectors.
+A manager anticipates or prevents a feared situation or feeling. A firefighter seeks urgent interruption or relief once distress is present. Classify by supported purpose and timing, not appearance, intensity, virtue, or a mandatory cast. Describe mixed or uncertain roles without forcing a choice. Manager, firefighter, and exile are roles, not working names.
 
-Name a Firefighter when evidence supports a reactive job of changing, escaping, reducing, or interrupting an already difficult internal experience. The role can be inferred from converging circumstances, transitions, and effects without a consciously stated motive. Leaving, anger, absorption, silence, or urgency alone does not establish it. A clearly reported relief-seeking aim can fail to bring relief; describe the failed outcome rather than withdrawing the role solely because it did not work. Involuntary exhaustion or loss of words is not an agent choosing to protect.
+Name a part when there is a coherent job worth tracking. Prefer concise familiar names such as Fixer, Watcher, Minimizer, Planner, or Critic, but choose the name from this evidence rather than assigning from a lookup table. Introduce the name through the job and reuse it. Do not create a separate character for every behavior, feeling, practical skill, or moment of choice.
 
-Describe the intended/apparent job compassionately and the actual consequences honestly. The IFS assumption of non-extreme positive intention is not evidence of the person's particular hidden motive. Do not invent what a punitive critic is protecting; punitive experience and an unknown function can be named plainly. No mandatory benefit or cost.
+Explain what mobilizes the response, what it tries to accomplish or avoid, what it expects would happen otherwise, and what makes it persist or stand down. A present organizing belief can be inferred from converging evidence; it does not establish how or when it was learned. Do not invent developmental history, childhood scenes, trauma, or hidden memories.
 
-## Vulnerability, Exiles, and internal exclusion
+## Vulnerability and internal exclusion
 
-Differentiate four questions: what is felt/wanted; what is concealed from others; what is difficult to admit or allow internally; and how protective responses organize around that experience. Social privacy or reducing a request is not by itself internal exile. Someone may know and welcome a need privately while making a sensible decision not to disclose it.
+Preserve the vulnerable material actually visible: needing help, disappointment, shame, loneliness, hurt, or another reported concern. A vulnerable theme is not automatically a distinct part or exile. An exile interpretation needs support for a vulnerable self-state and a pattern of being kept out of awareness, expression, or participation by protection. Explicit rejection or exclusion of an internal experience matters, but does not by itself establish childhood origin or a traumatic burden. Explain what is supported without populating the rest of the theory.
 
-Identify and name an Exile when the evidence supports a recognizable part/experience kept apart, suppressed, disowned, or repeatedly pushed out of internal contact, together with protection organized around that exclusion or avoiding overwhelm from it. This may be established through explicit internal-access answers or converging linked behavior, meaning, and transitions. Do not require a special keyword, a developmental origin, a preconfirmed part name, or a fixed number of protectors. A detailed single occurrence can support an event-scoped exile formulation; recurring organization requires a valid recurrence basis. Retain that distinction.
+Describe relationships when supported. Reinforcement, conflict, interruption, protection of vulnerability, and different contextual responses are not synonyms. Polarization requires competing internal aims; a handoff requires actual linked sequence; a loop requires a return. Do not splice separate scenes into an internal drama. Preserve uncertainty about a relationship rather than withholding clear descriptions of the parts involved.
 
-Exile is a role, not a synonym for sadness, shame, need, childhood, trauma, or intensity. The material can involve anger, agency, wanting, joy, or another quality as well as pain; do not expand to an unmeasured quality. Do not assign an age, origin, memory, exact burden, or biography. Name only the emotional/relational content supported. Describe a vulnerable theme or vulnerable part directly when that is the more defensible formulation, without apologizing for not producing an exile. Conversely, do not retreat to a generic theme when the evidence supports the more informative exile organization.
+## Make the whole intelligible
 
-For a current belief or burden, distinguish what the part carries from what the part is. 'A rule that you must not need help' is not the identity 'a needy/broken person'. Burden language requires evidence of a constraining extreme belief/feeling, not any worry. Present content can be inferred; its historical acquisition cannot be reconstructed from these answers.
+Show how the important responses affect needs, relationships, feelings, behavior, and choice. Benefits, burdens, and costs are findings only where supported. Explain connections that add understanding, not a compulsory master wound or universal hidden purpose. Keep contrary examples and practical constraints visible when they change the interpretation.
 
-## Relations between parts
+Notice perspective, curiosity, kindness, room for multiple needs, and increased choice where supported. These can be described as Self-led capacities without inventing a named Self entity, a global Self score, or a completed unblending process. Compliance, successful work, relief, and calm are not automatically perspective or Self-leadership.
 
-Look for supported shared protective targets, coalitions, mutual interference, escalation, handoffs, and conditions under which a response stands down. Each relation is a separate claim; evidence for two entities does not automatically prove their relationship. Shared vocabulary does not prove a shared exile. Similar preventive jobs do not prove identity.
+Preserve recovery detail that changes the account: the first easing may differ from later capacity, less input may help without resolving the concern, and wanting to talk is different from having words available. Do not translate all relief into a protector standing down unless that relationship is supported.
 
-Polarization is more than having two wants: there must be evidence of opposing strategies constraining, intensifying, or obstructing one another. A compromise can remain a compromise. A handoff needs an actual within-occurrence relation plus a change of function or organization. Same behavior with a changed job can matter; changed behavior with the same job need not be a new part. Only call a sequence a loop when its return is supported. Several independent processes may coexist without a single hierarchy.
-
-## Self and unblending
-
-Self is not a named part in the registry. Describe moments of perspective, curiosity toward one's own reaction, compassion, clarity, or choice in relation to difficult material when supported. 'More Self-led' and 'less blended' are permitted model interpretations, not measured states. Calmness, compliance, low arousal, politeness, accepting help, or performing well alone do not establish Self leadership. Firmness, anger, grief, and boundaries do not rule it out.
-
-Distinguish available capacity from evidence about how the person relates to a part. A practical pause can be useful without being proof of unblending. Missing Self evidence never means the person lacks Self; the model treats Self differently from a variable score. Do not imply that protectors must disappear for the person to be present.
-
-## Composition
-
-Explain the system through the relationships and episodes that are actually visible. Portraits can be useful; a catalog is not mandatory. Unknown connections stay unconnected. Use ordinary, usable names; a familiar term is acceptable when its description is specific. Follow the respondent's preference for parts or plain-pattern language without changing the analysis.
-
-Show conditions of greater choice, contextual constraints, and unresolved questions where they alter the map. Do not prescribe direct exile contact, inner-child work, unburdening, or a readiness-to-heal narrative. The report can be deeply personal without asserting what the person must do next.
+Use an understandable progression from the central organization into important parts and relationships, their consequences, and conditions of flexibility. The material determines the structure and length. Substantial evidence should not disappear into one small portrait; sparse evidence must not be padded with extra parts. Questions are optional. Do not prescribe therapy, retrieval of memories, dialogue scripts, or a treatment plan.

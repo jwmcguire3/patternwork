@@ -1,15 +1,15 @@
-# Mapping report — v7
+# Mapping report — revision 2
 
-Use the v7 shared contract. `report_type = MAP`.
+Use the shared contract. Set report_type to MAP.
 
-Produce the first useful account from the covered episodes. Make the connection between situation, response, meaning/function, and immediate consequence intelligible where those links are present. A name is permitted, including a clear event-scoped protective role, but is not a prerequisite for insight.
+Give the reader a useful first understanding of their responses to pressure, uncertainty, need, and connection. Mapping stands on its own; it is not a waiting room for another report. Organize around the most consequential functions and contrasts rather than narrating each questionnaire scene.
 
-Mapping is an entry point, not an impoverished report and not a miniature completion of all three theories. Give supported findings enough explanation to be recognizable. Do not impose a section count, a context-difference quota, an insight limit, or an equal relational/nonrelational allocation. Develop the material that changes this reader's map, including ordinary practical responses and already available capacities.
+Explain what the person does, what that move is trying to accomplish when established, what changes immediately, and what remains difficult. Distinguish a task goal from a protective purpose and an intended outcome from a reported effect. Do not narrow a broad wish to prevent a future problem into a single predicted relationship consequence just because another answer names one. Preserve multiple concurrent aims.
 
-Compare contexts when the comparison is meaningful. Preserve a response that works differently at work than in closeness, or an action that looks unchanged while its internal effect differs. Equally, preserve genuine consistency; do not manufacture a surprising contrast. More follow-ups in one area do not make it the person's dominant concern.
+Show how the pattern changes with practical demands, another person's availability, room to think, lower input, or effective help when those conditions appear in the evidence. Continued functioning, feeling better, regained words, and wider choice are not interchangeable. Costs and benefits require support; neither is obligatory.
 
-A partial sequence is a partial sequence. Identify what is clear without filling its beginning, hidden goal, handoff, or resolution. Recalled expectations are not other people's verified intentions. Missing recovery or an unasked vulnerability question is not evidence of blocked healing.
+Use simple working handles for patterns only when they make the explanation easier to follow. Mapping does not need an IFS cast, a nervous-system ladder, or an attachment-style verdict. A functional interpretation may be worthwhile without a theoretical label. Do not call an organizing hypothesis a settled personality fact.
 
-An unresolved question can be worth naming when it changes the interpretation: for example, whether extra preparation seeks task readiness or reassurance. Do not promise that Deepening will find a wound, hidden exile, or more impressive result. A complete practical explanation is a complete finding.
+A single well-described situation can support a conditional description of how a response operated there, not a lifetime rule. Multiple scenarios do not prove recurrence unless their relationships support that inference. Give counterexamples and ordinary explanations their due. Unknown answers and opted-out areas should limit the claim, not become findings about the person's deficits.
 
-End in a way that fits the report: an integrative distinction, a relevant open question, or an observed condition of greater choice. Reflection questions are not required. Do not generate provider calls, scores, advice, or a future-report sales pitch.
+Let the report's progression carry understanding: the central response, its purpose, meaningful contrasts, consequences, and conditions of greater flexibility where supported. There is no compulsory outline or ending exercise. Include an unresolved question only when resolving it would materially change this picture.

@@ -21,7 +21,9 @@
   },
   "prompt_composition": "shared_plus_selected_layer_only",
   "activation": "requires_external_provider_qualification_and_authorized_release_approval",
-  "runtime_implementation": "standalone_adapter_not_deployed",
+  "runtime_implementation": "shared_runtime_adapter",
   "repair_prompt": "prompts/07_REPAIR_REPORT_PROMPT.md",
-  "compatible_question_release": "PWQE-5.1.0-candidate.1"
+  "compatible_question_release": "PWQE-5.1.0-candidate.1",
+  "interpretation_revision": 2,
+  "review_contract": "PWRP-REVIEW-7.1.0-candidate.2"
 }

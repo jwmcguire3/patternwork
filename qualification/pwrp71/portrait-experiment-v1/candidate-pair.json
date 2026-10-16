@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "PATTERNWORK-PORTRAIT-PAIR-V1",
+  "purpose": "IFS structural diversity, functional portraits, future full-report composition system",
+  "comparisonType": "diverse_fictional_cases_not_matched_controls",
+  "reportType": "IFS",
+  "reportRelease": "PWRP-7.1.0-candidate.1",
+  "questionRelease": "PWQE-5.1.0-candidate.1",
+  "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+  "fixtureSet": "route-replays-v5",
+  "profiles": [
+    {
+      "id": "P02",
+      "fixture": "qualification/pwrp71/route_replays_v5/P02.json",
+      "focus": "preventive relation-management followed by reactive withdrawal and reported relief",
+      "authoredDeepeningQuestionIds": [
+        "D61",
+        "D02",
+        "D03",
+        "D07",
+        "D08",
+        "D09",
+        "D10"
+      ],
+      "originalAuthoredGap": "D06 unadministered in the current v5 route",
+      "mustNotClaim": [
+        "lifelong habit",
+        "fixed pair of two enduring parts",
+        "a confirmed recurrent loop",
+        "a known developmental origin",
+        "every leaving response is protective"
+      ]
+    },
+    {
+      "id": "C10",
+      "fixture": "qualification/pwrp71/route_replays_v5/C10.json",
+      "focus": "functioning versus ease, word/attention restriction, partial order, recovery context and changed appraisal",
+      "authoredDeepeningQuestionIds": [
+        "D29",
+        "D30",
+        "D32",
+        "D33",
+        "D34",
+        "D35",
+        "D36",
+        "D37",
+        "D80",
+        "D81",
+        "D82",
+        "D83",
+        "D84",
+        "D85",
+        "D86",
+        "D100"
+      ],
+      "requiredOrdering": "D36.input before D36.words before D36.think; do not invent other order",
+      "mustNotClaim": [
+        "automatic IFS exile",
+        "involuntary impairment is a protective intention",
+        "full recovery was observed",
+        "exact recovery duration",
+        "physiological autonomic measurements"
+      ]
+    }
+  ],
+  "referenceProfiles": {
+    "priorDiscrimination": [
+      "C01",
+      "C02"
+    ],
+    "laterNegativeControl": "P07"
+  },
+  "runBoundary": "No paid calls or production source changes authorized by this experiment. A successful output is unqualified until evidence/source/claim validation and new semantic review."
+}

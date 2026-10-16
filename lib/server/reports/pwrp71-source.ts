@@ -7,7 +7,7 @@ import { PWQE51_RELEASE_IDENTITY } from "../../question-engine/pwqe51-source.ts"
 
 export const PWRP71_SOURCE_DIRECTORY = "reporting" as const;
 export const PWRP71_RELEASE_MANIFEST_PATH = `${PWRP71_SOURCE_DIRECTORY}/contracts/report_release_manifest.json` as const;
-export const PWRP71_RELEASE_MANIFEST_SHA256 = "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5" as const;
+export const PWRP71_RELEASE_MANIFEST_SHA256 = "890d555b5a7b59955d29352cb3f192120653cb901996934eccc1de16bda2fccb" as const;
 
 export const PWRP71_PROMPT_FILES = {
   shared: "prompts/00_SHARED_REPORT_PROMPT_v7.md",
@@ -124,7 +124,7 @@ export async function verifyPwrp71SourceIntegrity(workspaceRoot = process.cwd())
     issues.push(sourceIssue("pwrp71_manifest_pin_drift", PWRP71_RELEASE_MANIFEST_PATH, "The imported PWRP 7.1 release manifest no longer matches its content pin."));
   }
   if (manifest.report_release !== PWQE51_RELEASE_IDENTITY.reportRelease || manifest.kind !== "content_binding_not_approval"
-    || !/^[a-f0-9]{64}$/u.test(manifest.content_binding) || !manifest.files || Object.keys(manifest.files).length !== 18) {
+    || !/^[a-f0-9]{64}$/u.test(manifest.content_binding) || !manifest.files || Object.keys(manifest.files).length !== ALLOWED_FILES.size) {
     issues.push(sourceIssue("pwrp71_release_binding", PWRP71_RELEASE_MANIFEST_PATH, "The PWRP 7.1 manifest has an unexpected release identity or content population."));
   }
   for (const file of Object.keys(manifest.files ?? {})) {
@@ -183,7 +183,7 @@ async function loadPackage(workspaceRoot: string): Promise<Pwrp71SourcePackage> 
     || policy.compatible_router_source_sha256 !== PWQE51_RELEASE_IDENTITY.sourceSha256
     || policy.compatible_router_format !== "patternwork-router-evidence-v1"
     || policy.activation !== "requires_external_provider_qualification_and_authorized_release_approval"
-    || policy.runtime_implementation !== "standalone_adapter_not_deployed"
+    || policy.runtime_implementation !== "shared_runtime_adapter"
     || policy.findings_cardinality.minimum !== null || policy.findings_cardinality.maximum !== null
     || policy.findings_cardinality.theoretical_balance_required !== false) {
     throw new Error("PWRP 7.1 report policy does not match the candidate source, activation gate, or unbounded findings contract.");

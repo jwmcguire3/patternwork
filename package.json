@@ -22,7 +22,9 @@
     "reports:retry": "tsx scripts/report-retry/index.ts",
     "pwqe51:parity": "tsx scripts/pwqe51-parity/index.ts",
     "pwqe51:parity:strict": "tsx scripts/pwqe51-parity/index.ts --strict",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "reports:dev": "tsx scripts/report-dev/index.ts",
+    "reports:source": "tsx scripts/report-dev/source.ts"
   },
   "allowScripts": {
     "@swc/core@1.15.3": true,

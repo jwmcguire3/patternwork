@@ -1,3 +1,4 @@
+import { assertNoRespondentClassification } from "./content-boundary.ts";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { JsonObject, ReportType, ValidationIssue } from "../../question-engine/types.ts";
@@ -76,6 +77,7 @@ const DIRECT_PII = /(?:\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b|(?:^|\s)\+\d(?:
 
 /** Final synchronous fail-closed check immediately before prompt serialization. */
 export function assertProviderPromptPrivacy(input: unknown, path = "$"): void {
+  assertNoRespondentClassification(input);
   if (typeof input === "string") {
     if (DIRECT_PII.test(input) || containsAccountIdentifier(input)) throw new Error(`Provider prompt privacy boundary rejected direct identifying data at ${path}.`);
     return;
@@ -123,6 +125,7 @@ export function buildRepairPrompt(
   issues: readonly ValidationIssue[],
   previousOutput?: JsonObject,
 ): string {
+  assertProviderPromptPrivacy({ previousOutput: previousOutput ?? null, issues } as unknown as JsonObject);
   const feedback = issues.slice(0, 50).map((issue) => ({ code: issue.code, path: issue.path, message: issue.message }));
   return [
     buildGenerationPrompt(reportType, input),

@@ -1,3 +1,5 @@
+import { renderPwrp71Markdown } from "./pwrp71-render.ts";
+import { assertNoRespondentClassification } from "./content-boundary.ts";
 import { createHash } from "node:crypto";
 import Ajv2020 from "ajv/dist/2020.js";
 import type { JsonObject, ReportType, ValidationIssue, ValidationResult } from "../../question-engine/types.ts";
@@ -323,21 +325,6 @@ function validateReaderTextDoesNotExposeOccurrenceIds(draft: Record<string, unkn
   }
 }
 
-function markdown(draft: Record<string, unknown>): string {
-  const lines = [`# ${String(draft.title)}`, "", "*Patternwork is nonclinical self-reflection. Parts and state names are working interpretations, not diagnoses or physiological measurements.*", ""];
-  for (const section of rows(draft.sections)) {
-    if (typeof section.heading === "string" && section.heading) lines.push(`## ${section.heading}`, "");
-    lines.push(String(section.text), "");
-  }
-  const questions = Array.isArray(draft.reflection_questions) ? draft.reflection_questions : [];
-  if (questions.length) {
-    lines.push("## To notice", "");
-    for (const question of questions) lines.push(String(question), "");
-  }
-  return `${lines.join("\n").trimEnd()}\n`;
-}
-
-/** Validates structural evidence bindings and renders an artifact; this does not provide semantic approval. */
 export function validatePwrp71ReportDraft(input: {
   readonly value: unknown;
   readonly reportType: ReportType;
@@ -346,6 +333,8 @@ export function validatePwrp71ReportDraft(input: {
   readonly source: Pwrp71SourcePackage;
 }): ValidationResult<Pwrp71ReportArtifact> {
   const issues: ValidationIssue[] = [];
+  try { assertNoRespondentClassification(input.value); }
+  catch { return { ok: false, issues: [issue("respondent_classification", "$.draft", "Draft contains retired respondent classification.")] }; }
   const reportSource = input.source;
   if (reportSource.manifestSha256 !== PWRP71_RELEASE_MANIFEST_SHA256
     || reportSource.manifest.report_release !== PWQE51_RELEASE_IDENTITY.reportRelease
@@ -372,7 +361,7 @@ export function validatePwrp71ReportDraft(input: {
   validateReaderTextDoesNotExposeOccurrenceIds(draft, packet, issues);
   if (issues.length) return { ok: false, issues };
 
-  const reportMarkdown = markdown(draft);
+  const reportMarkdown = renderPwrp71Markdown(draft);
   const identity = { report_release: draft.report_release, release_id: draft.release_id, snapshot_id: draft.snapshot_id, report_type: draft.report_type, evidence_sha256: draft.evidence_sha256, draft };
   const reportId = `pwrp71_${sha256(identity).slice(0, 28)}`;
   const withoutDigests = {
