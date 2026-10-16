@@ -22,21 +22,30 @@ jobs:
           EVENT_SHA: ${{ github.sha }}
         run: |
           python3 - <<'PY'
-          import base64, gzip, hashlib, json, os, pathlib, re, subprocess, tempfile
+          import gzip, hashlib, io, json, os, pathlib, subprocess, tempfile, urllib.request
           def git(*args, **kw):
               return subprocess.check_output(['git', *args], **kw).decode().strip()
           relay = ['.github/workflows/apply-reporting-checkpoint.yml', '.recovery-transfer/payload.json']
+          expected = {
+              'base': 'a6301d4ffe954c2b8e35eba3ec1a3518ae6d8756',
+              'tree': 'a3b175320c9d380b71f1f2dda2988ee5cbf5d66c',
+              'patch_sha256': '4effc285f733af8b3d09dbd6668cbf1a7395e5c01486546c0c361bbc113bbdbe',
+              'patch_url': 'https://sb-63kyercv86pp.vercel.run/checkpoint-4effc285.patch.gz',
+          }
           data = json.loads(pathlib.Path(relay[1]).read_text())
-          assert set(data) == {'base', 'tree', 'patch_sha256', 'patch_gzip_base64'}
-          assert data['base'] == 'a6301d4ffe954c2b8e35eba3ec1a3518ae6d8756'
-          assert re.fullmatch(r'[a-f0-9]{40}', data['tree'])
-          assert re.fullmatch(r'[a-f0-9]{64}', data['patch_sha256'])
+          assert data == expected, 'Transfer is restricted to the explicitly tested checkpoint.'
           head = os.environ['EVENT_SHA']
           assert git('rev-parse', 'HEAD') == head
-          assert set(git('diff', '--name-only', data['base'], head).splitlines()) <= set(relay), 'Branch changed outside the transfer; reconcile before retrying.'
-          assert len(data['patch_gzip_base64']) < 2000000
-          patch = gzip.decompress(base64.b64decode(data['patch_gzip_base64'], validate=True))
-          assert len(patch) < 12000000
+          assert set(git('diff', '--name-only', data['base'], head).splitlines()) <= set(relay), 'Branch changed outside transfer; reconcile before retrying.'
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, *args, **kwargs):
+                  raise RuntimeError('Checkpoint redirects are not accepted.')
+          with urllib.request.build_opener(NoRedirect).open(data['patch_url'], timeout=30) as response:
+              compressed = response.read(2000001)
+          assert len(compressed) <= 2000000
+          with gzip.GzipFile(fileobj=io.BytesIO(compressed)) as stream:
+              patch = stream.read(12000001)
+          assert len(patch) <= 12000000
           assert hashlib.sha256(patch).hexdigest() == data['patch_sha256'], 'Transfer digest mismatch.'
           with tempfile.TemporaryDirectory() as directory:
               patch_file = pathlib.Path(directory, 'checkpoint.patch')
@@ -45,8 +54,8 @@ jobs:
               subprocess.check_call(['git', 'read-tree', data['base']], env=env)
               subprocess.check_call(['git', 'apply', '--cached', '--check', str(patch_file)], env=env)
               subprocess.check_call(['git', 'apply', '--cached', str(patch_file)], env=env)
-              assert git('write-tree', env=env) == data['tree'], 'Application tree differs from the tested checkpoint.'
-              # Keep the two transfer files unchanged; the connector removes them after remote verification.
+              assert git('write-tree', env=env) == data['tree'], 'Application tree differs from tested checkpoint.'
+              # Preserve these two files unchanged until connector-side cleanup.
               for name in relay:
                   blob = git('rev-parse', head + ':' + name)
                   subprocess.check_call(['git', 'update-index', '--add', '--cacheinfo', '100644', blob, name], env=env)
