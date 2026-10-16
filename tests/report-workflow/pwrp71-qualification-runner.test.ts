@@ -54,8 +54,8 @@ function mappingScopePacket(packet: JsonObject): JsonObject {
 async function writeRouteReplayFixtureSet(fixtureRoot: string): Promise<void> {
   const questionSource = await loadPwqe51SourcePackage();
   const reportSource = await loadPwrp71SourcePackage();
-  const legacy = await loadPwrp71QualificationFixtures();
-  const mappingPacket = await loadPwrp71FixturePacket({ profileId: "C01", fixtures: legacy, questionSource });
+  const retained = JSON.parse(await readFile("qualification/pwrp71/route_replays_v3/C01.json", "utf8"));
+  const mappingPacket = retained.packets.MAP;
   const v2Root = path.join(process.cwd(), "qualification", "pwrp71", "constructed_histories_v2");
   const v2ManifestText = await readFile(path.join(v2Root, "manifest.json"), "utf8");
   const v2Manifest = JSON.parse(v2ManifestText) as { sourceCommit: string };
@@ -80,7 +80,7 @@ async function writeRouteReplayFixtureSet(fixtureRoot: string): Promise<void> {
       profileId,
       authoredAnswerDisposition: [],
       sourceIdentity: { ...inputs, authoredFixtureFile: `${profileId}.json`, authoredFixtureSha256: fileSha(authoredFixtureText) },
-      replay: { completeness: { mapping: hasMap ? "complete" : "partial", deepening: "not_applicable" }, routingDecisionTrace: [] },
+      replay: { state: retained.replay.state, contextDecisions: retained.replay.contextDecisions, completeness: { mapping: hasMap ? "complete" : "partial", deepening: "not_applicable" }, routingDecisionTrace: [] },
       packets: hasMap ? { MAP: { packet: mappingScopePacket(mappingPacket.packet) }, IFS: { packet: mappingScopePacket(mappingPacket.packet) } } : {},
       packetValidation: hasMap ? { MAP: { accepted: true, issueCodes: [] }, IFS: { accepted: true, issueCodes: [] } } : {},
     };

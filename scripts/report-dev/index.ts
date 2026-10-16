@@ -1,4 +1,4 @@
-import { readFile, mkdir, readdir, writeFile } from "node:fs/promises";
+import { readFile, mkdir, readdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadPwqe51SourcePackage } from "../../lib/question-engine/pwqe51-source.ts";
@@ -112,7 +112,7 @@ async function main() {
  if(mode==="validate") {
   const result=await validateStoredReport(string("artifact")!,string("review"),packetFor(assessment,types[0],source),reportSource,types[0]);
   console.log(JSON.stringify(result,null,2));
-  if(!result.structural.ok||typeof result.semanticReview==="object"&&!result.semanticReview.ok) process.exitCode=1;
+  if (!result.structural.ok || (typeof result.semanticReview === "object" && (!result.semanticReview.ok || result.semanticReview.value.verdict !== "accept"))) process.exitCode = 1;
   return;
  }
  const runHash=contentHash(canonical({assessment:assessment.contentSha256,source:reportSource.manifestSha256,types,modelPolicy:developmentModelPolicy(),mode}));

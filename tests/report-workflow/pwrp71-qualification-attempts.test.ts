@@ -607,7 +607,7 @@ test("independent journal processes cannot both reserve the same aggregate remai
       const childRequest = { ...request, idempotencyKey: key };
       const code = `
         const [{ FileQualificationAttemptStore }, { GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY }, { projectOpenRouterStrictSchemaObject }] = await Promise.all([
-          import(${JSON.stringify(storeModule)}), import(${JSON.stringify(budgetModule)}), import(${JSON.stringify(schemaModule)})
+          import(${JSON.stringify(storeModule)}).then(m => m.default ?? m), import(${JSON.stringify(budgetModule)}).then(m => m.default ?? m), import(${JSON.stringify(schemaModule)}).then(m => m.default ?? m)
         ]);
         const store = new FileQualificationAttemptStore(${JSON.stringify(runDirectory)});
         const request = ${JSON.stringify(childRequest)};

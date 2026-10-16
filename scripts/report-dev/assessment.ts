@@ -1,3 +1,4 @@
+import { assertAssessmentRoute } from "./verify-assessment.ts";
 import Ajv from "ajv";
 import { randomUUID } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
@@ -87,5 +88,6 @@ export async function loadAssessment(file:string,source:Pwqe51SourcePackage):Pro
  if(value.schema!=="patternwork-completed-assessment-1"||contentHash(canonical(content))!==contentSha256||value.questionSourceSha256!==source.sourceManifestSha256||!isPwqe51SessionState(value.mapping)||!isPwqe51SessionState(value.deepening)) throw new Error("Assessment content, structure, or question-source binding is invalid.");
  const verified=sealAssessment({mapping:value.mapping,deepening:value.deepening,transcript:value.transcript,questionSourceSha256:value.questionSourceSha256});
  if(verified.contentSha256!==contentSha256) throw new Error("Assessment has unknown envelope fields.");
+ assertAssessmentRoute(value,source);
  return value;
 }

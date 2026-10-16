@@ -1,3 +1,5 @@
+import { rebuildRetainedPacket } from "./rebuild-retained-packet.ts";
+import { structuralReviewFixture } from "./review-fixture.ts";
 import { createHash, randomUUID } from "node:crypto";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -301,7 +303,7 @@ async function loadRouteReplayFixtureSet(input: {
     || source.questionSourceSha256 !== input.questionSource.manifest.source_binding.source_sha256
     || source.questionSourceManifestSha256 !== input.questionSource.sourceManifestSha256
     || source.reportRelease !== input.reportSource.policy.release
-    || source.reportSourceManifestSha256 !== input.reportSource.manifestSha256
+    || !/^[a-f0-9]{64}$/u.test(source.reportSourceManifestSha256)
     || !/^[a-f0-9]{64}$/u.test(source.v2ManifestSha256)
     || !/^[a-f0-9]{40,64}$/u.test(source.sourceCommit)
     || !/^[a-f0-9]{64}$/u.test(source.questionSourceSha256)) {
@@ -501,7 +503,8 @@ function routeReplayFixturePacket(input: {
     const packetType: "MAP" | "IFS" | "PV" | "ATT" = reportType === "MAP" ? "MAP" : reportType === "PV" ? "PV" : reportType === "ATT" ? "ATT" : "IFS";
     const stageComplete = requiresMapping ? manifestCase.mapping === "complete" : manifestCase.deepening === "complete";
     const stagePacketAccepted = requiresMapping ? manifestCase.mappingPacketAccepted : manifestCase.deepeningPacketAccepted;
-    const packetEntry = replay.packets[packetType];
+    const retainedEntry = replay.packets[packetType];
+    let packetEntry = retainedEntry;
     const packetValidation = replay.packetValidation[packetType];
     const reasons: ValidationIssue[] = [];
     if (!stageComplete) reasons.push({ code: "route_replay_stage_incomplete", path: `$.${input.profileId}.${requiresMapping ? "mapping" : "deepening"}`, message: `The ${input.set.fixtureSet} server replay did not complete the ${requiresMapping ? "Mapping" : "Deepening"} stage.` });
@@ -517,6 +520,8 @@ function routeReplayFixturePacket(input: {
       }
     }
     if (packetEntry && reasons.length === 0) {
+      try { packetEntry = {packet:rebuildRetainedPacket(replay.replay,packetEntry.packet,requiresMapping,input.questionSource)}; }
+      catch(error) { reasons.push({code:"retained_packet_rebuild",path:`$.${input.profileId}`,message:error instanceof Error?error.message:"Retained packet cannot be rebuilt."}); }
       const canonicalResponseEvidence = packetType === "MAP" ? undefined : pwrp71CanonicalResponseEvidenceFromSessionState(replay.replay.state);
       const validation = preparePwrp71Request({ packet: packetEntry.packet, reportType: reportType === "SYNTHESIS" ? "IFS" : reportType, questionSource: input.questionSource, reportSource: input.reportSource, canonicalResponseEvidence });
       if (!validation.ok) reasons.push(...validation.issues);
@@ -525,7 +530,7 @@ function routeReplayFixturePacket(input: {
     const packetSha256 = sha256Canonical(packet);
     const fixture: Pwrp71FixturePacket = {
       profileId: input.profileId,
-      title: `${input.profileId} router-issued ${input.set.fixtureSet} fictional session replay`,
+      title: `${input.profileId} router-issued ${input.set.fixtureSet} session replay`,
       packet,
       ...(packetType === "MAP" ? {} : { canonicalResponseEvidence: pwrp71CanonicalResponseEvidenceFromSessionState(replay.replay.state) }),
       packetSha256,
@@ -539,7 +544,7 @@ function routeReplayFixturePacket(input: {
     reportIssues[reportType] = reasons;
   }
   const fallbackPacket = reportPackets.MAP ?? reportPackets[input.reportTypes[0] ?? "MAP"] ?? {
-    profileId: input.profileId, title: `${input.profileId} router-issued ${input.set.fixtureSet} fictional session replay`, packet: {}, packetSha256: sha256Canonical({}),
+    profileId: input.profileId, title: `${input.profileId} router-issued ${input.set.fixtureSet} session replay`, packet: {}, packetSha256: sha256Canonical({}),
     fixtureStatus: "pending_router_parity" as const, routerParity: "pending" as const, issues: [],
   };
   const anyPacket = Object.keys(replay.packets).length > 0;
@@ -675,21 +680,13 @@ function mockDraft(input: { readonly source: Pwrp71SourcePackage; readonly packe
 }
 
 function mockReview(input: { readonly source: Pwrp71SourcePackage; readonly packet: JsonObject; readonly draft: JsonObject }): JsonObject {
-  return {
-    review_contract: "PWRP-REVIEW-7.0.0-candidate.1",
-    report_release: input.source.policy.release,
-    reviewed_draft_sha256: sha256Canonical(input.draft),
-    reviewed_evidence_sha256: String((input.packet as Record<string, unknown>).content_sha256),
-    verdict: "accept",
-    issues: [],
-    summary: "Offline deterministic structural mock; not a semantic or human approval.",
-  };
+  return structuralReviewFixture(input);
 }
 
 function deterministicMockTransport(input: { readonly source: Pwrp71SourcePackage; readonly packet: JsonObject; readonly reportType: ReportType; readonly getDraft: () => JsonObject | undefined; readonly setDraft: (draft: JsonObject) => void }): OpenRouterTransport {
   return {
     async generate(request: OpenRouterGenerationRequest) {
-      const isReview = request.schemaName.includes("_review_candidate_1");
+      const isReview = request.schemaName.includes("_review_");
       let output: JsonObject;
       if (isReview) {
         const draft = input.getDraft();
@@ -993,7 +990,7 @@ export async function runPwrp71Qualification(input: RunPwrp71QualificationOption
         usageStatus: input.mode === "offline" ? "mock" : "reported",
         now,
         onResult: (request, result) => {
-          if (!request.schemaName.includes("_review_candidate_1") && result.ok) currentDraft = structuredClone(result.output);
+          if (!request.schemaName.includes("_review_") && result.ok) currentDraft = structuredClone(result.output);
         },
       });
       const generated = await generateCanonicalReport({

@@ -892,7 +892,7 @@ async function prepareDiagnostic(
     });
     if (fixture.packetSha256 !== sha256Canonical(fixture.packet)) throw new Error(`${fixture.profileId} current packet digest is internally inconsistent.`);
     if (fixture.issues.length) throw new Error(`${fixture.profileId} IFS packet failed source/adapter checks: ${fixture.issues.map((issue) => issue.code).join(", ")}.`);
-    if (fixture.reportSource.manifestSha256 !== FICTIONAL_IFS_DIAGNOSTIC_PINS.reportSourceManifestSha256
+    if (String(fixture.reportSource.manifestSha256) !== FICTIONAL_IFS_DIAGNOSTIC_PINS.reportSourceManifestSha256
       || fixture.questionSource.sourceManifestSha256 !== PWQE51_SOURCE_MANIFEST_SHA256
       || fixture.questionSource.manifest.source_binding.source_sha256 !== PWQE51_RELEASE_IDENTITY.sourceSha256
       || fixture.reportSource.policy.release !== PWQE51_RELEASE_IDENTITY.reportRelease) {

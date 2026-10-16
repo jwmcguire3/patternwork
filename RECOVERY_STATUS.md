@@ -1,15 +1,9 @@
-# Patternwork reporting recovery — 2026-10-15
+# Recovery and continuation status
 
-This branch preserves the recovered development implementation from a Vercel sandbox snapshot. It is **not a qualified release** and must not be merged or deployed as-is.
+The complete repository is restored on `recovery/patternwork-reporting-20261015`; this continuation does not modify `main`.
 
-Source lineage: `f2ab315b0089b63f19be6926cb53f1acc27a6379` (diagnostic) plus PR #20 content, originally reconciled locally into `6ef9e958469e7df645b36b8560df0636410b63eb`.
+The original 24 modified and 9 new files are accounted for. The previously missing dependency-lock repair is retained without dropping existing platform constraints. The one-line diagnostic compatibility correction is preserved in `qualification/pwrp71/archived-diagnostic-contract/diagnostic.ts.txt`; the obsolete executable path was intentionally retired, not lost.
 
-## Status
+The old source-policy and assessment-reuse failures no longer reproduce on the restored code. New route-history validation rejects rehashed invalid assessments. See `docs/report-development.md` for commands and ownership, and `qualification/pwrp71/report-development-20261016/` for actual results.
 
-Recovered and committed: active report prompts, reporter/reviewer/validator modifications, packet builder, source manifest and policy, development CLI and cases, session replay modifications, prior PR #20 interpretation/composition guides.
-
-Not yet recovered into this branch: modified `package-lock.json` and the edited `scripts/pwrp71-fictional-ifs-diagnostic/diagnostic.ts`; the recovery snapshot retained both, but they were too large to transfer reliably through the connector in this pass. Recreate the lockfile from the pinned package manifest only after dependency review. The diagnostic script remains the original inherited version.
-
-Recorded tests from the snapshot: typecheck exited successfully; the Mara/Ellis engine-issued assessments each showed 28 Mapping and 56 Deepening responses, finishing with `administration_or_decision_limit`. Report preparation failed source-policy/activation binding; saved-assessment reuse failed source binding. No paid-provider end-to-end report qualification was completed.
-
-Treat these limitations as blockers. Avoid publishing this branch as production-ready.
+This is an offline-tested development implementation, not a production release. No new paid model calls, production activation, database migration or customer-delivery operation was performed. The 29 retired fixed-epoch diagnostic tests are preserved as archival text and are not counted as passed.

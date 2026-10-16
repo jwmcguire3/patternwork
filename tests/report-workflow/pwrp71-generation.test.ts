@@ -1,3 +1,4 @@
+import { structuralReviewFixture } from "../../lib/server/reports/qualification/review-fixture.ts";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { mkdir, mkdtemp, rm } from "node:fs/promises";
@@ -105,15 +106,7 @@ function mockProvider(outputs: readonly { readonly output: JsonObject; readonly 
 }
 
 function reviewerOutput(draft: JsonObject, packet: JsonObject, source: Awaited<ReturnType<typeof loadPwrp71SourcePackage>>, verdict: "accept" | "revise", issues: JsonObject[] = []): JsonObject {
-  return {
-    review_contract: "PWRP-REVIEW-7.0.0-candidate.1",
-    report_release: source.policy.release,
-    reviewed_draft_sha256: hash(draft),
-    reviewed_evidence_sha256: String((packet as Record<string, unknown>).content_sha256),
-    verdict,
-    issues,
-    summary: verdict === "accept" ? "No structural review issues remain." : "A focused revision is requested.",
-  };
+  return structuralReviewFixture({draft,packet,source,verdict,issues});
 }
 
 function reviseIssue(): JsonObject {

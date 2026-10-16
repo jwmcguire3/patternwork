@@ -1,0 +1,45 @@
+
+> patternwork@0.1.0 build
+> next build
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+workflows build complete (23 steps, 3 workflows, time 86ms)
+   ▲ Next.js 16.0.7 (Turbopack)
+
+   Creating an optimized production build ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+ ✓ Compiled successfully in 20.7s
+   Running TypeScript ...
+   Collecting page data using 1 worker ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Generating static pages using 1 worker (0/14) ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Generating static pages using 1 worker (3/14) 
+   Generating static pages using 1 worker (6/14) 
+   Generating static pages using 1 worker (10/14) 
+ ✓ Generating static pages using 1 worker (14/14) in 1172.3ms
+   Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /.well-known/workflow/v1/flow
+├ ƒ /.well-known/workflow/v1/step
+├ ƒ /.well-known/workflow/v1/webhook/[token]
+├ ƒ /api/[...path]
+├ ○ /assessment
+├ ○ /cannawithdrawl
+├ ○ /companion
+├ ○ /debug
+├ ○ /method
+├ ƒ /reports
+├ ƒ /reports/[assessmentId]
+├ ƒ /reports/consume
+├ ƒ /response-exports/[assessmentId]
+├ ƒ /response-exports/consume
+└ ○ /selfmap
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

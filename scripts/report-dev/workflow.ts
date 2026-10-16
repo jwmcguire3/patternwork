@@ -1,3 +1,4 @@
+import { assertAssessmentRoute } from "./verify-assessment.ts";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { JsonObject, ReportType } from "../../lib/question-engine/types.ts";
@@ -41,6 +42,7 @@ export interface RunReportBatchOptions {
 }
 export async function runReportBatch(options:RunReportBatchOptions) {
  const {assessment,types,questionSource,reportSource,directory,mode}=options;
+ assertAssessmentRoute(assessment,questionSource);
  const modelPolicy=developmentModelPolicy();
  const binding={schema:"patternwork-report-dev-run-1",assessmentSha256:assessment.contentSha256,questionSourceSha256:questionSource.sourceManifestSha256,reportSourceSha256:reportSource.manifestSha256,types,modelPolicy,mode,aggregateMicros:options.aggregateMicros??0,perCallMicros:options.perCallMicros??0};
  await writeImmutableJson(path.join(directory,"binding.json"),binding);
