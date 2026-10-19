@@ -31,7 +31,12 @@ export function validatePwrp71ReviewQuality(review: Record<string, unknown>, dra
    }))) add("review_explanation_support", path, "Positive judgment evidence must be carried by its cited draft claims.");
   }
   if (assessment.status === "revise") {
-   const linkedIssue = rows(review.issues).some(issue => refs.length > 0 && refs.every(id => strings(issue.evidence_ids).includes(id)));
+   // An aspect may cite sound examples alongside the affected evidence. Its
+   // actionable issue should identify the affected subset, not indict every
+   // example. Declared missing groups still require their full omission link below.
+   const linkedIssue = rows(review.issues).some(issue => refs.some(id => strings(issue.evidence_ids).includes(id))
+    && typeof issue.reason === "string" && issue.reason.trim().length > 0
+    && typeof issue.requested_change === "string" && issue.requested_change.trim().length > 0);
    if (!linkedIssue || review.verdict !== "revise" || !statuses.includes("revise")) add("review_explanation_revision", path, "An explanatory deficiency requires an evidence-linked actionable issue and revision verdict/dimension.");
   }
   if (review.verdict === "accept" && assessment.status === "revise") add("review_explanation_verdict", path, "Acceptance cannot retain an explanatory deficiency.");

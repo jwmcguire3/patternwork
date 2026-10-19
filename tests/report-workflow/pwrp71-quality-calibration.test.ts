@@ -144,3 +144,68 @@ test("calibrated writer, reviewer, and repair instructions preserve interpretati
   assert.match(repair, /function, vulnerability, context, cost, relationships, and choice/u);
   assert.ok(!generator.includes("without giving it common causal or organizing force"));
 });
+
+function mixedRevisionInputs() {
+  const { review, draft, packet } = inputs(cases[1]);
+  review.verdict = "revise";
+  review.quality_assessment.semantic_completeness.status = "revise";
+  review.explanatory_assessment.triggers = {
+    status: "revise", evidence_ids: ["obs-0", "obs-1"], claim_ids: ["c"],
+    rationale: "One represented condition remains sound; another material condition is omitted from the readable account.",
+  };
+  review.evidence_coverage = [
+    { evidence_ids: ["obs-0", "obs-2"], claim_ids: ["c"], disposition: "represented", rationale: "These observations remain represented." },
+    { evidence_ids: ["obs-1"], claim_ids: ["c"], disposition: "missing", rationale: "The material distinction carried by this observation is omitted." },
+  ];
+  review.issues = [{
+    id: "mixed-omission", category: "material_omission", claim_ids: ["c"], section_ids: ["s"], name_ids: [], relationship_ids: [],
+    evidence_ids: ["obs-1"], reason: "A material contextual condition is omitted from the readable account.",
+    requested_change: "Restore the omitted condition while retaining the represented condition and the supported scope.",
+  }];
+  return { review, draft, packet };
+}
+
+test("a revised aspect may cite represented examples while its issue targets only the omitted subset", () => {
+  const { review, draft, packet } = mixedRevisionInputs();
+  assert.equal(validateSchema(review), true, JSON.stringify(validateSchema.errors));
+  assert.deepEqual(validatePwrp71ReviewQuality(review, draft, packet), []);
+  assert.equal(review.verdict, "revise", "a consistent revision receipt does not accept the report");
+});
+
+test("an unrelated evidence issue cannot support an explanatory revision", () => {
+  const { review, draft, packet } = mixedRevisionInputs();
+  review.issues[0].evidence_ids = ["obs-2"];
+  assert.ok(validatePwrp71ReviewQuality(review, draft, packet).some(i => i.code === "review_explanation_revision"));
+});
+
+test("overlap with a represented example cannot conceal an unaddressed declared omission", () => {
+  const { review, draft, packet } = mixedRevisionInputs();
+  review.issues[0].evidence_ids = ["obs-0"];
+  const issues = validatePwrp71ReviewQuality(review, draft, packet);
+  assert.ok(issues.some(i => i.code === "review_coverage_omission"));
+  assert.ok(!issues.some(i => i.code === "review_explanation_revision"), "the missing-coverage gate supplies the distinguishing evidence, not textual judgment");
+});
+
+for (const change of ["no_issue", "blank_request", "blank_reason", "no_deficient_dimension", "accept_with_deficiency"] as const) {
+  test(`a mixed explanatory revision rejects ${change}`, () => {
+    const { review, draft, packet } = mixedRevisionInputs();
+    if (change === "no_issue") review.issues = [];
+    if (change === "blank_request") review.issues[0].requested_change = " ";
+    if (change === "blank_reason") review.issues[0].reason = " ";
+    if (change === "no_deficient_dimension") review.quality_assessment.semantic_completeness.status = "adequate";
+    if (change === "accept_with_deficiency") review.verdict = "accept";
+    assert.ok(validatePwrp71ReviewQuality(review, draft, packet).some(i => i.code === "review_explanation_revision"));
+  });
+}
+
+for (const change of ["no_omission_issue", "no_completeness_revision"] as const) {
+  test(`declared missing coverage rejects ${change} even when explanatory evidence intersects`, () => {
+    const { review, draft, packet } = mixedRevisionInputs();
+    if (change === "no_omission_issue") review.issues[0].category = "voice";
+    if (change === "no_completeness_revision") {
+      review.quality_assessment.semantic_completeness.status = "adequate";
+      review.quality_assessment.narrative_quality.status = "revise";
+    }
+    assert.ok(validatePwrp71ReviewQuality(review, draft, packet).some(i => i.code === "review_coverage_omission"));
+  });
+}
