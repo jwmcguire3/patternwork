@@ -190,7 +190,7 @@ function validateClaimStructure(draft: Record<string, unknown>, packet: Record<s
       if (!observation) { issues.push(issue("current_observation", `$.claims[${i}].evidence_ids[${j}]`, "Claim evidence must cite a current packet observation.")); continue; }
       current.add(evidenceId as string);
       if (typeof observation.response_id !== "string" || invalidated.has(observation.response_id) || !liveResponses.has(observation.response_id)) issues.push(issue("stale_observation", `$.claims[${i}].evidence_ids[${j}]`, "Claim cites a stale or noncurrent response."));
-      if (!occurrenceIds.has(observation.occurrence_id)) issues.push(issue("evidence_scope", `$.claims[${i}].scope.occurrence_ids`, "Cited observation lies outside the claim's declared occurrence scope."));
+      if (!occurrenceIds.has(observation.occurrence_id)) issues.push(issue("evidence_scope", `$.claims[${i}].scope.occurrence_ids`, "Evidence observation " + JSON.stringify(evidenceId) + " belongs to occurrence " + (typeof observation.occurrence_id === "string" ? JSON.stringify(observation.occurrence_id) : "(missing)") + ", which is absent from claim scope."));
       if (typeof observation.person_id === "string" && !personIds.has(observation.person_id)) issues.push(issue("person_scope", `$.claims[${i}].scope.person_ids`, "Cited observation lies outside the claim's declared person scope."));
     }
     for (const id of occurrenceIds) if (typeof id !== "string" || !episodes.has(id)) issues.push(issue("claim_scope", `$.claims[${i}].scope.occurrence_ids`, "Claim scope contains an unknown occurrence."));
@@ -280,7 +280,7 @@ function validateClaimStructure(draft: Record<string, unknown>, packet: Record<s
     if (role !== "descriptive_pattern" && name.entity_kind !== "ifs_part") issues.push(issue("name_role", `$.name_registry[${i}].entity_kind`, "An IFS role must be attached to an IFS part entity."));
     if (["manager", "firefighter", "exile", "vulnerable_part"].includes(role)
       && !support.some((claimId) => { const claim = claims.get(String(claimId)); return claim?.kind === "supported_interpretation" && Array.isArray(claim.constructs) && claim.constructs.includes(role); })) {
-      issues.push(issue("name_role_claim", `$.name_registry[${i}].supporting_claim_ids`, "Named IFS role requires a supported interpretation claim with the same role."));
+      issues.push(issue("name_role_claim", `$.name_registry[${i}].supporting_claim_ids`, "Role " + JSON.stringify(role) + " for entity ID " + JSON.stringify(id) + " lacks a matching supported_interpretation construct; supporting claim IDs checked: " + (support.filter((claimId) => typeof claimId === "string").map((claimId) => JSON.stringify(claimId)).join(", ") || "none") + "."));
     }
   }
   for (const [i, relationship] of rows(draft.relationships).entries()) {

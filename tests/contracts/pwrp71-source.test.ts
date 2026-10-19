@@ -53,10 +53,11 @@ test("an edit to an active PWRP 7.1 prompt invalidates the source package", asyn
   }
 });
 
-test("PWRP 7.1 prompt binding combines only its shared and selected layer prompt", async () => {
+test("PWRP 7.1 prompt binding combines its shared contract, construct guide, and selected layer", async () => {
   const mapping = await loadPwrp71ReportPrompt("MAP");
   assert.equal(mapping.schemaName, "patternwork_map_pwrp_7_1_candidate");
   assert.ok(mapping.system.includes(mapping.source.prompts.shared));
+  assert.ok(mapping.system.includes(mapping.source.constructGuide));
   assert.ok(mapping.system.includes(mapping.source.prompts.mapping));
   assert.equal(mapping.system.includes(mapping.source.prompts.ifs), false);
   assert.equal(mapping.schema, mapping.source.schemas.reportDraft);

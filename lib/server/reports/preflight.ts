@@ -1,5 +1,7 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
+import { productionProviderBudget } from "./provider-factory.ts";
+import { resolveOpenRouterTimeoutMs } from "../openrouter/client.ts";
 import { prisma } from "../../prisma.ts";
 import { cookieKeyringFromEnv, encryptionKeyringFromEnv } from "../security/index.ts";
 
@@ -21,12 +23,15 @@ export function reportGenerationReadiness(result: ReportPreflightResult): Report
 export async function runReportPreflight(_workspaceRoot?: string, databaseCheck: () => Promise<void> = async () => {
   await prisma.patternworkV31AssessmentSnapshot.count({ take: 1 });
   await prisma.patternworkV31ReportWorkflowAttempt.count({ take: 1 });
+  await prisma.patternworkV31ReportProviderLedger.count({ take: 1 });
 }): Promise<ReportPreflightResult> {
   const checks: Array<{ name: string; ok: boolean; message: string }> = [];
   const required = ["DATABASE_URL", "OPENROUTER_API_KEY", "RESEND_API_KEY", "RESEND_WEBHOOK_SECRET", "EMAIL_FROM", "REPORT_BCC_EMAIL"] as const;
   for (const name of required) checks.push({ name, ok: Boolean(process.env[name]?.trim()), message: process.env[name]?.trim() ? "configured" : "missing" });
-  const cap = Number(process.env.OPENROUTER_MAX_COST_PER_ASSESSMENT_USD);
-  checks.push({ name: "OPENROUTER_MAX_COST_PER_ASSESSMENT_USD", ok: Number.isFinite(cap) && cap > 0, message: Number.isFinite(cap) && cap > 0 ? "valid" : "must be a positive number" });
+  try { productionProviderBudget(); checks.push({ name: "OPENROUTER_MAX_COST_PER_ASSESSMENT_USD", ok: true, message: "valid aggregate and per-call limits" }); }
+  catch { checks.push({ name: "OPENROUTER_MAX_COST_PER_ASSESSMENT_USD", ok: false, message: "aggregate/per-call limit is invalid" }); }
+  try { resolveOpenRouterTimeoutMs(); checks.push({ name: "OPENROUTER_TIMEOUT_MS", ok: true, message: "valid complete-response deadline" }); }
+  catch { checks.push({ name: "OPENROUTER_TIMEOUT_MS", ok: false, message: "complete-response deadline is invalid" }); }
   for (const [name, check] of [["encryption-keyring", encryptionKeyringFromEnv], ["assessment-cookie-keyring", cookieKeyringFromEnv]] as const) {
     try { check(); checks.push({ name, ok: true, message: "valid" }); }
     catch { checks.push({ name, ok: false, message: "missing or invalid" }); }
@@ -39,14 +44,27 @@ export async function runReportPreflight(_workspaceRoot?: string, databaseCheck:
   } catch { checks.push({ name: "public-app-url", ok: false, message: "missing or invalid" }); }
   try { await databaseCheck(); checks.push({ name: "report-attempt-tables", ok: true, message: "migration ready" }); }
   catch { checks.push({ name: "report-attempt-tables", ok: false, message: "migration not ready" }); }
-  for (const [name, environmentName, fallback] of [
-    ["pdf-text-verifier", "PDFTOTEXT_PATH", "pdftotext"],
-    ["pdf-metadata-verifier", "PDFINFO_PATH", "pdfinfo"],
-    ["pdf-raster-verifier", "PDFTOPPM_PATH", "pdftoppm"],
-  ] as const) {
-    const command = process.env[environmentName]?.trim() || fallback;
-    try { await execFileAsync(command, ["-v"], { windowsHide: true, timeout: 5_000 }); checks.push({ name, ok: true, message: "available" }); }
-    catch { checks.push({ name, ok: false, message: `${environmentName} is unavailable` }); }
-  }
+  checks.push(...await probeReportPdfTools());
   return { ok: checks.every((check) => check.ok), checks };
+}
+
+/** Probe the same explicitly selected text extractor used by the PDF renderer. */
+export async function probeReportPdfTools(
+  env: Readonly<Record<string, string | undefined>> = process.env,
+  execute: (command: string, args: string[]) => Promise<unknown> = (command,args) => execFileAsync(command,args,{windowsHide:true,timeout:5_000}),
+): Promise<ReportPreflightResult["checks"]> {
+  const python=env.PDF_PYTHON_PATH?.trim();
+  const tools = [
+    python
+      ? {name:"pdf-text-verifier",command:python,args:["-c","from pypdf import PdfReader"],setting:"PDF_PYTHON_PATH + pypdf"}
+      : {name:"pdf-text-verifier",command:env.PDFTOTEXT_PATH?.trim()||"pdftotext",args:["-v"],setting:"PDFTOTEXT_PATH"},
+    {name:"pdf-metadata-verifier",command:env.PDFINFO_PATH?.trim()||"pdfinfo",args:["-v"],setting:"PDFINFO_PATH"},
+    {name:"pdf-raster-verifier",command:env.PDFTOPPM_PATH?.trim()||"pdftoppm",args:["-v"],setting:"PDFTOPPM_PATH"},
+  ];
+  const checks: {name:string;ok:boolean;message:string}[]=[];
+  for(const tool of tools){
+    try {await execute(tool.command,tool.args);checks.push({name:tool.name,ok:true,message:"available"});}
+    catch {checks.push({name:tool.name,ok:false,message:`${tool.setting} is unavailable`});}
+  }
+  return checks;
 }

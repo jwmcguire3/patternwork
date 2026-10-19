@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
-import { mkdtemp,readFile,rm } from "node:fs/promises";
+import { mkdtemp,readFile,readdir,rm } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { renderPwrp71Markdown } from "../../lib/server/reports/pwrp71-render.ts";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -43,6 +45,13 @@ test("all report inputs use real packets and synthesis waits without dispatching
  }finally{await rm(directory,{recursive:true,force:true});}
 });
 
+test("live report generation stops before dispatch when the local identity inventory was not reviewed",async()=>{
+ const input=await inputs(),directory=path.join(os.tmpdir(),`pw-dev-unreviewed-${Date.now()}`);let calls=0;
+ const transport:OpenRouterTransport={async generate(){calls++;throw new Error("must not dispatch");}};
+ await assert.rejects(runReportBatch({...input,directory,types:["IFS"],mode:"generate",transport,aggregateMicros:500_000,perCallMicros:500_000}),/reviewed local identity inventory/u);
+ assert.equal(calls,0);
+});
+
 test("five real generator/review paths complete with an explicitly deterministic transport; durable attempts are reused",async()=>{
  const input=await inputs(),directory=await mkdtemp(path.join(os.tmpdir(),"pw-dev-generate-"));
  const packets=Object.fromEntries(REPORT_ORDER.map(type=>[type,prepareReport(input.assessment,type==="SYNTHESIS"?"IFS":type,input.questionSource,input.reportSource).packet]));
@@ -59,12 +68,32 @@ test("five real generator/review paths complete with an explicitly deterministic
   return {ok:true,output,finishReason:"stop",usage:{generationId:`test-${calls}`,inputTokens:0,outputTokens:0,reasoningTokens:0,totalTokens:0,costMicros:0,currency:"USD",model:"offline/mock"}};
  }};
  try{
-  const options={...input,directory,types:REPORT_ORDER,mode:"generate" as const,transport,testTransport:true,aggregateMicros:1000000,perCallMicros:100000};
+  const options={...input,directory,types:REPORT_ORDER,mode:"generate" as const,transport,testTransport:true,aggregateMicros:1000000,perCallMicros:100000,exportPdfs:true,pdfVerification:{async verify(bytes:Buffer){
+   assert.equal(bytes.subarray(0,5).toString("ascii"),"%PDF-");
+   const pageCount=Math.max(...Array.from(bytes.toString("latin1").matchAll(/\/Count (\d+)/gu),m=>Number(m[1])));
+   const pngPages=Array.from({length:pageCount},()=>{const png=Buffer.alloc(128);Buffer.from("89504e47","hex").copy(png);return png;});
+   return {extractedText:renderPwrp71Markdown(Object.values(drafts)[0]!),pageCount,pngPages};
+  }}};
   const result=await runReportBatch(options);
   assert.equal(result.failed,false,JSON.stringify(result.reports));
   assert.equal(calls,10);assert.equal(result.narrativeEvaluation,"deterministic_transport_only");
   assert.equal(result.operationalApproval,false);
-  for(const type of REPORT_ORDER){const saved=JSON.parse(await readFile(path.join(directory,type,"artifact.json"),"utf8"));assert.equal(await readFile(path.join(directory,type,"report.md"),"utf8"),saved.report_markdown);}
+  for(const type of REPORT_ORDER){
+   const saved=JSON.parse(await readFile(path.join(directory,type,"artifact.json"),"utf8"));
+   assert.equal(await readFile(path.join(directory,type,"report.md"),"utf8"),saved.report_markdown);
+   const pdf=await readFile(path.join(directory,type,"report.pdf"));
+   const verification=JSON.parse(await readFile(path.join(directory,type,"pdf-verification.json"),"utf8"));
+   assert.equal(verification.sha256,createHash("sha256").update(pdf).digest("hex"));
+  }
+  const requestsDirectory=path.join(directory,"provider","requests");
+  const requestFiles=await readdir(requestsDirectory);assert.equal(requestFiles.length,10);
+  for(const file of requestFiles){
+   const exported=JSON.parse(await readFile(path.join(requestsDirectory,file),"utf8"));
+   assert.equal(exported.wirePayload.messages[0].content,exported.request.system);
+   assert.equal(exported.wirePayload.messages[1].content,exported.request.prompt);
+   assert.equal(exported.wirePayload.max_completion_tokens,128000);
+   assert.equal(exported.wirePayload.model,"openai/gpt-6-luna");
+  }
   const second=await runReportBatch(options);
   assert.equal(second.failed,false,JSON.stringify(second.reports));assert.equal(calls,10,"resume must not repeat settled provider calls");
  }finally{await rm(directory,{recursive:true,force:true});}

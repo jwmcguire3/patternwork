@@ -138,7 +138,8 @@
                 "scope_limit"
               ]
             },
-            "uniqueItems": true
+            "uniqueItems": true,
+            "description": "Use the active construct guide. In particular burden requires an evidenced current constraining extreme belief or feeling carried by a part, not an ordinary expectation or a cost; no acquisition history follows from the label."
           },
           "scope": {
             "type": "object",
@@ -154,6 +155,7 @@
                 ]
               },
               "occurrence_ids": {
+                "description": "Occurrence IDs represented by this claim's evidence_ids and counterevidence_ids. Every cited observation must be included. Reported and supported_interpretation claims may not include unsupported extra occurrences.",
                 "type": "array",
                 "items": {
                   "type": "string",
@@ -162,6 +164,7 @@
                 "uniqueItems": true
               },
               "person_ids": {
+                "description": "Person IDs represented by cited evidence and counterevidence observations when present. Every cited person must be included. Reported and supported_interpretation claims may not include unsupported extra people.",
                 "type": "array",
                 "items": {
                   "type": "string",
@@ -310,6 +313,7 @@
             ]
           },
           "role": {
+            "description": "Use a specific theoretical role only when a listed supporting claim is a supported_interpretation with the same role in constructs; otherwise use an appropriate broader category.",
             "enum": [
               "manager",
               "firefighter",
@@ -324,6 +328,7 @@
             "type": "boolean"
           },
           "supporting_claim_ids": {
+            "description": "Claims that support this entity. For manager, firefighter, exile, or vulnerable_part roles, at least one ID must refer to a supported_interpretation claim with the same role in constructs.",
             "type": "array",
             "items": {
               "type": "string",
@@ -414,7 +419,7 @@
     "reflection_questions"
   ],
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Patternwork report draft v7 — no psychological cardinality quota",
+  "title": "Patternwork report draft v7 \u00e2\u20ac\u201d no psychological cardinality quota",
   "$defs": {
     "construct": {
       "enum": [

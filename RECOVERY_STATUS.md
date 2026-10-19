@@ -1,9 +1,9 @@
-# Recovery and continuation status
+# Recovery and integration status
 
-The complete repository is restored on `recovery/patternwork-reporting-20261015`; this continuation does not modify `main`.
+The complete repository was restored on `recovery/patternwork-reporting-20261015`. The finishing overhaul integrates that history and current `main`, preserving subsequent local fixes. Original local source files and their SHA256 manifest, binary patch and retained Git stash are available in the ignored local `.codex-temp/overhaul-20261018/` preservation area.
 
-The original 24 modified and 9 new files are accounted for. The previously missing dependency-lock repair is retained without dropping existing platform constraints. The one-line diagnostic compatibility correction is preserved in `qualification/pwrp71/archived-diagnostic-contract/diagnostic.ts.txt`; the obsolete executable path was intentionally retired, not lost.
+The original modified/new files and dependency-lock repair remain accounted for. Retired direct-provider diagnostic code and its 29 fixed-epoch tests remain archival `.ts.txt` material under `qualification/pwrp71/archived-diagnostic-contract/`; they are not counted as passing tests or live authorization.
 
-The old source-policy and assessment-reuse failures no longer reproduce on the restored code. New route-history validation rejects rehashed invalid assessments. See `docs/report-development.md` for commands and ownership, and `qualification/pwrp71/report-development-20261016/` for actual results.
+Development now uses the shared session/router, versioned operation replay, packet builder, adapter, generator, reviewer, journal and optional canonical PDF renderer. Active response eligibility does not depend on original/synthetic respondent labels. See `docs/report-development.md` for commands, contract boundaries and current output handling.
 
-This is an offline-tested development implementation, not a production release. No new paid model calls, production activation, database migration or customer-delivery operation was performed. The 29 retired fixed-epoch diagnostic tests are preserved as archival text and are not counted as passed.
+Actual Luna writer/reviewer runs for Mara and Ellis are retained locally, including every failed draft and uncertain billing reservation. Their original output bytes remain the pipeline evaluation baseline. These runs and deterministic tests do not establish production qualification, database migration or real customer email delivery. Current verification receipts must describe the source and tests actually exercised, separate from the older 20261016 offline receipts.

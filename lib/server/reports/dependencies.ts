@@ -1,10 +1,11 @@
 import type { JsonObject, ReportType } from "../../question-engine/types.ts";
 import { sha256Canonical } from "../../report-contracts/delivery-validator.ts";
 import { prisma } from "../../prisma.ts";
-import { decryptJson, encryptBytes, encryptJson, encryptionKeyringFromEnv, sha256, type EncryptionKeyring } from "../security/index.ts";
+import { decryptJson, decryptString, encryptBytes, encryptJson, encryptionKeyringFromEnv, sha256, type EncryptionKeyring } from "../security/index.ts";
+import { createProductionPwrp71Provider, productionProviderBudget } from "./provider-factory.ts";
 import { OpenRouterClient } from "../openrouter/client.ts";
 import { totalUsage } from "../openrouter/policy.ts";
-import type { OpenRouterUsage } from "../openrouter/types.ts";
+import type { OpenRouterUsage, ProviderPrivacyIdentityContext } from "../openrouter/types.ts";
 import type {
   DecryptedAssessmentSnapshot,
   GeneratedCanonicalArtifact,
@@ -19,6 +20,7 @@ import { buildPseudonymousPacketsFromCanonicalSnapshot } from "./packet-builder.
 import { classifyReportFailure, failReportAttempt, isCompleteActiveReportSet } from "./attempts.ts";
 import { reportGenerationReadiness, runReportPreflight } from "./preflight.ts";
 import { assertCanonicalCompletionBoundary, assertNormalCompletionBoundary } from "../assessment/completion-boundary.ts";
+import { isRespondentNameFieldKey } from "./content-boundary.ts";
 
 interface SnapshotRow {
   id: string;
@@ -41,6 +43,13 @@ interface SnapshotRow {
     canonicalJsonNonce: Uint8Array;
     encryptionKeyVersion: string;
   }>;
+  assessmentSession?: {
+    userId: string | null;
+    contactEmailHash: string | null;
+    contactEmailCiphertext: Uint8Array | null;
+    contactEmailNonce: Uint8Array | null;
+    encryptionKeyVersion: string;
+  };
 }
 
 interface RunRow {
@@ -107,7 +116,38 @@ function packetsFromSnapshot(snapshot: JsonObject): readonly JsonObject[] | unde
   return undefined;
 }
 
+function snapshotIdentityValues(value: unknown): ProviderPrivacyIdentityContext {
+  const respondentNames: string[] = [];
+  const accountIds: string[] = [];
+  const emails: string[] = [];
+  const otherIdentityTokens: string[] = [];
+  const visit = (current: unknown): void => {
+    if (Array.isArray(current)) {
+      current.forEach(visit);
+      return;
+    }
+    if (!current || typeof current !== "object") return;
+    for (const [key, child] of Object.entries(current as Record<string, unknown>)) {
+      const normalized = key.toLowerCase().replace(/[^a-z]/gu, "");
+      if (typeof child === "string") {
+        if (isRespondentNameFieldKey(key)) respondentNames.push(child);
+        if (normalized.includes("email")) emails.push(child);
+        if (normalized.includes("account") || normalized.includes("acct") || normalized.includes("userid")
+          || ["memberid", "memberidentifier", "membernumber", "customerid", "customeridentifier", "customernumber", "clientuserid", "externaluserid", "authuserid"].includes(normalized)) {
+          accountIds.push(child);
+        }
+        if (normalized.includes("emailhash") || normalized.includes("identitytoken")) otherIdentityTokens.push(child);
+      }
+      visit(child);
+    }
+  };
+  visit(value);
+  return { identityInventoryReviewed: true, respondentNames, accountIds, emails, otherIdentityTokens };
+}
+
 export class PrismaSnapshotPacketBoundary implements SnapshotPacketBoundary {
+  private readonly localIdentityContexts = new WeakMap<DecryptedAssessmentSnapshot, ProviderPrivacyIdentityContext>();
+
   constructor(
     private readonly database: ReportPrisma = reportPrisma,
     private readonly keyring: EncryptionKeyring = encryptionKeyringFromEnv(),
@@ -120,7 +160,10 @@ export class PrismaSnapshotPacketBoundary implements SnapshotPacketBoundary {
         snapshotId: input.snapshotId,
         completedPass: input.completedPass,
       },
-      include: { evidencePackets: { orderBy: { reportType: "asc" } } },
+      include: {
+        evidencePackets: { orderBy: { reportType: "asc" } },
+        assessmentSession: { select: { userId: true, contactEmailHash: true, contactEmailCiphertext: true, contactEmailNonce: true, encryptionKeyVersion: true } },
+      },
     });
     if (!row) throw new Error("Immutable assessment snapshot was not found for this pass.");
     if (row.completedPass !== 1 && row.completedPass !== 2) throw new Error("Snapshot completedPass is invalid.");
@@ -142,7 +185,7 @@ export class PrismaSnapshotPacketBoundary implements SnapshotPacketBoundary {
       nonce: Buffer.from(packet.canonicalJsonNonce),
       keyVersion: packet.encryptionKeyVersion,
     }, packetEncryptionPurpose(packet.id), this.keyring));
-    return {
+    const snapshot: DecryptedAssessmentSnapshot = {
       databaseId: row.id,
       assessmentSessionId: row.assessmentSessionId,
       snapshotId: row.snapshotId,
@@ -153,6 +196,35 @@ export class PrismaSnapshotPacketBoundary implements SnapshotPacketBoundary {
       canonicalSnapshot,
       persistedPackets,
     };
+    const identity = row.assessmentSession;
+    const sourceIdentity = snapshotIdentityValues({ canonicalSnapshot, persistedPackets });
+    const respondentNames = [...(sourceIdentity.respondentNames ?? [])];
+    const accountIds = [...(sourceIdentity.accountIds ?? [])];
+    const otherIdentityTokens = [...(sourceIdentity.otherIdentityTokens ?? [])];
+    const emails = [...(sourceIdentity.emails ?? [])];
+    if (identity) {
+      if (identity.userId) accountIds.push(identity.userId);
+      if (identity.contactEmailHash) otherIdentityTokens.push(identity.contactEmailHash);
+      if (identity.contactEmailCiphertext && identity.contactEmailNonce) {
+        emails.push(decryptString({
+          ciphertext: Buffer.from(identity.contactEmailCiphertext),
+          nonce: Buffer.from(identity.contactEmailNonce),
+          keyVersion: identity.encryptionKeyVersion,
+        }, `patternwork:assessment-email:${row.assessmentSessionId}`, this.keyring));
+      }
+    }
+    this.localIdentityContexts.set(snapshot, {
+      identityInventoryReviewed: true,
+      respondentNames,
+      accountIds,
+      otherIdentityTokens,
+      emails,
+    });
+    return snapshot;
+  }
+
+  getLocalProviderIdentityContext(snapshot: DecryptedAssessmentSnapshot): ProviderPrivacyIdentityContext | undefined {
+    return this.localIdentityContexts.get(snapshot);
   }
 
   async buildPseudonymousPackets(snapshot: DecryptedAssessmentSnapshot): Promise<readonly JsonObject[]> {
@@ -374,14 +446,13 @@ export function setReportWorkflowDependenciesForTests(dependencies: ReportWorkfl
 
 export function getReportWorkflowDependencies(): ReportWorkflowDependencies {
   if (testDependencies) return testDependencies;
-  const rawCap = process.env.OPENROUTER_MAX_COST_PER_ASSESSMENT_USD;
-  const capUsd = rawCap === undefined ? Number.NaN : Number(rawCap);
-  if (!Number.isFinite(capUsd) || capUsd <= 0) throw new Error("OPENROUTER_MAX_COST_PER_ASSESSMENT_USD must be configured as a positive number before live report generation.");
+  const budget = productionProviderBudget();
   return {
     snapshotBoundary: new PrismaSnapshotPacketBoundary(),
     persistence: new PrismaReportWorkflowPersistence(),
     provider: new OpenRouterClient(),
-    costCapMicros: Math.floor(capUsd * 1_000_000),
+    createPwrp71Provider: context => createProductionPwrp71Provider(context, budget),
+    costCapMicros: budget.aggregateCostCapMicros,
     preflight: async () => {
       const result = reportGenerationReadiness(await runReportPreflight());
       if (!result.ok) throw new Error(`preflight_configuration_failed:${result.checks.filter((check) => !check.ok).map((check) => `${check.name}=${check.message}`).join("; ")}`);

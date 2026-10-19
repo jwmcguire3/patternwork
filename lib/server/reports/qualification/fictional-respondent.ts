@@ -2,11 +2,6 @@ import type { Pwqe51RouteCandidate } from "../../assessment/pwqe51-router.ts";
 import type { Pwqe51SessionState } from "../../assessment/pwqe51-session.ts";
 import type { Pwqe51SourcePackage } from "../../../question-engine/pwqe51-source.ts";
 
-export type FictionalRespondentProvenance =
-  | "original_authored_fictional_response"
-  | "new_synthetic_deepening_answer"
-  | "new_fictional_control_outcome";
-
 export interface FictionalRespondentResponse {
   readonly responseId: string;
   readonly questionId: string;
@@ -15,8 +10,6 @@ export interface FictionalRespondentResponse {
   readonly selectedOptionIds?: readonly string[];
   readonly status?: "answered" | "none_fit" | "not_sure" | "no_event" | "not_applicable" | "skip";
   readonly mode?: "single" | "simultaneous" | "ordered" | "order_unknown";
-  readonly provenance?: string;
-  readonly sourceRef?: string;
   readonly basis?: "actual_recalled" | "reported_typicality";
   readonly replayOfOccurrenceId?: string;
 }
@@ -45,7 +38,6 @@ export interface FictionalDeepeningAnswerAudit {
   readonly rationale: string;
   readonly scenarioRole: "necessary_to_establish_original_scenario" | "incidental_routing";
   readonly changesIntendedSemanticTest: boolean;
-  readonly provenance: "new_synthetic_deepening_answer";
   readonly outcome: "answered" | "valid_missingness";
 }
 
@@ -54,8 +46,6 @@ export interface FictionalRespondentHistory {
   readonly episodes?: readonly { readonly occurrenceId: string; readonly episodeFamily: string }[];
   readonly mappingResponses: readonly FictionalRespondentResponse[];
   readonly deepeningResponses: readonly FictionalRespondentResponse[];
-  readonly originalAuthoredResponses?: readonly FictionalRespondentResponse[];
-  readonly responseProvenance?: readonly { readonly responseId: string; readonly origin?: string }[];
   readonly intendedDeepeningContext?: {
     readonly optedInTopics?: readonly string[];
     readonly focusTopics?: readonly string[];
@@ -120,8 +110,7 @@ export type FictionalRespondentControl =
   };
 
 export type FictionalRespondentDecision =
-  | { readonly kind: "original_authored_response"; readonly response: FictionalRespondentResponse }
-  | { readonly kind: "new_synthetic_deepening_answer"; readonly response: FictionalRespondentResponse; readonly audit: FictionalDeepeningAnswerAudit }
+  | { readonly kind: "response"; readonly response: FictionalRespondentResponse; readonly audit?: FictionalDeepeningAnswerAudit }
   | { readonly kind: "valid_missingness"; readonly response: FictionalRespondentResponse; readonly audit: FictionalDeepeningAnswerAudit }
   | { readonly kind: "unresolved"; readonly reason: string };
 
@@ -132,7 +121,7 @@ export interface FictionalRespondentContext {
   readonly questionSource: Pwqe51SourcePackage;
   readonly occurrenceReferenceToServerId: Readonly<Record<string, string>>;
   readonly acceptedSourceResponses: readonly FictionalRespondentFact[];
-  readonly matchingOriginalResponses: readonly FictionalRespondentResponse[];
+  readonly matchingResponses: readonly FictionalRespondentResponse[];
 }
 
 function sourceReferenceFor(serverOccurrenceId: string, occurrenceMap: Readonly<Record<string, string>>): string {
@@ -451,13 +440,13 @@ function decisionForQuestion(context: FictionalRespondentContext, facts: readonl
 }
 
 /**
- * Selects only after the production router has issued `candidate`. Original
- * answers are passed in only after exact question, step, variant, occurrence,
- * replay-parent, and comparison binding checks have succeeded.
+ * Selects only after the production router has issued `candidate`. Matching
+ * source answers are passed in only after exact question, step, variant,
+ * occurrence, replay-parent, and comparison binding checks have succeeded.
  */
 export function decideFictionalRespondent(context: FictionalRespondentContext): FictionalRespondentDecision {
-  const original = context.matchingOriginalResponses[0];
-  if (original) return { kind: "original_authored_response", response: original };
+  const matching = context.matchingResponses[0];
+  if (matching) return { kind: "response", response: matching };
 
   const current = context.state.currentInteraction;
   if (!current || current.questionId !== context.candidate.questionId || current.stepId !== context.candidate.stepId
@@ -507,8 +496,6 @@ export function decideFictionalRespondent(context: FictionalRespondentContext): 
     mode,
     ...(planned.basis ? { basis: planned.basis } : {}),
     ...(planned.replayOfOccurrenceId ? { replayOfOccurrenceId: planned.replayOfOccurrenceId } : {}),
-    provenance: "new_synthetic_deepening_answer",
-    sourceRef: `router-issued:${context.candidate.questionId}/${context.candidate.stepId};occurrence:${occurrenceReference}`,
   };
   const audit: FictionalDeepeningAnswerAudit = {
     profileId: context.history.profile.id,
@@ -534,11 +521,10 @@ export function decideFictionalRespondent(context: FictionalRespondentContext): 
     rationale: planned.rationale,
     scenarioRole: planned.scenarioRole ?? "incidental_routing",
     changesIntendedSemanticTest: planned.changesIntendedSemanticTest ?? false,
-    provenance: "new_synthetic_deepening_answer",
     outcome: planned.optionId ? "answered" : "valid_missingness",
   };
   return planned.optionId
-    ? { kind: "new_synthetic_deepening_answer", response, audit }
+    ? { kind: "response", response, audit }
     : { kind: "valid_missingness", response, audit };
 }
 

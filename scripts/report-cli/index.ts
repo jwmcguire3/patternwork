@@ -5,7 +5,7 @@ export interface ReportCliArguments { readonly input: string; readonly output: s
 export function parseReportCliArguments(argv: readonly string[]): ReportCliArguments {
   const value = (flag: string) => { const index = argv.indexOf(flag); return index >= 0 ? argv[index + 1] : undefined; };
   const input = value("--input"); const output = value("--output"); const persistAssessmentId = value("--persist-assessment");
-  if (!input || !output) throw new Error("Usage: npm run reports:codex -- --input <results-or-packet.json> --output <directory> [--persist-assessment <id>]");
+  if (!input || !output) throw new Error("Usage: npm run reports:codex -- --input <results-or-packet.json> --output <directory> [--persist-assessment <id>] (external generation is retired; use npm run reports:dev with explicit budgets)");
   return { input, output, ...(persistAssessmentId ? { persistAssessmentId } : {}) };
 }
 

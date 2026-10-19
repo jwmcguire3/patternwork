@@ -73,3 +73,6 @@ $RECYCLE.BIN/
 
 # Local assessment content and provider journals; never commit.
 .report-dev/
+.codex-temp/
+/node-compile-cache/
+/tsx-jwmcg/

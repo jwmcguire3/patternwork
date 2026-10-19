@@ -8,7 +8,7 @@ Explain what the person does, what that move is trying to accomplish when establ
 
 Show how the pattern changes with practical demands, another person's availability, room to think, lower input, or effective help when those conditions appear in the evidence. Continued functioning, feeling better, regained words, and wider choice are not interchangeable. Costs and benefits require support; neither is obligatory.
 
-Use simple working handles for patterns only when they make the explanation easier to follow. Mapping does not need an IFS cast, a nervous-system ladder, or an attachment-style verdict. A functional interpretation may be worthwhile without a theoretical label. Do not call an organizing hypothesis a settled personality fact.
+Use simple working handles for patterns only when they make the explanation easier to follow. Mapping does not need an IFS cast, a nervous-system ladder, or an attachment-style verdict. A functional interpretation may be worthwhile without a theoretical label. Explain a consequential connection or contrast when the source permits it; naming all the scenes does not itself explain the pattern. Do not call an organizing hypothesis a settled personality fact.
 
 A single well-described situation can support a conditional description of how a response operated there, not a lifetime rule. Multiple scenarios do not prove recurrence unless their relationships support that inference. Give counterexamples and ordinary explanations their due. Unknown answers and opted-out areas should limit the claim, not become findings about the person's deficits.
 

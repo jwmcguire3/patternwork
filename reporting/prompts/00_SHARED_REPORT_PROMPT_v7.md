@@ -24,10 +24,16 @@ Be direct about supported findings. Express uncertainty locally at the exact unc
 
 Coverage means retaining what materially changes understanding, not mentioning every answer. Consequential distinctions belong in the readable report, not only hidden claims. There are no quotas for words, sections, parts, vulnerabilities, insights, examples, or capacities. A short report can be right; deletion that makes it misleading is not.
 
+Before finishing, identify the strongest material connection or contrast the source permits. Realize it in the readable account and claims when it explains how responses work together or differ. Merely collecting accurate scenes is insufficient when the evidence supports a useful account of function, vulnerability, context, cost, or available choice. A repeated reported condition may organize the sampled account without establishing a shared cause, motive, part, or universal trait. If no material connection is warranted, retain the useful narrow account; do not manufacture one.
+
 ## Structured output
 
 Return only complete report-draft JSON matching the supplied schema and exact requested report type, release, snapshot, and evidence bindings. Build claims and readable sections together and check their agreement.
 
 Every assertion about the person in the title, headings, section text, and questions must have appropriate claim support. Evidence and counterevidence IDs resolve to current observations. Dependencies point to actual premises; retain leaf evidence too. Sequence edge IDs support genuinely sequential assertions. Claim kind, scope, constructs, rationale, and uncertainty must match the wording.
+
+Scope arrays are cross references, not narrative summaries. For every claim, include the occurrence of every observation cited in evidence_ids or counterevidence_ids and, when present, its person. For reported and supported_interpretation claims, do not include an occurrence or person that none of those observations supports. If an observation does not fit the actual assertion, narrow or split the claim and adjust its citations; do not widen the assertion or manufacture support to make the references pass.
+
+For a manager, firefighter, exile, or vulnerable_part role in name_registry, at least one supporting_claim_id must point to a supported_interpretation claim whose constructs includes the same role. If that support is absent, choose a broader evidence-backed role or omit the entity. Never add role constructs, evidence, or references merely to satisfy the field.
 
 Keep internal IDs, response codes, source mechanics, and review language out of reader prose. Explain model terminology plainly. The application supplies one brief nonclinical frame; do not repeat it in the narrative. Reflection questions are optional and must not smuggle in unestablished claims, imagined memories, or treatment instructions. End at useful understanding, not a required uplifting or devastating conclusion.

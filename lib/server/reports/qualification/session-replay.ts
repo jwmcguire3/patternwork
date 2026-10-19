@@ -23,7 +23,6 @@ import { preparePwrp71Request } from "../pwrp71-adapter.ts";
 import { pwrp71CanonicalResponseEvidenceFromRoute } from "../pwrp71-response-evidence.ts";
 import type { Pwrp71SourcePackage } from "../pwrp71-source.ts";
 
-export type FictionalAnswerProvenance = "original_authored_fictional_response" | "new_synthetic_mapping_response" | "new_synthetic_deepening_answer" | "new_fictional_control_outcome";
 export interface FictionalMappingEntryTopicOptIn {
   readonly controlId: string;
   readonly topic: string;
@@ -32,15 +31,11 @@ export interface FictionalMappingEntryTopicOptIn {
   readonly archivedPermissionProvenance: "original_authored_configuration" | "new_synthetic_mapping_control";
   readonly baselineReplayApplicationBoundary: "deepening_start";
 }
-export interface FictionalResponse extends Pwqe51CanonicalResponse {
-  readonly provenance?: FictionalAnswerProvenance;
-  readonly sourceRef?: string;
-}
+export type FictionalResponse = Pwqe51CanonicalResponse;
 export interface FictionalHistoryV2 {
   readonly schemaVersion: "PWQE51-FICTIONAL-HISTORY-V2";
   readonly profile: { readonly id: string; readonly title?: string };
   readonly source?: Readonly<Record<string, unknown>>;
-  readonly responseProvenance?: readonly { readonly responseId: string; readonly origin: string; readonly authoredSourceRef?: string | null; readonly usage?: string; readonly note?: string }[];
   readonly episodes?: readonly { readonly occurrenceId: string; readonly episodeFamily: string; readonly basis: string; readonly origin: string; readonly archivedOccurrenceId?: string }[];
   readonly mappingResponses: readonly FictionalResponse[];
   readonly deepeningResponses: readonly FictionalResponse[];
@@ -58,10 +53,9 @@ export interface FictionalSessionReplayResult {
   readonly profileId: string;
   readonly state: Pwqe51SessionState;
   readonly occurrenceReferenceToServerId: Readonly<Record<string, string>>;
-  readonly submitted: readonly { readonly sourceResponseId: string; readonly runtimeResponseId: string; readonly questionId: string; readonly occurrenceId: string; readonly stepId: string; readonly variantId?: string; readonly selectedOptionIds: readonly string[]; readonly status: string; readonly mode: string; readonly basis?: string; readonly targetIds: readonly string[]; readonly replayOfOccurrenceId?: string; readonly administrationSequence: number; readonly phase: "mapping" | "deepening"; readonly provenance: FictionalAnswerProvenance }[];
+  readonly submitted: readonly { readonly sourceResponseId: string; readonly runtimeResponseId: string; readonly questionId: string; readonly occurrenceId: string; readonly stepId: string; readonly variantId?: string; readonly selectedOptionIds: readonly string[]; readonly status: string; readonly mode: string; readonly basis?: string; readonly targetIds: readonly string[]; readonly replayOfOccurrenceId?: string; readonly administrationSequence: number; readonly phase: "mapping" | "deepening" }[];
   readonly routingTrace: readonly { readonly phase: "mapping" | "deepening"; readonly candidate: Pwqe51RouteCandidate; readonly renderedQuestionId: string; readonly result: "accepted" | "replay_binding" | "respondent_control" | "diverged"; readonly sourceResponseId?: string; readonly reason?: string }[];
   readonly replayDecisions: readonly { readonly decisionId: string; readonly sourceOccurrenceId: string; readonly replayOccurrenceId?: string; readonly outcome: Pwqe51ReplayBindingOutcome; readonly sourceOccurrenceReference: string }[];
-  readonly responseProvenance: readonly { readonly sourceResponseId: string; readonly runtimeResponseId?: string; readonly origin: string; readonly authoredSourceRef?: string | null; readonly usage?: string; readonly accepted: boolean }[];
   readonly syntheticDeepeningAnswerAudit: readonly FictionalDeepeningAnswerAudit[];
   readonly syntheticRespondentControls: readonly FictionalRespondentControl[];
   readonly episodeRegistry: readonly { readonly fixtureOccurrenceReference: string; readonly serverOccurrenceId?: string; readonly episodeFamily?: string; readonly origin?: string }[];
@@ -71,7 +65,7 @@ export interface FictionalSessionReplayResult {
   readonly contextDecisions: { readonly optedInTopics: readonly string[]; readonly mappingEntryTopicOptIns: readonly FictionalMappingEntryTopicOptIn[]; readonly details: readonly string[]; readonly focusOccurrenceId?: string; readonly focusTopics: readonly string[]; readonly focusTopicsApplied: boolean; readonly reason?: string; readonly distinctness: readonly { readonly sourceReference: string; readonly otherReference: string; readonly outcome: string; readonly status: "applied" | "unavailable"; readonly basis: "router_replay_binding" | "pass_two_context" | "router_explicit_different_event_prompt" | "unavailable"; readonly sourceOccurrenceId?: string; readonly otherOccurrenceId?: string; readonly reason?: string }[]; readonly comparisonBindings: readonly { readonly responseId: string; readonly occurrenceIds: readonly [string, string]; readonly applied: boolean }[] };
   readonly referentRoleBindings: readonly { readonly fixtureOccurrenceReference: string; readonly serverOccurrenceId?: string; readonly slot: string; readonly role: string; readonly origin: string }[];
   readonly fictionalControlHistory: { readonly declaredMappingControls: FictionalHistoryV2["mappingControls"]; readonly runtimeControls: Pwqe51SessionState["controls"]; readonly runtimeMissingness: Pwqe51SessionState["routerResult"]["missingness"] };
-  readonly unreachedOriginalAnswers: readonly { readonly responseId: string; readonly questionId: string; readonly occurrenceId: string; readonly classification: "eligible_but_not_reached" | "ineligible_in_current_context" | "intentionally_forbidden" | "source_contract_mismatch" | "implementation_defect"; readonly reason: string }[];
+  readonly unreachedSourceResponses: readonly { readonly responseId: string; readonly questionId: string; readonly occurrenceId: string; readonly classification: "eligible_but_not_reached" | "ineligible_in_current_context" | "intentionally_forbidden" | "source_contract_mismatch" | "implementation_defect"; readonly reason: string }[];
   readonly firstDivergence?: string;
   readonly mappingComplete: boolean;
   readonly deepeningStarted: boolean;
@@ -285,7 +279,6 @@ export function replayFictionalPwqe51Session(input: {
   const submitted: FictionalSessionReplayResult["submitted"] extends readonly (infer T)[] ? T[] : never = [];
   const trace: FictionalSessionReplayResult["routingTrace"] extends readonly (infer T)[] ? T[] : never = [];
   const replayDecisions: FictionalSessionReplayResult["replayDecisions"] extends readonly (infer T)[] ? T[] : never = [];
-  const sourceProvenance = new Map((history.responseProvenance ?? []).map((entry) => [entry.responseId, entry]));
   const sourceContractMismatches = new Map<string, string>();
   const syntheticDeepeningAnswerAudit: FictionalDeepeningAnswerAudit[] = [];
   const syntheticRespondentControls = [...fictionalRespondentTopicControls(history)];
@@ -393,7 +386,7 @@ export function replayFictionalPwqe51Session(input: {
         state = advancePwqe51Session(state, { completionState: "SKIPPED", responseId, selectedOptionIds: [] }, questionSource);
         const runtimeId = runtimeResponseId(history.profile.id, phase, responseId, candidate.occurrenceId ?? "");
         submitted.push({ sourceResponseId: responseId, runtimeResponseId: runtimeId, questionId: candidate.questionId, occurrenceId: candidate.occurrenceId!, stepId: candidate.stepId,
-          selectedOptionIds: [], status: "skip", mode: "single", targetIds: candidate.targetIds, administrationSequence: state.responses.length, phase, provenance: "new_fictional_control_outcome" });
+          selectedOptionIds: [], status: "skip", mode: "single", targetIds: candidate.targetIds, administrationSequence: state.responses.length, phase });
         syntheticRespondentControls.push({ kind: "forbidden_question_discrepancy", questionId: candidate.questionId,
           sourceResponseIds: withheld.map((answer) => answer.sourceAnswerRef ?? answer.questionId), resolution: "respondent_skip",
           rationale: `The genuine router issued ${candidate.questionId}, which the fictional source plan explicitly forbids. The respondent used the supported skip control; no prohibited authored option was submitted.`,
@@ -418,11 +411,11 @@ export function replayFictionalPwqe51Session(input: {
             status: answer.status,
             evidenceKind: answer.phase === "mapping" ? "mapping_response" as const : "accepted_deepening_response" as const,
           })),
-          matchingOriginalResponses: possible,
+          matchingResponses: possible,
         });
-        if (decision.kind === "original_authored_response" || decision.kind === "new_synthetic_deepening_answer" || decision.kind === "valid_missingness") {
+        if (decision.kind === "response" || decision.kind === "valid_missingness") {
           response = decision.response as FictionalResponse;
-          if (decision.kind !== "original_authored_response") syntheticDeepeningAnswerAudit.push(decision.audit);
+          if (decision.audit) syntheticDeepeningAnswerAudit.push(decision.audit);
         } else {
           const reason = decision.reason;
           trace.push({ phase, candidate, renderedQuestionId: rendered.questionId, result: "diverged", reason });
@@ -442,7 +435,7 @@ export function replayFictionalPwqe51Session(input: {
           const runtimeId = runtimeResponseId(history.profile.id, phase, responseId, candidate.occurrenceId);
           submitted.push({ sourceResponseId: responseId, runtimeResponseId: runtimeId, questionId: candidate.questionId, occurrenceId: candidate.occurrenceId,
             stepId: candidate.stepId, variantId: candidate.variantId, selectedOptionIds: [], status: "skip", mode: "single", targetIds: candidate.targetIds,
-            administrationSequence: state.responses.length, phase, provenance: "new_fictional_control_outcome" });
+            administrationSequence: state.responses.length, phase });
           syntheticRespondentControls.push({ kind: "source_contract_mismatch", questionId: candidate.questionId, variantId: candidate.variantId,
             sourceResponseIds: mismatchedRows.map((row) => row.responseId), resolution: "respondent_skip",
             rationale: `The router issued ${candidate.questionId}, but the available fictional answer uses a different base item contract. The respondent used the supported skip control and preserved the source response without translating it.`,
@@ -483,13 +476,6 @@ export function replayFictionalPwqe51Session(input: {
         divergence ??= reason;
         break;
       }
-      const provenance = response.provenance ?? (response.responseId.includes("SYN") ? "new_synthetic_mapping_response" : "original_authored_fictional_response");
-      if (phase === "deepening" && provenance === "new_synthetic_mapping_response") {
-        const reason = "Synthetic Mapping authorization cannot supply a Deepening answer.";
-        trace.push({ phase, candidate, renderedQuestionId: rendered.questionId, result: "diverged", sourceResponseId: response.responseId, reason });
-        divergence ??= reason;
-        break;
-      }
       const id = runtimeResponseId(history.profile.id, phase, response.responseId, candidate.occurrenceId);
       state = advancePwqe51Session(state, {
         completionState: response.status === "skip" ? "SKIPPED" : "COMPLETED",
@@ -503,7 +489,7 @@ export function replayFictionalPwqe51Session(input: {
       submitted.push({ sourceResponseId: response.responseId, runtimeResponseId: id, questionId: response.questionId, occurrenceId: candidate.occurrenceId, stepId: candidate.stepId,
         ...(candidate.variantId ? { variantId: candidate.variantId } : {}), selectedOptionIds: response.selectedOptionIds ?? [], status: response.status ?? "answered", mode: response.mode ?? "single",
         ...(rendered.rootBasisRequired && response.basis ? { basis: response.basis } : {}), targetIds: candidate.targetIds, ...(candidate.replayOfOccurrenceId ? { replayOfOccurrenceId: candidate.replayOfOccurrenceId } : {}),
-        administrationSequence: state.responses.length, phase, provenance });
+        administrationSequence: state.responses.length, phase });
       trace.push({ phase, candidate, renderedQuestionId: rendered.questionId, result: "accepted", sourceResponseId: response.responseId });
     }
   };
@@ -570,12 +556,9 @@ export function replayFictionalPwqe51Session(input: {
   }
 
   const reachedIds = new Set(submitted.map((row) => row.sourceResponseId));
-  const provenanceByResponse = sourceProvenance;
   const allSourceAnswers = [...history.mappingResponses, ...history.deepeningResponses];
-  const unreachedOriginalAnswers = allSourceAnswers
-    .filter((response) => !reachedIds.has(response.responseId)
-      && !provenanceByResponse.get(response.responseId)?.origin.includes("synthetic_mapping_answer")
-      && response.provenance !== "new_synthetic_mapping_response")
+  const unreachedSourceResponses = allSourceAnswers
+    .filter((response) => !reachedIds.has(response.responseId))
     .map((response) => {
       const rejected = state.routerResult.rejectedCandidates.find((candidate) => candidate.questionId === response.questionId);
       const phase = history.mappingResponses.some((entry) => entry.responseId === response.responseId) ? "mapping" : "deepening";
@@ -594,7 +577,7 @@ export function replayFictionalPwqe51Session(input: {
          });
       const mismatch = sourceContractMismatches.has(response.responseId)
         || (response.questionId === "M10" && state.routerResult.next?.questionId === "M10" && state.routerResult.next.variantId === "M10.observable"
-          && sourceProvenance.get(response.responseId)?.origin === "original_authored_fictional_answer");
+          && !responseMatchesAuthoredSelection(state.routerResult.next, response, questionSource));
       const forbidden = history.mappingControls?.some((control) => /forbidden|do_not_administer|exclude/iu.test(control.kind)
         && (control as { questionId?: string }).questionId === response.questionId) ?? false;
       const classification = forbidden ? "intentionally_forbidden" as const
@@ -607,17 +590,6 @@ export function replayFictionalPwqe51Session(input: {
             : validUnreached ? "This authored answer matches a server-eligible candidate for the correct occurrence, but the router ranked another candidate first before the replay stopped."
               : rejected?.reason ?? (divergence ?? (issued ? "The emitted question did not match the authored occurrence, step, variant, or replay parent binding." : runtimeOccurrence ? "No route-issued candidate or explicit eligible decision supports administering this authored response in the current context." : "The fixture occurrence has no server-issued counterpart in the current session context.")) };
     });
-  const responseProvenance = allSourceAnswers.map((response) => {
-    const entry = provenanceByResponse.get(response.responseId);
-    const origin = entry?.origin ?? response.provenance ?? (response.responseId.includes("SYN") ? "new_synthetic_mapping_answer" : "original_authored_fictional_answer");
-    return { sourceResponseId: response.responseId, ...(submitted.find((answer) => answer.sourceResponseId === response.responseId) ? { runtimeResponseId: submitted.find((answer) => answer.sourceResponseId === response.responseId)!.runtimeResponseId } : {}), origin, ...(entry && "authoredSourceRef" in entry ? { authoredSourceRef: entry.authoredSourceRef } : {}), ...(entry?.usage ? { usage: entry.usage } : {}), accepted: reachedIds.has(response.responseId) };
-  });
-  for (const answer of submitted.filter((entry) => entry.provenance === "new_synthetic_deepening_answer")) {
-    responseProvenance.push({ sourceResponseId: answer.sourceResponseId, runtimeResponseId: answer.runtimeResponseId, origin: "new_synthetic_deepening_answer", authoredSourceRef: answer.sourceResponseId, usage: "source_bound_fictional_deepening_context_only", accepted: true });
-  }
-  for (const answer of submitted.filter((entry) => entry.provenance === "new_fictional_control_outcome")) {
-    responseProvenance.push({ sourceResponseId: answer.sourceResponseId, runtimeResponseId: answer.runtimeResponseId, origin: "new_fictional_control_outcome", authoredSourceRef: null, usage: "explicit_router_control_or_forbidden_question_skip", accepted: true });
-  }
   const episodeRegistry = (history.episodes ?? []).map((episode) => ({ fixtureOccurrenceReference: episode.occurrenceId, ...(occurrenceMap[episode.occurrenceId] ? { serverOccurrenceId: occurrenceMap[episode.occurrenceId] } : {}), episodeFamily: episode.episodeFamily, origin: episode.origin }));
   const context = history.intendedDeepeningContext ?? {};
   const decisionPairs = new Set((state.routerInput.distinctPairs ?? []).map((pair) => [...pair].sort().join("\u0000")));
@@ -681,9 +653,9 @@ export function replayFictionalPwqe51Session(input: {
   const semanticCore = { status: coreStatus, requiredSourceResponseIds, acceptedSourceResponseIds,
     ...(coreStatus === "unavailable" ? { reason: "The source case contains no authored Deepening semantic anchors; a full session may not claim that Deepening semantically qualified this profile." }
       : coreStatus === "incomplete" ? { reason: `${acceptedSourceResponseIds.length} of ${requiredSourceResponseIds.length} exact source-bound semantic-core responses were accepted.` } : {}) };
-  return { profileId: history.profile.id, state, occurrenceReferenceToServerId: occurrenceMap, submitted, routingTrace: trace, replayDecisions, responseProvenance, episodeRegistry,
+  return { profileId: history.profile.id, state, occurrenceReferenceToServerId: occurrenceMap, submitted, routingTrace: trace, replayDecisions, episodeRegistry,
     syntheticDeepeningAnswerAudit, syntheticRespondentControls,
     missingness: state.routerResult.missingness, sequenceGraph: state.routerResult.sequenceEdges, finalTargetResolutions: state.routerResult.targets, contextDecisions, referentRoleBindings,
     fictionalControlHistory: { declaredMappingControls: history.mappingControls ?? [], runtimeControls: state.controls, runtimeMissingness: state.routerResult.missingness },
-    unreachedOriginalAnswers, ...(divergence ? { firstDivergence: divergence } : {}), mappingComplete, deepeningStarted, deepeningComplete, semanticCore, packets };
+    unreachedSourceResponses, ...(divergence ? { firstDivergence: divergence } : {}), mappingComplete, deepeningStarted, deepeningComplete, semanticCore, packets };
 }

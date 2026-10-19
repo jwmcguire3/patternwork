@@ -7,7 +7,7 @@ import { PWQE51_RELEASE_IDENTITY } from "../../question-engine/pwqe51-source.ts"
 
 export const PWRP71_SOURCE_DIRECTORY = "reporting" as const;
 export const PWRP71_RELEASE_MANIFEST_PATH = `${PWRP71_SOURCE_DIRECTORY}/contracts/report_release_manifest.json` as const;
-export const PWRP71_RELEASE_MANIFEST_SHA256 = "890d555b5a7b59955d29352cb3f192120653cb901996934eccc1de16bda2fccb" as const;
+export const PWRP71_RELEASE_MANIFEST_SHA256 = "188f85f647719b044f2d7c7604991323f56af4025e949aef7ac6ad3084f8dfe2" as const;
 
 export const PWRP71_PROMPT_FILES = {
   shared: "prompts/00_SHARED_REPORT_PROMPT_v7.md",
@@ -49,6 +49,26 @@ export interface Pwrp71ReportPolicy {
   readonly repair_prompt: string;
   readonly draft_schema: string;
   readonly review_schema: string;
+  readonly provider_data_handling: {
+    readonly assessment_content: "permitted_when_respondent_names_account_ids_and_emails_are_omitted";
+    readonly test_assessment_content: "permitted_for_all_report_types_when_respondent_names_account_ids_and_emails_are_omitted";
+    readonly respondent_full_name: "prohibited";
+    readonly respondent_first_name: "prohibited";
+    readonly respondent_last_name: "prohibited";
+    readonly respondent_alias_or_nickname: "prohibited";
+    readonly respondent_identity_fields: "prohibited";
+    readonly respondent_account_id: "prohibited";
+    readonly respondent_email: "prohibited";
+    readonly session_identifier: "permitted_when_schema_validated_as_opaque_id";
+    readonly snapshot_identifier: "permitted_when_schema_validated_as_opaque_id";
+    readonly author_generated_entity_labels: "permitted_when_schema_validated";
+    readonly additional_privacy_approval: "not_required_for_identity_free_test_assessment_evidence";
+    readonly provider_destination: "openrouter";
+    readonly provider_retention: "zdr_not_required_no_zero_retention_promise";
+    readonly provider_data_collection: "deny_required";
+    readonly test_dispatch_paths: "budgeted_report_dev_and_journaled_pwrp71_qualification_only";
+    readonly production_activation: "separate_reviewed_qualification_and_release_approval";
+  };
 }
 
 export interface Pwrp71SourcePackage {
@@ -56,6 +76,7 @@ export interface Pwrp71SourcePackage {
   readonly manifestSha256: typeof PWRP71_RELEASE_MANIFEST_SHA256;
   readonly policy: Pwrp71ReportPolicy;
   readonly prompts: Readonly<Record<Pwrp71PromptKey, string>>;
+  readonly constructGuide: string;
   readonly schemas: { readonly reportDraft: JsonSchema; readonly reportReview: JsonSchema };
 }
 
@@ -172,11 +193,12 @@ async function readJson<T>(workspaceRoot: string, relativePath: string): Promise
 async function loadPackage(workspaceRoot: string): Promise<Pwrp71SourcePackage> {
   const integrity = await verifyPwrp71SourceIntegrity(workspaceRoot);
   if (!integrity.ok) throw new Error(`PWRP 7.1 source integrity failed: ${JSON.stringify(integrity.issues)}`);
-  const [policy, promptValues, reportDraft, reportReview] = await Promise.all([
+  const [policy, promptValues, reportDraft, reportReview, constructGuide] = await Promise.all([
     readJson<Pwrp71ReportPolicy>(workspaceRoot, POLICY_FILE),
     Promise.all(Object.values(PWRP71_PROMPT_FILES).map((file) => readFile(path.join(workspaceRoot, PWRP71_SOURCE_DIRECTORY, ...file.split("/")), "utf8"))),
     readJson<JsonSchema>(workspaceRoot, DRAFT_SCHEMA_FILE),
     readJson<JsonSchema>(workspaceRoot, REVIEW_SCHEMA_FILE),
+    readFile(path.join(workspaceRoot, PWRP71_SOURCE_DIRECTORY, "contracts/CONSTRUCT_GUIDE.md"), "utf8"),
   ]);
   if (policy.release !== integrity.value.report_release
     || policy.compatible_question_release !== PWQE51_RELEASE_IDENTITY.questionRelease
@@ -185,7 +207,25 @@ async function loadPackage(workspaceRoot: string): Promise<Pwrp71SourcePackage> 
     || policy.activation !== "requires_external_provider_qualification_and_authorized_release_approval"
     || policy.runtime_implementation !== "shared_runtime_adapter"
     || policy.findings_cardinality.minimum !== null || policy.findings_cardinality.maximum !== null
-    || policy.findings_cardinality.theoretical_balance_required !== false) {
+    || policy.findings_cardinality.theoretical_balance_required !== false
+    || policy.provider_data_handling?.assessment_content !== "permitted_when_respondent_names_account_ids_and_emails_are_omitted"
+    || policy.provider_data_handling?.respondent_full_name !== "prohibited"
+    || policy.provider_data_handling?.test_assessment_content !== "permitted_for_all_report_types_when_respondent_names_account_ids_and_emails_are_omitted"
+    || policy.provider_data_handling?.respondent_first_name !== "prohibited"
+    || policy.provider_data_handling?.respondent_last_name !== "prohibited"
+    || policy.provider_data_handling?.respondent_alias_or_nickname !== "prohibited"
+    || policy.provider_data_handling?.respondent_identity_fields !== "prohibited"
+    || policy.provider_data_handling?.respondent_account_id !== "prohibited"
+    || policy.provider_data_handling?.respondent_email !== "prohibited"
+    || policy.provider_data_handling?.session_identifier !== "permitted_when_schema_validated_as_opaque_id"
+    || policy.provider_data_handling?.snapshot_identifier !== "permitted_when_schema_validated_as_opaque_id"
+    || policy.provider_data_handling?.author_generated_entity_labels !== "permitted_when_schema_validated"
+    || policy.provider_data_handling?.additional_privacy_approval !== "not_required_for_identity_free_test_assessment_evidence"
+    || policy.provider_data_handling?.provider_destination !== "openrouter"
+    || policy.provider_data_handling?.provider_retention !== "zdr_not_required_no_zero_retention_promise"
+    || policy.provider_data_handling?.provider_data_collection !== "deny_required"
+    || policy.provider_data_handling?.test_dispatch_paths !== "budgeted_report_dev_and_journaled_pwrp71_qualification_only"
+    || policy.provider_data_handling?.production_activation !== "separate_reviewed_qualification_and_release_approval") {
     throw new Error("PWRP 7.1 report policy does not match the candidate source, activation gate, or unbounded findings contract.");
   }
   const prompts = Object.fromEntries(Object.keys(PWRP71_PROMPT_FILES).map((key, index) => [key, promptValues[index]])) as Record<Pwrp71PromptKey, string>;
@@ -204,6 +244,7 @@ async function loadPackage(workspaceRoot: string): Promise<Pwrp71SourcePackage> 
     manifestSha256: PWRP71_RELEASE_MANIFEST_SHA256,
     policy,
     prompts,
+    constructGuide,
     schemas: { reportDraft, reportReview },
   };
 }

@@ -110,6 +110,6 @@ test("all PWRP 7.1 draft report types and reviewer schema project to OpenAI stri
   }
   assertOpenAiStrictSchema(review, "$.review");
   assert.equal(countEnumAndConstNodes(draft) + countEnumAndConstNodes(review),
-    19,
-    "all 19 retained enum/const nodes are checked; conditional constraints remain locally validated");
+    26,
+    "all 26 retained enum/const nodes, including explanatory judgments, are checked; conditional constraints remain locally validated");
 });

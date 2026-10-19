@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test",
+    "test": "node scripts/run-tests.mjs",
     "test:contracts": "tsx --test tests/contracts/*.test.ts",
     "reports:codex": "tsx scripts/report-cli/index.ts",
     "reports:qualify": "tsx scripts/qualify-openrouter/index.ts",
@@ -39,6 +39,7 @@
   "dependencies": {
     "@prisma/client": "^6.7.0",
     "@react-email/components": "^1.0.12",
+    "@workflow/errors": "4.2.1",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "next": "16.0.7",

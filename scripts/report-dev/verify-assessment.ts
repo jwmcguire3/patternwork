@@ -1,3 +1,4 @@
+import { assertAssessmentOperations } from "./operation-transcript.ts";
 import type { Pwqe51SourcePackage } from "../../lib/question-engine/pwqe51-source.ts";
 import { compilePwqe51Route } from "../../lib/server/assessment/pwqe51-router.ts";
 import { isPwqe51SessionState } from "../../lib/server/assessment/pwqe51-session.ts";
@@ -9,6 +10,7 @@ const equal = (left: unknown, right: unknown) => canonical(left) === canonical(r
 
 /** Replay the recorded route; a self-consistent file hash alone is not administration evidence. */
 export function assertAssessmentRoute(value: AssessmentRecord, source: Pwqe51SourcePackage): void {
+  if (value.schema === "patternwork-completed-assessment-2") { assertAssessmentOperations(value, source); return; }
   if (value.questionSourceSha256 !== source.sourceManifestSha256 || !isPwqe51SessionState(value.mapping) || !isPwqe51SessionState(value.deepening)) {
     throw new Error("Assessment question-source or state schema is invalid.");
   }

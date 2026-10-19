@@ -175,7 +175,15 @@ export class PopplerPdfVerificationBoundary implements PdfVerificationBoundary {
     const pngPrefix = path.join(directory, "page");
     try {
       await writeFile(pdfPath, pdf);
-      await execFileAsync(popplerCommand("PDFTOTEXT_PATH", "pdftotext"), ["-layout", pdfPath, textPath], { windowsHide: true, maxBuffer: 8 * 1024 * 1024 });
+      // Some Windows Poppler distributions omit pdftotext. An explicitly
+      // configured Python+pypdf installation can extract the actual PDF text;
+      // page count and raster verification still use the Poppler tools below.
+      const python = process.env.PDF_PYTHON_PATH?.trim();
+      if (python) {
+        await execFileAsync(python, ["-c", "from pypdf import PdfReader; import pathlib,sys; pathlib.Path(sys.argv[2]).write_text('\\n'.join(page.extract_text() or '' for page in PdfReader(sys.argv[1]).pages), encoding='utf-8')", pdfPath, textPath], { windowsHide: true, maxBuffer: 8 * 1024 * 1024 });
+      } else {
+        await execFileAsync(popplerCommand("PDFTOTEXT_PATH", "pdftotext"), ["-layout", pdfPath, textPath], { windowsHide: true, maxBuffer: 8 * 1024 * 1024 });
+      }
       const { stdout } = await execFileAsync(popplerCommand("PDFINFO_PATH", "pdfinfo"), [pdfPath], { windowsHide: true });
       const pageMatch = stdout.match(/^Pages:\s+(\d+)\s*$/mu);
       if (!pageMatch) throw new Error("pdfinfo did not report a page count.");

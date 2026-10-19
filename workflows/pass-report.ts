@@ -19,10 +19,23 @@ import {
   dispatchReportFailureNotificationStep,
 } from "../lib/server/reports/steps.ts";
 
-function layerInput(reportType: "IFS" | "PV" | "ATT", prepared: PreparedReportInputs): JsonObject {
+export function layerInput(reportType: "IFS" | "PV" | "ATT", prepared: PreparedReportInputs): JsonObject {
   const packet = prepared.routerPacket;
-  if (!packet || prepared.contractVersion !== "v6") throw new Error(`Missing PWQE6 router packet for ${reportType}.`);
-  return { release_id: "PWQE-5.0.0-design.1", snapshot_id: prepared.snapshot.snapshotId, report_type: reportType, packet } as unknown as JsonObject;
+  if (!packet) throw new Error(`Missing router packet for ${reportType}.`);
+  if (prepared.contractVersion === "v6") {
+    return { release_id: "PWQE-5.0.0-design.1", snapshot_id: prepared.snapshot.snapshotId, report_type: reportType, packet } as unknown as JsonObject;
+  }
+  if (prepared.contractVersion === "v7.1") {
+    return {
+      report_release: "PWRP-7.1.0-candidate.1",
+      release_id: packet.release_id,
+      snapshot_id: prepared.snapshot.snapshotId,
+      evidence_sha256: packet.content_sha256,
+      report_type: reportType,
+      packet,
+    } as unknown as JsonObject;
+  }
+  throw new Error(`Missing supported router packet contract for ${reportType}.`);
 }
 
 async function requireGenerated(

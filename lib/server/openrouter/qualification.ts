@@ -17,6 +17,7 @@ import {
   type ReviewedQualificationManifest,
 } from "./policy.ts";
 import type { OpenRouterGenerationRequest, OpenRouterTransport } from "./types.ts";
+import { REVIEWED_IDENTITY_FREE_FIXTURE_CONTEXT } from "./privacy-boundary.ts";
 
 export { loadPwqe5OfflineQualificationFixtures } from "./pwqe5-qualification.ts";
 export type { Pwqe5OfflineNegativeCase, Pwqe5OfflineProfileFixture, Pwqe5OfflineQualificationFixtures } from "./pwqe5-qualification.ts";
@@ -413,7 +414,7 @@ export async function runOpenRouterQualification(options: RunQualificationOption
           maxOutputTokens: UNQUALIFIED_MOCK_MODEL_POLICY[reportType].maxOutputTokens,
           idempotencyKey: `qualification:${fixtureSet.fixtureSetSha256}:${key}`,
         };
-        const result = await options.provider.generate(request);
+        const result = await options.provider.generate(request, REVIEWED_IDENTITY_FREE_FIXTURE_CONTEXT);
         let issues: readonly ValidationIssue[] = [];
         let artifactPath: string | undefined;
         let artifactSha256: string | undefined;

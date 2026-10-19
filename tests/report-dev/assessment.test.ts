@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { loadPwqe51SourcePackage } from "../../lib/question-engine/pwqe51-source.ts";
-import { loadAssessment, runAssessmentPlan, writeImmutableJson, type AnswerPlan } from "../../scripts/report-dev/assessment.ts";
+import { loadAssessment, runAssessmentPlan, writeImmutableJson, sealAssessment, type AssessmentOperationEntry, type AnswerPlan } from "../../scripts/report-dev/assessment.ts";
 import { assertAssessmentRoute } from "../../scripts/report-dev/verify-assessment.ts";
 import { canonical, contentHash } from "../../scripts/report-dev/source.ts";
 import { assertNoRespondentClassification } from "../../lib/server/reports/content-boundary.ts";
@@ -35,7 +35,7 @@ for (const id of ["mara", "ellis"]) {
       const body=Object.fromEntries(Object.entries(tampered).filter(([key])=>key!=="contentSha256"));
       tampered.contentSha256=contentHash(canonical(body));
       const bad=path.join(directory,"rehash.json");await writeImmutableJson(bad,tampered);
-      await assert.rejects(loadAssessment(bad,source),/router result differs/);
+      await assert.rejects(loadAssessment(bad,source),/replay differs/);
     } finally {await rm(directory,{recursive:true,force:true});}
   });
 }
@@ -43,12 +43,12 @@ for (const id of ["mara", "ellis"]) {
 test("a valid hash cannot make a reordered or edited transcript eligible", async () => {
   const source=await sourcePromise, assessment=runAssessmentPlan(await plan("mara"),source);
   const edits=structuredClone(assessment);
-  [edits.transcript[0],edits.transcript[1]]=[edits.transcript[1],edits.transcript[0]];
-  assert.throws(()=>assertAssessmentRoute(edits,source),/transcript\/answer mismatch/);
+  [edits.transcript[1],edits.transcript[2]]=[edits.transcript[2],edits.transcript[1]];
+  assert.throws(()=>assertAssessmentRoute(edits,source),/Issued operation context mismatch/);
   const bad=structuredClone(assessment);
-  const first=bad.transcript[0] as {acceptedInput:{selectedOptionIds:string[]}};
+  const first=bad.transcript[1] as {acceptedInput:{selectedOptionIds:string[]}};
   first.acceptedInput.selectedOptionIds=["M01.foreign"];
-  assert.throws(()=>assertAssessmentRoute(bad,source),/transcript\/answer mismatch/);
+  assert.throws(()=>assertAssessmentRoute(bad,source));
 });
 
 test("answer plans reject unknown questions, invalid issued options and conflicting answers",async()=>{
@@ -66,4 +66,30 @@ test("origin labels cannot enter new records, including nested fields and former
     assert.throws(()=>assertNoRespondentClassification(value),/Retired respondent classification/);
   }
   assert.doesNotThrow(()=>assertNoRespondentClassification({responseId:"r",source_version:"v1",status:"answered"}));
+});
+
+// Construct the historical envelope from actual issued answers solely to exercise the retained v1 reader.
+// Existing stored assessments are never migrated or rewritten.
+test("historical v1 answer transcripts remain loadable with their original bytes and route checks", async()=>{
+ const source=await sourcePromise,current=runAssessmentPlan(await plan("mara"),source);
+ const transcript=(current.transcript as AssessmentOperationEntry[]).filter(row=>row.operation==="answer").map(row=>{
+  const acceptedInput={...row.acceptedInput} as Record<string,unknown>;delete acceptedInput.questionId;
+  return {issued:(row.issued as {interaction:unknown}).interaction,acceptedInput};
+ });
+ const legacy=sealAssessment({mapping:current.mapping,deepening:current.deepening,questionSourceSha256:current.questionSourceSha256,transcript});
+ assert.equal(legacy.schema,"patternwork-completed-assessment-1");assert.doesNotThrow(()=>assertAssessmentRoute(legacy,source));
+ const directory=await mkdtemp(path.join(os.tmpdir(),"pw-dev-v1-"));
+ try {
+  const file=path.join(directory,"original.json");await writeImmutableJson(file,legacy);const before=await readFile(file,"utf8");
+  assert.equal(canonical(await loadAssessment(file,source)),canonical(legacy));assert.equal(await readFile(file,"utf8"),before);
+  const edited=structuredClone(legacy);[edited.transcript[0],edited.transcript[1]]=[edited.transcript[1],edited.transcript[0]];
+  assert.throws(()=>assertAssessmentRoute(edited,source),/transcript\/answer mismatch/);
+ }finally{await rm(directory,{recursive:true,force:true});}
+});
+
+test("an immediately completed Deepening transition records engine completion without inventing answers",async()=>{
+ const source=await sourcePromise,base=await plan("mara");
+ const result=runAssessmentPlan({...base,optedInTopics:[],details:[],missingStatus:"not_sure",answers:[{phase:"mapping",questionId:"M01",status:"not_sure"}]},source);
+ assert.equal(result.deepening.responses.length,result.mapping.responses.length);
+ assert.equal(result.deepening.phase,"finished");assert.doesNotThrow(()=>assertAssessmentRoute(result,source));
 });

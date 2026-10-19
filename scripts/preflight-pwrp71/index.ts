@@ -128,7 +128,7 @@ async function main(): Promise<void> {
       preflightRequestRows.push({ profileId, status: "blocked", packetSha256: sha256Canonical(packet), issues: prepared.issues });
       continue;
     }
-    const prompt = buildGenerationPrompt(REPORT_TYPE, prepared.value.user_data);
+    const prompt = buildGenerationPrompt(REPORT_TYPE, prepared.value.user_data, "v7.1");
     const request = {
       model: modelPin.model,
       reasoningEffort: modelPin.reasoningEffort,
@@ -215,7 +215,7 @@ async function main(): Promise<void> {
       privacy: {
         privateNoteAndRawAnswerKeysExcludedByPreparedRequest: true,
         directIdentifierScanAppliedByPromptBuilder: true,
-        zeroDataRetentionRequested: true,
+        zeroDataRetentionRequired: false,
         dataCollectionDenied: true,
       },
       repairsAndReviews: {

@@ -37,6 +37,9 @@ async function generateOne(reportType: ReportType, generationInput: JsonObject, 
 }
 
 export async function runReportCli(input: RunCliInput): Promise<{ readonly reportTypes: readonly ReportType[]; readonly persisted: boolean }> {
+  if (!input.processBoundary) {
+    throw new Error("The legacy reports:codex external-generation path is disabled. Use the budgeted PWRP 7.1 reports:dev or journaled qualification path.");
+  }
   const workspaceRoot = path.resolve(input.workspaceRoot ?? process.cwd());
   const outputDirectory = path.resolve(input.outputDirectory);
   await mkdir(outputDirectory, { recursive: true });

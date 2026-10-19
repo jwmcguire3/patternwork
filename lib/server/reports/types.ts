@@ -5,7 +5,7 @@ import type {
   SynthesisAudit,
   SynthesisBundle,
 } from "../../report-contracts/types.ts";
-import type { OpenRouterTransport, OpenRouterUsage } from "../openrouter/types.ts";
+import type { OpenRouterTransport, OpenRouterUsage, ProviderPrivacyIdentityContext } from "../openrouter/types.ts";
 import type { totalUsage } from "../openrouter/policy.ts";
 import type { ActivatedReportModelPolicy } from "../openrouter/policy.ts";
 import type { ReportDeliveryBoundary } from "../email/types.ts";
@@ -59,6 +59,8 @@ export interface PreparedReportInputs {
 export interface SnapshotPacketBoundary {
   loadAndDecryptSnapshot(input: PassReportWorkflowInput): Promise<DecryptedAssessmentSnapshot>;
   buildPseudonymousPackets(snapshot: DecryptedAssessmentSnapshot): Promise<readonly JsonObject[]>;
+  /** Local-only identity values for the outbound guard; implementations must not persist or serialize them. */
+  getLocalProviderIdentityContext?(snapshot: DecryptedAssessmentSnapshot): ProviderPrivacyIdentityContext | undefined;
 }
 
 export type AggregatedOpenRouterUsage = ReturnType<typeof totalUsage>;
@@ -127,10 +129,22 @@ export interface ReportWorkflowPersistence {
   persistFailure(input: PassReportWorkflowInput, code: string, message: string, reportType?: ReportType, usages?: readonly OpenRouterUsage[]): Promise<void>;
 }
 
+export interface Pwrp71ProviderContext {
+  readonly input: PassReportWorkflowInput;
+  readonly prepared: PreparedReportInputs;
+  readonly reportType: ReportType;
+  readonly privacyIdentityContext?: ProviderPrivacyIdentityContext;
+}
+export interface BudgetedPwrp71Provider {
+  readonly provider: OpenRouterTransport;
+  readonly onPwrp71Event: (event: import("./generator.ts").Pwrp71GenerationEvent) => Promise<void>;
+}
+
 export interface ReportWorkflowDependencies {
   readonly claimAttempt?: (input: PassReportWorkflowInput) => Promise<"claimed" | "already_released">;
   readonly snapshotBoundary: SnapshotPacketBoundary;
   readonly provider: OpenRouterTransport;
+  readonly createPwrp71Provider?: (context: Pwrp71ProviderContext) => BudgetedPwrp71Provider;
   readonly persistence: ReportWorkflowPersistence;
   readonly workspaceRoot?: string;
   readonly costCapMicros?: number;

@@ -1,6 +1,6 @@
 # State / polyvagal-informed report — revision 2
 
-Use the shared contract. Set report_type to PV. Explain how lived state affects attention, language, thought, energy, sensation, action, social contact, and available choices. Let the actual movement and contrasts organize the report.
+Use the shared contract. Set report_type to PV. Explain how lived state affects attention, language, thought, energy, sensation, action, social contact, and available choices. Let the actual movement and contrasts organize the report. Connect state, practical context, and available action where warranted; this explanatory account needs no protective motive or IFS cast.
 
 Distinguish functioning from feeling settled, continuing a task from having flexibility, choosing not to speak from wanting to speak without words, and immediate relief from regained capacity. Mixed experiences belong together without claiming that one channel reveals the person's hidden truth. Do not infer dissociation, self-betrayal, or intentional suppression from a mismatch alone.
 

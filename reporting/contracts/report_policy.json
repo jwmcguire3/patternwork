@@ -19,11 +19,31 @@
     "maximum": null,
     "theoretical_balance_required": false
   },
-  "prompt_composition": "shared_plus_selected_layer_only",
+  "prompt_composition": "shared_plus_construct_guide_plus_selected_layer",
   "activation": "requires_external_provider_qualification_and_authorized_release_approval",
   "runtime_implementation": "shared_runtime_adapter",
   "repair_prompt": "prompts/07_REPAIR_REPORT_PROMPT.md",
   "compatible_question_release": "PWQE-5.1.0-candidate.1",
-  "interpretation_revision": 2,
-  "review_contract": "PWRP-REVIEW-7.1.0-candidate.2"
+  "interpretation_revision": 3,
+  "review_contract": "PWRP-REVIEW-7.1.0-candidate.3",
+  "provider_data_handling": {
+    "assessment_content": "permitted_when_respondent_names_account_ids_and_emails_are_omitted",
+    "test_assessment_content": "permitted_for_all_report_types_when_respondent_names_account_ids_and_emails_are_omitted",
+    "respondent_full_name": "prohibited",
+    "respondent_first_name": "prohibited",
+    "respondent_last_name": "prohibited",
+    "respondent_alias_or_nickname": "prohibited",
+    "respondent_identity_fields": "prohibited",
+    "respondent_account_id": "prohibited",
+    "respondent_email": "prohibited",
+    "session_identifier": "permitted_when_schema_validated_as_opaque_id",
+    "snapshot_identifier": "permitted_when_schema_validated_as_opaque_id",
+    "author_generated_entity_labels": "permitted_when_schema_validated",
+    "additional_privacy_approval": "not_required_for_identity_free_test_assessment_evidence",
+    "provider_destination": "openrouter",
+    "provider_retention": "zdr_not_required_no_zero_retention_promise",
+    "provider_data_collection": "deny_required",
+    "test_dispatch_paths": "budgeted_report_dev_and_journaled_pwrp71_qualification_only",
+    "production_activation": "separate_reviewed_qualification_and_release_approval"
+  }
 }

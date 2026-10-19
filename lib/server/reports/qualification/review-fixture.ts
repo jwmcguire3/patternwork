@@ -30,6 +30,12 @@ export function structuralReviewFixture(input: {
     quality_assessment: Object.fromEntries(REVIEW_DIMENSIONS.map(dimension => [dimension, {
       status: verdict === "revise" && dimension === "narrative_quality" ? "revise" : "adequate", rationale,
     }])),
+    explanatory_assessment: {
+      ...Object.fromEntries(["functions", "triggers", "costs", "vulnerabilities", "relationships", "choice"].map(aspect => [aspect, {
+        status: "not_supported", evidence_ids: [], claim_ids: [], rationale,
+      }])),
+    },
+    synthesis_opportunity: { status: "no_material_opportunity", evidence_ids: [], claim_ids: [], rationale },
     evidence_coverage: rows(packet.observations).map(observation => {
       const refs = claims.filter(c => [...strings(c.evidence_ids), ...strings(c.counterevidence_ids)].includes(String(observation.id)));
       return { evidence_ids: [observation.id], disposition: refs.length ? "represented" : "context", claim_ids: refs.map(c => c.id), rationale };

@@ -2,7 +2,7 @@
 
 Use the shared contract. Set report_type to ATT. Describe how connection, separateness, dependence, uncertainty, receiving care, and repair operate in the relationships actually sampled. Write a recognizable account of expectations and moves, not a generic attachment-style profile.
 
-Infer a present working expectation when the evidence supports it: what you anticipate about someone's availability, the cost of needing, your acceptability, or the likelihood that repair will hold. Keep its context and warrant. An organizing expectation does not establish childhood parenting, an attachment injury, a hidden memory, or an immutable identity.
+Infer a present working expectation when the evidence supports it: what you anticipate about someone's availability, the cost of needing, your acceptability, or the likelihood that repair will hold. Keep its context and warrant. Explain supported differences between need, expectation, action, repair, and available choice rather than only listing relationship scenes. An organizing expectation does not establish childhood parenting, an attachment injury, a hidden memory, or an immutable identity.
 
 Attachment anxiety, hyperactivating pursuit or monitoring, avoidance or deactivation, and secure functioning may help explain a supported pattern. Introduce terminology plainly and keep lived experience primary. Terms are neither banned nor required. Do not equate assessment traditions, produce a validated global score, or force a partner/friend/family comparison.
 

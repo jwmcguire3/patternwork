@@ -1,6 +1,6 @@
 # Interpretation guide — distinctions, not required output slots
 
-This guide is for authors and reviewers. Active writer rules are in the prompts. These are qualitative product interpretation policies, not validated clinical cutoffs.
+This guide is included in the effective writer and reviewer instructions. Apply its distinctions with the layer prompts; it defines no required output slots. These are qualitative product interpretation policies, not validated clinical cutoffs.
 
 ## Finding inclusion
 
@@ -39,3 +39,5 @@ Trace same-occurrence relations separately from cross-context parallels. Interpr
 ## Review
 
 False negatives matter, but omissions must be argued from the actual evidence, not from a preferred theory term. Distinct useful structures should not be merged for brevity; one structure should not be split for variety. Several reasonable formulations may preserve the same distinctions. Require fidelity and explanatory value, not one predetermined part count or name.
+
+A repeated reported context can organize a bounded comparison of available choice without establishing common cause, motive, coercion, or part identity. A supported connection earns its place by explaining function, vulnerability, context, cost, relationships, or flexibility; citation coverage alone does not establish that explanatory value. Repairs must preserve that value when narrowing an assertion.

@@ -164,6 +164,7 @@ model PatternworkV31AssessmentSession {
   responses     PatternworkV31AssessmentResponse[]
   accessTokens  PatternworkV31AccessToken[]
   notifications PatternworkV31Notification[]
+  reportProviderLedger PatternworkV31ReportProviderLedger?
 
   @@index([userId])
   @@index([contactEmailHash])
@@ -455,4 +456,16 @@ model PatternworkDebugReportRun {
 
   @@index([status, updatedAt])
   @@index([profileId, createdAt])
+}
+
+// Contains sensitive provider results and review receipts; encrypt the entire session journal.
+model PatternworkV31ReportProviderLedger {
+  assessmentSessionId String @id
+  revision Int @default(0)
+  ledgerCiphertext Bytes
+  ledgerNonce Bytes
+  encryptionKeyVersion String
+  updatedAt DateTime @updatedAt
+
+  assessmentSession PatternworkV31AssessmentSession @relation(fields: [assessmentSessionId], references: [id], onDelete: Cascade)
 }

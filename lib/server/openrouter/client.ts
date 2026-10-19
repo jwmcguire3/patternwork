@@ -5,10 +5,29 @@ import {
   type OpenRouterGenerationResult,
   type OpenRouterTransport,
   type OpenRouterUsage,
+  type ProviderPrivacyIdentityContext,
+  OPENROUTER_PROVIDER_POLICY,
 } from "./types.ts";
 import { buildOpenRouterWirePayload, OPENROUTER_DEFAULT_ENDPOINT } from "./wire.ts";
 import { sanitizeProviderErrorDetail } from "./provider-error-details.ts";
 import { consumePwrp71BudgetAuthorization } from "../reports/qualification/budget-authorization.ts";
+import { assertProviderRequestPrivacy, mergeProviderPrivacyIdentityContexts } from "./privacy-boundary.ts";
+
+export const OPENROUTER_DEFAULT_TIMEOUT_MS = 20 * 60 * 1_000;
+const MAX_NODE_TIMEOUT_MS = 2_147_483_647;
+
+/** Resolve one full-request deadline without overflowing Node's timer range. */
+export function resolveOpenRouterTimeoutMs(
+  timeoutMs?: number,
+  env: Readonly<Record<string, string | undefined>> = process.env,
+): number {
+  const configured = env.OPENROUTER_TIMEOUT_MS?.trim();
+  const value = timeoutMs !== undefined ? timeoutMs : configured ? Number(configured) : OPENROUTER_DEFAULT_TIMEOUT_MS;
+  if (!Number.isSafeInteger(value) || value <= 0 || value > MAX_NODE_TIMEOUT_MS) {
+    throw new Error(`OPENROUTER_TIMEOUT_MS/timeoutMs must be a positive integer no greater than ${MAX_NODE_TIMEOUT_MS}.`);
+  }
+  return value;
+}
 
 type FetchLike = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
 
@@ -19,7 +38,9 @@ export interface OpenRouterClientOptions {
   readonly fetch?: FetchLike;
   readonly appUrl?: string;
   readonly appTitle?: string;
-  /** Persist bounded upstream error details for the explicitly authorized fictional diagnostic only. */
+  /** Local comparison values only; never serialized into a provider request or journal. */
+  readonly privacyIdentityContext?: ProviderPrivacyIdentityContext;
+  /** Persist bounded upstream error details for explicitly opted-in local diagnostics. */
   readonly captureProviderErrorDetail?: boolean;
 }
 
@@ -72,6 +93,42 @@ function safeProviderField(value: unknown): string | undefined {
   return value;
 }
 
+function successfulEnvelopeProviderError(body: Record<string, unknown>, choice: Record<string, unknown> | undefined): {
+  readonly code?: string;
+  readonly type?: string;
+  readonly providerName?: string;
+  readonly upstreamCode?: string;
+  readonly metadataKeys?: readonly string[];
+  readonly hints?: readonly string[];
+} | undefined {
+  const error = asObject(body.error) ?? asObject(choice?.error);
+  if (!error) return undefined;
+  const metadata = asObject(error.metadata);
+  const code = typeof error.code === "number" && Number.isFinite(error.code)
+    ? String(error.code)
+    : safeProviderField(error.code);
+  const type = safeProviderField(error.type) ?? safeProviderField(metadata?.error_type);
+  const providerName = safeProviderField(metadata?.provider_name);
+  const upstreamCode = safeProviderField(metadata?.provider_error_code);
+  const metadataKeys = (metadata ? Object.keys(metadata).map((key) => `error.${key}`) : [])
+    .filter((key) => /^[a-zA-Z0-9_.-]{1,72}$/u.test(key))
+    .slice(0, 16);
+  // Derive fixed diagnostic labels only from allowlisted scalar fields and metadata keys.
+  // Never persist an upstream message, raw metadata, prompt, completion, or reasoning text.
+  const diagnosticText = JSON.stringify([type, providerName, upstreamCode, metadataKeys]).toLowerCase();
+  const hints = PROVIDER_ERROR_HINTS
+    .filter(([, pattern]) => pattern.test(diagnosticText))
+    .map(([hint]) => hint);
+  return {
+    ...(code ? { code } : {}),
+    ...(type ? { type } : {}),
+    ...(providerName ? { providerName } : {}),
+    ...(upstreamCode ? { upstreamCode } : {}),
+    ...(metadataKeys.length ? { metadataKeys } : {}),
+    ...(hints.length ? { hints } : {}),
+  };
+}
+
 const PROVIDER_ERROR_HINTS = [
   ["reasoning", /reasoning|effort/],
   ["schema", /schema|response_format|structured output/],
@@ -120,7 +177,8 @@ async function responseError(response: Response, captureProviderErrorDetail: boo
       ...(providerMetadataKeys?.length ? { providerMetadataKeys } : {}),
       ...(providerHints.length ? { providerHints } : {}),
     };
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") throw error;
     return { message: `OpenRouter returned HTTP ${response.status}.` };
   }
 }
@@ -132,19 +190,35 @@ export class OpenRouterClient implements OpenRouterTransport {
   private readonly fetchImpl: FetchLike;
   private readonly appUrl?: string;
   private readonly appTitle?: string;
+  private readonly privacyIdentityContext?: ProviderPrivacyIdentityContext;
   private readonly captureProviderErrorDetail: boolean;
 
   constructor(options: OpenRouterClientOptions = {}) {
     this.apiKey = options.apiKey ?? process.env.OPENROUTER_API_KEY ?? "";
     this.endpoint = options.endpoint ?? OPENROUTER_DEFAULT_ENDPOINT;
-    this.timeoutMs = options.timeoutMs ?? 120_000;
+    this.timeoutMs = resolveOpenRouterTimeoutMs(options.timeoutMs);
     this.fetchImpl = options.fetch ?? globalThis.fetch;
     this.appUrl = options.appUrl ?? process.env.OPENROUTER_APP_URL;
     this.appTitle = options.appTitle ?? process.env.OPENROUTER_APP_NAME;
+    this.privacyIdentityContext = options.privacyIdentityContext;
     this.captureProviderErrorDetail = options.captureProviderErrorDetail ?? false;
   }
 
-  async generate(request: OpenRouterGenerationRequest): Promise<OpenRouterGenerationResult> {
+  async generate(request: OpenRouterGenerationRequest, localIdentityContext?: ProviderPrivacyIdentityContext): Promise<OpenRouterGenerationResult> {
+    const identityContext = mergeProviderPrivacyIdentityContexts(this.privacyIdentityContext, localIdentityContext);
+    const wirePayload = buildOpenRouterWirePayload(request);
+    const finalRequest: OpenRouterGenerationRequest = {
+      ...request,
+      providerPolicy: request.providerPolicy ?? OPENROUTER_PROVIDER_POLICY,
+    };
+    try {
+      assertProviderRequestPrivacy(finalRequest, {
+        identityContext,
+        outboundStrings: [this.endpoint, this.appUrl, this.appTitle, JSON.stringify(wirePayload)].filter((value): value is string => Boolean(value)),
+      });
+    } catch {
+      throw new OpenRouterTransportError("client_error", "OpenRouter request was rejected by the local privacy boundary.", { retryable: false });
+    }
     if (request.schemaName.includes("_pwrp71_") && !consumePwrp71BudgetAuthorization(request)) {
       throw new OpenRouterTransportError("client_error", "PWRP 7.1 OpenRouter dispatch requires a durable budget-prepared request with usage and price controls.", { retryable: false });
     }
@@ -153,76 +227,96 @@ export class OpenRouterClient implements OpenRouterTransport {
     }
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), this.timeoutMs);
-    let response: Response;
     try {
-      response = await this.fetchImpl(this.endpoint, {
-        method: "POST",
-        signal: controller.signal,
-        headers: {
-          authorization: `Bearer ${this.apiKey}`,
-          "content-type": "application/json",
-          "x-openrouter-metadata": "enabled",
-          "x-request-id": request.idempotencyKey,
-          ...(this.appUrl ? { "http-referer": this.appUrl } : {}),
-          ...(this.appTitle ? { "x-title": this.appTitle } : {}),
-        },
-        body: JSON.stringify(buildOpenRouterWirePayload(request)),
-      });
+      let response: Response;
+      try {
+        response = await this.fetchImpl(this.endpoint, {
+          method: "POST",
+          signal: controller.signal,
+          headers: {
+            authorization: `Bearer ${this.apiKey}`,
+            "content-type": "application/json",
+            "x-openrouter-metadata": "enabled",
+            "x-request-id": request.idempotencyKey,
+            ...(this.appUrl ? { "http-referer": this.appUrl } : {}),
+            ...(this.appTitle ? { "x-title": this.appTitle } : {}),
+          },
+          body: JSON.stringify(wirePayload),
+        });
+      } catch (error) {
+        if (error instanceof Error && error.name === "AbortError") throw error;
+        throw new OpenRouterTransportError("network", "OpenRouter request failed before a response was received.", { retryable: true, cause: error });
+      }
+      controller.signal.throwIfAborted();
+
+      if (!response.ok) {
+        const providerError = await responseError(response, this.captureProviderErrorDetail);
+        controller.signal.throwIfAborted();
+        const errorDetails = {
+          statusCode: response.status,
+          ...(providerError.providerCode ? { providerCode: providerError.providerCode } : {}),
+          ...(providerError.providerParam ? { providerParam: providerError.providerParam } : {}),
+          ...(providerError.providerName ? { providerName: providerError.providerName } : {}),
+          ...(providerError.providerUpstreamCode ? { providerUpstreamCode: providerError.providerUpstreamCode } : {}),
+          ...(providerError.providerErrorRaw ? { providerErrorRaw: providerError.providerErrorRaw } : {}),
+          ...(providerError.providerMetadataKeys ? { providerMetadataKeys: providerError.providerMetadataKeys } : {}),
+          ...(providerError.providerHints ? { providerHints: providerError.providerHints } : {}),
+        };
+        if (response.status === 429) {
+          throw new OpenRouterTransportError("rate_limited", providerError.message, { ...errorDetails, retryable: true, retryAfterMs: retryAfterMs(response) });
+        }
+        if (response.status >= 500) {
+          throw new OpenRouterTransportError("server_error", providerError.message, { ...errorDetails, retryable: true, retryAfterMs: retryAfterMs(response) });
+        }
+        throw new OpenRouterTransportError("client_error", providerError.message, { ...errorDetails, retryable: false });
+      }
+
+      let body: Record<string, unknown>;
+      try {
+        body = asObject(await response.json()) ?? {};
+      } catch (error) {
+        if (error instanceof Error && error.name === "AbortError") throw error;
+        throw new OpenRouterTransportError("protocol", "OpenRouter returned a non-JSON response envelope.", { retryable: false, cause: error });
+      }
+      controller.signal.throwIfAborted();
+      const usage = parseUsage(body, response, request.model);
+      const choice = Array.isArray(body.choices) ? asObject(body.choices[0]) : undefined;
+      const message = asObject(choice?.message);
+      const refusal = message?.refusal;
+      const finishReason = choice?.finish_reason;
+      const finishMetadata = typeof finishReason === "string" ? { finishReason } : {};
+      const providerDiagnostic = successfulEnvelopeProviderError(body, choice);
+      if (providerDiagnostic) {
+        return {
+          ok: false,
+          kind: "provider_error",
+          message: "OpenRouter returned provider error metadata in a successful HTTP response.",
+          usage,
+          ...finishMetadata,
+          providerDiagnostic,
+        };
+      }
+      if ((typeof refusal === "string" && refusal.length > 0) || finishReason === "content_filter") {
+        return { ok: false, kind: "refusal", message: typeof refusal === "string" ? refusal : "The provider refused the generation.", usage, ...finishMetadata };
+      }
+      const content = message?.content;
+      if (typeof content !== "string") {
+        return { ok: false, kind: "invalid_json", message: "OpenRouter response contained no string JSON content.", usage, ...finishMetadata };
+      }
+      try {
+        const output = JSON.parse(content) as unknown;
+        if (!asObject(output)) return { ok: false, kind: "invalid_json", message: "Structured output was not a JSON object.", usage, rawContent: content, ...finishMetadata };
+        return { ok: true, output: output as JsonObject, usage, ...finishMetadata };
+      } catch {
+        return { ok: false, kind: "invalid_json", message: "Structured output was invalid JSON.", usage, rawContent: content, ...finishMetadata };
+      }
     } catch (error) {
-      if (error instanceof Error && error.name === "AbortError") {
+      if (controller.signal.aborted || error instanceof Error && error.name === "AbortError") {
         throw new OpenRouterTransportError("timeout", `OpenRouter request exceeded ${this.timeoutMs} ms.`, { retryable: true, cause: error });
       }
-      throw new OpenRouterTransportError("network", "OpenRouter request failed before a response was received.", { retryable: true, cause: error });
+      throw error;
     } finally {
       clearTimeout(timer);
-    }
-
-    if (!response.ok) {
-      const providerError = await responseError(response, this.captureProviderErrorDetail);
-      const errorDetails = {
-        statusCode: response.status,
-        ...(providerError.providerCode ? { providerCode: providerError.providerCode } : {}),
-        ...(providerError.providerParam ? { providerParam: providerError.providerParam } : {}),
-        ...(providerError.providerName ? { providerName: providerError.providerName } : {}),
-        ...(providerError.providerUpstreamCode ? { providerUpstreamCode: providerError.providerUpstreamCode } : {}),
-        ...(providerError.providerErrorRaw ? { providerErrorRaw: providerError.providerErrorRaw } : {}),
-        ...(providerError.providerMetadataKeys ? { providerMetadataKeys: providerError.providerMetadataKeys } : {}),
-        ...(providerError.providerHints ? { providerHints: providerError.providerHints } : {}),
-      };
-      if (response.status === 429) {
-        throw new OpenRouterTransportError("rate_limited", providerError.message, { ...errorDetails, retryable: true, retryAfterMs: retryAfterMs(response) });
-      }
-      if (response.status >= 500) {
-        throw new OpenRouterTransportError("server_error", providerError.message, { ...errorDetails, retryable: true, retryAfterMs: retryAfterMs(response) });
-      }
-      throw new OpenRouterTransportError("client_error", providerError.message, { ...errorDetails, retryable: false });
-    }
-
-    let body: Record<string, unknown>;
-    try {
-      body = asObject(await response.json()) ?? {};
-    } catch (error) {
-      throw new OpenRouterTransportError("protocol", "OpenRouter returned a non-JSON response envelope.", { retryable: false, cause: error });
-    }
-    const usage = parseUsage(body, response, request.model);
-    const choice = Array.isArray(body.choices) ? asObject(body.choices[0]) : undefined;
-    const message = asObject(choice?.message);
-    const refusal = message?.refusal;
-    const finishReason = choice?.finish_reason;
-    const finishMetadata = typeof finishReason === "string" ? { finishReason } : {};
-    if ((typeof refusal === "string" && refusal.length > 0) || finishReason === "content_filter") {
-      return { ok: false, kind: "refusal", message: typeof refusal === "string" ? refusal : "The provider refused the generation.", usage, ...finishMetadata };
-    }
-    const content = message?.content;
-    if (typeof content !== "string") {
-      return { ok: false, kind: "invalid_json", message: "OpenRouter response contained no string JSON content.", usage, ...finishMetadata };
-    }
-    try {
-      const output = JSON.parse(content) as unknown;
-      if (!asObject(output)) return { ok: false, kind: "invalid_json", message: "Structured output was not a JSON object.", usage, rawContent: content, ...finishMetadata };
-      return { ok: true, output: output as JsonObject, usage, ...finishMetadata };
-    } catch {
-      return { ok: false, kind: "invalid_json", message: "Structured output was invalid JSON.", usage, rawContent: content, ...finishMetadata };
     }
   }
 }

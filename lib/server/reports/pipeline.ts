@@ -9,6 +9,7 @@ import type {
   ReportGenerationFailure,
   ReportWorkflowDependencies,
 } from "./types.ts";
+import type { ProviderPrivacyIdentityContext } from "../openrouter/types.ts";
 
 export class ReportPipelineError extends Error {
   constructor(readonly failure: ReportGenerationFailure) {
@@ -32,6 +33,7 @@ async function requireGenerated(
   invocationKey: string,
   spentMicros: number,
   synthesisBundle?: ReturnType<typeof buildValidatedSynthesisBundle>,
+  privacyIdentityContext?: ProviderPrivacyIdentityContext,
 ): Promise<GeneratedCanonicalArtifact> {
   if (!dependencies.modelPolicy) throw new Error("The offline legacy report pipeline requires an explicitly activated report model policy.");
   const outcome = await generateCanonicalReport({
@@ -39,6 +41,7 @@ async function requireGenerated(
     input,
     packets: prepared.packets,
     provider: dependencies.provider,
+    privacyIdentityContext,
     invocationKey,
     spentMicros,
     costCapMicros: dependencies.costCapMicros ?? 20_000_000,
@@ -57,6 +60,7 @@ export async function runPassReportPipeline(
   let prepared: PreparedReportInputs | undefined;
   try {
     const snapshot = await dependencies.snapshotBoundary.loadAndDecryptSnapshot(input);
+    const privacyIdentityContext = dependencies.snapshotBoundary.getLocalProviderIdentityContext?.(snapshot);
     const packetValues = await dependencies.snapshotBoundary.buildPseudonymousPackets(snapshot);
     const validation = await prepareAndValidateInputs(snapshot, packetValues, dependencies.workspaceRoot);
     if (!validation.ok) throw new ReportPipelineError({
@@ -74,18 +78,18 @@ export async function runPassReportPipeline(
     const generated: GeneratedCanonicalArtifact[] = [];
     let spentMicros = 0;
     if (input.completedPass === 1) {
-      const mapping = await requireGenerated("MAP", reportInput("MAP", prepared), prepared, dependencies, input.invocationKey, spentMicros);
+      const mapping = await requireGenerated("MAP", reportInput("MAP", prepared), prepared, dependencies, input.invocationKey, spentMicros, undefined, privacyIdentityContext);
       generated.push(mapping);
       await dependencies.persistence.persistUsage(input, mapping);
     } else {
       for (const reportType of ["IFS", "PV", "ATT"] as const) {
-        const layer = await requireGenerated(reportType, reportInput(reportType, prepared), prepared, dependencies, input.invocationKey, spentMicros);
+        const layer = await requireGenerated(reportType, reportInput(reportType, prepared), prepared, dependencies, input.invocationKey, spentMicros, undefined, privacyIdentityContext);
         generated.push(layer);
         spentMicros += layer.usage.costMicros;
         await dependencies.persistence.persistUsage(input, layer);
       }
       const bundle = buildValidatedSynthesisBundle(prepared, generated);
-      const synthesis = await requireGenerated("SYNTHESIS", { bundle } as unknown as JsonObject, prepared, dependencies, input.invocationKey, spentMicros, bundle);
+      const synthesis = await requireGenerated("SYNTHESIS", { bundle } as unknown as JsonObject, prepared, dependencies, input.invocationKey, spentMicros, bundle, privacyIdentityContext);
       generated.push(synthesis);
       await dependencies.persistence.persistUsage(input, synthesis);
     }

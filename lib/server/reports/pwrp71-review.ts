@@ -16,6 +16,10 @@ export interface Pwrp71Review {
   readonly verdict: "accept" | "revise" | "invalid_input";
   readonly issues: readonly JsonObject[];
   readonly summary: string;
+  readonly quality_assessment: JsonObject;
+  readonly evidence_coverage: readonly JsonObject[];
+  readonly explanatory_assessment: JsonObject;
+  readonly synthesis_opportunity: JsonObject;
 }
 
 export interface Pwrp71StructuralReviewReceipt extends JsonObject {

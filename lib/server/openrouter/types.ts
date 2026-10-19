@@ -3,7 +3,6 @@ import type { JsonObject } from "../../question-engine/types.ts";
 export type OpenRouterReasoningEffort = "low" | "medium" | "high" | "max";
 
 export interface OpenRouterProviderPolicy {
-  readonly zdr: true;
   readonly data_collection: "deny";
   readonly require_parameters: true;
   /** Restrict OpenRouter to these provider slugs when an experiment pins an upstream. */
@@ -18,19 +17,13 @@ export interface OpenRouterProviderPolicy {
   };
 }
 
-/** Distinct request type used only by the owner-authorized fictional diagnostic. */
-export interface OpenRouterNonZdrDiagnosticProviderPolicy extends Omit<OpenRouterProviderPolicy, "zdr"> {
-  readonly zdr?: never;
-}
-
-export type OpenRouterRequestProviderPolicy = OpenRouterProviderPolicy | OpenRouterNonZdrDiagnosticProviderPolicy;
+export type OpenRouterRequestProviderPolicy = OpenRouterProviderPolicy;
 
 export interface OpenRouterPromptCacheOptions {
   readonly mode: "explicit";
 }
 
 export const OPENROUTER_PROVIDER_POLICY: OpenRouterProviderPolicy = {
-  zdr: true,
   data_collection: "deny",
   require_parameters: true,
 };
@@ -50,6 +43,7 @@ export interface OpenRouterUsage {
 export type OpenRouterFailureKind =
   | "invalid_json"
   | "refusal"
+  | "provider_error"
   | "protocol"
   | "rate_limited"
   | "server_error"
@@ -61,11 +55,20 @@ export type OpenRouterGenerationResult =
   | { readonly ok: true; readonly output: JsonObject; readonly usage: OpenRouterUsage; readonly finishReason?: string }
   | {
       readonly ok: false;
-      readonly kind: "invalid_json" | "refusal";
+      readonly kind: "invalid_json" | "refusal" | "provider_error";
       readonly message: string;
       readonly usage: OpenRouterUsage;
       readonly rawContent?: string;
       readonly finishReason?: string;
+      /** Allowlisted metadata only; upstream messages and raw metadata are never persisted. */
+      readonly providerDiagnostic?: {
+        readonly code?: string;
+        readonly type?: string;
+        readonly providerName?: string;
+        readonly upstreamCode?: string;
+        readonly metadataKeys?: readonly string[];
+        readonly hints?: readonly string[];
+      };
     };
 
 export interface OpenRouterGenerationRequest {
@@ -85,14 +88,24 @@ export interface OpenRouterGenerationRequest {
   readonly includeUsage?: boolean;
 }
 
+/** Local-only comparison values. Never place these on a generation request. */
+export interface ProviderPrivacyIdentityContext {
+  /** Set only after the caller reviews every local identity source for this report subject. */
+  readonly identityInventoryReviewed?: true;
+  readonly respondentNames?: readonly string[];
+  readonly accountIds?: readonly string[];
+  readonly emails?: readonly string[];
+  readonly otherIdentityTokens?: readonly string[];
+}
+
 export interface OpenRouterTransport {
   /** Exact endpoint used by this transport; live qualification fingerprints require it. */
   readonly endpoint?: string;
-  generate(request: OpenRouterGenerationRequest): Promise<OpenRouterGenerationResult>;
+  generate(request: OpenRouterGenerationRequest, localIdentityContext?: ProviderPrivacyIdentityContext): Promise<OpenRouterGenerationResult>;
 }
 
 export class OpenRouterTransportError extends Error {
-  readonly kind: Exclude<OpenRouterFailureKind, "invalid_json" | "refusal">;
+  readonly kind: Exclude<OpenRouterFailureKind, "invalid_json" | "refusal" | "provider_error">;
   readonly retryable: boolean;
   readonly retryAfterMs?: number;
   readonly statusCode?: number;
@@ -106,7 +119,7 @@ export class OpenRouterTransportError extends Error {
   readonly providerHints?: readonly string[];
 
   constructor(
-    kind: Exclude<OpenRouterFailureKind, "invalid_json" | "refusal">,
+    kind: Exclude<OpenRouterFailureKind, "invalid_json" | "refusal" | "provider_error">,
     message: string,
     options: { retryable: boolean; retryAfterMs?: number; statusCode?: number; providerCode?: string; providerParam?: string; providerName?: string; providerUpstreamCode?: string; providerErrorRaw?: string; providerMetadataKeys?: readonly string[]; providerHints?: readonly string[]; cause?: unknown },
   ) {

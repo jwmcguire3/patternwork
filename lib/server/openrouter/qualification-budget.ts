@@ -1,5 +1,5 @@
 import { sha256Canonical } from "../../report-contracts/delivery-validator.ts";
-import type { OpenRouterGenerationRequest, OpenRouterNonZdrDiagnosticProviderPolicy, OpenRouterProviderPolicy } from "./types.ts";
+import type { OpenRouterGenerationRequest, OpenRouterProviderPolicy } from "./types.ts";
 
 /** OpenRouter's currently published non-cached GPT-6 Luna pricing basis. */
 export const GPT6_LUNA_BILLING_BASIS = {
@@ -21,7 +21,6 @@ export const GPT6_LUNA_PROVIDER_PRICE_CEILING: NonNullable<OpenRouterProviderPol
 };
 
 export const GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY: OpenRouterProviderPolicy = {
-  zdr: true,
   data_collection: "deny",
   require_parameters: true,
   max_price: GPT6_LUNA_PROVIDER_PRICE_CEILING,
@@ -34,16 +33,17 @@ export const GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY = {
   allow_fallbacks: false,
 } as const satisfies OpenRouterProviderPolicy;
 
-/** Owner-authorized non-ZDR route, limited to the fictional IFS diagnostic. */
-export const GPT6_LUNA_OPENAI_NON_ZDR_DIAGNOSTIC_PROVIDER_POLICY = {
-  data_collection: "deny",
-  require_parameters: true,
-  max_price: GPT6_LUNA_PROVIDER_PRICE_CEILING,
-  only: ["openai"],
-  allow_fallbacks: false,
-} as const satisfies OpenRouterNonZdrDiagnosticProviderPolicy;
-
 export const GPT6_LUNA_BILLING_BASIS_SHA256 = sha256Canonical(GPT6_LUNA_BILLING_BASIS);
+
+export function reportBillingBasis(model: string) {
+  if (model === GPT6_LUNA_BILLING_BASIS.model) return GPT6_LUNA_BILLING_BASIS;
+  throw new Error(`No authorized billing basis exists for model ${model}.`);
+}
+export function reportBillingBasisSha256(model: string): string { return sha256Canonical(reportBillingBasis(model)); }
+export function reportDevProviderPolicy(model: string): OpenRouterProviderPolicy {
+  reportBillingBasis(model);
+  return GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY;
+}
 
 export function validatePositiveMicros(value: unknown, name: string): asserts value is number {
   if (typeof value !== "number" || !Number.isSafeInteger(value) || value <= 0) {
@@ -58,16 +58,14 @@ export function validatePositiveMicros(value: unknown, name: string): asserts va
  * This is provider-dependent, not a locally enforceable invoice guarantee.
  */
 export function maximumQuotedCallCostMicros(request: OpenRouterGenerationRequest): number {
-  if (request.model !== GPT6_LUNA_BILLING_BASIS.model) {
-    throw new Error(`No pinned billing basis exists for model ${request.model}.`);
+  const basis = reportBillingBasis(request.model);
+  if (!Number.isSafeInteger(request.maxOutputTokens) || request.maxOutputTokens <= 0 || request.maxOutputTokens > basis.maxCompletionTokens) {
+    throw new Error(`maxOutputTokens must be between 1 and ${basis.maxCompletionTokens}.`);
   }
-  if (!Number.isSafeInteger(request.maxOutputTokens) || request.maxOutputTokens <= 0 || request.maxOutputTokens > GPT6_LUNA_BILLING_BASIS.maxCompletionTokens) {
-    throw new Error(`maxOutputTokens must be between 1 and ${GPT6_LUNA_BILLING_BASIS.maxCompletionTokens}.`);
-  }
-  const promptRateMicrosPerMillion = Math.round(GPT6_LUNA_BILLING_BASIS.promptUsdPerMillionTokens * 1_000_000);
-  const completionRateMicrosPerMillion = Math.round(GPT6_LUNA_BILLING_BASIS.completionUsdPerMillionTokens * 1_000_000);
+  const promptRateMicrosPerMillion = Math.round(basis.promptUsdPerMillionTokens * 1_000_000);
+  const completionRateMicrosPerMillion = Math.round(basis.completionUsdPerMillionTokens * 1_000_000);
   return Math.ceil((
-    GPT6_LUNA_BILLING_BASIS.contextTokens * promptRateMicrosPerMillion
+    basis.contextTokens * promptRateMicrosPerMillion
     + request.maxOutputTokens * completionRateMicrosPerMillion
   ) / 1_000_000);
 }

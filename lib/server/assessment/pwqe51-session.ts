@@ -7,6 +7,10 @@ import {
   type Pwqe51RouterResult,
 } from "./pwqe51-router.ts";
 
+/** Server-owned identity seam for faithful operation replay; never accepted from browser input. */
+export type Pwqe51IdentityFactory = (kind: "occurrence" | "interaction") => string;
+const defaultIdentityFactory: Pwqe51IdentityFactory = (kind) => `${kind === "occurrence" ? "pwep" : "pwi"}_${randomUUID()}`;
+
 export const PWQE51_SESSION_SCHEMA = "PWQE51-AS-1" as const;
 
 export interface Pwqe51CurrentInteraction {
@@ -146,7 +150,7 @@ function routeInput(state: Pick<Pwqe51SessionState, "pass" | "responses" | "phas
 }
 
 /** Replays canonical history and resolves only router-issued binding keys on the server. */
-function compileBoundRoute(input: Pwqe51RouterInput, source: Pwqe51SourcePackage): {
+function compileBoundRoute(input: Pwqe51RouterInput, source: Pwqe51SourcePackage, identities: Pwqe51IdentityFactory): {
   readonly result: Pwqe51RouterResult;
   readonly occurrenceBindings: Readonly<Record<string, string>>;
   readonly episodeLinks: NonNullable<Pwqe51RouterInput["episodeLinks"]>;
@@ -168,7 +172,7 @@ function compileBoundRoute(input: Pwqe51RouterInput, source: Pwqe51SourcePackage
     if (occurrenceBindings[candidate.bindingKey]) {
       throw new Error("PWQE 5.1 router returned an already-bound occurrence request.");
     }
-    const occurrenceId = `pwep_${randomUUID()}`;
+    const occurrenceId = identities("occurrence");
     occurrenceBindings = { ...occurrenceBindings, [candidate.bindingKey]: occurrenceId };
     if (candidate.linkedFrom) episodeLinks = [...episodeLinks.filter((link) => link.occurrenceId !== occurrenceId), { occurrenceId, linkedFrom: candidate.linkedFrom }];
     result = compilePwqe51Route({ ...input, occurrenceBindings, episodeLinks }, source);
@@ -176,7 +180,7 @@ function compileBoundRoute(input: Pwqe51RouterInput, source: Pwqe51SourcePackage
   throw new Error("PWQE 5.1 router exceeded the authored occurrence-binding limit.");
 }
 
-function currentFor(route: Pwqe51RouterResult, prior: Pwqe51CurrentInteraction | null): Pwqe51CurrentInteraction | null {
+function currentFor(route: Pwqe51RouterResult, prior: Pwqe51CurrentInteraction | null, identities: Pwqe51IdentityFactory): Pwqe51CurrentInteraction | null {
   const candidate = route.next;
   if (!candidate) return null;
   if (candidate.bindingRequest === "confirm_replay_distinctness") return null;
@@ -189,7 +193,7 @@ function currentFor(route: Pwqe51RouterResult, prior: Pwqe51CurrentInteraction |
     && canonicalizeTargetIds(prior.comparisonIds ?? []) === canonicalizeTargetIds(candidate.comparisonIds ?? [])
     && canonicalizeTargetIds(prior.targetIds ?? []) === canonicalizeTargetIds(targetIds)) return prior;
   return {
-    interactionInstanceId: `pwi_${randomUUID()}`,
+    interactionInstanceId: identities("interaction"),
     questionId: candidate.questionId,
     occurrenceId: candidate.occurrenceId,
     stepId: candidate.stepId,
@@ -404,6 +408,7 @@ export function createPwqe51SessionState(
   source: Pwqe51SourcePackage,
   routerInput: Pwqe51SessionState["routerInput"] = {},
   options: { readonly initialOptedInTopics?: readonly string[] } = {},
+  identities: Pwqe51IdentityFactory = defaultIdentityFactory,
 ): Pwqe51SessionState {
   const initialOptedInTopics = [...new Set(options.initialOptedInTopics ?? [])];
   const availableTopics = new Set(source.routingTargets.entry_points.map((entry) => entry.id));
@@ -424,8 +429,8 @@ export function createPwqe51SessionState(
     controls: [] as ("end" | "shorten")[],
     routerInput,
   };
-  const compiled = compileBoundRoute({ ...routerInput, responses: [], phase: "mapping", occurrenceBindings: {}, optedInTopics: initialOptedInTopics }, source);
-  return { ...partial, routerInput: { ...routerInput, episodeLinks: compiled.episodeLinks }, occurrenceBindings: compiled.occurrenceBindings, routerResult: compiled.result, currentInteraction: currentFor(compiled.result, null) };
+  const compiled = compileBoundRoute({ ...routerInput, responses: [], phase: "mapping", occurrenceBindings: {}, optedInTopics: initialOptedInTopics }, source, identities);
+  return { ...partial, routerInput: { ...routerInput, episodeLinks: compiled.episodeLinks }, occurrenceBindings: compiled.occurrenceBindings, routerResult: compiled.result, currentInteraction: currentFor(compiled.result, null, identities) };
 }
 
 export function applyPwqe51ReplayBinding(
@@ -437,6 +442,7 @@ export function applyPwqe51ReplayBinding(
     readonly correctsDecisionId?: string;
   },
   source: Pwqe51SourcePackage,
+  identities: Pwqe51IdentityFactory = defaultIdentityFactory,
 ): Pwqe51SessionState {
   if (state.paused || state.phase === "finished") throw new Error("PWQE 5.1 replay binding is not accepting a decision.");
   assertPinnedSource(state, source);
@@ -467,7 +473,7 @@ export function applyPwqe51ReplayBinding(
   }
   const previousReplayOccurrenceId = request.replayOccurrenceId
     ?? [...(state.replayBindingHistory ?? [])].reverse().find((decision) => decision.bindingKey === request.bindingKey && decision.replayOccurrenceId)?.replayOccurrenceId;
-  const replayOccurrenceId = input.outcome === "different" ? previousReplayOccurrenceId ?? `pwep_${randomUUID()}` : undefined;
+  const replayOccurrenceId = input.outcome === "different" ? previousReplayOccurrenceId ?? identities("occurrence") : undefined;
   const decision: Pwqe51ReplayBindingDecision = {
     decisionId: input.decisionId,
     requestSha256: input.requestSha256,
@@ -481,14 +487,14 @@ export function applyPwqe51ReplayBinding(
   };
   const replayBindingHistory = [...(state.replayBindingHistory ?? []), decision];
   const partial = { ...state, replayBindingHistory };
-  const compiled = compileBoundRoute(routeInput(partial), source);
+  const compiled = compileBoundRoute(routeInput(partial), source, identities);
   return {
     ...partial,
     routerInput: { ...partial.routerInput, episodeLinks: compiled.episodeLinks },
     occurrenceBindings: compiled.occurrenceBindings,
     routerResult: compiled.result,
     phase: compiled.result.phase,
-    currentInteraction: currentFor(compiled.result, null),
+    currentInteraction: currentFor(compiled.result, null, identities),
   };
 }
 
@@ -553,6 +559,7 @@ export function advancePwqe51Session(
     readonly supersedesResponseId?: string;
   },
   source: Pwqe51SourcePackage,
+  identities: Pwqe51IdentityFactory = defaultIdentityFactory,
 ): Pwqe51SessionState {
   if (state.paused || state.phase === "finished" || !state.currentInteraction) throw new Error("PWQE 5.1 session is not accepting an answer.");
   assertPinnedSource(state, source);
@@ -622,19 +629,19 @@ export function advancePwqe51Session(
     referentRolesByOccurrenceSlot,
     routerInput: { ...state.routerInput, ...(comparisonIdsByResponseId ? { comparisonIdsByResponseId } : {}) },
   };
-  const compiled = compileBoundRoute(routeInput(partial), source);
+  const compiled = compileBoundRoute(routeInput(partial), source, identities);
   return {
     ...partial,
     routerInput: { ...partial.routerInput, episodeLinks: compiled.episodeLinks },
     occurrenceBindings: compiled.occurrenceBindings,
     routerResult: compiled.result,
     phase: compiled.result.phase,
-    currentInteraction: currentFor(compiled.result, null),
+    currentInteraction: currentFor(compiled.result, null, identities),
     correctionTargetResponseId: undefined,
   };
 }
 
-export function beginPwqe51Correction(state: Pwqe51SessionState, responseId: string, source: Pwqe51SourcePackage): Pwqe51SessionState {
+export function beginPwqe51Correction(state: Pwqe51SessionState, responseId: string, source: Pwqe51SourcePackage, identities: Pwqe51IdentityFactory = defaultIdentityFactory): Pwqe51SessionState {
   if (state.paused || state.phase === "finished") throw new Error("PWQE 5.1 session is not accepting a correction.");
   assertPinnedSource(state, source);
   const superseded = new Set(state.responses.flatMap((response) => response.supersedesResponseId ? [response.supersedesResponseId] : []));
@@ -645,7 +652,7 @@ export function beginPwqe51Correction(state: Pwqe51SessionState, responseId: str
     ...state,
     correctionTargetResponseId: target.responseId,
     currentInteraction: {
-      interactionInstanceId: `pwi_${randomUUID()}`,
+      interactionInstanceId: identities("interaction"),
       questionId: target.questionId,
       occurrenceId: target.occurrenceId,
       stepId: target.stepId ?? questionFor(source, target.questionId).step_binding,
@@ -665,19 +672,19 @@ export function resumePwqe51Session(state: Pwqe51SessionState): Pwqe51SessionSta
   return { ...state, paused: false };
 }
 
-export function endPwqe51Session(state: Pwqe51SessionState, source: Pwqe51SourcePackage): Pwqe51SessionState {
+export function endPwqe51Session(state: Pwqe51SessionState, source: Pwqe51SourcePackage, identities: Pwqe51IdentityFactory = defaultIdentityFactory): Pwqe51SessionState {
   assertPinnedSource(state, source);
   const controls = [...new Set([...state.controls, "end" as const])];
-  const compiled = compileBoundRoute(routeInput({ ...state, controls }), source);
+  const compiled = compileBoundRoute(routeInput({ ...state, controls }), source, identities);
   return { ...state, controls, phase: compiled.result.phase, routerInput: { ...state.routerInput, episodeLinks: compiled.episodeLinks }, routerResult: compiled.result, currentInteraction: null, occurrenceBindings: compiled.occurrenceBindings };
 }
 
-export function shortenPwqe51Session(state: Pwqe51SessionState, source: Pwqe51SourcePackage): Pwqe51SessionState {
+export function shortenPwqe51Session(state: Pwqe51SessionState, source: Pwqe51SourcePackage, identities: Pwqe51IdentityFactory = defaultIdentityFactory): Pwqe51SessionState {
   if (state.pass !== 2 || state.phase === "finished") throw new Error("PWQE 5.1 can only shorten an active Deepening pass.");
   assertPinnedSource(state, source);
   const controls = [...new Set([...state.controls, "shorten" as const])];
-  const compiled = compileBoundRoute(routeInput({ ...state, controls }), source);
-  return { ...state, controls, phase: compiled.result.phase, routerInput: { ...state.routerInput, episodeLinks: compiled.episodeLinks }, routerResult: compiled.result, currentInteraction: currentFor(compiled.result, state.currentInteraction), occurrenceBindings: compiled.occurrenceBindings };
+  const compiled = compileBoundRoute(routeInput({ ...state, controls }), source, identities);
+  return { ...state, controls, phase: compiled.result.phase, routerInput: { ...state.routerInput, episodeLinks: compiled.episodeLinks }, routerResult: compiled.result, currentInteraction: currentFor(compiled.result, state.currentInteraction, identities), occurrenceBindings: compiled.occurrenceBindings };
 }
 
 export function startPwqe51Deepening(
@@ -685,6 +692,7 @@ export function startPwqe51Deepening(
   optedInTopics: readonly string[],
   source: Pwqe51SourcePackage,
   context: { readonly focusOccurrences?: readonly string[]; readonly details?: readonly string[]; readonly distinctPairs?: readonly (readonly [string, string])[]; readonly comparisonDecisions?: readonly Pwqe51ComparisonDecision[] } = {},
+  identities: Pwqe51IdentityFactory = defaultIdentityFactory,
 ): Pwqe51SessionState {
   if (state.pass !== 1 || state.phase !== "finished") throw new Error("PWQE 5.1 Mapping must finish before Deepening starts.");
   assertPinnedSource(state, source);
@@ -714,8 +722,8 @@ export function startPwqe51Deepening(
     distinctPairs,
   };
   const nextBase = { ...state, routerInput, comparisonDecisions: [...(context.comparisonDecisions ?? [])], pass: 2 as const, phase: "deepening" as const, paused: false, optedInTopics: [...new Set(optedInTopics)], controls: [] as ("end" | "shorten")[] };
-  const compiled = compileBoundRoute(routeInput(nextBase), source);
-  return { ...nextBase, routerInput: { ...nextBase.routerInput, episodeLinks: compiled.episodeLinks }, occurrenceBindings: compiled.occurrenceBindings, routerResult: compiled.result, phase: compiled.result.phase, currentInteraction: currentFor(compiled.result, null) };
+  const compiled = compileBoundRoute(routeInput(nextBase), source, identities);
+  return { ...nextBase, routerInput: { ...nextBase.routerInput, episodeLinks: compiled.episodeLinks }, occurrenceBindings: compiled.occurrenceBindings, routerResult: compiled.result, phase: compiled.result.phase, currentInteraction: currentFor(compiled.result, null, identities) };
 }
 
 export function canCompletePwqe51Pass(state: Pwqe51SessionState): boolean {

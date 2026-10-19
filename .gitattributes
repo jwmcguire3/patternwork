@@ -1,0 +1,5 @@
+* text=auto eol=lf
+# Source manifests bind exact bytes. Checkout must not rewrite these packages.
+reporting/** -text
+specs/** -text
+qualification/** -text
