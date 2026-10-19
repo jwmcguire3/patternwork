@@ -106,12 +106,6 @@ export function renderMarkdownPdf(markdown: string, title: string): Promise<Rend
       layout: { pageCount: finalPageCount, renderedLineCount, bottomMarginPoints: PAGE_HEIGHT - CONTENT_BOTTOM, minimumRemainingPoints },
     }));
 
-    const pageHeader = () => {
-      doc.save().font("Helvetica").fontSize(8).fillColor("#64748b").text("PATTERNWORK", MARGIN, 28, { width: PAGE_WIDTH - MARGIN * 2, characterSpacing: 1.5 });
-      doc.restore();
-    };
-    doc.on("pageAdded", pageHeader);
-    pageHeader();
     doc.font("Helvetica-Bold").fontSize(22).fillColor("#18212f").text(title, { lineGap: 4 });
     doc.moveDown(0.35).font("Helvetica").fontSize(9).fillColor("#64748b").text("A descriptive, non-diagnostic reflection generated from your completed assessment.");
     doc.moveDown(1.15);
@@ -124,7 +118,8 @@ export function renderMarkdownPdf(markdown: string, title: string): Promise<Rend
       minimumRemainingPoints = Math.min(minimumRemainingPoints, CONTENT_BOTTOM - doc.y);
     };
 
-    for (const rawLine of normalizeLf(markdown).split("\n")) {
+    const markdownLines = normalizeLf(markdown).split("\n");
+    for (const [lineIndex, rawLine] of markdownLines.entries()) {
       const line = rawLine.trimEnd();
       if (!line.trim()) {
         ensureSpace(8);
@@ -141,8 +136,28 @@ export function renderMarkdownPdf(markdown: string, title: string): Promise<Rend
       if (heading) {
         const level = heading[1].length;
         const fontSize = level === 1 ? 18 : level === 2 ? 14 : 11.5;
-        ensureSpace(fontSize * 2.2);
-        doc.moveDown(level === 1 ? 0.9 : 0.6).font("Helvetica-Bold").fontSize(fontSize).fillColor("#24364b").text(text, { lineGap: 3 });
+        const headingGap = doc.currentLineHeight(true) * (level === 1 ? 0.9 : 0.6);
+        doc.font("Helvetica-Bold").fontSize(fontSize);
+        const headingHeight = doc.heightOfString(text, { width: PAGE_WIDTH - MARGIN - doc.x, lineGap: 3 });
+        const blankLineHeight = doc.currentLineHeight(true) * 0.35;
+        let nextLine = lineIndex + 1;
+        while (nextLine < markdownLines.length && !markdownLines[nextLine].trim()) nextLine += 1;
+        let followingHeight = 0;
+        if (nextLine < markdownLines.length && !/^\s{0,3}#{1,6}\s+/u.test(markdownLines[nextLine])) {
+          const following = markdownLines[nextLine];
+          const nextQuote = /^\s*>\s?/u.test(following);
+          const nextList = /^\s*(?:[-*+]\s+|\d+[.)]\s+)/u.test(following);
+          const followingText = stripInlineMarkdown(following.replace(/^\s*(?:[-*+]\s+|\d+[.)]\s+|>\s?)/u, ""));
+          doc.font(nextQuote ? "Helvetica-Oblique" : "Helvetica").fontSize(10.5);
+          const bodyHeight = doc.heightOfString(followingText, { width: PAGE_WIDTH - MARGIN * 2 - (nextQuote ? 18 : nextList ? 30 : 0), lineGap: 3 });
+          // Keep two opening lines rather than the whole paragraph, including the existing paragraph/list start guards.
+          const openingHeight = Math.min(bodyHeight, (doc.currentLineHeight(true) + 3) * 2);
+          const markerOffset = nextList ? doc.currentLineHeight(true) - doc.currentLineHeight() : 0;
+          followingHeight = blankLineHeight * (nextLine - lineIndex - 1) + Math.max(nextList ? 30 : 24, openingHeight + markerOffset);
+        }
+        ensureSpace(Math.min(headingGap + headingHeight + followingHeight, CONTENT_BOTTOM - MARGIN));
+        doc.y += headingGap;
+        doc.font("Helvetica-Bold").fontSize(fontSize).fillColor("#24364b").text(text, { lineGap: 3 });
       } else if (bullet || numbered) {
         ensureSpace(30);
         const marker = bullet ? "-" : `${numbered![1]}.`;
@@ -161,7 +176,13 @@ export function renderMarkdownPdf(markdown: string, title: string): Promise<Rend
     if (range.count > MAX_PAGES) return reject(new Error(`PDF exceeded the ${MAX_PAGES}-page safety limit.`));
     for (let index = range.start; index < range.start + range.count; index += 1) {
       doc.switchToPage(index);
-      doc.save().font("Helvetica").fontSize(8).fillColor("#718096").text(`${index + 1} / ${range.count}`, MARGIN, CONTENT_BOTTOM - 24, { width: PAGE_WIDTH - MARGIN * 2, align: "right", lineBreak: false }).restore();
+      // Decorate buffered pages only after wrapping has finished: text() changes PDFKit's live font and cursor state.
+      doc.save().font("Helvetica").fontSize(8).fillColor("#64748b").text("PATTERNWORK", MARGIN, 28, { characterSpacing: 1.5, lineBreak: false }).restore();
+      doc.save().font("Helvetica").fontSize(8).fillColor("#718096");
+      const footer = `${index + 1} / ${range.count}`;
+      // Omitting width bypasses wrapping; an explicit width would paginate below the body margin even with lineBreak:false.
+      doc.text(footer, PAGE_WIDTH - MARGIN - doc.widthOfString(footer), PAGE_HEIGHT - 32, { lineBreak: false });
+      doc.restore();
     }
     doc.end();
   });
