@@ -120,3 +120,119 @@ test("supports a common response control only when authored for that question", 
   const projected = buildPwrp71AuthoredQuestionContext(makePacket(source, [controlObservation]), source);
   assert.equal((projected.observations as Record<string, unknown>[])[0].option_text, control.text);
 });
+
+test("D02-only binding guidance preserves other explicitly referential authored follow-ups", async () => {
+  const source = await sourcePromise;
+  const selected = [["M02", "M02.feedback"], ["M03", "M03.approval"], ["M17", "M17.send"], ["D43", "D43.notice"]].map(([id, option]) => observation(source.questionBank.items.find(q => q.id === id)!, option, "base", source));
+  for (const row of selected.slice(2)) row.occurrence_id = "pwep_aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
+  const packet = makePacket(source, selected), before = structuredClone(packet);
+  const result = buildPwrp71AuthoredQuestionContext(packet, source);
+  assert.equal(result.context_version, "pwrp71-authored-question-context-v4");
+  assert.deepEqual(result.response_aim_bindings, [], "other explicit referents need no fabricated D02 entries");
+  const contexts = result.observations as Record<string, unknown>[];
+  const byItem = new Map(contexts.map(row => [row.item_id, row]));
+  assert.match(String(byItem.get("M03")?.prompt), /with that preparation/u);
+  assert.equal(byItem.get("M03")?.option_text, "Get a sign that it was good enough.");
+  assert.equal(byItem.get("M02")?.option_text, "I asked someone else to look it over.");
+  assert.match(String(byItem.get("D43")?.prompt), /hoping \{contact_response_label\} would change/u);
+  assert.equal(byItem.get("D43")?.option_text, "I wanted them to notice that I was affected.");
+  assert.equal(byItem.get("M17")?.option_text, "I sent another message.");
+  for (const [aim, action] of [["M03", "M02"], ["D43", "M17"]]) {
+    assert.equal(byItem.get(aim)?.occurrence_id, byItem.get(action)?.occurrence_id);
+    assert.equal(byItem.get(aim)?.step_id, byItem.get(action)?.step_id);
+  }
+  const rule = String(result.response_aim_binding_rule);
+  assert.match(rule, /For D02 entries, only resolved_single with answer_kind stated_aim/u);
+  assert.match(rule, /M03 asks about M02's preparation or leaving it alone/u);
+  assert.match(rule, /D43's contact_response_label refers to the reported M17 response/u);
+  assert.match(rule, /absence from the D02-only array does not make those links unspecified/u);
+  assert.deepEqual(packet, before, "context construction does not rewrite source evidence");
+});
+
+test("D02 still resolves only one exact-step substantive response", async () => {
+  const source = await sourcePromise;
+  const action = observation(source.questionBank.items.find(q => q.id === "M02")!, "M02.feedback", "base", source);
+  const aim = { ...observation(source.questionBank.items.find(q => q.id === "D02")!, "D02.prevent", "base", source), step_id: "first" };
+  const bindings = (rows: Record<string, unknown>[]) => buildPwrp71AuthoredQuestionContext(makePacket(source, rows), source).response_aim_bindings as JsonObject[];
+  const resolved = bindings([action, aim])[0];
+  assert.equal(resolved.binding_status, "resolved_single");
+  assert.equal(resolved.answer_kind, "stated_aim");
+  assert.deepEqual((resolved.response_observations as JsonObject[]).map(row => row.evidence_id), [action.id]);
+  for (const changed of [{ ...action, step_id: "next" }, { ...action, occurrence_id: "pwep_aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee" }]) {
+    const unbound = bindings([changed, aim])[0];
+    assert.equal(unbound.binding_status, "unbound");
+    assert.deepEqual(unbound.response_observations, []);
+  }
+  const secondAction = { ...observation(source.questionBank.items.find(q => q.id === "M02")!, "M02.recheck", "base", source), id: "Osecond-action" };
+  const ambiguous = bindings([action, secondAction, aim])[0];
+  assert.equal(ambiguous.binding_status, "ambiguous");
+  assert.equal((ambiguous.response_observations as JsonObject[]).length, 2);
+});
+
+test("D02 response controls and no-aim answers do not become positive aim bindings", async () => {
+  const source = await sourcePromise;
+  const actionQuestion = source.questionBank.items.find(q => q.id === "M02")!;
+  const aimQuestion = source.questionBank.items.find(q => q.id === "D02")!;
+  const action = observation(actionQuestion, "M02.feedback", "base", source);
+  const noAim = { ...observation(aimQuestion, "D02.none", "base", source), step_id: "first" };
+  const control = source.questionBank.common_response_controls.find(c => aimQuestion.response_controls.includes(c.id))!;
+  const controlledAim = { ...noAim, option_id: control.id, text: control.text, reported_value: control.text };
+  for (const [aim, kind] of [[noAim, "no_particular_aim"], [controlledAim, "response_control"]] as const) {
+    const result = buildPwrp71AuthoredQuestionContext(makePacket(source, [action, aim]), source);
+    const binding = (result.response_aim_bindings as JsonObject[])[0];
+    assert.equal(binding.binding_status, "resolved_single");
+    assert.equal(binding.answer_kind, kind, "resolution alone never turns a non-aim answer into stated_aim");
+  }
+  const actionControl = source.questionBank.common_response_controls.find(c => actionQuestion.response_controls.includes(c.id))!;
+  const controlledAction = { ...action, option_id: actionControl.id, text: actionControl.text, reported_value: actionControl.text };
+  const result = buildPwrp71AuthoredQuestionContext(makePacket(source, [controlledAction, { ...noAim, ...observation(aimQuestion, "D02.prevent", "base", source), step_id: "first" }]), source);
+  const binding = (result.response_aim_bindings as JsonObject[])[0];
+  assert.equal(binding.binding_status, "unbound");
+  assert.deepEqual(binding.response_observations, []);
+});
+
+test("other authored referents retain step, ambiguity, and limited-answer boundaries", async () => {
+  const source = await sourcePromise;
+  const selected = [["M02", "M02.none"], ["M03", "M03.no_aim"], ["M17", "M17.send"], ["D43", "D43.automatic"]].map(([id, option]) => observation(source.questionBank.items.find(q => q.id === id)!, option, "base", source));
+  selected[0].step_id = "next";
+  selected[2].occurrence_id = "pwep_aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
+  const result = buildPwrp71AuthoredQuestionContext(makePacket(source, selected), source);
+  const contexts = result.observations as JsonObject[];
+  assert.equal(contexts.find(row => row.item_id === "M02")?.step_id, "next");
+  assert.equal(contexts.find(row => row.item_id === "M03")?.step_id, "first");
+  assert.equal(contexts.find(row => row.item_id === "M03")?.option_text, "I was not aiming for anything beyond the task.");
+  assert.equal(contexts.find(row => row.item_id === "D43")?.option_text, "It was more automatic than purposeful.");
+  assert.deepEqual(result.response_aim_bindings, [], "the context does not manufacture a link across steps or occurrences");
+  const rule = String(result.response_aim_binding_rule);
+  assert.match(rule, /exact current occurrence and step/u);
+  assert.match(rule, /Do not choose an action from an ambiguous referent/u);
+  assert.match(rule, /borrow a response from another step or occurrence/u);
+  assert.match(rule, /without a substantive selected answer/u);
+  assert.match(rule, /Preserve task-limited, automatic, no-aim, and response-control answers at their stated strength/u);
+});
+
+test("other authored follow-up controls remain controls rather than positive aims", async () => {
+  const source = await sourcePromise;
+  for (const itemId of ["M03", "D43"]) {
+    const question = source.questionBank.items.find(q => q.id === itemId)!;
+    const control = source.questionBank.common_response_controls.find(c => question.response_controls.includes(c.id))!;
+    const selected = { ...observation(question, undefined, "base", source), option_id: control.id, text: control.text, reported_value: control.text };
+    const result = buildPwrp71AuthoredQuestionContext(makePacket(source, [selected]), source);
+    assert.equal((result.observations as JsonObject[])[0].is_response_control, true);
+    assert.equal((result.observations as JsonObject[])[0].option_text, control.text);
+    assert.deepEqual(result.response_aim_bindings, []);
+  }
+});
+
+test("ambiguous non-D02 referents remain visible without choosing or distributing an aim", async () => {
+  const source = await sourcePromise;
+  const actionQuestion = source.questionBank.items.find(q => q.id === "M17")!;
+  const aimQuestion = source.questionBank.items.find(q => q.id === "D43")!;
+  const first = observation(actionQuestion, "M17.send", "base", source);
+  const second = { ...observation(actionQuestion, "M17.reread", "base", source), id: "Osecond-contact-action" };
+  const aim = observation(aimQuestion, "D43.notice", "base", source);
+  const result = buildPwrp71AuthoredQuestionContext(makePacket(source, [first, second, aim]), source);
+  assert.deepEqual((result.observations as JsonObject[]).filter(row => row.item_id === "M17").map(row => row.evidence_id), [first.id, second.id]);
+  assert.deepEqual(result.response_aim_bindings, [], "no automatic single-action assignment or distribution is introduced");
+  assert.match(String(result.response_aim_binding_rule), /Do not choose an action from an ambiguous referent/u);
+});
