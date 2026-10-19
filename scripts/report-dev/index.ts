@@ -11,10 +11,11 @@ import { reportBillingBasisSha256, reportDevProviderPolicy } from "../../lib/ser
 import { sha256Canonical } from "../../lib/report-contracts/delivery-validator.ts";
 import { AssessmentPlanError, loadAssessment, runAssessmentPlan, writeImmutableJson } from "./assessment.ts";
 import { canonical, contentHash } from "./source.ts";
-import { packetFor, REPORT_ORDER, runReportBatch, validateStoredReport, developmentModelPolicy, loadPwrp71ContinuationSeed, loadPwrp71ReviewRetrySeed, citationClosureBinding } from "./workflow.ts";
+import { packetFor, REPORT_ORDER, runReportBatch, validateStoredReport, developmentModelPolicy, loadPwrp71ContinuationSeed, loadPwrp71RecoverySeed, loadPwrp71ReviewRetrySeed, citationClosureBinding } from "./workflow.ts";
 import { loadPwrp71CitationClosureSeed } from "./citation-recovery.ts";
 import { loadPrivacyIdentityContext } from "./privacy-identities.ts";
 import { PWRP71_INPUT_GUIDANCE_VERSION, PWRP71_REPAIR_STRATEGY_VERSION, PWRP71_GENERATION_REPAIR_VERSION, PWRP71_SCOPE_GUIDANCE_VERSION } from "../../lib/server/reports/generator.ts";
+import { recoveryProfileBinding } from "./recovery-profile.ts";
 import type { ReportType } from "../../lib/question-engine/types.ts";
 
 const HELP=`Patternwork reporting development
@@ -41,12 +42,13 @@ Default: offline preparation. No provider call without --mode generate and --all
 --mode validate checks structure and an existing bound review, not new semantic judgment.
 --candidate report-dev-luna-high-128k-v2 selects the active fixed Luna/high/128,000-token IFS configuration (also the fresh IFS default). Historical 20k candidates are read-only; arbitrary model/effort overrides are rejected.
 Active 128k continuation requires the same fixed candidate's completed generation and valid final revision review. It permits one repair and one fresh review without structural correction. One final voice-only continuation may follow the first continuation; depth three is rejected.
+--recovery-profile report-dev-luna-high-128k-bounded-structure-v1 explicitly permits one semantic repair, at most one structural correction and one fresh full review from a strictly reloaded current-v2 generation only. Maximum new aggregate budget is $0.25, within the original source authorization. Every failure is terminal; no recovery run can seed this profile. Ordinary continuation remains unchanged.
 Live generation, continuation, and review retry require --identity-file. The local-only JSON must set identityInventoryReviewed to true and include respondentNames, accountIds, emails, and otherIdentityTokens arrays (use [] when a category is absent). Values are checked locally and never stored in run artifacts.
 Live generation uses OPENROUTER_API_KEY and the existing configured model tiers unless that fixed candidate is explicitly selected. Old authorizations are never read.
 `;
 function argumentsMap(argv:string[]) {
  const flags=new Map<string,string|boolean>();
- const valued=new Set(["case","plan","assessment","mode","reports","output","budget","per-call","artifact","review","left","right","run","candidate","continue-from","review-retry-from","review-closure-from","identity-file"]);
+ const valued=new Set(["case","plan","assessment","mode","reports","output","budget","per-call","artifact","review","left","right","run","candidate","continue-from","recovery-profile","review-retry-from","review-closure-from","identity-file"]);
  for(let i=0;i<argv.length;i++) {
   const key=argv[i].replace(/^--/u,"");
   if(!argv[i].startsWith("--")||flags.has(key)) throw new Error("Use unique --named options; see --help.");
@@ -81,6 +83,9 @@ async function main() {
  if(liveMode&&!flags.has("identity-file")) throw new Error("Live generation requires --identity-file with a reviewed local identity inventory; no provider was called.");
  if(!liveMode&&(flags.has("allow-spend")||flags.has("budget")||flags.has("per-call"))) throw new Error("Spending flags are valid only in generation modes.");
  const candidateId=string("candidate")??((mode==="generate"||mode==="prepare")&&(string("reports")??"all").toUpperCase()==="IFS"?REPORT_DEV_LUNA_HIGH_128K_CANDIDATE_V2.id:undefined);
+ const recoveryProfileId=string("recovery-profile");
+ const recovery=recoveryProfileId?recoveryProfileBinding(recoveryProfileId):undefined;
+ if(recovery&&(mode!=="continue"||candidateId!==recovery.recoveryProfile.candidateId))throw new Error("--recovery-profile requires --mode continue and the current fixed 128k candidate.");
  const candidate=candidateId?reportDevCandidate(candidateId):undefined;
  if(candidateId!==undefined&&!candidate) throw new Error("Unknown report-dev candidate; arbitrary model and effort overrides are not supported.");
  if(liveMode&&candidate&&candidate.maxOutputTokens!==REPORT_OUTPUT_TOKEN_LIMIT) throw new Error("Historical 20k candidates are read-only. New calls require report-dev-luna-high-128k-v2.");
@@ -157,16 +162,17 @@ async function main() {
  const providerPolicy=reportDevProviderPolicy(candidate?.model??modelPolicy.IFS.model);
  const billingBasisSha256=reportBillingBasisSha256(candidate?.model??modelPolicy.IFS.model);
  const candidateConfiguration=candidate?{candidate,candidateSha256:sha256Canonical(candidate)}:{qualifiedCandidateOrderSha256:sha256Canonical(QUALIFICATION_MODEL_ORDER)};
- const continuation=mode==="continue"?await loadPwrp71ContinuationSeed({sourceRunDirectory:path.resolve(continuationSource!),outputRoot:root,assessment,questionSource:source,reportSource,candidateId:candidate?.id}):undefined;
- const continuationStructuralRepair=mode==="continue"&&candidate?.id!==REPORT_DEV_LUNA_HIGH_128K_CANDIDATE_V2.id;
+ const recoverySource=recovery?{sourceRunDirectory:path.resolve(continuationSource!),outputRoot:root}:undefined;
+ const continuation=mode==="continue"?await (recovery?loadPwrp71RecoverySeed:loadPwrp71ContinuationSeed)({sourceRunDirectory:path.resolve(continuationSource!),outputRoot:root,assessment,questionSource:source,reportSource,candidateId:candidate?.id,recoveryProfileId:recoveryProfileId!,aggregateMicros,perCallMicros}):undefined;
+ const continuationStructuralRepair=recovery!==undefined||mode==="continue"&&candidate?.id!==REPORT_DEV_LUNA_HIGH_128K_CANDIDATE_V2.id;
  const reviewRetry=mode==="review-retry"?await loadPwrp71ReviewRetrySeed({sourceRunDirectory:path.resolve(reviewRetrySource!),outputRoot:root,assessment,questionSource:source,reportSource}):undefined;
  const citationClosure=mode==="review-closure"?await loadPwrp71CitationClosureSeed({sourceRunDirectory:path.resolve(closureSource!),outputRoot:root,assessment,questionSource:source,reportSource}):undefined;
  const closureBinding=citationClosure?citationClosureBinding(citationClosure):undefined;
  const continuationBinding=continuation?{sourceRunBindingSha256:continuation.sourceRunBindingSha256,sourceDraftSha256:continuation.sourceDraftSha256,sourceReviewSha256:continuation.sourceReviewSha256,sourceDraftAttemptId:continuation.sourceDraftAttemptId,sourceReviewAttemptId:continuation.sourceReviewAttemptId}:undefined;
  const reviewRetryBinding=reviewRetry?{sourceRunBindingSha256:reviewRetry.sourceRunBindingSha256,sourceDraftSha256:reviewRetry.sourceDraftSha256,sourceDraftAttemptId:reviewRetry.sourceDraftAttemptId,sourceReviewAttemptId:reviewRetry.sourceReviewAttemptId,validationIssues:reviewRetry.validationIssues.map(({code,path})=>({code,path}))}:undefined;
- const runHash=contentHash(canonical({...(flags.has("pdf")?{exportPdfs:true}:{}),...(mode==="generate"?{generationRepairVersion:PWRP71_GENERATION_REPAIR_VERSION,reviewReplacementStructuralRepairLimit:1}:{}),...(candidate!==undefined&&"unsuccessfulResponsePolicy" in candidate?{unsuccessfulResponsePolicy:candidate.unsuccessfulResponsePolicy}:{}),schema:"patternwork-report-dev-run-2",inputGuidanceVersion:PWRP71_INPUT_GUIDANCE_VERSION,questionContextVersion:PWRP71_QUESTION_CONTEXT_VERSION,scopeGuidanceVersion:PWRP71_SCOPE_GUIDANCE_VERSION,referenceSchemaVersion:PWRP71_REFERENCE_SCHEMA_VERSION,...(mode==="continue"?{repairStrategyVersion:PWRP71_REPAIR_STRATEGY_VERSION,structuralRepairLimit:continuationStructuralRepair?1:0}:{}),assessment:assessment.contentSha256,questionSource:source.sourceManifestSha256,reportSource:reportSource.manifestSha256,types,modelPolicy,candidateConfiguration,providerPolicy,billingBasisSha256,mode,aggregateMicros:aggregateMicros??0,perCallMicros:perCallMicros??0,...(continuationBinding?{continuation:continuationBinding}:{}),...(reviewRetryBinding?{reviewRetry:reviewRetryBinding}:{}),...(closureBinding?{citationClosure:closureBinding}:{})}));
+ const runHash=contentHash(canonical({...(recovery??{}),...(flags.has("pdf")?{exportPdfs:true}:{}),...(mode==="generate"?{generationRepairVersion:PWRP71_GENERATION_REPAIR_VERSION,reviewReplacementStructuralRepairLimit:1}:{}),...(candidate!==undefined&&"unsuccessfulResponsePolicy" in candidate?{unsuccessfulResponsePolicy:candidate.unsuccessfulResponsePolicy}:{}),schema:"patternwork-report-dev-run-2",inputGuidanceVersion:PWRP71_INPUT_GUIDANCE_VERSION,questionContextVersion:PWRP71_QUESTION_CONTEXT_VERSION,scopeGuidanceVersion:PWRP71_SCOPE_GUIDANCE_VERSION,referenceSchemaVersion:PWRP71_REFERENCE_SCHEMA_VERSION,...(mode==="continue"?{repairStrategyVersion:PWRP71_REPAIR_STRATEGY_VERSION,structuralRepairLimit:continuationStructuralRepair?1:0}:{}),assessment:assessment.contentSha256,questionSource:source.sourceManifestSha256,reportSource:reportSource.manifestSha256,types,modelPolicy,candidateConfiguration,providerPolicy,billingBasisSha256,mode,aggregateMicros:aggregateMicros??0,perCallMicros:perCallMicros??0,...(continuationBinding?{continuation:continuationBinding}:{}),...(reviewRetryBinding?{reviewRetry:reviewRetryBinding}:{}),...(closureBinding?{citationClosure:closureBinding}:{})}));
  const directory=path.join(root,"runs",`${mode}-${runHash.slice(0,24)}`);
- const summary=await runReportBatch({...(flags.has("pdf")?{exportPdfs:true}:{}),assessment,types,questionSource:source,reportSource,directory,mode:mode as "prepare"|"generate"|"continue"|"review-retry"|"review-closure",...(candidate?{candidateId:candidate.id}:{}),...(continuation?{continuation,continuationStructuralRepair}:{}),...(reviewRetry?{reviewRetry}:{}),...(citationClosure?{citationClosure}:{}),...(privacyIdentityContext?{privacyIdentityContext}:{}),aggregateMicros,perCallMicros,...(liveMode?{transport:new OpenRouterClient()}: {})});
+ const summary=await runReportBatch({...(flags.has("pdf")?{exportPdfs:true}:{}),assessment,types,questionSource:source,reportSource,directory,mode:mode as "prepare"|"generate"|"continue"|"review-retry"|"review-closure",...(candidate?{candidateId:candidate.id}:{}),...(recovery?{recoveryProfileId,recoverySource}:continuation?{continuation,continuationStructuralRepair}:{}),...(reviewRetry?{reviewRetry}:{}),...(citationClosure?{citationClosure}:{}),...(privacyIdentityContext?{privacyIdentityContext}:{}),aggregateMicros,perCallMicros,...(liveMode?{transport:new OpenRouterClient()}: {})});
  console.log(JSON.stringify(summary,null,2));
  if(summary.failed) process.exitCode=1;
 }
