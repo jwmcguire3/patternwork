@@ -209,3 +209,28 @@ for (const change of ["no_omission_issue", "no_completeness_revision"] as const)
     assert.ok(validatePwrp71ReviewQuality(review, draft, packet).some(i => i.code === "review_coverage_omission"));
   });
 }
+
+test("positive review evidence carried only by an uncited claim still fails the support guard", () => {
+  const { review, draft, packet } = inputs(cases[1]);
+  draft.claims = [0, 1, 2].map(index => ({ id: `c${index}`, text: `A bounded observation ${index}.`, evidence_ids: [`obs-${index}`], counterevidence_ids: [] }));
+  (draft.sections as JsonObject[])[0].claim_ids = ["c0", "c1", "c2"];
+  review.evidence_coverage = [0, 1, 2].map(index => ({ evidence_ids: [`obs-${index}`], claim_ids: [`c${index}`], disposition: "represented", rationale: "Each observation has its own surfaced claim." }));
+  review.synthesis_opportunity = { status: "no_material_opportunity", evidence_ids: [], claim_ids: [], rationale: "This fixture isolates reference support rather than assessing further synthesis." };
+  review.explanatory_assessment.triggers = { status: "adequate", evidence_ids: ["obs-0", "obs-1"], claim_ids: ["c0"], rationale: "The cited source conditions are relevant, but the second is not carried by the listed claim." };
+  const before = structuredClone(draft);
+  assert.equal(validateSchema(review), true, JSON.stringify(validateSchema.errors));
+  const issues = validatePwrp71ReviewQuality(review, draft, packet);
+  assert.deepEqual(issues.map(({ code, path }) => ({ code, path })), [{ code: "review_explanation_support", path: "$.explanatory_assessment.triggers" }]);
+  review.explanatory_assessment.triggers.claim_ids = ["c0", "c1"];
+  assert.deepEqual(validatePwrp71ReviewQuality(review, draft, packet), []);
+  assert.deepEqual(draft, before, "repairing review references does not retrofit draft evidence or assertions");
+});
+
+test("reviewer instructions preserve visible source meaning, authored effect referents, and positive reference support", async () => {
+  const reviewer = await readFile("reporting/prompts/06_REVIEWER_PROMPT.md", "utf8");
+  assert.match(reviewer, /full visible authored question and selected answer/u);
+  assert.match(reviewer, /Distinguish an aim to change what happens next from explicit preventive effort/u);
+  assert.match(reviewer, /each effect against its actual first-response or later-attempt referent/u);
+  assert.match(reviewer, /each evidence_id is actually carried in evidence_ids or counterevidence_ids of at least one cited reader-surfaced claim/u);
+  assert.match(reviewer, /do not add unsupported evidence or assertions to the draft/u);
+});

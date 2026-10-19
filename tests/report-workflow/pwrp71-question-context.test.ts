@@ -127,7 +127,7 @@ test("D02-only binding guidance preserves other explicitly referential authored 
   for (const row of selected.slice(2)) row.occurrence_id = "pwep_aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
   const packet = makePacket(source, selected), before = structuredClone(packet);
   const result = buildPwrp71AuthoredQuestionContext(packet, source);
-  assert.equal(result.context_version, "pwrp71-authored-question-context-v4");
+  assert.equal(result.context_version, "pwrp71-authored-question-context-v5");
   assert.deepEqual(result.response_aim_bindings, [], "other explicit referents need no fabricated D02 entries");
   const contexts = result.observations as Record<string, unknown>[];
   const byItem = new Map(contexts.map(row => [row.item_id, row]));
@@ -235,4 +235,57 @@ test("ambiguous non-D02 referents remain visible without choosing or distributin
   assert.deepEqual((result.observations as JsonObject[]).filter(row => row.item_id === "M17").map(row => row.evidence_id), [first.id, second.id]);
   assert.deepEqual(result.response_aim_bindings, [], "no automatic single-action assignment or distribution is introduced");
   assert.match(String(result.response_aim_binding_rule), /Do not choose an action from an ambiguous referent/u);
+});
+
+test("visible source wording distinguishes a future-change answer from explicit preventive effort", async () => {
+  const source = await sourcePromise;
+  const actionQuestion = source.questionBank.items.find(q => q.id === "M11")!;
+  const aimQuestion = source.questionBank.items.find(q => q.id === "D02")!;
+  const effectQuestion = source.questionBank.items.find(q => q.id === "M06")!;
+  const action = observation(actionQuestion, "M11.help", "base", source);
+  const aim: JsonObject = { ...observation(aimQuestion, "D02.prevent", "base", source), step_id: "first" };
+  const effort = { ...observation(effectQuestion, "M06.prevent", "base", source), occurrence_id: "pwep_aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee" };
+  const packet = makePacket(source, [action, aim, effort]), before = structuredClone(packet);
+  const result = buildPwrp71AuthoredQuestionContext(packet, source);
+  const contexts = result.observations as JsonObject[];
+  assert.equal(aim.reported_value, "prevent", "symbolic source codes remain unchanged");
+  assert.ok(aimQuestion.options.find(o => o.id === "D02.prevent")?.candidate_signals?.includes("prevention_aim"));
+  assert.equal(contexts.find(row => row.item_id === "D02")?.option_text, "What might happen next.");
+  assert.match(String(contexts.find(row => row.item_id === "D02")?.prompt), /trying to change/u);
+  assert.equal(contexts.find(row => row.item_id === "M06")?.option_text, "I worked harder to prevent another one.");
+  const binding = (result.response_aim_bindings as JsonObject[])[0];
+  assert.equal(binding.aim_option_id, "D02.prevent");
+  assert.equal(binding.aim_option_text, "What might happen next.");
+  assert.equal(binding.binding_status, "resolved_single");
+  assert.equal(binding.answer_kind, "stated_aim", "the broad aim stays linked to the exact action without being upgraded to prevention");
+  const rule = String(result.interpretation_rule);
+  assert.match(rule, /visible authored question and selected option text govern/u);
+  assert.match(rule, /not explicit prevention by itself, despite the D02.prevent ID/u);
+  assert.match(rule, /A preventive interpretation needs additional evidence and its proper claim kind and scope/u);
+  assert.match(rule, /explicitly reports preventive effort in that mistake account; preserve it/u);
+  assert.deepEqual(packet, before);
+});
+
+test("authored first and later effect referents survive unordered observation projection", async () => {
+  const source = await sourcePromise;
+  const selections = [["M14", "M14.brief"], ["M12", "M12.function"], ["M13", "M13.company"], ["M11", "M11.help"]];
+  const selected = selections.map(([id, option]) => observation(source.questionBank.items.find(q => q.id === id)!, option, "base", source));
+  const result = buildPwrp71AuthoredQuestionContext(makePacket(source, selected), source);
+  const contexts = result.observations as JsonObject[];
+  assert.deepEqual(contexts.map(row => row.item_id), selections.map(([id]) => id), "projection order is source order, not asserted chronology");
+  const byItem = new Map(contexts.map(row => [row.item_id, row]));
+  assert.match(String(byItem.get("M12")?.prompt), /Right after that first response/u);
+  assert.equal(byItem.get("M12")?.step_id, "first");
+  assert.equal(byItem.get("M12")?.option_text, "I could carry on, but did not feel better.");
+  assert.match(String(byItem.get("M13")?.prompt), /Later that day/u);
+  assert.equal(byItem.get("M13")?.step_id, "later");
+  assert.equal(byItem.get("M13")?.option_text, "I spent time with someone I wanted to be with.");
+  assert.match(String(byItem.get("M14")?.prompt), /After that later attempt/u);
+  assert.equal(byItem.get("M14")?.step_id, "later");
+  assert.equal(byItem.get("M14")?.option_text, "I got a break, but it faded when I stopped.");
+  const rule = String(result.interpretation_rule);
+  assert.match(rule, /Keep each outcome with its own response and stage in claims and readable prose/u);
+  assert.match(rule, /Do not flatten these into one undifferentiated effect/u);
+  assert.match(rule, /do not license an order among unordered selections, a causal mechanism, a handoff between parts/u);
+  assert.match(rule, /preserve supported meanings and restore their correct referents rather than deleting the distinctions/u);
 });

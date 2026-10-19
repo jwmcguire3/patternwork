@@ -1,7 +1,7 @@
 {
   "report_release": "PWRP-7.1.0-candidate.1",
   "kind": "content_binding_not_approval",
-  "content_binding": "8bd0d1e24c87198ca40be7d410fa278406e15bc4e3622d22e4ae1c750279b452",
+  "content_binding": "47df9ee791a07ec4dd142dc3d24dddd6f49db52d05018ca7cc98233776129490",
   "files": {
     "contracts/ADDED_CHANNELS.md": "181010878a5955f3912498054e3520a9c192ebc72014d0277c978851d2dbfbde",
     "contracts/CONSTRUCT_GUIDE.md": "78114eca99e18d57b0e2a3efaa06fc33475730bfc896f0864f4ae949fca51511",
@@ -17,7 +17,7 @@
     "prompts/03_STATE_REPORT_PROMPT.md": "f88ece63dbbffde0708bc6dc47eaf9795380c3560fa60c1290df76dd5ceb3cb0",
     "prompts/04_ATTACHMENT_REPORT_PROMPT.md": "9b78591c3d22e333124d30906487b2a4cac96fa886da58007dd21936fbca36b8",
     "prompts/05_SYNTHESIS_REPORT_PROMPT.md": "b84c557517bb293a48c177b07c0f34667d1ad90915d76cf04b74879b03e13383",
-    "prompts/06_REVIEWER_PROMPT.md": "62c2cebff9ef7f56d6dec4cd6241f4e376190d895eb9b77564ad64e0fc299495",
+    "prompts/06_REVIEWER_PROMPT.md": "8f3d1d1b58f7dbab824bd3a9b7e3c5cfdcd48a87334cef2606b120210788a984",
     "prompts/07_REPAIR_REPORT_PROMPT.md": "691deeb175b5d003811fa0c4d556b6a2b39106d4ecc8cc123e8e24c3e5fd86da",
     "schemas/report_draft.schema.json": "e174128ac882153c5be288c044663111ae2a2a7deb79b1fb1cb1267ceea51b17",
     "schemas/report_review.schema.json": "bf7ce508bd94b7262871eccf2d9b1f1b6a67e48e251cf56aa025acdb1b0f73aa"
