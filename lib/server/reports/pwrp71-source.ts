@@ -7,7 +7,7 @@ import { PWQE51_RELEASE_IDENTITY } from "../../question-engine/pwqe51-source.ts"
 
 export const PWRP71_SOURCE_DIRECTORY = "reporting" as const;
 export const PWRP71_RELEASE_MANIFEST_PATH = `${PWRP71_SOURCE_DIRECTORY}/contracts/report_release_manifest.json` as const;
-export const PWRP71_RELEASE_MANIFEST_SHA256 = "188f85f647719b044f2d7c7604991323f56af4025e949aef7ac6ad3084f8dfe2" as const;
+export const PWRP71_RELEASE_MANIFEST_SHA256 = "36b7b20d9ffb9d49a31e7e229598b83440a982268c4a0bee40effe0322779af1" as const;
 
 export const PWRP71_PROMPT_FILES = {
   shared: "prompts/00_SHARED_REPORT_PROMPT_v7.md",

@@ -152,6 +152,8 @@ test("PWRP 7.1 uses the prepared prompt/schema and validates a complete stop res
   assert.match(requests[0].prompt, /PWRP-7\.1\.0-candidate\.1/u);
   for (const request of requests) {
     assert.match(request.prompt, /authored_question_context/u);
+    assert.match(request.prompt, /pwrp71-authored-question-context-v5/u);
+    assert.match(request.prompt, /visible authored question and selected option text govern/u);
     const question = value.questionSource.questionBank.items.find((item) => item.id === "D65")!;
     assert.ok(request.prompt.includes(JSON.stringify(question.prompt)), "Writer and reviewer receive the full authored question wording.");
   }
@@ -212,6 +214,7 @@ test("PWRP 7.1 repair uses its authored repair contract and keeps the prepared s
   });
   assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify(result.failure));
   assert.equal(requests.length, 3);
+  assert.ok(requests.every(request => request.prompt.includes("pwrp71-authored-question-context-v5") && request.prompt.includes("Keep each outcome with its own response and stage")), "initial generation, structural repair, and reviewer receive the same source-reading rules");
   assert.equal(requests[0].system, value.request.system);
   assert.equal(requests[1].system, `${value.request.system}\n\n${value.reportSource.prompts.repair}`);
   assert.match(requests[1].prompt, /validator_feedback/u);
@@ -243,6 +246,7 @@ test("PWRP 7.1 reviewer revise gets one repair and a fresh review bound to the r
   const acceptedDraft = (result.value.artifact as Record<string, unknown>).draft as Record<string, unknown>;
   assert.equal(((acceptedDraft.sections as Record<string, unknown>[])[0]).text, ((revisedDraft.sections as Record<string, unknown>[])[0]).text);
   assert.equal(requests.length, 4);
+  assert.ok(requests.every(request => request.prompt.includes("pwrp71-authored-question-context-v5") && request.prompt.includes("visible authored question and selected option text govern")), "semantic repair and its fresh review retain the current source-reading rules");
   assert.equal(validations.length, 2, "both initial and reviewer-requested replacement drafts retain their validation receipts");
   assert.deepEqual(validations.map((entry) => [entry.attemptId.split(":").at(-3), entry.ok]), [["initial", true], ["repair", true]]);
   assert.equal(requests[2].system, `${value.request.system}\n\n${value.reportSource.prompts.repair}`);
