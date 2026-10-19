@@ -127,7 +127,7 @@ test("D02-only binding guidance preserves other explicitly referential authored 
   for (const row of selected.slice(2)) row.occurrence_id = "pwep_aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
   const packet = makePacket(source, selected), before = structuredClone(packet);
   const result = buildPwrp71AuthoredQuestionContext(packet, source);
-  assert.equal(result.context_version, "pwrp71-authored-question-context-v5");
+  assert.equal(result.context_version, "pwrp71-authored-question-context-v6");
   assert.deepEqual(result.response_aim_bindings, [], "other explicit referents need no fabricated D02 entries");
   const contexts = result.observations as Record<string, unknown>[];
   const byItem = new Map(contexts.map(row => [row.item_id, row]));
@@ -288,4 +288,73 @@ test("authored first and later effect referents survive unordered observation pr
   assert.match(rule, /Do not flatten these into one undifferentiated effect/u);
   assert.match(rule, /do not license an order among unordered selections, a causal mechanism, a handoff between parts/u);
   assert.match(rule, /preserve supported meanings and restore their correct referents rather than deleting the distinctions/u);
+});
+
+test("post-response experience does not imply efficacy, completed intention, or received support", async () => {
+  const source = await sourcePromise;
+  const selections = [["M11", "M11.help"], ["M12", "M12.function"], ["M13", "M13.company"], ["M14", "M14.brief"]];
+  const selected = selections.map(([id, option]) => observation(source.questionBank.items.find(q => q.id === id)!, option, "base", source));
+  const packet = makePacket(source, selected), before = structuredClone(packet);
+  const result = buildPwrp71AuthoredQuestionContext(packet, source);
+  const contexts = result.observations as JsonObject[];
+  assert.deepEqual(contexts.map(row => [row.item_id, row.step_id, row.option_text]), [
+    ["M11", "first", "I asked for help or company."],
+    ["M12", "first", "I could carry on, but did not feel better."],
+    ["M13", "later", "I spent time with someone I wanted to be with."],
+    ["M14", "later", "I got a break, but it faded when I stopped."],
+  ]);
+  const rule = String(result.interpretation_rule);
+  assert.match(rule, /describes reported experience immediately after the first response in M11/u);
+  assert.match(rule, /describes reported experience after the later attempt in M13/u);
+  assert.doesNotMatch(rule, /describes the effect of M11|describes the effect of M13/u);
+  assert.match(rule, /By itself it does not establish that an intended action was completed, requested support was received, or the response produced the outcome/u);
+  assert.deepEqual(packet, before);
+});
+
+test("explicit stronger attribution remains available when the selected answer or authored stop question reports it", async () => {
+  const source = await sourcePromise;
+  const stronger = observation(source.questionBank.items.find(q => q.id === "M14")!, "M14.worse", "base", source);
+  const stop = { ...observation(source.questionBank.items.find(q => q.id === "D04")!, "D04.sign", "base", source), step_id: "later" };
+  const result = buildPwrp71AuthoredQuestionContext(makePacket(source, [stronger, stop]), source);
+  const contexts = result.observations as JsonObject[];
+  assert.equal(contexts.find(row => row.item_id === "M14")?.option_text, "It made things harder.");
+  assert.match(String(contexts.find(row => row.item_id === "D04")?.prompt), /What actually let .* stop/u);
+  assert.equal(contexts.find(row => row.item_id === "D04")?.option_text, "I got a sign that things were okay.");
+  assert.match(String(result.interpretation_rule), /Preserve stronger attribution when the authored question and selected answer explicitly report it/u);
+});
+
+test("separate positive stop reports retain their referents for an optional bounded comparison", async () => {
+  const source = await sourcePromise;
+  const stopQuestion = source.questionBank.items.find(q => q.id === "D04")!;
+  const actionA = observation(source.questionBank.items.find(q => q.id === "M02")!, "M02.feedback", "base", source);
+  const actionB = { ...observation(source.questionBank.items.find(q => q.id === "M15")!, "M15.check", "base", source), occurrence_id: "pwep_aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee" };
+  const stopA = { ...observation(stopQuestion, "D04.sign", "base", source), id: "Ostop-evaluation", occurrence_id: actionA.occurrence_id, step_id: "first" };
+  const stopB = { ...observation(stopQuestion, "D04.sign", "base", source), id: "Ostop-wait", occurrence_id: actionB.occurrence_id, step_id: "first" };
+  const packet = makePacket(source, [actionA, stopA, actionB, stopB]);
+  packet.episodes = [{ id: String(actionA.occurrence_id), context: "evaluation" }, { id: String(actionB.occurrence_id), context: "practical_uncertainty" }];
+  const result = buildPwrp71AuthoredQuestionContext(packet, source);
+  const stops = (result.observations as JsonObject[]).filter(row => row.item_id === "D04");
+  assert.deepEqual(stops.map(row => [row.evidence_id, row.occurrence_id, row.step_id, row.option_text]), [
+    [stopA.id, actionA.occurrence_id, "first", "I got a sign that things were okay."],
+    [stopB.id, actionB.occurrence_id, "first", "I got a sign that things were okay."],
+  ]);
+  const rule = String(result.interpretation_rule);
+  assert.match(rule, /may support a bounded comparison across sampled situations when it adds material understanding/u);
+  assert.match(rule, /Preserve each condition's actual meaning and referent/u);
+  assert.match(rule, /does not establish shared part, motive, or mechanism and need not be added when immaterial/u);
+});
+
+test("repeated non-stopping labels and response controls do not become positive shared stop conditions", async () => {
+  const source = await sourcePromise;
+  const question = source.questionBank.items.find(q => q.id === "D04")!;
+  const first = { ...observation(question, "D04.continued", "base", source), id: "Ocontinued-first", step_id: "first" };
+  const second = { ...first, id: "Ocontinued-second", occurrence_id: "pwep_aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee" };
+  const control = source.questionBank.common_response_controls.find(c => question.response_controls.includes(c.id))!;
+  const controlled = { ...first, id: "Ostop-control", option_id: control.id, text: control.text, reported_value: control.text };
+  const result = buildPwrp71AuthoredQuestionContext(makePacket(source, [first, second, controlled]), source);
+  const contexts = result.observations as JsonObject[];
+  assert.deepEqual(contexts.slice(0, 2).map(row => row.option_text), ["It did not really stop during that period.", "It did not really stop during that period."]);
+  assert.equal(contexts[2].is_response_control, true);
+  assert.match(String(result.interpretation_rule), /Repeated labels alone, response controls, and reports that a response did not stop do not supply a shared positive stopping condition/u);
+  assert.deepEqual(result.response_aim_bindings, [], "guidance does not synthesize a positive comparison from repeated labels or controls");
 });
