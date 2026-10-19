@@ -17,8 +17,10 @@ import { generateCanonicalReport, PWRP71_INPUT_GUIDANCE_VERSION, PWRP71_REPAIR_S
 import { derivePwrp71Citations } from "../../lib/server/reports/pwrp71-citation-derivation.ts";
 import { validatePwrp71Review } from "../../lib/server/reports/pwrp71-review.ts";
 import { validatePwrp71ReportDraft, type Pwrp71ReportArtifact } from "../../lib/server/reports/pwrp71-validation.ts";
-import { FileQualificationAttemptStore, JournaledPwrp71Transport } from "../../lib/server/reports/qualification/attempt-store.ts";
+import { FileQualificationAttemptStore, JournaledPwrp71Transport, qualificationAttemptFingerprint } from "../../lib/server/reports/qualification/attempt-store.ts";
 import { assertNoRespondentClassification, assertNoRespondentFullName, assertNoRespondentFullNameInGeneratedDraft, assertNoRespondentFullNameInPwrp71ModelInput } from "../../lib/server/reports/content-boundary.ts";
+import { projectOpenRouterStrictSchemaObject } from "../../lib/server/openrouter/schema-projection.ts";
+import { recoveryProfileBinding, type RecoverySource } from "./recovery-profile.ts";
 import { canonical, contentHash } from "./source.ts";
 import { type AssessmentRecord, writeImmutableJson } from "./assessment.ts";
 import { sha256Canonical } from "../../lib/report-contracts/delivery-validator.ts";
@@ -55,6 +57,9 @@ export interface RunReportBatchOptions {
  candidateId?:ReportDevCandidateAdmission["candidateId"];
  continuation?:Pwrp71ContinuationSeed;
  continuationStructuralRepair?:boolean;
+ recoveryProfileId?:string;
+ /** A profile reloads the durable generation lineage; raw continuation seeds are rejected. */
+ recoverySource?:RecoverySource;
  reviewRetry?:Pwrp71ReviewRetrySeed;
  citationClosure?:Pwrp71CitationClosureSeed;
  /** Injected deterministic transports are allowed only by tests, never exposed by the CLI. */
@@ -624,6 +629,42 @@ export function citationClosureBinding(seed:Pwrp71CitationClosureSeed) {
  return {sourceRunBindingSha256:seed.sourceRunBindingSha256,sourceDraftAttemptId:seed.sourceDraftAttemptId,rawDraftSha256:seed.derivation.raw_draft_sha256,normalizedDraftSha256:seed.derivation.normalized_draft_sha256,normalizationVersion:seed.derivation.normalization_version,derivationSha256:sha256Canonical(seed.derivation)};
 }
 
+/** Direct generation only; revalidate the saved source and exact captured requests on every invocation. */
+export async function loadPwrp71RecoverySeed(input:RecoverySource & {
+ assessment:AssessmentRecord; questionSource:Pwqe51SourcePackage; reportSource:Pwrp71SourcePackage;
+ candidateId?:string; recoveryProfileId:string; aggregateMicros?:number; perCallMicros?:number;
+}):Promise<Pwrp71ContinuationSeed> {
+ const {recoveryProfile:profile}=recoveryProfileBinding(input.recoveryProfileId);
+ if(input.candidateId!==profile.candidateId)throw new Error("Recovery profile requires the current fixed 128k candidate.");
+ if(!Number.isSafeInteger(input.aggregateMicros)||!Number.isSafeInteger(input.perCallMicros)
+  ||input.aggregateMicros!<=0||input.aggregateMicros!>profile.maximumAggregateMicros
+  ||input.perCallMicros!<=0||input.perCallMicros!>profile.maximumPerCallMicros||input.perCallMicros!>input.aggregateMicros!)throw new Error("Recovery profile requires positive limits of at most $0.25 aggregate and the per-call/source caps.");
+ const sourceDirectory=await realpath(input.sourceRunDirectory),root=await realpath(input.outputRoot);
+ const relative=path.relative(root,sourceDirectory);
+ if(relative===".."||relative.startsWith(`..${path.sep}`)||path.isAbsolute(relative))throw new Error("Recovery source must be inside the selected output root.");
+ const binding=object(JSON.parse(await readFile(path.join(sourceDirectory,"binding.json"),"utf8")));
+ if(binding?.mode!==profile.sourceMode||binding.recoveryProfile!==undefined||binding.recoveryProfileSha256!==undefined)throw new Error("Recovery profile requires a direct current-v2 generation, never a recovery run.");
+ if(typeof binding.aggregateMicros!=="number"||input.aggregateMicros!>binding.aggregateMicros)throw new Error("Recovery budget exceeds the original generation authorization.");
+ const seed=await loadPwrp71ContinuationSeed(input);
+ const summary=JSON.parse(await readFile(path.join(sourceDirectory,"summary.json"),"utf8"));
+ if(input.aggregateMicros!+summary.settledCostMicros>binding.aggregateMicros)throw new Error("Recovery budget plus settled generation spend exceeds the original generation authorization.");
+ const journal=JSON.parse(await readFile(path.join(sourceDirectory,"provider/attempts.json"),"utf8"));
+ for(const attempt of journal.attempts) {
+  const capture=JSON.parse(await readFile(path.join(sourceDirectory,"provider/requests",`${contentHash(attempt.attemptId)}.json`),"utf8"));
+  const request=capture.request;
+  if(!request||capture.attemptId!==attempt.attemptId)throw new Error("Recovery source request capture is missing or mismatched.");
+  const wireRequest={...request,schema:projectOpenRouterStrictSchemaObject(request.schema),providerPolicy:GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY,promptCacheOptions:{mode:"explicit" as const},includeUsage:true};
+  const expectedRequest={requestedModel:request.model,requestedReasoningEffort:request.reasoningEffort,schemaName:request.schemaName,maxOutputTokens:request.maxOutputTokens,idempotencyKey:request.idempotencyKey,systemSha256:contentHash(request.system),promptSha256:contentHash(request.prompt),localSchemaSha256:sha256Canonical(request.schema),wireSchemaSha256:sha256Canonical(wireRequest.schema)};
+  assertSame(attempt.request,expectedRequest,"Recovery source journal request differs from its capture.");
+  assertSame(capture.wirePayload,buildOpenRouterWirePayload(wireRequest),"Recovery source wire request differs from its pinned privacy route.");
+  assertSame(attempt.usage,attempt.providerResult?.usage,"Recovery source reported cost differs from its durable result.");
+  if(attempt.aggregateCostCapMicros!==binding.aggregateMicros||attempt.maximumCallCostMicros!==binding.perCallMicros
+   ||attempt.billingBasisSha256!==binding.billingBasisSha256||attempt.wirePayloadSha256!==contentHash(JSON.stringify(capture.wirePayload))
+   ||attempt.requestFingerprint!==qualificationAttemptFingerprint({request,wireRequest,endpoint:attempt.endpoint,maxCallCostMicros:binding.perCallMicros as number,aggregateCostCapMicros:binding.aggregateMicros,billingBasisSha256:binding.billingBasisSha256 as string,candidateAdmission:attempt.candidateAdmission}))throw new Error("Recovery source request fingerprint, spend authorization, or journal binding changed.");
+ }
+ return seed;
+}
+
 export async function runReportBatch(options:RunReportBatchOptions) {
  const {assessment,types,questionSource,reportSource,directory,mode}=options;
  const privacyIdentityContext=options.privacyIdentityContext??(options.testTransport?REVIEWED_IDENTITY_FREE_FIXTURE_CONTEXT:undefined);
@@ -632,16 +673,21 @@ export async function runReportBatch(options:RunReportBatchOptions) {
   throw new Error("Live report-dev generation requires a reviewed local identity inventory before provider dispatch.");
  }
  assertAssessmentRoute(assessment,questionSource);
+ const recovery=options.recoveryProfileId!==undefined?recoveryProfileBinding(options.recoveryProfileId):undefined;
+ if(recovery&&(mode!=="continue"||options.continuation!==undefined||options.continuationStructuralRepair!==undefined||!options.recoverySource))throw new Error("Recovery profile requires continue mode and a durable generation source, without caller-supplied seeds or correction overrides.");
+ if(!recovery&&options.recoverySource)throw new Error("A recovery source requires an explicit fixed recovery profile.");
+ const continuation=recovery?await loadPwrp71RecoverySeed({...options.recoverySource!,assessment,questionSource,reportSource,candidateId:options.candidateId,recoveryProfileId:options.recoveryProfileId!,aggregateMicros:options.aggregateMicros,perCallMicros:options.perCallMicros}):options.continuation;
+ const structuralRepair=recovery!==undefined||options.continuationStructuralRepair===true;
  const candidate=options.candidateId?reportDevCandidate(options.candidateId):undefined;
  if(options.candidateId&&!candidate)throw new Error("Unknown fixed development candidate.");
  if(mode!=="prepare"&&candidate&&candidate.maxOutputTokens!==REPORT_OUTPUT_TOKEN_LIMIT)throw new Error("Historical 20k candidates cannot make new calls; select the active 128k Luna candidate.");
  if(candidate!==undefined&&"unsuccessfulResponsePolicy" in candidate&&mode!=="prepare"&&mode!=="generate"&&!(candidate.id===REPORT_DEV_LUNA_HIGH_128K_CANDIDATE_V2.id&&mode==="continue"))throw new Error("This candidate does not support the selected recovery mode.");
- if(candidate?.id===REPORT_DEV_LUNA_HIGH_128K_CANDIDATE_V2.id&&mode==="continue"&&options.continuationStructuralRepair===true)throw new Error("The active 128k continuation permits one repair and one fresh review only.");
+ if(candidate?.id===REPORT_DEV_LUNA_HIGH_128K_CANDIDATE_V2.id&&mode==="continue"&&!recovery&&options.continuationStructuralRepair===true)throw new Error("The active 128k continuation permits one repair and one fresh review only.");
  if(candidate&&(types.length!==1||types[0]!=="IFS"))throw new Error("The unqualified report-dev candidate is restricted to one IFS report per run.");
- if((mode==="continue")!==Boolean(options.continuation))throw new Error("Continuation mode requires one validated continuation seed, and other modes reject continuation seeds.");
+ if((mode==="continue")!==Boolean(continuation))throw new Error("Continuation mode requires one validated continuation seed, and other modes reject continuation seeds.");
  if((mode==="review-retry")!==Boolean(options.reviewRetry))throw new Error("Review-retry mode requires one validated review-retry seed, and other modes reject review-retry seeds.");
  if((mode==="review-closure")!==Boolean(options.citationClosure))throw new Error("Citation review requires exactly one source-bound derivation seed.");
- if([options.continuation,options.reviewRetry,options.citationClosure].filter(Boolean).length>1)throw new Error("Recovery seeds cannot be combined.");
+ if([continuation,options.reviewRetry,options.citationClosure].filter(Boolean).length>1)throw new Error("Recovery seeds cannot be combined.");
  if(mode==="continue"&&(!candidate||types.length!==1||types[0]!=="IFS"))throw new Error("Continuation is restricted to one fixed-candidate IFS report.");
  if(mode==="review-retry"&&(!candidate||types.length!==1||types[0]!=="IFS"))throw new Error("Review retry is restricted to one fixed-candidate IFS report.");
  if(mode==="review-closure"&&(!candidate||types.length!==1||types[0]!=="IFS"))throw new Error("Citation review is restricted to one fixed-candidate IFS report.");
@@ -649,7 +695,6 @@ export async function runReportBatch(options:RunReportBatchOptions) {
  const providerPolicy=reportDevProviderPolicy(candidate?.model??modelPolicy.IFS.model);
  const billingBasisSha256=reportBillingBasisSha256(candidate?.model??modelPolicy.IFS.model);
  const candidateSha256=candidate?sha256Canonical(candidate):undefined;
- const continuation=options.continuation;
  const reviewRetry=options.reviewRetry;
  const citationClosure=options.citationClosure;
  const closureBinding=citationClosure?citationClosureBinding(citationClosure):undefined;
@@ -661,7 +706,7 @@ export async function runReportBatch(options:RunReportBatchOptions) {
   sourceReviewAttemptId:continuation.sourceReviewAttemptId,
  }:undefined;
  const reviewRetryBinding=reviewRetry?{sourceRunBindingSha256:reviewRetry.sourceRunBindingSha256,sourceDraftSha256:reviewRetry.sourceDraftSha256,sourceDraftAttemptId:reviewRetry.sourceDraftAttemptId,sourceReviewAttemptId:reviewRetry.sourceReviewAttemptId,validationIssues:reviewRetry.validationIssues.map(({code,path})=>({code,path}))}:undefined;
- const binding={...(options.exportPdfs?{exportPdfs:true}:{}),...(mode==="generate"?{generationRepairVersion:PWRP71_GENERATION_REPAIR_VERSION,reviewReplacementStructuralRepairLimit:1}:{}),...(candidate!==undefined&&"unsuccessfulResponsePolicy" in candidate?{unsuccessfulResponsePolicy:candidate.unsuccessfulResponsePolicy}:{}),schema:"patternwork-report-dev-run-2",assessmentSha256:assessment.contentSha256,questionSourceSha256:questionSource.sourceManifestSha256,reportSourceSha256:reportSource.manifestSha256,types,modelPolicy,...(candidate?{candidate,candidateSha256}:{}),providerPolicy,billingBasisSha256,inputGuidanceVersion:PWRP71_INPUT_GUIDANCE_VERSION,questionContextVersion:PWRP71_QUESTION_CONTEXT_VERSION,scopeGuidanceVersion:PWRP71_SCOPE_GUIDANCE_VERSION,referenceSchemaVersion:PWRP71_REFERENCE_SCHEMA_VERSION,...(mode==="continue"?{repairStrategyVersion:PWRP71_REPAIR_STRATEGY_VERSION,structuralRepairLimit:options.continuationStructuralRepair===true?1:0}:{}),mode,aggregateMicros:options.aggregateMicros??0,perCallMicros:options.perCallMicros??0,operationalApproval:false,...(continuationBinding?{continuation:continuationBinding}:{}),...(reviewRetryBinding?{reviewRetry:reviewRetryBinding}:{}),...(closureBinding?{citationClosure:closureBinding}:{})};
+ const binding={...(recovery??{}),...(options.exportPdfs?{exportPdfs:true}:{}),...(mode==="generate"?{generationRepairVersion:PWRP71_GENERATION_REPAIR_VERSION,reviewReplacementStructuralRepairLimit:1}:{}),...(candidate!==undefined&&"unsuccessfulResponsePolicy" in candidate?{unsuccessfulResponsePolicy:candidate.unsuccessfulResponsePolicy}:{}),schema:"patternwork-report-dev-run-2",assessmentSha256:assessment.contentSha256,questionSourceSha256:questionSource.sourceManifestSha256,reportSourceSha256:reportSource.manifestSha256,types,modelPolicy,...(candidate?{candidate,candidateSha256}:{}),providerPolicy,billingBasisSha256,inputGuidanceVersion:PWRP71_INPUT_GUIDANCE_VERSION,questionContextVersion:PWRP71_QUESTION_CONTEXT_VERSION,scopeGuidanceVersion:PWRP71_SCOPE_GUIDANCE_VERSION,referenceSchemaVersion:PWRP71_REFERENCE_SCHEMA_VERSION,...(mode==="continue"?{repairStrategyVersion:PWRP71_REPAIR_STRATEGY_VERSION,structuralRepairLimit:structuralRepair?1:0}:{}),mode,aggregateMicros:options.aggregateMicros??0,perCallMicros:options.perCallMicros??0,operationalApproval:false,...(continuationBinding?{continuation:continuationBinding}:{}),...(reviewRetryBinding?{reviewRetry:reviewRetryBinding}:{}),...(closureBinding?{citationClosure:closureBinding}:{})};
  const runBindingSha256=contentHash(canonical(binding));
  const candidateAdmission:ReportDevCandidateAdmission|undefined=candidate&&candidateSha256?{scope:"report-dev-experimental-v1",candidateId:candidate.id,candidateSha256,runBindingSha256}:undefined;
  await writeImmutableJson(path.join(directory,"binding.json"),binding);
@@ -701,7 +746,7 @@ export async function runReportBatch(options:RunReportBatchOptions) {
     await writeImmutableJson(path.join(sub,"normalized-draft.json"),closed.artifact.draft);
    }
    const events:JsonObject[]=[];
-   const outcome=await generateCanonicalReport({reportType:type,input:request.value.user_data,packets:[packet],provider:provider!,privacyIdentityContext,invocationKey:`dev:${runBindingSha256}`,spentMicros:0,costCapMicros:options.aggregateMicros!,modelPolicy,contractVersion:"v7.1",reviewReplacementStructuralRepair:mode==="generate",stopOnUnsuccessfulProviderResponse:candidate!==undefined&&"unsuccessfulResponsePolicy" in candidate,...(candidate?{requestIdentityLabel:candidate.id}:{}),...(continuation?{continuation,continuationStructuralRepair:options.continuationStructuralRepair===true}:{}),...(reviewRetry?{reviewRetry}:{}),...(citationClosure?{citationClosure}:{}),beforeProviderRequest:({assessmentData,previousOutput})=>{assertNoRespondentFullNameInPwrp71ModelInput(assessmentData);if(previousOutput)assertNoRespondentFullNameInGeneratedDraft(previousOutput);},pwrp71:{request:request.value,packet,source:reportSource,questionSource},onPwrp71Event:async event=>{assertNoRespondentClassification(event);assertNoRespondentFullName(event);events.push(event as unknown as JsonObject);await store.recordGenerationEvent(event);}});
+   const outcome=await generateCanonicalReport({reportType:type,input:request.value.user_data,packets:[packet],provider:provider!,privacyIdentityContext,invocationKey:`dev:${runBindingSha256}`,spentMicros:0,costCapMicros:options.aggregateMicros!,modelPolicy,contractVersion:"v7.1",reviewReplacementStructuralRepair:mode==="generate",stopOnUnsuccessfulProviderResponse:candidate!==undefined&&"unsuccessfulResponsePolicy" in candidate,...(candidate?{requestIdentityLabel:candidate.id}:{}),...(continuation?{continuation,continuationStructuralRepair:structuralRepair}:{}),...(reviewRetry?{reviewRetry}:{}),...(citationClosure?{citationClosure}:{}),beforeProviderRequest:({assessmentData,previousOutput})=>{assertNoRespondentFullNameInPwrp71ModelInput(assessmentData);if(previousOutput)assertNoRespondentFullNameInGeneratedDraft(previousOutput);},pwrp71:{request:request.value,packet,source:reportSource,questionSource},onPwrp71Event:async event=>{assertNoRespondentClassification(event);assertNoRespondentFullName(event);events.push(event as unknown as JsonObject);await store.recordGenerationEvent(event);}});
    if(events.some((event)=>event.type==="review_receipt"||event.type==="review_validation")) independentReviewCount++;
    await writeImmutableJson(path.join(sub,"outcome.json"),outcome);
    await writeImmutableJson(path.join(sub,"events.json"),events);
