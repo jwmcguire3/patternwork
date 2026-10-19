@@ -35,7 +35,8 @@ def _index(rows: list[dict[str, Any]], key: str, label: str) -> dict[str, dict[s
 
 
 class ReportContract:
-    def __init__(self, root: str | Path | None = None, *, verify_manifest: bool = True):
+    def __init__(self, root: str | Path | None = None, *, verify_manifest: bool = True,
+                 router_root: str | Path | None = None):
         self.root = Path(root) if root else Path(__file__).resolve().parents[2]
         self.policy = self.load('contracts/report_policy.json')
         if verify_manifest:
@@ -44,14 +45,24 @@ class ReportContract:
         self.review_schema = self.load(self.policy['review_schema'])
         jsonschema.Draft202012Validator.check_schema(self.draft_schema)
         jsonschema.Draft202012Validator.check_schema(self.review_schema)
-        self.router_root = self.root.parent / 'assessment_runtime'
+        self.router_root = (Path(router_root) if router_root is not None else
+                            self.root.parent / 'specs' / 'patternwork' /
+                            'question-engine-v5.1' / 'assessment_runtime')
         path = str(self.router_root / 'implementation')
         if path not in sys.path:
             sys.path.insert(0, path)
         from patternwork_router import Source
         self.source = Source(self.router_root)
-        if self.source.binding['source_sha256'] != self.policy['compatible_router_source_sha256']:
+        # The source manifest uses POSIX member names. Source's filesystem glob
+        # produces backslashes on Windows; normalize keys, never source bytes,
+        # and authenticate the complete resulting hash map before using it.
+        canonical_hashes = {name.replace('\\', '/'): sha for name, sha in self.source.hashes.items()}
+        source_sha = digest(canonical_hashes)
+        if (len(canonical_hashes) != len(self.source.hashes) or
+                source_sha != self.policy['compatible_router_source_sha256']):
             raise ReportValidationError('Router changed; compatibility must be requalified, not silently resumed.')
+        self.source.hashes = canonical_hashes
+        self.source.binding['source_sha256'] = source_sha
 
     def load(self, path: str) -> Any:
         return json.loads((self.root / path).read_text(encoding='utf-8'))
@@ -74,7 +85,7 @@ class ReportContract:
     def validate_packet(self, packet: dict[str, Any]) -> None:
         from patternwork_router.packet import validate_packet
         try:
-            schema = json.loads((self.router_root / 'schemas/router_packet.schema.json').read_text())
+            schema = json.loads((self.router_root / 'schemas/router_packet.schema.json').read_text(encoding='utf-8'))
             jsonschema.Draft202012Validator(schema).validate(packet)
             validate_packet(packet, self.source)
         except (ValueError, KeyError, TypeError, jsonschema.ValidationError) as exc:
@@ -101,8 +112,9 @@ class ReportContract:
                 raise ReportValidationError('Invalid synthesis source layer.')
             self.validate_draft(draft, packet)
         self._consistent_registry(list(layers.values()))
-        shared = (self.root / self.policy['shared_prompt']).read_text()
-        layer_prompt = (self.root / self.policy['layer_prompts'][report_type]).read_text()
+        shared = (self.root / self.policy['shared_prompt']).read_text(encoding='utf-8')
+        constructs = (self.root / 'contracts/CONSTRUCT_GUIDE.md').read_text(encoding='utf-8')
+        layer_prompt = (self.root / self.policy['layer_prompts'][report_type]).read_text(encoding='utf-8')
         # The original envelope remains the validator's authority. This view keeps
         # all observations but removes administrative response history and totals.
         keys = ['release_id', 'snapshot_id', 'source_binding', 'observations', 'episodes', 'steps',
@@ -119,11 +131,12 @@ class ReportContract:
         view['accepted_layers'] = deepcopy(layers)
         # This is a structural aid, not a computed evidence-completeness score.
         view['interpretation_note'] = 'Structural summaries are non-exhaustive; current source observations control.'
-        return {'system': shared + '\n\n' + layer_prompt, 'user_data': view,
+        system = '\n\n'.join([shared, constructs, layer_prompt])
+        return {'system': system, 'user_data': view,
                 'response_schema': deepcopy(self.draft_schema),
                 'binding': {'report_release': self.policy['release'], 'report_type': report_type,
                             'snapshot_id': packet['snapshot_id'], 'evidence_sha256': packet['content_sha256'],
-                            'prompt_sha256': hashlib.sha256((shared+'\n\n'+layer_prompt).encode()).hexdigest()}}
+                            'prompt_sha256': hashlib.sha256(system.encode()).hexdigest()}}
 
     @staticmethod
     def _consistent_registry(drafts: list[dict[str, Any]]) -> None:
@@ -265,7 +278,7 @@ class ReportContract:
                        accepted_layers: dict[str, dict[str, Any]] | None = None) -> dict[str, Any]:
         self.validate_draft(draft, packet, accepted_layers=accepted_layers)
         request = self.prepare_request(packet, draft['report_type'], accepted_layers=accepted_layers)
-        return {'system': 'REVIEW TASK: The writer contracts below are evaluation criteria, not an instruction to write a report. Return only the review schema.\n\n'+request['system']+'\n\n'+(self.root/self.policy['reviewer_prompt']).read_text(),
+        return {'system': 'REVIEW TASK: The writer contracts below are evaluation criteria, not an instruction to write a report. Return only the review schema.\n\n'+request['system']+'\n\n'+(self.root/self.policy['reviewer_prompt']).read_text(encoding='utf-8'),
                 'user_data': {'draft':deepcopy(draft), 'source':request['user_data'],
                               'reviewed_draft_sha256':digest(draft),'reviewed_evidence_sha256':packet['content_sha256']},
                 'response_schema':deepcopy(self.review_schema)}
@@ -292,7 +305,7 @@ class ReportContract:
                 feedback = {'kind': 'recomputed_structural_error', 'error': str(exc)}
             else:
                 raise ReportValidationError('Structurally valid draft needs bound semantic feedback to request repair.')
-        return {'system': request['system']+'\n\n'+(self.root/self.policy['repair_prompt']).read_text(),
+        return {'system': request['system']+'\n\n'+(self.root/self.policy['repair_prompt']).read_text(encoding='utf-8'),
                 'user_data': {'source': request['user_data'], 'draft': deepcopy(draft),
                               'draft_sha256': digest(draft), 'feedback': feedback},
                 'response_schema': deepcopy(self.draft_schema), 'binding': deepcopy(request['binding'])}

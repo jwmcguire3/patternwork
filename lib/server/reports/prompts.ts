@@ -1,10 +1,10 @@
+import { assertProviderPayloadPrivacy } from "../openrouter/privacy-boundary.ts";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { JsonObject, ReportType, ValidationIssue } from "../../question-engine/types.ts";
 import { loadPatternworkSchemas } from "../../report-contracts/schema-loader.ts";
 import { loadPwqe5SourcePackage, type Pwqe5SourcePackage } from "./pwqe6-source.ts";
 import { loadPwrp71SourcePackage, type Pwrp71SourcePackage } from "./pwrp71-source.ts";
-import { containsAccountIdentifier } from "./privacy-patterns.ts";
 
 const PROMPT_DIRECTORY = "specs/patternwork/report-prompts-v4.1";
 const WRITER_CONTRACT = "specs/patternwork/question-engine-v3.1/09_report_writer_contract.md";
@@ -35,6 +35,20 @@ export interface LoadedReportPrompt {
   readonly schemaName: string;
 }
 
+const LEGACY_PRIVATE_INPUT_KEYS = new Set(["narrative", "privateNote", "private_note", "freeText", "free_text", "raw_answers", "answers", "all_responses"]);
+
+function assertNoLegacyFreeText(value: unknown, path = "$"): void {
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => assertNoLegacyFreeText(item, `${path}[${index}]`));
+    return;
+  }
+  if (!value || typeof value !== "object") return;
+  for (const [key, child] of Object.entries(value as Record<string, unknown>)) {
+    if (LEGACY_PRIVATE_INPUT_KEYS.has(key)) throw new Error(`Provider prompt privacy boundary rejected free text at ${path}.${key}.`);
+    assertNoLegacyFreeText(child, `${path}.${key}`);
+  }
+}
+
 export async function loadPwrp71ReportPrompt(
   reportType: ReportType,
   workspaceRoot = process.cwd(),
@@ -49,6 +63,7 @@ export async function loadPwrp71ReportPrompt(
     system: [
       "You are the Patternwork PWRP 7.1 report writer. Return only the requested JSON object.",
       source.prompts.shared,
+      source.constructGuide,
       source.prompts[specificKey],
     ].join("\n\n"),
     schema: source.schemas.reportDraft as JsonObject,
@@ -71,21 +86,10 @@ export async function loadPwqe6ReportPrompt(reportType: ReportType, workspaceRoo
   };
 }
 
-const PRIVATE_INPUT_KEYS = new Set(["narrative", "privateNote", "private_note", "freeText", "free_text", "raw_answers", "answers", "all_responses"]);
-const DIRECT_PII = /(?:\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b|(?:^|\s)\+\d(?:[\s().-]*\d){7,14}(?:\s|$)|\b\d{3}-\d{2}-\d{4}\b)/iu;
-
 /** Final synchronous fail-closed check immediately before prompt serialization. */
-export function assertProviderPromptPrivacy(input: unknown, path = "$"): void {
-  if (typeof input === "string") {
-    if (DIRECT_PII.test(input) || containsAccountIdentifier(input)) throw new Error(`Provider prompt privacy boundary rejected direct identifying data at ${path}.`);
-    return;
-  }
-  if (Array.isArray(input)) return input.forEach((value, index) => assertProviderPromptPrivacy(value, `${path}[${index}]`));
-  if (!input || typeof input !== "object") return;
-  for (const [key, value] of Object.entries(input as Record<string, unknown>)) {
-    if (PRIVATE_INPUT_KEYS.has(key)) throw new Error(`Provider prompt privacy boundary rejected free text at ${path}.${key}.`);
-    assertProviderPromptPrivacy(value, `${path}.${key}`);
-  }
+export function assertProviderPromptPrivacy(input: unknown, path = "$", contractVersion: "legacy" | "v7.1" = "legacy"): void {
+  assertProviderPayloadPrivacy(input, contractVersion, path);
+  if (contractVersion === "legacy") assertNoLegacyFreeText(input, path);
 }
 
 export async function loadReportPrompt(reportType: ReportType, workspaceRoot = process.cwd()): Promise<LoadedReportPrompt> {
@@ -108,11 +112,13 @@ export async function loadReportPrompt(reportType: ReportType, workspaceRoot = p
   };
 }
 
-export function buildGenerationPrompt(reportType: ReportType, input: JsonObject): string {
-  assertProviderPromptPrivacy(input);
+export function buildGenerationPrompt(reportType: ReportType, input: JsonObject, contractVersion: "legacy" | "v7.1" = "legacy"): string {
+  assertProviderPromptPrivacy(input, "$", contractVersion);
   return [
     `Requested report type: ${reportType}`,
-    "The following object is the complete validated, pseudonymous input contract. It contains no email, direct contact data, or flat raw-answer list.",
+    contractVersion === "v7.1"
+      ? "The following object is the complete PWRP 7.1 source-bound evidence contract. It may contain opaque session or snapshot identifiers; respondent name fields are prohibited."
+      : "The following object is the complete validated, pseudonymous input contract. It contains no email, direct contact data, or flat raw-answer list.",
     JSON.stringify(input),
   ].join("\n\n");
 }
@@ -123,6 +129,7 @@ export function buildRepairPrompt(
   issues: readonly ValidationIssue[],
   previousOutput?: JsonObject,
 ): string {
+  assertProviderPromptPrivacy({ previousOutput: previousOutput ?? null, issues } as unknown as JsonObject);
   const feedback = issues.slice(0, 50).map((issue) => ({ code: issue.code, path: issue.path, message: issue.message }));
   return [
     buildGenerationPrompt(reportType, input),

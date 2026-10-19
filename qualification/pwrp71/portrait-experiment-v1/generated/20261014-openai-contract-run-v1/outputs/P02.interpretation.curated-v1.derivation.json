@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-P02-CONSTRAINED-EVIDENCE-CORRECTION-V1",
+  "status": "source_validation_and_independent_review_required",
+  "profileId": "P02",
+  "reportType": "IFS",
+  "fixtureSet": "route-replays-v5",
+  "packetSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+  "experimentSha256": "eecb94ff118569ff44288fc81333aa42d0dee6dd868b514e02d3f0e09b47db33",
+  "sourceIdentity": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "sourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb",
+    "authoredFixtureFile": "P02.json",
+    "authoredFixtureSha256": "b47d80f9f0194055c8461145d75c559422abf34a0377682aa8cfa22e8ac990dc",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5"
+  },
+  "provider": "OpenAI direct API",
+  "model": "gpt-6-luna",
+  "reasoningEffort": "max",
+  "providerCallId": "189f5e43-b80e-4f50-9f84-ce8fd605468d",
+  "providerResponseId": "resp_00c09462f20e87f3016ad0d6c7df0087d2afaae132b1f87871",
+  "requestFile": "requests/P02.interpretation.attempt-5.request.json",
+  "requestFileSha256": "f8c36e20ba9043a8bfc4392c7b11c174f6766d60b796ab175c4ee29cdd5b9cb6",
+  "providerResponseFile": "responses/P02.interpretation.attempt-5.response.json",
+  "providerResponseFileSha256": "4b574e0d880b47b39c7b842e3561553bd833b7f3f6d2b8a269a8edec8f8070ab",
+  "providerRawOutputFile": "outputs/P02.interpretation.attempt-5.raw-output.txt",
+  "providerRawOutputFileSha256": "bb64e152ff133c3420310903349c18b5ac286e920e28b1ce5bed00a6951a82de",
+  "providerOutputFile": "outputs/P02.interpretation.attempt-5.json",
+  "providerOutputFileSha256": "c967d35a2a5e139f0d31db3b568b523274eefdc019f899412e8c94d8b7824d2f",
+  "providerOutputCompactSha256": "9d22a10690c62c021c3a603b12da8f009a50bf685840f5b38513bd2db5543533",
+  "originalValidationFile": "outputs/P02.interpretation.attempt-5.validation.json",
+  "originalValidationFileSha256": "f9a7fb44959532c5491420fee672af50073c111d8fa3e8d863afc0eaa84f2c90",
+  "validationParentFile": "outputs/P02.interpretation.attempt-5.validation.source-recheck.json",
+  "validationParentFileSha256": "bd39d906fc1d53f5eb254c1aa6cdb64e69b6e4f960b415f02094d1b719c165ef",
+  "preparedInputFile": "prepared/P02.interpretation.input.json",
+  "preparedInputFileSha256": "5cb46749aa39edabd3e8f6cf9a1e753c4c4c6aad8a14065c51dadbed7e8012de",
+  "sourceObservationIndexFile": "outputs/P02.source-observation-index-v3.json",
+  "sourceObservationIndexFileSha256": "6902ae1ace97a48ff8ea49e99c4ffc6a155bcfea6bcad570a5854587ff1f7417",
+  "curatedOutputFile": "outputs/P02.interpretation.curated-v1.json",
+  "curatedOutputFileSha256": "18e4e22a60cb02528c94192247c99bbc005047920483782b2ac80942fd63bc96",
+  "curatedOutputCompactSha256": "70991484909bdb0c48464ecd623a572a3278fe91883c5ac48b1296dd22b32983",
+  "curationPolicy": "constrained_p02_authored_evidence_correction_v1",
+  "exactEvidenceCorrections": [
+    {
+      "claimId": "c_conflict_preventive_explaining",
+      "field": "support_basis",
+      "before": "Converging actual-recalled first-action and prevention-aim selections plus a remembered expectation/prediction; synthetic fictional evidence only.",
+      "after": "Original authored fictional D61 first action, D02 prevention aim, and D03 remembered expectation/prediction, all bound to the same recalled conflict occurrence.",
+      "reason": "Correct provenance label to exact original authored D61/D02/D03 observations; no new evidence or substantive claim."
+    },
+    {
+      "claimId": "c_conflict_exit_relief",
+      "field": "text",
+      "before": "In this occurrence, after the respondent reported that explaining was not helping, the next action was leaving or ending the exchange. The stated next aim was for the feeling to ease right then, and the reported next effect was that it became easier to bear. The action, aim, and effect support a local reactive, relief-oriented interruption function.",
+      "after": "In this occurrence, the next action was leaving or ending the exchange. The stated next aim was for the feeling to ease right then, and the reported next effect was that it became easier to bear. The action, aim, and effect support a local reactive, relief-oriented interruption function.",
+      "reason": "Remove temporal clause whose D08 edge evidence was not directly cited by this claim."
+    },
+    {
+      "claimId": "c_conflict_exit_relief",
+      "field": "support_basis",
+      "before": "Actual-recalled next action, explicit next aim, and reported next effect, together with the sourced temporal edge; synthetic fictional evidence only.",
+      "after": "Original authored fictional D07 next action, D09 next aim, and D10 reported next effect, all bound to the same recalled conflict occurrence.",
+      "reason": "Correct provenance label to exact original authored D07/D09/D10 observations and remove direct edge assertion."
+    },
+    {
+      "claimId": "c_conflict_exit_relief",
+      "field": "sequence_edge_ids",
+      "before": [
+        "edge:pwr_cbcda3040bd22d070ab9ce0cc901ab53f9b973f2:D08.after_failed"
+      ],
+      "after": [],
+      "reason": "Keep temporal edge only on the separately sourced sequence claim and relationship."
+    }
+  ],
+  "omittedRecordIds": {
+    "claims": [
+      "c_overload_practical_adjustment",
+      "c_overload_later_capacity",
+      "c_evaluation_bounded_check",
+      "c_mistake_learning",
+      "c_boundary_limit",
+      "c_reply_wait_ordinary_alternative",
+      "c_practical_pause",
+      "c_exception_stopping",
+      "c_internal_compromise",
+      "c_help_request",
+      "c_receiving_care",
+      "c_repair_offered",
+      "c_repair_received",
+      "c_planned_stop",
+      "c_praise_response",
+      "c_ordinary_rest"
+    ],
+    "name_registry": [],
+    "relationships": [],
+    "observed_strengths": [
+      "s_direct_communication",
+      "s_practical_learning_and_adjustment",
+      "s_reported_choice_and_stopping",
+      "s_compromise",
+      "s_support_and_repair_actions"
+    ],
+    "counterexamples": [
+      "cx_practical_alternatives",
+      "cx_reply_wait",
+      "cx_stopping_available",
+      "cx_compromise_not_fixed_polarity",
+      "cx_varied_relational_actions",
+      "cx_processing_slowing_not_a_chosen_protector"
+    ],
+    "open_questions": [
+      "oq_exit_return_and_access",
+      "oq_overload_detail",
+      "oq_self_stance",
+      "oq_internal_polarization",
+      "oq_help_and_care_meaning",
+      "oq_repair_detail",
+      "oq_other_person_motives",
+      "oq_packet_coverage",
+      "oq_independent_validation"
+    ]
+  },
+  "limitations": [
+    "One recalled fictional conflict occurrence only",
+    "Labels are candidate response-function handles, not enduring part identities",
+    "Fresh source validation and independent review required before composition"
+  ],
+  "rawPreservationHashes": {
+    "responses/P02.interpretation.attempt-5.response.json": "4b574e0d880b47b39c7b842e3561553bd833b7f3f6d2b8a269a8edec8f8070ab",
+    "outputs/P02.interpretation.attempt-5.raw-output.txt": "bb64e152ff133c3420310903349c18b5ac286e920e28b1ce5bed00a6951a82de",
+    "outputs/P02.interpretation.attempt-5.json": "c967d35a2a5e139f0d31db3b568b523274eefdc019f899412e8c94d8b7824d2f",
+    "outputs/P02.interpretation.attempt-5.validation.json": "f9a7fb44959532c5491420fee672af50073c111d8fa3e8d863afc0eaa84f2c90",
+    "outputs/P02.interpretation.attempt-5.validation.source-recheck.json": "bd39d906fc1d53f5eb254c1aa6cdb64e69b6e4f960b415f02094d1b719c165ef"
+  },
+  "interpretation": "Experimental constrained evidence-correction derivative. The completed provider output and failed validation receipts remain unchanged and rejected. This artifact is not source validated, human approved, routing qualified, or released."
+}

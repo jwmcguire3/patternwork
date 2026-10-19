@@ -1,3 +1,4 @@
+import { structuralReviewFixture } from "../../lib/server/reports/qualification/review-fixture.ts";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { mkdir, mkdtemp, rm } from "node:fs/promises";
@@ -6,13 +7,16 @@ import test from "node:test";
 import { loadPwqe51SourcePackage } from "../../lib/question-engine/pwqe51-source.ts";
 import type { JsonObject } from "../../lib/question-engine/types.ts";
 import { UNQUALIFIED_MOCK_MODEL_POLICY } from "../../lib/server/openrouter/policy.ts";
-import type { OpenRouterGenerationRequest, OpenRouterTransport, OpenRouterUsage } from "../../lib/server/openrouter/types.ts";
+import type { OpenRouterGenerationRequest, OpenRouterTransport, OpenRouterUsage, ProviderPrivacyIdentityContext } from "../../lib/server/openrouter/types.ts";
 import { preparePwrp71Request } from "../../lib/server/reports/pwrp71-adapter.ts";
-import { generateCanonicalReport } from "../../lib/server/reports/generator.ts";
+import { generateCanonicalReport, PWRP71_REPAIR_STRATEGY_VERSION } from "../../lib/server/reports/generator.ts";
+import { constrainPwrp71ReferenceSchema } from "../../lib/server/reports/pwrp71-reference-schema.ts";
+import { derivePwrp71Citations } from "../../lib/server/reports/pwrp71-citation-derivation.ts";
 import { loadPwrp71SourcePackage } from "../../lib/server/reports/pwrp71-source.ts";
 import type { Pwrp71SourcePackage } from "../../lib/server/reports/pwrp71-source.ts";
 import { FileQualificationAttemptStore, JournaledPwrp71Transport } from "../../lib/server/reports/qualification/attempt-store.ts";
 import { maximumQuotedCallCostMicros } from "../../lib/server/openrouter/qualification-budget.ts";
+import { REVIEWED_IDENTITY_FREE_FIXTURE_CONTEXT } from "../../lib/server/openrouter/privacy-boundary.ts";
 
 function canonical(value: unknown): string {
   if (value === null || typeof value !== "object") return JSON.stringify(value);
@@ -30,7 +34,7 @@ const usage: OpenRouterUsage = {
   totalTokens: 2, costMicros: 0, currency: "USD", model: "offline/mock",
 };
 
-async function fixture() {
+async function fixture(reportType: "MAP" | "IFS" = "MAP") {
   const questionSource = await loadPwqe51SourcePackage();
   const reportSource = await loadPwrp71SourcePackage();
   const question = questionSource.questionBank.items.find((item) => item.id === "D65")!;
@@ -69,14 +73,14 @@ async function fixture() {
     administration_provenance: [{ id: "admin-1", item_id: question.id, variant: "base", occurrence_id: occurrenceId, phase: "deepening", selection_reason: "server-selected authored question", option_order: [option.id], live_response_id: responseId }],
   };
   packet.content_sha256 = hash(packet);
-  const prepared = preparePwrp71Request({ packet: packet as JsonObject, reportType: "MAP", questionSource, reportSource });
+  const prepared = preparePwrp71Request({ packet: packet as JsonObject, reportType, questionSource, reportSource });
   if (prepared.ok === false) throw new Error(JSON.stringify(prepared.issues));
   const draft: JsonObject = {
     report_release: reportSource.policy.release,
     release_id: String(packet.release_id),
     snapshot_id: String(packet.snapshot_id),
     evidence_sha256: String(packet.content_sha256),
-    report_type: "MAP",
+    report_type: reportType,
     title: "A reported moment",
     title_claim_ids: [],
     content_status: "complete",
@@ -92,11 +96,11 @@ async function fixture() {
   return { questionSource, reportSource, packet: packet as JsonObject, request: prepared.value, draft };
 }
 
-function mockProvider(outputs: readonly { readonly output: JsonObject; readonly finishReason?: string }[], onCall?: (request: OpenRouterGenerationRequest) => void): OpenRouterTransport {
+function mockProvider(outputs: readonly { readonly output: JsonObject; readonly finishReason?: string }[], onCall?: (request: OpenRouterGenerationRequest, identityContext?: ProviderPrivacyIdentityContext) => void): OpenRouterTransport {
   let index = 0;
   return {
-    async generate(request) {
-      onCall?.(request);
+    async generate(request, identityContext) {
+      onCall?.(request, identityContext);
       const next = outputs[index++];
       if (!next) throw new Error("Unexpected provider call.");
       return { ok: true, output: next.output, usage, ...(next.finishReason === undefined ? {} : { finishReason: next.finishReason }) };
@@ -105,15 +109,7 @@ function mockProvider(outputs: readonly { readonly output: JsonObject; readonly 
 }
 
 function reviewerOutput(draft: JsonObject, packet: JsonObject, source: Awaited<ReturnType<typeof loadPwrp71SourcePackage>>, verdict: "accept" | "revise", issues: JsonObject[] = []): JsonObject {
-  return {
-    review_contract: "PWRP-REVIEW-7.0.0-candidate.1",
-    report_release: source.policy.release,
-    reviewed_draft_sha256: hash(draft),
-    reviewed_evidence_sha256: String((packet as Record<string, unknown>).content_sha256),
-    verdict,
-    issues,
-    summary: verdict === "accept" ? "No structural review issues remain." : "A focused revision is requested.",
-  };
+  return structuralReviewFixture({draft,packet,source,verdict,issues});
 }
 
 function reviseIssue(): JsonObject {
@@ -127,25 +123,41 @@ function reviseIssue(): JsonObject {
 test("PWRP 7.1 uses the prepared prompt/schema and validates a complete stop response", async () => {
   const value = await fixture();
   const requests: OpenRouterGenerationRequest[] = [];
+  const localIdentityContext: ProviderPrivacyIdentityContext = { identityInventoryReviewed: true, accountIds: ["local-account-123"], emails: ["local@example.test"] };
+  const observedIdentityContexts: Array<ProviderPrivacyIdentityContext | undefined> = [];
   const result = await generateCanonicalReport({
     reportType: "MAP", input: {}, packets: [value.packet], provider: mockProvider([
       { output: value.draft, finishReason: "stop" },
       { output: reviewerOutput(value.draft, value.packet, value.reportSource, "accept"), finishReason: "stop" },
-    ], (request) => { requests.push(request); }),
+    ], (request, identityContext) => { requests.push(request); observedIdentityContexts.push(identityContext); }),
     invocationKey: "pwrp71-stop", spentMicros: 0, costCapMicros: 1_000_000, modelPolicy: UNQUALIFIED_MOCK_MODEL_POLICY,
-    contractVersion: "v7.1", pwrp71: { request: value.request, packet: value.packet, source: value.reportSource },
+    contractVersion: "v7.1", privacyIdentityContext: localIdentityContext,
+    workspaceRoot: path.join(process.cwd(), ".codex-temp", "not-a-question-source-root"),
+    pwrp71: { request: value.request, packet: value.packet, source: value.reportSource, questionSource: value.questionSource },
   });
   assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify(result.failure));
   if (!result.ok) return;
   assert.equal(result.value.artifact.artifact_type, "pwrp71_report");
   assert.equal(requests.length, 2);
+  assert.deepEqual(observedIdentityContexts, [localIdentityContext, localIdentityContext]);
+  assert.equal(JSON.stringify(requests).includes("local-account-123"), false);
+  assert.equal(JSON.stringify(requests).includes("local@example.test"), false);
   assert.equal(requests[0].system, value.request.system);
-  assert.deepEqual(requests[0].schema, value.request.response_schema);
+  assert.ok(requests.every(request => request.system.includes(value.reportSource.constructGuide)), "the active construct guide must reach writer and reviewer");
+  assert.equal(requests[1].schemaName, "patternwork_map_pwrp71_review_candidate_3");
+  assert.ok((requests[1].schema.required as string[]).includes("explanatory_assessment"));
+  assert.ok((requests[1].schema.required as string[]).includes("synthesis_opportunity"));
+  assert.deepEqual(requests[0].schema, constrainPwrp71ReferenceSchema(value.request.response_schema, value.packet));
   assert.equal(requests[0].schemaName, "patternwork_map_pwrp71_candidate_1");
   assert.match(requests[0].prompt, /PWRP-7\.1\.0-candidate\.1/u);
+  for (const request of requests) {
+    assert.match(request.prompt, /authored_question_context/u);
+    const question = value.questionSource.questionBank.items.find((item) => item.id === "D65")!;
+    assert.ok(request.prompt.includes(JSON.stringify(question.prompt)), "Writer and reviewer receive the full authored question wording.");
+  }
   assert.ok(requests[1].system.includes(value.reportSource.prompts.reviewer));
   assert.deepEqual(requests[1].schema, value.reportSource.schemas.reportReview);
-  assert.equal(requests[1].schemaName, "patternwork_map_pwrp71_review_candidate_1");
+  assert.equal(requests[1].schemaName, "patternwork_map_pwrp71_review_candidate_3");
 });
 
 test("PWRP 7.1 fails closed on a length finish reason without attempting repair", async () => {
@@ -159,6 +171,22 @@ test("PWRP 7.1 fails closed on a length finish reason without attempting repair"
   assert.equal(result.ok, false);
   if (!result.ok) assert.equal(result.failure.code, "incomplete_generation");
   assert.equal(calls, 1);
+});
+
+test("PWRP 7.1 rejects unresolved authored question context before transport", async () => {
+  const value = await fixture();
+  let calls = 0;
+  const invalidSource = { ...value.questionSource, sourceManifestSha256: "0".repeat(64) } as typeof value.questionSource;
+  const result = await generateCanonicalReport({
+    reportType: "MAP", input: {}, packets: [value.packet],
+    provider: mockProvider([], () => { calls += 1; }),
+    invocationKey: "pwrp71-bad-question-context", spentMicros: 0, costCapMicros: 1_000_000,
+    modelPolicy: UNQUALIFIED_MOCK_MODEL_POLICY, contractVersion: "v7.1",
+    pwrp71: { request: value.request, packet: value.packet, source: value.reportSource, questionSource: invalidSource },
+  });
+  assert.equal(result.ok, false);
+  if (!result.ok) assert.equal(result.failure.code, "pwrp71_question_context_binding");
+  assert.equal(calls, 0);
 });
 
 test("PWRP 7.1 repair uses its authored repair contract and keeps the prepared source view", async () => {
@@ -203,16 +231,20 @@ test("PWRP 7.1 reviewer revise gets one repair and a fresh review bound to the r
     { output: reviewerOutput(revisedDraft, value.packet, value.reportSource, "accept"), finishReason: "stop" },
   ];
   const requests: OpenRouterGenerationRequest[] = [];
+  const validations: { readonly attemptId: string; readonly ok: boolean }[] = [];
   const result = await generateCanonicalReport({
     reportType: "MAP", input: {}, packets: [value.packet], provider: mockProvider(outputs, (request) => { requests.push(request); }),
     invocationKey: "pwrp71-revise-fresh-review", spentMicros: 0, costCapMicros: 1_000_000, modelPolicy: UNQUALIFIED_MOCK_MODEL_POLICY,
     contractVersion: "v7.1", pwrp71: { request: value.request, packet: value.packet, source: value.reportSource },
+    onPwrp71Event: (event) => { if (event.type === "draft_validation") validations.push({ attemptId: event.attemptId, ok: event.ok }); },
   });
   assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify(result.failure));
   if (!result.ok) return;
   const acceptedDraft = (result.value.artifact as Record<string, unknown>).draft as Record<string, unknown>;
   assert.equal(((acceptedDraft.sections as Record<string, unknown>[])[0]).text, ((revisedDraft.sections as Record<string, unknown>[])[0]).text);
   assert.equal(requests.length, 4);
+  assert.equal(validations.length, 2, "both initial and reviewer-requested replacement drafts retain their validation receipts");
+  assert.deepEqual(validations.map((entry) => [entry.attemptId.split(":").at(-3), entry.ok]), [["initial", true], ["repair", true]]);
   assert.equal(requests[2].system, `${value.request.system}\n\n${value.reportSource.prompts.repair}`);
   assert.ok(requests[3].system.includes(value.reportSource.prompts.reviewer));
   assert.deepEqual(requests[3].schema, value.reportSource.schemas.reportReview);
@@ -241,6 +273,159 @@ test("PWRP 7.1 rejects a stale review after the draft has been repaired", async 
     assert.ok(result.failure.issues.some((entry) => entry.code === "review_binding"));
   }
   assert.equal(calls, 4);
+});
+
+test("IFS continuation supplies actionable feedback and current references to repair and fresh review", async () => {
+  const value = await fixture("IFS");
+  const previousDraft = structuredClone(value.draft);
+  previousDraft.name_registry = [{ name_id: "N1", name: "Signal checker", entity_kind: "descriptive_pattern", role: "descriptive_pattern", author_generated: true, supporting_claim_ids: ["claim-1"] }];
+  const issue = { ...reviseIssue(), name_ids: ["N1"], requested_change: "Introduce the retained Signal checker label in the bounded narrative." };
+  const priorReview = reviewerOutput(previousDraft, value.packet, value.reportSource, "revise", [issue]);
+  const replacement = structuredClone(previousDraft);
+  (replacement.sections as JsonObject[])[0].text = "Signal checker: the response was noticed within one recalled moment.";
+  const requests: OpenRouterGenerationRequest[] = [];
+  const result = await generateCanonicalReport({
+    reportType: "IFS", input: {}, packets: [value.packet], provider: mockProvider([
+      { output: replacement, finishReason: "stop" },
+      { output: reviewerOutput(replacement, value.packet, value.reportSource, "accept"), finishReason: "stop" },
+    ], request => { requests.push(request); }),
+    invocationKey: "ifs-current-feedback", spentMicros: 0, costCapMicros: 500_000, modelPolicy: UNQUALIFIED_MOCK_MODEL_POLICY,
+    contractVersion: "v7.1", pwrp71: { request: value.request, packet: value.packet, source: value.reportSource },
+    continuation: { previousDraft, previousReview: priorReview, sourceRunBindingSha256: "a".repeat(64), sourceDraftSha256: hash(previousDraft), sourceReviewSha256: hash(priorReview), sourceDraftAttemptId: "source-draft", sourceReviewAttemptId: "source-review" },
+  });
+  assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify(result.failure));
+  assert.equal(requests.length, 2, "one repair and a separate fresh review are required");
+  assert.ok(requests[0].prompt.includes(PWRP71_REPAIR_STRATEGY_VERSION));
+  assert.match(requests[0].prompt, /across_sampled_contexts/u);
+  assert.match(requests[0].prompt, /Build the claim support for that grouping first/u);
+  assert.match(requests[0].prompt, /may organize a bounded account of available choice/u);
+  assert.ok(!requests[0].prompt.includes("without giving it common causal or organizing force"));
+  assert.match(requests[0].system, /Compare the before and after meanings/u);
+  assert.match(requests[0].prompt, /Split that premise or remove the inappropriate dependency/u);
+  const constrained = requests[0].schema as {
+    properties: { claims: { items: { properties: {
+      evidence_ids: { items: { enum: string[] } };
+      scope: { properties: { person_ids: { maxItems: number } } };
+    } } } };
+  };
+  assert.deepEqual(constrained.properties.claims.items.properties.evidence_ids.items.enum, (value.packet.observations as JsonObject[]).map(row=>row.id));
+  assert.equal(constrained.properties.claims.items.properties.scope.properties.person_ids.maxItems,0);
+  const repairPayloads = requests[0].prompt.split("\n\n").filter(part => part.startsWith("{")).map(part => JSON.parse(part));
+  const feedback = repairPayloads.find(payload => Array.isArray(payload.validator_feedback));
+  assert.equal(feedback.validator_feedback.length, 1);
+  assert.equal(feedback.validator_feedback[0].code, "voice");
+  assert.ok(feedback.validator_feedback[0].message.includes(String(issue.requested_change)));
+  assert.deepEqual(feedback.semantic_review, priorReview, "the saved review is supplied unchanged");
+  assert.deepEqual(feedback.current_draft_references.claims[0].evidence_ids, (previousDraft.claims as JsonObject[])[0].evidence_ids);
+  assert.deepEqual(feedback.current_draft_references.named_entities[0].section_ids_with_literal_label, []);
+  const freshInput = JSON.parse(requests[1].prompt.split("\n\n").at(-1)!);
+  assert.equal(freshInput.reviewed_draft_sha256, hash(replacement));
+  assert.deepEqual(freshInput.current_draft_references.named_entities[0].section_ids_with_literal_label, ["section-1"]);
+  assert.equal(freshInput.current_observation_count, 1);
+});
+
+test("IFS continuation refuses a mismatched review seed before transport", async () => {
+  const value = await fixture("IFS");
+  const priorReview = reviewerOutput(value.draft, value.packet, value.reportSource, "revise", [reviseIssue()]);
+  let calls = 0;
+  const result = await generateCanonicalReport({
+    reportType: "IFS", input: {}, packets: [value.packet], provider: mockProvider([], () => { calls += 1; }),
+    invocationKey: "ifs-stale-seed", spentMicros: 0, costCapMicros: 500_000, modelPolicy: UNQUALIFIED_MOCK_MODEL_POLICY,
+    contractVersion: "v7.1", pwrp71: { request: value.request, packet: value.packet, source: value.reportSource },
+    continuation: { previousDraft: value.draft, previousReview: priorReview, sourceRunBindingSha256: "a".repeat(64), sourceDraftSha256: hash(value.draft), sourceReviewSha256: "b".repeat(64), sourceDraftAttemptId: "source-draft", sourceReviewAttemptId: "source-review" },
+  });
+  assert.equal(result.ok, false);
+  if (!result.ok) assert.equal(result.failure.code, "continuation_review_binding");
+  assert.equal(calls, 0);
+});
+
+test("a non-voice continuation requests a local repair while preserving adequate narrative", async () => {
+  const value=await fixture("IFS");
+  const priorReview=reviewerOutput(value.draft,value.packet,value.reportSource,"revise",[{...reviseIssue(),category:"overreach",requested_change:"Narrow the reviewed assertion."}]);
+  const requests:OpenRouterGenerationRequest[]=[];
+  const result=await generateCanonicalReport({reportType:"IFS",input:{},packets:[value.packet],contractVersion:"v7.1",pwrp71:{request:value.request,packet:value.packet,source:value.reportSource},modelPolicy:UNQUALIFIED_MOCK_MODEL_POLICY,invocationKey:"local-repair",spentMicros:0,costCapMicros:450000,continuation:{previousDraft:value.draft,previousReview:priorReview,sourceRunBindingSha256:"a".repeat(64),sourceDraftSha256:hash(value.draft),sourceReviewSha256:hash(priorReview),sourceDraftAttemptId:"source-draft",sourceReviewAttemptId:"source-review"},provider:mockProvider([{output:value.draft,finishReason:"stop"},{output:reviewerOutput(value.draft,value.packet,value.reportSource,"accept"),finishReason:"stop"}],request=>{requests.push(request);})});
+  assert.equal(result.ok,true,result.ok?undefined:JSON.stringify(result.failure));
+  assert.match(requests[0].prompt,/LOCAL REPAIR:/u);
+  assert.ok(!requests[0].prompt.includes("PARAGRAPH CONSTRUCTION PLAN"));
+  assert.equal(requests.length,2);
+});
+
+test("continuation gets at most one structural correction before a fresh review", async () => {
+  const value = await fixture("IFS");
+  const review = reviewerOutput(value.draft,value.packet,value.reportSource,"revise",[reviseIssue()]);
+  const continuation = {previousDraft:value.draft,previousReview:review,sourceRunBindingSha256:"a".repeat(64),sourceDraftSha256:hash(value.draft),sourceReviewSha256:hash(review),sourceDraftAttemptId:"saved-draft",sourceReviewAttemptId:"saved-review"};
+  const invalid = {...value.draft, report_type:"MAP"} as JsonObject;
+  for(const succeeds of [true,false]) {
+    const requests:OpenRouterGenerationRequest[]=[];
+    const events:unknown[]=[];
+    const generated=await generateCanonicalReport({reportType:"IFS",input:{},packets:[value.packet],contractVersion:"v7.1",pwrp71:{request:value.request,packet:value.packet,source:value.reportSource},modelPolicy:UNQUALIFIED_MOCK_MODEL_POLICY,invocationKey:`bounded-structure-${succeeds}`,spentMicros:0,costCapMicros:450000,continuation,continuationStructuralRepair:true,onPwrp71Event:event=>{events.push(event);},provider:mockProvider([{output:invalid,finishReason:"stop"},{output:succeeds?value.draft:invalid,finishReason:"stop"},...(succeeds?[{output:reviewerOutput(value.draft,value.packet,value.reportSource,"accept"),finishReason:"stop"}]:[])],request=>{requests.push(request);})});
+    assert.equal(generated.ok,succeeds);
+    assert.equal(requests.length,succeeds?3:2);
+    assert.match(requests[1].prompt,/BOUNDED STRUCTURAL CORRECTION/u);
+    assert.match(requests[1].prompt,/reference_inventory/u);
+    assert.match(requests[1].prompt,/Remove parenthetical internal claim/u);
+    assert.equal(events.filter(event=>(event as {type:string}).type==="repair_decision").length,1);
+    if(succeeds)assert.match(requests[2].idempotencyKey,/:review_after_repair:.*:attempt-3$/u);
+    else assert.ok(requests.every(request=>!request.schemaName.includes("_review_")));
+  }
+});
+
+test("citation derivation makes exactly one fresh review and withholds non-accepts", async () => {
+  const value = await fixture("IFS");
+  const raw = structuredClone(value.draft);
+  const leaf = (raw.claims as JsonObject[])[0];
+  leaf.counterevidence_ids = [...leaf.evidence_ids as string[]];
+  const derived = structuredClone(leaf);
+  derived.id = "derived";
+  derived.depends_on_claim_ids = [String(leaf.id)];
+  derived.counterevidence_ids = [];
+  (raw.claims as JsonObject[]).push(derived);
+  (raw.sections as JsonObject[])[0].claim_ids = [String(leaf.id), "derived"];
+  const closed = derivePwrp71Citations({ value: raw, reportType: "IFS", snapshotId: "snapshot-1", packet: value.packet, source: value.reportSource });
+  const seed = { rawDraft: raw, sourceRunBindingSha256: "a".repeat(64), sourceDraftAttemptId: "saved-writer", derivation: closed.derivation };
+  for (const verdict of ["accept", "revise"] as const) {
+    let calls = 0;
+    const result = await generateCanonicalReport({
+      reportType: "IFS", input: {}, packets: [value.packet], contractVersion: "v7.1",
+      pwrp71: { request: value.request, packet: value.packet, source: value.reportSource },
+      modelPolicy: UNQUALIFIED_MOCK_MODEL_POLICY, invocationKey: `closure-${verdict}`, spentMicros: 0, costCapMicros: 150_000, citationClosure: seed,
+      provider: mockProvider([{ output: reviewerOutput(closed.artifact.draft, value.packet, value.reportSource, verdict, verdict === "revise" ? [reviseIssue()] : []), finishReason: "stop" }], request => {
+        calls++;
+        assert.match(request.schemaName, /_review_/u);
+        assert.match(request.prompt, /citation_derivation/u);
+        assert.match(request.system, /not semantic support/u);
+      }),
+    });
+    assert.equal(calls, 1);
+    assert.equal(result.ok, verdict === "accept");
+    if (result.ok) assert.deepEqual((result.value.artifact as { draft: JsonObject }).draft, closed.artifact.draft);
+  }
+  let calls = 0;
+  const changed = { ...seed, derivation: { ...seed.derivation, normalized_draft_sha256: "f".repeat(64) } };
+  const refused = await generateCanonicalReport({ reportType: "IFS", input: {}, packets: [value.packet], contractVersion: "v7.1", pwrp71: { request: value.request, packet: value.packet, source: value.reportSource }, modelPolicy: UNQUALIFIED_MOCK_MODEL_POLICY, invocationKey: "tampered-closure", spentMicros: 0, costCapMicros: 150_000, citationClosure: changed, provider: mockProvider([], () => { calls++; }) });
+  assert.equal(refused.ok, false);
+  assert.equal(calls, 0);
+});
+
+test("prior citation restoration requires one unique character loss in an unchanged prior assertion", async () => {
+  const value = await fixture("IFS");
+  const prior = structuredClone(value.draft);
+  const claim = (prior.claims as JsonObject[])[0];
+  claim.counterevidence_ids = [...claim.evidence_ids as string[]];
+  const raw = structuredClone(prior), rawClaim = (raw.claims as JsonObject[])[0];
+  const correct = (claim.evidence_ids as string[])[0];
+  rawClaim.evidence_ids = [correct.slice(0, 5) + correct.slice(6)];
+  const input = { value: raw, previousDraft: prior, reportType: "IFS" as const, snapshotId: "snapshot-1", packet: value.packet, source: value.reportSource };
+  const saved = structuredClone(raw), restored = derivePwrp71Citations(input);
+  assert.deepEqual(raw, saved);
+  assert.deepEqual(restored.artifact.draft, prior);
+  assert.equal(restored.derivation.normalization_version, "pwrp71-prior-citation-restoration-v1");
+  assert.deepEqual(derivePwrp71Citations(input), restored);
+  rawClaim.text = "Changed assertion.";
+  assert.throws(() => derivePwrp71Citations(input));
+  rawClaim.text = claim.text;
+  rawClaim.evidence_ids = ["unresolvable"];
+  assert.throws(() => derivePwrp71Citations(input));
 });
 
 test("PWRP 7.1 rejects mismatched source or packet bindings before provider call", async () => {
@@ -315,6 +500,7 @@ test("journal budget preflights initial, reviewer, and repair calls and blocks t
       maxCallCostMicros: quote,
       aggregateCostCapMicros: quote * 3,
       usageStatus: "reported",
+      privacyIdentityContext: REVIEWED_IDENTITY_FREE_FIXTURE_CONTEXT,
     });
     const generated = await generateCanonicalReport({
       reportType: "MAP", input: {}, packets: [value.packet], provider: journal,
@@ -362,7 +548,7 @@ test("a failed draft cannot use escalation after earlier attempts consume the ag
   const runDirectory = await mkdtemp(path.join(scratch, "pwrp71-budget-escalation-"));
   try {
     const store = new FileQualificationAttemptStore(runDirectory);
-    const provider = new JournaledPwrp71Transport({ store, transport, maxCallCostMicros: quote, aggregateCostCapMicros: quote * 2, usageStatus: "reported" });
+    const provider = new JournaledPwrp71Transport({ store, transport, maxCallCostMicros: quote, aggregateCostCapMicros: quote * 2, usageStatus: "reported", privacyIdentityContext: REVIEWED_IDENTITY_FREE_FIXTURE_CONTEXT });
     const generated = await generateCanonicalReport({
       reportType: "MAP", input: {}, packets: [value.packet], provider,
       invocationKey: "pwrp71-budgeted-escalation", spentMicros: 0, costCapMicros: quote * 2,

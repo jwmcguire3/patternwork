@@ -1,0 +1,3475 @@
+{
+  "schemaVersion": "PATTERNWORK-IFS-SYSTEM-PORTRAIT-PREPARATION-V1",
+  "status": "EXPERIMENTAL_NOT_QUALIFIED",
+  "mode": "no_dispatch",
+  "profileId": "C10",
+  "fixtureSet": "route-replays-v5",
+  "packetSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+  "sourceIdentity": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "sourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb",
+    "authoredFixtureFile": "C10.json",
+    "authoredFixtureSha256": "db6e0b9e8296741324c1aef0e4b481f70468ce4114a599ee8c2907df944d3b81",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5"
+  },
+  "experimentSha256": "eecb94ff118569ff44288fc81333aa42d0dee6dd868b514e02d3f0e09b47db33",
+  "authoredDeepening": [
+    "D100",
+    "D29",
+    "D30",
+    "D32",
+    "D33",
+    "D34",
+    "D35",
+    "D36",
+    "D37",
+    "D80",
+    "D81",
+    "D82",
+    "D83",
+    "D84",
+    "D85",
+    "D86"
+  ],
+  "exclusions": [
+    "automatic IFS exile",
+    "involuntary impairment is a protective intention",
+    "full recovery was observed",
+    "exact recovery duration",
+    "physiological autonomic measurements"
+  ],
+  "researchQuestion": "functioning versus ease, word/attention restriction, partial order, recovery context and changed appraisal",
+  "stage": "interpretation",
+  "system": "# Interpretation contract — IFS system-portrait candidate 1\n\nYou receive a canonical PWRP/PWQE source-bound fictional evidence packet. Build an **internal, audit-ready** psychological account before writing any reader prose. The model's interpretation is not an empirical discovery of independently existing psychological entities.\n\n## Build the functional graph\n\nFor each materially supported candidate response, decide:\n- What kind of pressure or need brings it forward? Distinguish actual recalled occurrence, reported typicality, and unrelated situations.\n- What is the response trying to accomplish? State a job supported by aim, timing, choice, effect, or converging evidence; a plausible effect alone is not automatically intent.\n- What does it protect from, protect for, or make possible? Preserve practical, relational, contextual and ordinary alternatives.\n- How does it operate? Preventive regulation and reactive interruption are different jobs. Involuntary loss of words/energy is not itself a choosing protector.\n- What happens afterward? Tradeoff or relief only if actually reported. A sequence needs a sourced edge and a recurrence needs independently confirmed distinct episodes.\n- How is it related to other parts or vulnerable experiences? Different roles are not automatically different entities; shared concern does not prove one permanent underlying part.\n- Does the reader retain some choice, perspective, or capacity? Self-led findings require actual relational stance and available choice, not merely performance, calmness, or hindsight.\n\nProduce supported claims with exact current observation IDs and source scope, evidence basis, dependencies, counterevidence and uncertainty. Preserve source options, status and occurrence identity. Treat synthetic Mapping scaffolds as fictional context, not corroboration of a person's life.\n\n## Naming contract\n\nName the *function*, not the taxonomy. Favor a 1–2-word natural handle: Minimizer, Suppressor, Fixer, Critic, Watcher, Planner **only when supported**. Never select from this list as a classifier. Avoid “Don't-Be-a-Burden One”, “Load-Limiting Manager”, long explanatory phrases, forced personification, and dramatic invented personas.\n\nStore stable `name_id` and `role` separately. A named role must be supported by the appropriate claim. The name can describe a protective behavior without proving a distinct enduring part identity. Use a consistent name throughout a report set; rename only through an explicit reviewed reconciliation. Do not force names on every vulnerability, ability, or local contrast. Exile is a role, not the name for every hidden need. “Self” is not a part name.\n\n## Scope and uncertainty\n\nThe internal ledger, not the body prose, carries all meaningful validity limits. Distinguish:\n- observed versus interpreted;\n- singular occasion versus sampled recurring pattern;\n- action versus aim versus consequence;\n- internal access versus outward concealment;\n- vulnerability versus internal exile;\n- context/relational expectation versus the other person's true motives;\n- capacity to function versus felt ease;\n- reported order versus assumed handoff.\n\nA strong locally grounded finding can be stated confidently in plain language. Do not turn a single occasion into a lifelong trait. An unanswered question means unknown, not absence. Keep apparently useful ordinary explanations as real findings.\n\n## Output boundary\n\nReturn a structured interpretation ledger: claim records (with exact evidence IDs), candidate stable name records, explicit or withheld relationships, priority of findings, observed strengths and counterexamples, and confidence/scope notes. Mark hypotheses that cannot be established as `open_question` / `not_assessed`. Preserve PWRP v7 claim/relationship semantics; this is a proposed intermediate step, not a released draft. All resulting records require independent validation before composition.\n",
+  "task": "Derive a supported IFS functional graph with source-bound claims, roles, stable names, relations, priorities, and evidence/scope limits. Do not generate final reader prose. Do not extrapolate a whole person's life from fictional cases.",
+  "evidencePacket": {
+    "format": "patternwork-router-evidence-v1",
+    "release_id": "PWQE-5.1.0-candidate.1",
+    "snapshot_id": "fictional-C10-deepening",
+    "packet_id": "pwp51_fictional-C10-deepening",
+    "source_binding": {
+      "question_release": "PWQE-5.1.0-candidate.1",
+      "runtime_version": "PW-ROUTER-1.1.0-candidate.1",
+      "source_sha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832"
+    },
+    "superseded_response_ids": [],
+    "invalidated_response_ids": [],
+    "assessment_scope": {
+      "recall_window": "Per-question respondent recall; no fixed lookback window is defined by this source release.",
+      "report_language": "en",
+      "phase": "deepening",
+      "interpretation_authority": "Respondent selections and deterministic structural derivation; no diagnostic or physiological measurement authority.",
+      "evidence_basis": "Versioned authored options bound to respondent-recalled occurrences and server-derived routing state.",
+      "completion_reason": "administration_or_decision_limit",
+      "readiness": {
+        "mapping_coverage_complete": false,
+        "normal_mapping_ready": true,
+        "applicable_pending_items": [],
+        "offered_mapping_items": [
+          "M01",
+          "M02",
+          "M03",
+          "M04",
+          "M05",
+          "M06",
+          "M07",
+          "M08",
+          "M09",
+          "M10",
+          "M11",
+          "M12",
+          "M13",
+          "M14",
+          "M15",
+          "M16",
+          "M17",
+          "M18",
+          "M19",
+          "M20",
+          "M21",
+          "M22",
+          "M23",
+          "M25",
+          "M26",
+          "M27",
+          "M24",
+          "M28",
+          "M29",
+          "M30"
+        ],
+        "actual_occurrence_ids": [
+          "pwep_07c2a228-527f-4516-8e4a-7dedd3a80c2c",
+          "pwep_0baff9af-9c27-42e3-bee1-de6d67393af8",
+          "pwep_20db9640-de79-4123-b375-7f4e9853b2e9",
+          "pwep_26fac5a8-618d-4cc1-a387-bc22afa5ae97",
+          "pwep_2c1b8a46-81ac-4a96-a3d2-825ff7d084a0",
+          "pwep_614b6ccc-d189-4f35-8a8b-71e48ba7a9e2",
+          "pwep_6b0a5e01-3bc3-41dd-a46a-c53033b1ca8a",
+          "pwep_87c4704b-d9f2-4872-8bb1-9d1edd418793",
+          "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "pwep_a076f7a9-a543-40f9-a76b-327fd2455f72",
+          "pwep_a0b2013c-ed26-4b26-9c7e-2014f8f15372",
+          "pwep_a0d84224-25b0-45db-acd6-a809f8c5f69f",
+          "pwep_a271822b-6efc-49c7-96f9-85f8c187fa75",
+          "pwep_a67f06bc-ea54-4de8-a5d1-31abdca51439",
+          "pwep_fcc5c159-6815-467a-a612-ef9105e7922d"
+        ],
+        "sampled_contexts": [
+          "repair",
+          "receiving_care",
+          "evaluation",
+          "rest",
+          "exception",
+          "boundary",
+          "help",
+          "overload",
+          "internal_conflict",
+          "practical_uncertainty",
+          "close_relationship",
+          "ordinary",
+          "visibility",
+          "mistake"
+        ],
+        "closed_coverage": {
+          "access_before_change:pwep_90003ada-19de-4edd-9080-17cbf5347d11:next": "open",
+          "attachment_meaning:pwep_a0d84224-25b0-45db-acd6-a809f8c5f69f:first": "resolved_descriptively",
+          "attention:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first": "resolved_descriptively",
+          "contrast_context:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first": "unavailable",
+          "cost:pwep_fcc5c159-6815-467a-a612-ef9105e7922d:self_response": "open",
+          "coverage_easing_time_estimate:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery": "resolved_descriptively",
+          "coverage_function_ease_order:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery": "resolved_descriptively",
+          "coverage_help_response:pwep_87c4704b-d9f2-4872-8bb1-9d1edd418793:first": "unresolved",
+          "coverage_meaning_after_easing:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery": "resolved_descriptively",
+          "coverage_onset_shape:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first": "resolved_descriptively",
+          "coverage_outward_inward:pwep_07c2a228-527f-4516-8e4a-7dedd3a80c2c:first": "open",
+          "coverage_outward_inward:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first": "resolved_descriptively",
+          "coverage_recovery_conditions:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery": "resolved_descriptively",
+          "coverage_relational_self_expectation:pwep_a0d84224-25b0-45db-acd6-a809f8c5f69f:first": "open",
+          "coverage_remaining_capacity:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first": "resolved_descriptively",
+          "coverage_residual_difficulty:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first": "resolved_descriptively",
+          "coverage_self_stance:pwep_614b6ccc-d189-4f35-8a8b-71e48ba7a9e2:first": "unresolved",
+          "coverage_self_stance:pwep_fcc5c159-6815-467a-a612-ef9105e7922d:first": "unresolved",
+          "energy:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first": "resolved_descriptively",
+          "function:pwep_26fac5a8-618d-4cc1-a387-bc22afa5ae97:first": "supports_alternative",
+          "function:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first": "resolved_descriptively",
+          "goal_change:pwep_90003ada-19de-4edd-9080-17cbf5347d11:next": "open",
+          "help_function:pwep_87c4704b-d9f2-4872-8bb1-9d1edd418793:first": "resolved_descriptively",
+          "next_effect:pwep_90003ada-19de-4edd-9080-17cbf5347d11:next": "open",
+          "next_move:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first": "resolved_descriptively",
+          "noticed_order:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first": "resolved_descriptively",
+          "polarization_relation:pwep_a076f7a9-a543-40f9-a76b-327fd2455f72:first": "unresolved",
+          "quiet_or_access:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first": "resolved_descriptively",
+          "recovery_duration:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery": "resolved_descriptively",
+          "recovery_marker:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery": "resolved_descriptively",
+          "recovery_sequence:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery": "resolved_descriptively",
+          "repair_feature:pwep_07c2a228-527f-4516-8e4a-7dedd3a80c2c:first": "unresolved",
+          "sequence_relation:pwep_90003ada-19de-4edd-9080-17cbf5347d11:next": "unresolved",
+          "social_feature:pwep_20db9640-de79-4123-b375-7f4e9853b2e9:first": "unresolved",
+          "uncertainty_meaning:pwep_a0b2013c-ed26-4b26-9c7e-2014f8f15372:first": "supports_alternative",
+          "words:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first": "resolved_descriptively"
+        },
+        "usable_actual_occurrences": 15,
+        "unresolved_bindings": 13,
+        "administrations": 56,
+        "mapping_administrations": 30,
+        "decisions": 59,
+        "controls": 8,
+        "interpretive_quota": null,
+        "report_readiness": "scoped_evidence_available"
+      }
+    },
+    "observations": [
+      {
+        "id": "Oa949c2a82cba4c009c72",
+        "response_id": "pwr_78c15dcdfebcecdfa0db6156d778647501faf821",
+        "administration_id": "pwr_78c15dcdfebcecdfa0db6156d778647501faf821",
+        "item_id": "M01",
+        "option_id": "M01.rest",
+        "variant": "base",
+        "text": "I let myself rest.",
+        "displayed_text": "I let myself rest.",
+        "reported_value": "rest",
+        "capture": "experience",
+        "occurrence_id": "pwep_a271822b-6efc-49c7-96f9-85f8c187fa75",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_a271822b-6efc-49c7-96f9-85f8c187fa75",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "Oc590abac89409b1af7cf",
+        "response_id": "pwr_c721994a916cb0a31e546fd72911fb4681f2724a",
+        "administration_id": "pwr_c721994a916cb0a31e546fd72911fb4681f2724a",
+        "item_id": "M02",
+        "option_id": "M02.bounded",
+        "variant": "base",
+        "text": "I checked what was needed and left it there.",
+        "displayed_text": "I checked what was needed and left it there.",
+        "reported_value": "bounded",
+        "capture": "first_action",
+        "occurrence_id": "pwep_26fac5a8-618d-4cc1-a387-bc22afa5ae97",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_26fac5a8-618d-4cc1-a387-bc22afa5ae97",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "O0dcfcec8c7cedd16b56d",
+        "response_id": "pwr_829073e578855484bd237eef5470195963cbfc8f",
+        "administration_id": "pwr_829073e578855484bd237eef5470195963cbfc8f",
+        "item_id": "M03",
+        "option_id": "M03.requirements",
+        "variant": "base",
+        "text": "Make sure it met the actual requirements.",
+        "displayed_text": "Make sure it met the actual requirements.",
+        "reported_value": "requirements",
+        "capture": "aim",
+        "occurrence_id": "pwep_26fac5a8-618d-4cc1-a387-bc22afa5ae97",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_26fac5a8-618d-4cc1-a387-bc22afa5ae97",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "practical_aim"
+        ]
+      },
+      {
+        "id": "O700d352efcb83e5870b8",
+        "response_id": "pwr_0b48828cdcc17757de52c45975c1440ee7cbdab3",
+        "administration_id": "pwr_0b48828cdcc17757de52c45975c1440ee7cbdab3",
+        "item_id": "M04",
+        "option_id": "M04.fix",
+        "variant": "base",
+        "text": "I corrected what I could.",
+        "displayed_text": "I corrected what I could.",
+        "reported_value": "fix",
+        "capture": "first_action",
+        "occurrence_id": "pwep_fcc5c159-6815-467a-a612-ef9105e7922d",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_fcc5c159-6815-467a-a612-ef9105e7922d",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "Ob4fb317bccfb8e934f08",
+        "response_id": "pwr_359b87768043e322ba71189ba9de02c92362c7d6",
+        "administration_id": "pwr_359b87768043e322ba71189ba9de02c92362c7d6",
+        "item_id": "M05",
+        "option_id": "M05.learn",
+        "variant": "base",
+        "text": "I tried to work out what I could learn.",
+        "displayed_text": "I tried to work out what I could learn.",
+        "reported_value": "learn",
+        "capture": "self_response",
+        "occurrence_id": "pwep_fcc5c159-6815-467a-a612-ef9105e7922d",
+        "step_id": "self_response",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_fcc5c159-6815-467a-a612-ef9105e7922d",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "Oa7b2914c233113694452",
+        "response_id": "pwr_f529f593f657837f08a3347429a1e8058562dadd",
+        "administration_id": "pwr_f529f593f657837f08a3347429a1e8058562dadd",
+        "item_id": "M06",
+        "option_id": "M06.clear",
+        "variant": "base",
+        "text": "I could deal with the mistake more clearly.",
+        "displayed_text": "I could deal with the mistake more clearly.",
+        "reported_value": "clear",
+        "capture": "self_effect",
+        "occurrence_id": "pwep_fcc5c159-6815-467a-a612-ef9105e7922d",
+        "step_id": "self_response",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_fcc5c159-6815-467a-a612-ef9105e7922d",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "O7ab4f1157c148f0bddb7",
+        "response_id": "pwr_3571aa7526731873cf9d5763b3c2b709e9054390",
+        "administration_id": "pwr_3571aa7526731873cf9d5763b3c2b709e9054390",
+        "item_id": "M07",
+        "option_id": "M07.accept",
+        "variant": "base",
+        "text": "I thanked them and let it stand.",
+        "displayed_text": "I thanked them and let it stand.",
+        "reported_value": "accept",
+        "capture": "first_action",
+        "occurrence_id": "pwep_a67f06bc-ea54-4de8-a5d1-31abdca51439",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_a67f06bc-ea54-4de8-a5d1-31abdca51439",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "O3d268a12c19aa1f77585",
+        "response_id": "pwr_2306f5c2e6b2fb28e90f82998d6ac564bc42f163",
+        "administration_id": "pwr_2306f5c2e6b2fb28e90f82998d6ac564bc42f163",
+        "item_id": "M08",
+        "option_id": "M08.limit",
+        "variant": "base",
+        "text": "I said what I could and could not manage.",
+        "displayed_text": "I said what I could and could not manage.",
+        "reported_value": "limit",
+        "capture": "first_action",
+        "occurrence_id": "pwep_6b0a5e01-3bc3-41dd-a46a-c53033b1ca8a",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_6b0a5e01-3bc3-41dd-a46a-c53033b1ca8a",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "O7e17b800500191a1e40a",
+        "response_id": "pwr_07e6498930b060005a59937ea29d085e580a5018",
+        "administration_id": "pwr_07e6498930b060005a59937ea29d085e580a5018",
+        "item_id": "M09",
+        "option_id": "M09.accept",
+        "variant": "base",
+        "text": "They would work around it.",
+        "displayed_text": "They would work around it.",
+        "reported_value": "accept",
+        "capture": "prediction",
+        "occurrence_id": "pwep_6b0a5e01-3bc3-41dd-a46a-c53033b1ca8a",
+        "step_id": "first",
+        "basis": "remembered_expectation",
+        "mode": "single",
+        "dependence_group": "pwep_6b0a5e01-3bc3-41dd-a46a-c53033b1ca8a",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "O8426258b9708c505f5a0",
+        "response_id": "pwr_d4a80e41fe6d11cc596a6b8b3a62955a148a6f46",
+        "administration_id": "pwr_d4a80e41fe6d11cc596a6b8b3a62955a148a6f46",
+        "item_id": "M10",
+        "option_id": "M10.words",
+        "variant": "base",
+        "text": "It became harder to answer people.",
+        "displayed_text": "It became harder to answer people.",
+        "reported_value": "words",
+        "capture": "first_notice",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "speech_access"
+        ]
+      },
+      {
+        "id": "O8478a00e94684f39abae",
+        "response_id": "pwr_442e9bf65f04c2cd29030dce948b1afa2154bc12",
+        "administration_id": "pwr_442e9bf65f04c2cd29030dce948b1afa2154bc12",
+        "item_id": "M11",
+        "option_id": "M11.quiet",
+        "variant": "base",
+        "text": "I went somewhere with less input.",
+        "displayed_text": "I went somewhere with less input.",
+        "reported_value": "quiet",
+        "capture": "first_action",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "reduce_input"
+        ]
+      },
+      {
+        "id": "Od5373f2188ec6a5cd687",
+        "response_id": "pwr_d4a979e4f470e04a518c56bb23447a77567c0ec0",
+        "administration_id": "pwr_d4a979e4f470e04a518c56bb23447a77567c0ec0",
+        "item_id": "M12",
+        "option_id": "M12.function",
+        "variant": "base",
+        "text": "I could carry on, but did not feel better.",
+        "displayed_text": "I could carry on, but did not feel better.",
+        "reported_value": "function",
+        "capture": "immediate_effect",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "function_without_ease"
+        ]
+      },
+      {
+        "id": "O05717d3bacb2f7eda689",
+        "response_id": "pwr_778dfb8ae2275faaf6871c3c58a5f52632ccf46e",
+        "administration_id": "pwr_778dfb8ae2275faaf6871c3c58a5f52632ccf46e",
+        "item_id": "M13",
+        "option_id": "M13.quiet",
+        "variant": "base",
+        "text": "I spent time with less noise or fewer demands.",
+        "displayed_text": "I spent time with less noise or fewer demands.",
+        "reported_value": "quiet",
+        "capture": "later_action",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "later",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "reduce_input"
+        ]
+      },
+      {
+        "id": "O543a044c866cd15b9573",
+        "response_id": "pwr_7a1d6ad2542a41652d31babe767b7d838437fd4b",
+        "administration_id": "pwr_7a1d6ad2542a41652d31babe767b7d838437fd4b",
+        "item_id": "M14",
+        "option_id": "M14.choice",
+        "variant": "base",
+        "text": "I had more room to think and choose.",
+        "displayed_text": "I had more room to think and choose.",
+        "reported_value": "choice",
+        "capture": "later_effect",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "later",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "choice_return"
+        ]
+      },
+      {
+        "id": "Odaed19d01368138583c2",
+        "response_id": "pwr_1fd5e2b9b1b6d0738203c962bbe4562ddf4cb9e6",
+        "administration_id": "pwr_1fd5e2b9b1b6d0738203c962bbe4562ddf4cb9e6",
+        "item_id": "M15",
+        "option_id": "M15.pause",
+        "variant": "base",
+        "text": "I left the decision alone until I knew more.",
+        "displayed_text": "I left the decision alone until I knew more.",
+        "reported_value": "pause",
+        "capture": "first_action",
+        "occurrence_id": "pwep_a0b2013c-ed26-4b26-9c7e-2014f8f15372",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_a0b2013c-ed26-4b26-9c7e-2014f8f15372",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "O4dbb6f732cb0740d7d75",
+        "response_id": "pwr_bb25f747bce9ab505719dc6a5d51e0db3955054c",
+        "administration_id": "pwr_bb25f747bce9ab505719dc6a5d51e0db3955054c",
+        "item_id": "M16",
+        "option_id": "M16.practical",
+        "variant": "base",
+        "text": "I could not take the next practical step.",
+        "displayed_text": "I could not take the next practical step.",
+        "reported_value": "practical",
+        "capture": "meaning",
+        "occurrence_id": "pwep_a0b2013c-ed26-4b26-9c7e-2014f8f15372",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_a0b2013c-ed26-4b26-9c7e-2014f8f15372",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "practical_stakes"
+        ]
+      },
+      {
+        "id": "O86bf6c18b073c9a19f50",
+        "response_id": "pwr_edf5dd0808d436f191e0b336653a08af5854da66",
+        "administration_id": "pwr_edf5dd0808d436f191e0b336653a08af5854da66",
+        "item_id": "M17",
+        "option_id": "M17.wait",
+        "variant": "base",
+        "text": "I waited without changing what I was doing.",
+        "displayed_text": "I waited without changing what I was doing.",
+        "reported_value": "wait",
+        "capture": "first_action",
+        "occurrence_id": "pwep_a0d84224-25b0-45db-acd6-a809f8c5f69f",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_a0d84224-25b0-45db-acd6-a809f8c5f69f",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "O7650e1f182f46f420626",
+        "response_id": "pwr_f81daec4f2f6ccf7daea47a4c448d36b1ab357e0",
+        "administration_id": "pwr_f81daec4f2f6ccf7daea47a4c448d36b1ab357e0",
+        "item_id": "M18",
+        "option_id": "M18.busy",
+        "variant": "base",
+        "text": "They were probably busy.",
+        "displayed_text": "They were probably busy.",
+        "reported_value": "busy",
+        "capture": "meaning",
+        "occurrence_id": "pwep_a0d84224-25b0-45db-acd6-a809f8c5f69f",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_a0d84224-25b0-45db-acd6-a809f8c5f69f",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "Of9c1da3d5efb52b3f298",
+        "response_id": "pwr_160969e4097d2a5cfbf31acbf91eb443f6c48b1f",
+        "administration_id": "pwr_160969e4097d2a5cfbf31acbf91eb443f6c48b1f",
+        "item_id": "M19",
+        "option_id": "M19.information",
+        "variant": "base",
+        "text": "I had the information and moved on.",
+        "displayed_text": "I had the information and moved on.",
+        "reported_value": "information",
+        "capture": "immediate_effect",
+        "occurrence_id": "pwep_a0d84224-25b0-45db-acd6-a809f8c5f69f",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_a0d84224-25b0-45db-acd6-a809f8c5f69f",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "practical_resolution"
+        ]
+      },
+      {
+        "id": "Oa08fde308da1e8e8a1ba",
+        "response_id": "pwr_172b772f86d4499061953fd523377339a7dd4391",
+        "administration_id": "pwr_172b772f86d4499061953fd523377339a7dd4391",
+        "item_id": "M20",
+        "option_id": "M20.ask",
+        "variant": "base",
+        "text": "I asked for what I needed.",
+        "displayed_text": "I asked for what I needed.",
+        "reported_value": "ask",
+        "capture": "first_action",
+        "occurrence_id": "pwep_87c4704b-d9f2-4872-8bb1-9d1edd418793",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_87c4704b-d9f2-4872-8bb1-9d1edd418793",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "O34719d6d8311c27fade1",
+        "response_id": "pwr_8d3f54336d96a64ce4f5ab45d1799b786db6aa59",
+        "administration_id": "pwr_8d3f54336d96a64ce4f5ab45d1799b786db6aa59",
+        "item_id": "M21",
+        "option_id": "M21.clear",
+        "variant": "base",
+        "text": "I expected them to say what they could do.",
+        "displayed_text": "I expected them to say what they could do.",
+        "reported_value": "clear",
+        "capture": "aim",
+        "occurrence_id": "pwep_87c4704b-d9f2-4872-8bb1-9d1edd418793",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_87c4704b-d9f2-4872-8bb1-9d1edd418793",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "O9b6e836ff22b4d283f12",
+        "response_id": "pwr_8efc585248cb88672cf7926a93771e08a66e5258",
+        "administration_id": "pwr_8efc585248cb88672cf7926a93771e08a66e5258",
+        "item_id": "M22",
+        "option_id": "M22.ease",
+        "variant": "base",
+        "text": "I could let them take some of the load.",
+        "displayed_text": "I could let them take some of the load.",
+        "reported_value": "ease",
+        "capture": "experience",
+        "occurrence_id": "pwep_20db9640-de79-4123-b375-7f4e9853b2e9",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_20db9640-de79-4123-b375-7f4e9853b2e9",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "care_received"
+        ]
+      },
+      {
+        "id": "O328735732ba80802c6e6",
+        "response_id": "pwr_826877927f6405c410eea5c79faee215d23197dc",
+        "administration_id": "pwr_826877927f6405c410eea5c79faee215d23197dc",
+        "item_id": "M23",
+        "option_id": "M23.apology",
+        "variant": "base",
+        "text": "I named what I had done and apologized.",
+        "displayed_text": "I named what I had done and apologized.",
+        "reported_value": "apology",
+        "capture": "first_action",
+        "occurrence_id": "pwep_0baff9af-9c27-42e3-bee1-de6d67393af8",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_0baff9af-9c27-42e3-bee1-de6d67393af8",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "O749766ba1bddf6a8265b",
+        "response_id": "pwr_6dca238961a0849cb29d98872c6b7344bb5c8c56",
+        "administration_id": "pwr_6dca238961a0849cb29d98872c6b7344bb5c8c56",
+        "item_id": "M25",
+        "option_id": "M25.stop",
+        "variant": "base",
+        "text": "I stopped where I had planned to.",
+        "displayed_text": "I stopped where I had planned to.",
+        "reported_value": "stop",
+        "capture": "first_action",
+        "occurrence_id": "pwep_2c1b8a46-81ac-4a96-a3d2-825ff7d084a0",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_2c1b8a46-81ac-4a96-a3d2-825ff7d084a0",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "O1ccf35d0c0135abb12cd",
+        "response_id": "pwr_6a35ec5f27d05016e2b186a5b0fbf79fef48332e",
+        "administration_id": "pwr_6a35ec5f27d05016e2b186a5b0fbf79fef48332e",
+        "item_id": "M26",
+        "option_id": "M26.finish",
+        "variant": "base",
+        "text": "I wanted to get it right, and I wanted to be done.",
+        "displayed_text": "I wanted to get it right, and I wanted to be done.",
+        "reported_value": "finish",
+        "capture": "competing_wants",
+        "occurrence_id": "pwep_a076f7a9-a543-40f9-a76b-327fd2455f72",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_a076f7a9-a543-40f9-a76b-327fd2455f72",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "competing_wants"
+        ]
+      },
+      {
+        "id": "Obaae82175e8645127285",
+        "response_id": "pwr_7e6dd37a1691716a790a17a83261548c184d3f5d",
+        "administration_id": "pwr_7e6dd37a1691716a790a17a83261548c184d3f5d",
+        "item_id": "M27",
+        "option_id": "M27.compromise",
+        "variant": "base",
+        "text": "I found a way to allow some of both.",
+        "displayed_text": "I found a way to allow some of both.",
+        "reported_value": "compromise",
+        "capture": "first_action",
+        "occurrence_id": "pwep_a076f7a9-a543-40f9-a76b-327fd2455f72",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_a076f7a9-a543-40f9-a76b-327fd2455f72",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "Ofbd7440ca70088f67a89",
+        "response_id": "pwr_208e27ffcd1e3d6d066a10b9f45d3a4f595faf9f",
+        "administration_id": "pwr_208e27ffcd1e3d6d066a10b9f45d3a4f595faf9f",
+        "item_id": "M24",
+        "option_id": "M24.helped",
+        "variant": "base",
+        "text": "It helped, even though there was more to discuss.",
+        "displayed_text": "It helped, even though there was more to discuss.",
+        "reported_value": "helped",
+        "capture": "experience",
+        "occurrence_id": "pwep_07c2a228-527f-4516-8e4a-7dedd3a80c2c",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_07c2a228-527f-4516-8e4a-7dedd3a80c2c",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "repair_received"
+        ]
+      },
+      {
+        "id": "O3328c61331cdfe7e196e",
+        "response_id": "pwr_8f19a7d6392daef052f36fedf840bb3d3518f438",
+        "administration_id": "pwr_8f19a7d6392daef052f36fedf840bb3d3518f438",
+        "item_id": "M28",
+        "option_id": "M28.stop",
+        "variant": "base",
+        "text": "I stopped once I had done enough.",
+        "displayed_text": "I stopped once I had done enough.",
+        "reported_value": "stop",
+        "capture": "first_action",
+        "occurrence_id": "pwep_614b6ccc-d189-4f35-8a8b-71e48ba7a9e2",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_614b6ccc-d189-4f35-8a8b-71e48ba7a9e2",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "available_stopping"
+        ]
+      },
+      {
+        "id": "O444ef36a49f072575185",
+        "response_id": "pwr_46cb254a4ab69bff7946b37179328c49707957ed",
+        "administration_id": "pwr_46cb254a4ab69bff7946b37179328c49707957ed",
+        "item_id": "M29",
+        "option_id": "M29.clear",
+        "variant": "base",
+        "text": "I knew more clearly what was expected.",
+        "displayed_text": "I knew more clearly what was expected.",
+        "reported_value": "clear",
+        "capture": "context_difference",
+        "occurrence_id": "pwep_614b6ccc-d189-4f35-8a8b-71e48ba7a9e2",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_614b6ccc-d189-4f35-8a8b-71e48ba7a9e2",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "clear_expectations"
+        ]
+      },
+      {
+        "id": "O58f9a513c6bb60791e64",
+        "response_id": "pwr_b471d355f89988fd489f865b1195f7b69c7e3e25",
+        "administration_id": "pwr_b471d355f89988fd489f865b1195f7b69c7e3e25",
+        "item_id": "M30",
+        "option_id": "M30.choice",
+        "variant": "base",
+        "text": "I had more room for what came next.",
+        "displayed_text": "I had more room for what came next.",
+        "reported_value": "choice",
+        "capture": "immediate_effect",
+        "occurrence_id": "pwep_614b6ccc-d189-4f35-8a8b-71e48ba7a9e2",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_614b6ccc-d189-4f35-8a8b-71e48ba7a9e2",
+        "selection_reason": "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "choice_return"
+        ]
+      },
+      {
+        "id": "O0658ae705c4c7f122eba",
+        "response_id": "pwr_fabb0be613dcc929eb6c24ccb70df9fe121a2503",
+        "administration_id": "pwr_fabb0be613dcc929eb6c24ccb70df9fe121a2503",
+        "item_id": "D30",
+        "option_id": "D30.stuck",
+        "variant": "base",
+        "text": "I knew what I meant but could not get it out.",
+        "displayed_text": "I knew what I meant but could not get it out.",
+        "reported_value": "stuck",
+        "capture": "speech_access",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "words_blocked"
+        ]
+      },
+      {
+        "id": "O397375211099023b504b",
+        "response_id": "pwr_d629eef3b52946c4bb33f5ed7c548ada8ab585fc",
+        "administration_id": "pwr_d629eef3b52946c4bb33f5ed7c548ada8ab585fc",
+        "item_id": "D34",
+        "option_id": "D34.words",
+        "variant": "base",
+        "text": "I wanted to speak but could not get words out.",
+        "displayed_text": "I wanted to speak but could not get words out.",
+        "reported_value": "words",
+        "capture": "quiet_or_access",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "words_blocked"
+        ]
+      },
+      {
+        "id": "O5aa856c65a707f3cecad",
+        "response_id": "pwr_579b56fd6dccd35eb6dcab40e76a30d233b1062c",
+        "administration_id": "pwr_579b56fd6dccd35eb6dcab40e76a30d233b1062c",
+        "item_id": "D02",
+        "option_id": "D02.none",
+        "variant": "base",
+        "text": "I was not trying to change anything in particular.",
+        "displayed_text": "I was not trying to change anything in particular.",
+        "reported_value": "none",
+        "capture": "aim",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: new_synthetic_deepening_answer; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "O3b1065e57d34c66256a2",
+        "response_id": "pwr_bdd3efadea11c4d6b093d1afc6905b26d4be5328",
+        "administration_id": "pwr_bdd3efadea11c4d6b093d1afc6905b26d4be5328",
+        "item_id": "D07",
+        "option_id": "D07.quiet",
+        "variant": "base",
+        "text": "I stopped responding.",
+        "displayed_text": "I stopped responding.",
+        "reported_value": "quiet",
+        "capture": "next_action",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "next",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: new_synthetic_deepening_answer; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "low_response"
+        ]
+      },
+      {
+        "id": "Ob22586b29466b74ea49b",
+        "response_id": "pwr_279817fac66e40c76724c831e99238dabab77a96",
+        "administration_id": "pwr_279817fac66e40c76724c831e99238dabab77a96",
+        "item_id": "D35",
+        "option_id": "D35.choice",
+        "variant": "base",
+        "text": "I could consider more than one next step.",
+        "displayed_text": "I could consider more than one next step.",
+        "reported_value": "choice",
+        "capture": "recovery_marker",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "recovery",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "choice_return"
+        ]
+      },
+      {
+        "id": "O8d4de3c2dd3c05d5ebe0",
+        "response_id": "pwr_be7fb75d25fdc08579d86e043b77a279e298abfb",
+        "administration_id": "pwr_be7fb75d25fdc08579d86e043b77a279e298abfb",
+        "item_id": "D83",
+        "option_id": "D83.settle",
+        "variant": "base",
+        "text": "Feeling settled rather than on edge.",
+        "displayed_text": "Feeling settled rather than on edge.",
+        "reported_value": "settle",
+        "capture": "residual_difficulty",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.1.0-candidate.1",
+        "person_id": null,
+        "signals": [
+          "residual_difficulty:settle"
+        ]
+      },
+      {
+        "id": "O183651e61cbf852b3de7",
+        "response_id": "pwr_dd44064da012738e3229cd0b3310636154af826e",
+        "administration_id": "pwr_dd44064da012738e3229cd0b3310636154af826e",
+        "item_id": "D80",
+        "option_id": "D80.task",
+        "variant": "base",
+        "text": "Carry out a familiar task.",
+        "displayed_text": "Carry out a familiar task.",
+        "reported_value": "task",
+        "capture": "remaining_capacity",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.1.0-candidate.1",
+        "person_id": null,
+        "signals": [
+          "remaining_capacity:task"
+        ]
+      },
+      {
+        "id": "Ocdd69071862c457438ee",
+        "response_id": "pwr_09b1e894f3cfffa5c1d32b69cf2cc803511ed5a8",
+        "administration_id": "pwr_09b1e894f3cfffa5c1d32b69cf2cc803511ed5a8",
+        "item_id": "D82",
+        "option_id": "D82.gradual",
+        "variant": "base",
+        "text": "It built gradually.",
+        "displayed_text": "It built gradually.",
+        "reported_value": "gradual",
+        "capture": "onset_shape",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.1.0-candidate.1",
+        "person_id": null,
+        "signals": [
+          "onset_shape:gradual"
+        ]
+      },
+      {
+        "id": "O20773d476bcbb179d2ef",
+        "response_id": "pwr_65dc2c0225dd33ea9a58293a9c3b9ef2dca04358",
+        "administration_id": "pwr_65dc2c0225dd33ea9a58293a9c3b9ef2dca04358",
+        "item_id": "D100",
+        "option_id": "D100.same_less",
+        "variant": "base",
+        "text": "The concern still made sense, but it felt less urgent.",
+        "displayed_text": "The concern still made sense, but it felt less urgent.",
+        "reported_value": "same_less",
+        "capture": "meaning_after_easing",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "recovery",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.1.0-candidate.1",
+        "person_id": null,
+        "signals": [
+          "meaning_after_easing:same_less"
+        ]
+      },
+      {
+        "id": "O94831d634b022e5d26f4",
+        "response_id": "pwr_9f4a8cfc5a0427ecc1e7f614cf03fc4af764a405",
+        "administration_id": "pwr_9f4a8cfc5a0427ecc1e7f614cf03fc4af764a405",
+        "item_id": "D85",
+        "option_id": "D85.function_first",
+        "variant": "base",
+        "text": "I could function before I felt more settled.",
+        "displayed_text": "I could function before I felt more settled.",
+        "reported_value": "function_first",
+        "capture": "function_ease_order",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "recovery",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.1.0-candidate.1",
+        "person_id": null,
+        "signals": [
+          "function_ease_order:function_first"
+        ]
+      },
+      {
+        "id": "O929cbaf357c5d2854ed9",
+        "response_id": "pwr_36ff3582215f970853f0b8f5cc1b66edda6b2772",
+        "administration_id": "pwr_36ff3582215f970853f0b8f5cc1b66edda6b2772",
+        "item_id": "D86",
+        "option_id": "D86.setting",
+        "variant": "base",
+        "text": "The setting had become quieter or less demanding.",
+        "displayed_text": "The setting had become quieter or less demanding.",
+        "reported_value": "setting",
+        "capture": "recovery_conditions",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "recovery",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.1.0-candidate.1",
+        "person_id": null,
+        "signals": [
+          "recovery_conditions:setting"
+        ]
+      },
+      {
+        "id": "O5ad2538a19201ee5851d",
+        "response_id": "pwr_952b49285df46a85ac218899c49cb1d442e84fc0",
+        "administration_id": "pwr_952b49285df46a85ac218899c49cb1d442e84fc0",
+        "item_id": "D37",
+        "option_id": "D37.part",
+        "variant": "base",
+        "text": "Some things were easier, but not all.",
+        "displayed_text": "Some things were easier, but not all.",
+        "reported_value": "part",
+        "capture": "recovery_duration",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "recovery",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "partial_recovery"
+        ]
+      },
+      {
+        "id": "Oc2946f9ba4b05c7e5f65",
+        "response_id": "pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b",
+        "administration_id": "pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b",
+        "item_id": "D36",
+        "option_id": "D36.input",
+        "variant": "base",
+        "text": "There was less input or demand.",
+        "displayed_text": "There was less input or demand.",
+        "reported_value": "input",
+        "capture": "recovery_sequence",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "recovery/D36.input",
+        "basis": "actual_recalled",
+        "mode": "ordered",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "Occa453554150fe009f5b",
+        "response_id": "pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b",
+        "administration_id": "pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b",
+        "item_id": "D36",
+        "option_id": "D36.words",
+        "variant": "base",
+        "text": "Words came more easily.",
+        "displayed_text": "Words came more easily.",
+        "reported_value": "words",
+        "capture": "recovery_sequence",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "recovery/D36.words",
+        "basis": "actual_recalled",
+        "mode": "ordered",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "O5a0b22af174f55b11f1c",
+        "response_id": "pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b",
+        "administration_id": "pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b",
+        "item_id": "D36",
+        "option_id": "D36.think",
+        "variant": "base",
+        "text": "I could think more clearly.",
+        "displayed_text": "I could think more clearly.",
+        "reported_value": "think",
+        "capture": "recovery_sequence",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "recovery/D36.think",
+        "basis": "actual_recalled",
+        "mode": "ordered",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "Off8cd05760c5de43ae55",
+        "response_id": "pwr_0c22aa3700face8a3bef93789737285a0cbf97fb",
+        "administration_id": "pwr_0c22aa3700face8a3bef93789737285a0cbf97fb",
+        "item_id": "D29",
+        "option_id": "D29.narrow",
+        "variant": "base",
+        "text": "It narrowed to one thing.",
+        "displayed_text": "It narrowed to one thing.",
+        "reported_value": "narrow",
+        "capture": "attention",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "attention_narrow"
+        ]
+      },
+      {
+        "id": "Oc1adc6f70b7c9cc1f73d",
+        "response_id": "pwr_3b3000fdc56862a4bf290a5ea128305645328f91",
+        "administration_id": "pwr_3b3000fdc56862a4bf290a5ea128305645328f91",
+        "item_id": "D32",
+        "option_id": "D32.both",
+        "variant": "base",
+        "text": "I felt keyed up and drained at the same time.",
+        "displayed_text": "I felt keyed up and drained at the same time.",
+        "reported_value": "both",
+        "capture": "energy",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": [
+          "mixed_energy"
+        ]
+      },
+      {
+        "id": "O95b9431fbdc556acbb2a",
+        "response_id": "pwr_39d5d5b6b9a53548fc8e99a87fe83faeb4919014",
+        "administration_id": "pwr_39d5d5b6b9a53548fc8e99a87fe83faeb4919014",
+        "item_id": "D33",
+        "option_id": "D33.later",
+        "variant": "base",
+        "text": "I only recognized the changes afterward.",
+        "displayed_text": "I only recognized the changes afterward.",
+        "reported_value": "later",
+        "capture": "noticed_order",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.0.0-design.1",
+        "person_id": null,
+        "signals": []
+      },
+      {
+        "id": "O36b8ab6657f1876670d8",
+        "response_id": "pwr_fd9bf498cc8bccc4b5d63f34e8fb9fdcbdd2d374",
+        "administration_id": "pwr_fd9bf498cc8bccc4b5d63f34e8fb9fdcbdd2d374",
+        "item_id": "D84",
+        "option_id": "D84.later_day",
+        "variant": "base",
+        "text": "More than two hours, but within the same day.",
+        "displayed_text": "More than two hours, but within the same day.",
+        "reported_value": "later_day",
+        "capture": "easing_time_estimate",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "recovery",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.1.0-candidate.1",
+        "person_id": null,
+        "signals": [
+          "easing_time_estimate:later_day"
+        ]
+      },
+      {
+        "id": "O6076a569a7a3123d3aa8",
+        "response_id": "pwr_794df933034d12383fd993b1cb512e6259355964",
+        "administration_id": "pwr_794df933034d12383fd993b1cb512e6259355964",
+        "item_id": "D81",
+        "option_id": "D81.steady_strained",
+        "variant": "base",
+        "text": "I looked steady while feeling strained inside.",
+        "displayed_text": "I looked steady while feeling strained inside.",
+        "reported_value": "steady_strained",
+        "capture": "outward_inward",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "basis": "actual_recalled",
+        "mode": "single",
+        "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "selection_reason": "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "source_version": "5.1.0-candidate.1",
+        "person_id": null,
+        "signals": [
+          "outward_inward:steady_strained"
+        ]
+      }
+    ],
+    "episodes": [
+      {
+        "id": "pwep_07c2a228-527f-4516-8e4a-7dedd3a80c2c",
+        "family": "repair_received",
+        "context": "repair",
+        "root_item_id": "M24",
+        "basis": "actual_recalled",
+        "status": "actual_recalled",
+        "recall_window": "Per-question respondent recall; the source release defines no fixed lookback window.",
+        "person_id": null,
+        "role": null,
+        "topic": null,
+        "linked_from": null,
+        "distinct_from": [],
+        "outside_window": false
+      },
+      {
+        "id": "pwep_0baff9af-9c27-42e3-bee1-de6d67393af8",
+        "family": "repair_offered",
+        "context": "repair",
+        "root_item_id": "M23",
+        "basis": "actual_recalled",
+        "status": "actual_recalled",
+        "recall_window": "Per-question respondent recall; the source release defines no fixed lookback window.",
+        "person_id": null,
+        "role": null,
+        "topic": null,
+        "linked_from": null,
+        "distinct_from": [],
+        "outside_window": false
+      },
+      {
+        "id": "pwep_20db9640-de79-4123-b375-7f4e9853b2e9",
+        "family": "receiving_help",
+        "context": "receiving_care",
+        "root_item_id": "M22",
+        "basis": "actual_recalled",
+        "status": "actual_recalled",
+        "recall_window": "Per-question respondent recall; the source release defines no fixed lookback window.",
+        "person_id": null,
+        "role": null,
+        "topic": null,
+        "linked_from": null,
+        "distinct_from": [],
+        "outside_window": false
+      },
+      {
+        "id": "pwep_26fac5a8-618d-4cc1-a387-bc22afa5ae97",
+        "family": "evaluation",
+        "context": "evaluation",
+        "root_item_id": "M02",
+        "basis": "actual_recalled",
+        "status": "actual_recalled",
+        "recall_window": "Per-question respondent recall; the source release defines no fixed lookback window.",
+        "person_id": null,
+        "role": null,
+        "topic": null,
+        "linked_from": null,
+        "distinct_from": [],
+        "outside_window": false
+      },
+      {
+        "id": "pwep_2c1b8a46-81ac-4a96-a3d2-825ff7d084a0",
+        "family": "rest",
+        "context": "rest",
+        "root_item_id": "M25",
+        "basis": "actual_recalled",
+        "status": "actual_recalled",
+        "recall_window": "Per-question respondent recall; the source release defines no fixed lookback window.",
+        "person_id": null,
+        "role": null,
+        "topic": null,
+        "linked_from": null,
+        "distinct_from": [],
+        "outside_window": false
+      },
+      {
+        "id": "pwep_614b6ccc-d189-4f35-8a8b-71e48ba7a9e2",
+        "family": "exception",
+        "context": "exception",
+        "root_item_id": "M28",
+        "basis": "actual_recalled",
+        "status": "actual_recalled",
+        "recall_window": "Per-question respondent recall; the source release defines no fixed lookback window.",
+        "person_id": null,
+        "role": null,
+        "topic": null,
+        "linked_from": null,
+        "distinct_from": [],
+        "outside_window": false
+      },
+      {
+        "id": "pwep_6b0a5e01-3bc3-41dd-a46a-c53033b1ca8a",
+        "family": "boundary",
+        "context": "boundary",
+        "root_item_id": "M08",
+        "basis": "actual_recalled",
+        "status": "actual_recalled",
+        "recall_window": "Per-question respondent recall; the source release defines no fixed lookback window.",
+        "person_id": null,
+        "role": null,
+        "topic": null,
+        "linked_from": null,
+        "distinct_from": [],
+        "outside_window": false
+      },
+      {
+        "id": "pwep_87c4704b-d9f2-4872-8bb1-9d1edd418793",
+        "family": "help_request",
+        "context": "help",
+        "root_item_id": "M20",
+        "basis": "actual_recalled",
+        "status": "actual_recalled",
+        "recall_window": "Per-question respondent recall; the source release defines no fixed lookback window.",
+        "person_id": null,
+        "role": null,
+        "topic": null,
+        "linked_from": null,
+        "distinct_from": [],
+        "outside_window": false
+      },
+      {
+        "id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "family": "overload",
+        "context": "overload",
+        "root_item_id": "M10",
+        "basis": "actual_recalled",
+        "status": "actual_recalled",
+        "recall_window": "Per-question respondent recall; the source release defines no fixed lookback window.",
+        "person_id": null,
+        "role": null,
+        "topic": null,
+        "linked_from": null,
+        "distinct_from": [],
+        "outside_window": false
+      },
+      {
+        "id": "pwep_a076f7a9-a543-40f9-a76b-327fd2455f72",
+        "family": "two_pulls",
+        "context": "internal_conflict",
+        "root_item_id": "M26",
+        "basis": "actual_recalled",
+        "status": "actual_recalled",
+        "recall_window": "Per-question respondent recall; the source release defines no fixed lookback window.",
+        "person_id": null,
+        "role": null,
+        "topic": null,
+        "linked_from": null,
+        "distinct_from": [],
+        "outside_window": false
+      },
+      {
+        "id": "pwep_a0b2013c-ed26-4b26-9c7e-2014f8f15372",
+        "family": "practical_wait",
+        "context": "practical_uncertainty",
+        "root_item_id": "M15",
+        "basis": "actual_recalled",
+        "status": "actual_recalled",
+        "recall_window": "Per-question respondent recall; the source release defines no fixed lookback window.",
+        "person_id": null,
+        "role": null,
+        "topic": null,
+        "linked_from": null,
+        "distinct_from": [],
+        "outside_window": false
+      },
+      {
+        "id": "pwep_a0d84224-25b0-45db-acd6-a809f8c5f69f",
+        "family": "reply_wait",
+        "context": "close_relationship",
+        "root_item_id": "M17",
+        "basis": "actual_recalled",
+        "status": "actual_recalled",
+        "recall_window": "Per-question respondent recall; the source release defines no fixed lookback window.",
+        "person_id": null,
+        "role": null,
+        "topic": null,
+        "linked_from": null,
+        "distinct_from": [],
+        "outside_window": false
+      },
+      {
+        "id": "pwep_a271822b-6efc-49c7-96f9-85f8c187fa75",
+        "family": "ordinary",
+        "context": "ordinary",
+        "root_item_id": "M01",
+        "basis": "actual_recalled",
+        "status": "actual_recalled",
+        "recall_window": "Per-question respondent recall; the source release defines no fixed lookback window.",
+        "person_id": null,
+        "role": null,
+        "topic": null,
+        "linked_from": null,
+        "distinct_from": [],
+        "outside_window": false
+      },
+      {
+        "id": "pwep_a67f06bc-ea54-4de8-a5d1-31abdca51439",
+        "family": "praise",
+        "context": "visibility",
+        "root_item_id": "M07",
+        "basis": "actual_recalled",
+        "status": "actual_recalled",
+        "recall_window": "Per-question respondent recall; the source release defines no fixed lookback window.",
+        "person_id": null,
+        "role": null,
+        "topic": null,
+        "linked_from": null,
+        "distinct_from": [],
+        "outside_window": false
+      },
+      {
+        "id": "pwep_fcc5c159-6815-467a-a612-ef9105e7922d",
+        "family": "mistake",
+        "context": "mistake",
+        "root_item_id": "M04",
+        "basis": "actual_recalled",
+        "status": "actual_recalled",
+        "recall_window": "Per-question respondent recall; the source release defines no fixed lookback window.",
+        "person_id": null,
+        "role": null,
+        "topic": null,
+        "linked_from": null,
+        "distinct_from": [],
+        "outside_window": false
+      }
+    ],
+    "steps": [
+      {
+        "id": "pwep_07c2a228-527f-4516-8e4a-7dedd3a80c2c:first",
+        "occurrence_id": "pwep_07c2a228-527f-4516-8e4a-7dedd3a80c2c",
+        "step_id": "first",
+        "observation_ids": [
+          "Ofbd7440ca70088f67a89"
+        ]
+      },
+      {
+        "id": "pwep_0baff9af-9c27-42e3-bee1-de6d67393af8:first",
+        "occurrence_id": "pwep_0baff9af-9c27-42e3-bee1-de6d67393af8",
+        "step_id": "first",
+        "observation_ids": [
+          "O328735732ba80802c6e6"
+        ]
+      },
+      {
+        "id": "pwep_20db9640-de79-4123-b375-7f4e9853b2e9:first",
+        "occurrence_id": "pwep_20db9640-de79-4123-b375-7f4e9853b2e9",
+        "step_id": "first",
+        "observation_ids": [
+          "O9b6e836ff22b4d283f12"
+        ]
+      },
+      {
+        "id": "pwep_26fac5a8-618d-4cc1-a387-bc22afa5ae97:first",
+        "occurrence_id": "pwep_26fac5a8-618d-4cc1-a387-bc22afa5ae97",
+        "step_id": "first",
+        "observation_ids": [
+          "Oc590abac89409b1af7cf",
+          "O0dcfcec8c7cedd16b56d"
+        ]
+      },
+      {
+        "id": "pwep_2c1b8a46-81ac-4a96-a3d2-825ff7d084a0:first",
+        "occurrence_id": "pwep_2c1b8a46-81ac-4a96-a3d2-825ff7d084a0",
+        "step_id": "first",
+        "observation_ids": [
+          "O749766ba1bddf6a8265b"
+        ]
+      },
+      {
+        "id": "pwep_614b6ccc-d189-4f35-8a8b-71e48ba7a9e2:first",
+        "occurrence_id": "pwep_614b6ccc-d189-4f35-8a8b-71e48ba7a9e2",
+        "step_id": "first",
+        "observation_ids": [
+          "O3328c61331cdfe7e196e",
+          "O444ef36a49f072575185",
+          "O58f9a513c6bb60791e64"
+        ]
+      },
+      {
+        "id": "pwep_6b0a5e01-3bc3-41dd-a46a-c53033b1ca8a:first",
+        "occurrence_id": "pwep_6b0a5e01-3bc3-41dd-a46a-c53033b1ca8a",
+        "step_id": "first",
+        "observation_ids": [
+          "O3d268a12c19aa1f77585",
+          "O7e17b800500191a1e40a"
+        ]
+      },
+      {
+        "id": "pwep_87c4704b-d9f2-4872-8bb1-9d1edd418793:first",
+        "occurrence_id": "pwep_87c4704b-d9f2-4872-8bb1-9d1edd418793",
+        "step_id": "first",
+        "observation_ids": [
+          "Oa08fde308da1e8e8a1ba",
+          "O34719d6d8311c27fade1"
+        ]
+      },
+      {
+        "id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11:first",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "observation_ids": [
+          "O8426258b9708c505f5a0",
+          "O8478a00e94684f39abae",
+          "Od5373f2188ec6a5cd687",
+          "O0658ae705c4c7f122eba",
+          "O397375211099023b504b",
+          "O5aa856c65a707f3cecad",
+          "O8d4de3c2dd3c05d5ebe0",
+          "O183651e61cbf852b3de7",
+          "Ocdd69071862c457438ee",
+          "Off8cd05760c5de43ae55",
+          "Oc1adc6f70b7c9cc1f73d",
+          "O95b9431fbdc556acbb2a",
+          "O6076a569a7a3123d3aa8"
+        ]
+      },
+      {
+        "id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11:later",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "later",
+        "observation_ids": [
+          "O05717d3bacb2f7eda689",
+          "O543a044c866cd15b9573"
+        ]
+      },
+      {
+        "id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11:next",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "next",
+        "observation_ids": [
+          "O3b1065e57d34c66256a2"
+        ]
+      },
+      {
+        "id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "recovery",
+        "observation_ids": [
+          "Ob22586b29466b74ea49b",
+          "O20773d476bcbb179d2ef",
+          "O94831d634b022e5d26f4",
+          "O929cbaf357c5d2854ed9",
+          "O5ad2538a19201ee5851d",
+          "O36b8ab6657f1876670d8"
+        ]
+      },
+      {
+        "id": "pwep_a076f7a9-a543-40f9-a76b-327fd2455f72:first",
+        "occurrence_id": "pwep_a076f7a9-a543-40f9-a76b-327fd2455f72",
+        "step_id": "first",
+        "observation_ids": [
+          "O1ccf35d0c0135abb12cd",
+          "Obaae82175e8645127285"
+        ]
+      },
+      {
+        "id": "pwep_a0b2013c-ed26-4b26-9c7e-2014f8f15372:first",
+        "occurrence_id": "pwep_a0b2013c-ed26-4b26-9c7e-2014f8f15372",
+        "step_id": "first",
+        "observation_ids": [
+          "Odaed19d01368138583c2",
+          "O4dbb6f732cb0740d7d75"
+        ]
+      },
+      {
+        "id": "pwep_a0d84224-25b0-45db-acd6-a809f8c5f69f:first",
+        "occurrence_id": "pwep_a0d84224-25b0-45db-acd6-a809f8c5f69f",
+        "step_id": "first",
+        "observation_ids": [
+          "O86bf6c18b073c9a19f50",
+          "O7650e1f182f46f420626",
+          "Of9c1da3d5efb52b3f298"
+        ]
+      },
+      {
+        "id": "pwep_a271822b-6efc-49c7-96f9-85f8c187fa75:first",
+        "occurrence_id": "pwep_a271822b-6efc-49c7-96f9-85f8c187fa75",
+        "step_id": "first",
+        "observation_ids": [
+          "Oa949c2a82cba4c009c72"
+        ]
+      },
+      {
+        "id": "pwep_a67f06bc-ea54-4de8-a5d1-31abdca51439:first",
+        "occurrence_id": "pwep_a67f06bc-ea54-4de8-a5d1-31abdca51439",
+        "step_id": "first",
+        "observation_ids": [
+          "O7ab4f1157c148f0bddb7"
+        ]
+      },
+      {
+        "id": "pwep_fcc5c159-6815-467a-a612-ef9105e7922d:first",
+        "occurrence_id": "pwep_fcc5c159-6815-467a-a612-ef9105e7922d",
+        "step_id": "first",
+        "observation_ids": [
+          "O700d352efcb83e5870b8"
+        ]
+      },
+      {
+        "id": "pwep_fcc5c159-6815-467a-a612-ef9105e7922d:self_response",
+        "occurrence_id": "pwep_fcc5c159-6815-467a-a612-ef9105e7922d",
+        "step_id": "self_response",
+        "observation_ids": [
+          "Ob4fb317bccfb8e934f08",
+          "Oa7b2914c233113694452"
+        ]
+      },
+      {
+        "id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery/D36.input",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "recovery/D36.input",
+        "observation_ids": [
+          "Oc2946f9ba4b05c7e5f65"
+        ]
+      },
+      {
+        "id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery/D36.words",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "recovery/D36.words",
+        "observation_ids": [
+          "Occa453554150fe009f5b"
+        ]
+      },
+      {
+        "id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery/D36.think",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "recovery/D36.think",
+        "observation_ids": [
+          "O5a0b22af174f55b11f1c"
+        ]
+      }
+    ],
+    "sequence_edges": [
+      {
+        "id": "recovery:pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b:D36.input:D36.words",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "from_step": "recovery/D36.input",
+        "to_step": "recovery/D36.words",
+        "meaning": "reported_recovery_order",
+        "relation": "before",
+        "evidence_ids": [
+          "Oc2946f9ba4b05c7e5f65",
+          "Occa453554150fe009f5b"
+        ],
+        "first_not_helping": false
+      },
+      {
+        "id": "recovery:pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b:D36.words:D36.think",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "from_step": "recovery/D36.words",
+        "to_step": "recovery/D36.think",
+        "meaning": "reported_recovery_order",
+        "relation": "before",
+        "evidence_ids": [
+          "Occa453554150fe009f5b",
+          "O5a0b22af174f55b11f1c"
+        ],
+        "first_not_helping": false
+      }
+    ],
+    "target_resolutions": [
+      {
+        "id": "access_before_change:pwep_90003ada-19de-4edd-9080-17cbf5347d11:next",
+        "target_id": "access_before_change",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "next",
+        "reason": "authored_evidence_gap",
+        "state": "open",
+        "comparison_ids": [],
+        "source_ids": [
+          "O3b1065e57d34c66256a2"
+        ],
+        "resolution_ids": [],
+        "attempts": 0
+      },
+      {
+        "id": "attachment_meaning:pwep_a0d84224-25b0-45db-acd6-a809f8c5f69f:first",
+        "target_id": "attachment_meaning",
+        "occurrence_id": "pwep_a0d84224-25b0-45db-acd6-a809f8c5f69f",
+        "step_id": "first",
+        "reason": "discriminator_answered_descriptively",
+        "state": "resolved_descriptively",
+        "comparison_ids": [],
+        "source_ids": [
+          "O86bf6c18b073c9a19f50"
+        ],
+        "resolution_ids": [
+          "O7650e1f182f46f420626"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "attention:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first",
+        "target_id": "attention",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "reason": "discriminator_answered_descriptively",
+        "state": "resolved_descriptively",
+        "comparison_ids": [],
+        "source_ids": [
+          "O8426258b9708c505f5a0"
+        ],
+        "resolution_ids": [
+          "Off8cd05760c5de43ae55"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "contrast_context:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first",
+        "target_id": "contrast_context",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "reason": "occurrence_binding_no_event",
+        "state": "unavailable",
+        "comparison_ids": [],
+        "source_ids": [
+          "O5ad2538a19201ee5851d"
+        ],
+        "resolution_ids": [],
+        "attempts": 0
+      },
+      {
+        "id": "cost:pwep_fcc5c159-6815-467a-a612-ef9105e7922d:self_response",
+        "target_id": "cost",
+        "occurrence_id": "pwep_fcc5c159-6815-467a-a612-ef9105e7922d",
+        "step_id": "self_response",
+        "reason": "authored_evidence_gap",
+        "state": "open",
+        "comparison_ids": [],
+        "source_ids": [
+          "Oa7b2914c233113694452"
+        ],
+        "resolution_ids": [],
+        "attempts": 0
+      },
+      {
+        "id": "coverage_easing_time_estimate:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery",
+        "target_id": "coverage_easing_time_estimate",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "recovery",
+        "reason": "coverage_description_recorded_not_theory_classification",
+        "state": "resolved_descriptively",
+        "comparison_ids": [],
+        "source_ids": [
+          "O8426258b9708c505f5a0",
+          "O543a044c866cd15b9573",
+          "Ob22586b29466b74ea49b"
+        ],
+        "resolution_ids": [
+          "O36b8ab6657f1876670d8"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "coverage_function_ease_order:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery",
+        "target_id": "coverage_function_ease_order",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "recovery",
+        "reason": "coverage_description_recorded_not_theory_classification",
+        "state": "resolved_descriptively",
+        "comparison_ids": [],
+        "source_ids": [
+          "Od5373f2188ec6a5cd687",
+          "O543a044c866cd15b9573",
+          "Ob22586b29466b74ea49b",
+          "Oc2946f9ba4b05c7e5f65",
+          "Occa453554150fe009f5b",
+          "O5a0b22af174f55b11f1c"
+        ],
+        "resolution_ids": [
+          "O94831d634b022e5d26f4"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "coverage_help_response:pwep_87c4704b-d9f2-4872-8bb1-9d1edd418793:first",
+        "target_id": "coverage_help_response",
+        "occurrence_id": "pwep_87c4704b-d9f2-4872-8bb1-9d1edd418793",
+        "step_id": "first",
+        "reason": "coverage_not_sure",
+        "state": "unresolved",
+        "comparison_ids": [],
+        "source_ids": [
+          "Oa08fde308da1e8e8a1ba",
+          "O34719d6d8311c27fade1"
+        ],
+        "resolution_ids": [],
+        "attempts": 0
+      },
+      {
+        "id": "coverage_meaning_after_easing:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery",
+        "target_id": "coverage_meaning_after_easing",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "recovery",
+        "reason": "coverage_description_recorded_not_theory_classification",
+        "state": "resolved_descriptively",
+        "comparison_ids": [],
+        "source_ids": [
+          "O543a044c866cd15b9573",
+          "Ob22586b29466b74ea49b",
+          "O05717d3bacb2f7eda689",
+          "Od5373f2188ec6a5cd687"
+        ],
+        "resolution_ids": [
+          "O20773d476bcbb179d2ef"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "coverage_onset_shape:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first",
+        "target_id": "coverage_onset_shape",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "reason": "coverage_description_recorded_not_theory_classification",
+        "state": "resolved_descriptively",
+        "comparison_ids": [],
+        "source_ids": [
+          "O8426258b9708c505f5a0",
+          "Oc1adc6f70b7c9cc1f73d",
+          "O95b9431fbdc556acbb2a"
+        ],
+        "resolution_ids": [
+          "Ocdd69071862c457438ee"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "coverage_outward_inward:pwep_07c2a228-527f-4516-8e4a-7dedd3a80c2c:first",
+        "target_id": "coverage_outward_inward",
+        "occurrence_id": "pwep_07c2a228-527f-4516-8e4a-7dedd3a80c2c",
+        "step_id": "first",
+        "reason": "coverage_gate_open",
+        "state": "open",
+        "comparison_ids": [],
+        "source_ids": [
+          "Ofbd7440ca70088f67a89"
+        ],
+        "resolution_ids": [],
+        "attempts": 0
+      },
+      {
+        "id": "coverage_outward_inward:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first",
+        "target_id": "coverage_outward_inward",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "reason": "coverage_description_recorded_not_theory_classification",
+        "state": "resolved_descriptively",
+        "comparison_ids": [],
+        "source_ids": [
+          "Od5373f2188ec6a5cd687",
+          "O0658ae705c4c7f122eba",
+          "O397375211099023b504b"
+        ],
+        "resolution_ids": [
+          "O6076a569a7a3123d3aa8"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "coverage_recovery_conditions:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery",
+        "target_id": "coverage_recovery_conditions",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "recovery",
+        "reason": "coverage_description_recorded_not_theory_classification",
+        "state": "resolved_descriptively",
+        "comparison_ids": [],
+        "source_ids": [
+          "O543a044c866cd15b9573",
+          "Ob22586b29466b74ea49b",
+          "O05717d3bacb2f7eda689",
+          "Od5373f2188ec6a5cd687"
+        ],
+        "resolution_ids": [
+          "O929cbaf357c5d2854ed9"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "coverage_relational_self_expectation:pwep_a0d84224-25b0-45db-acd6-a809f8c5f69f:first",
+        "target_id": "coverage_relational_self_expectation",
+        "occurrence_id": "pwep_a0d84224-25b0-45db-acd6-a809f8c5f69f",
+        "step_id": "first",
+        "reason": "coverage_gate_open",
+        "state": "open",
+        "comparison_ids": [],
+        "source_ids": [
+          "O7650e1f182f46f420626",
+          "O86bf6c18b073c9a19f50"
+        ],
+        "resolution_ids": [],
+        "attempts": 0
+      },
+      {
+        "id": "coverage_remaining_capacity:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first",
+        "target_id": "coverage_remaining_capacity",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "reason": "coverage_description_recorded_not_theory_classification",
+        "state": "resolved_descriptively",
+        "comparison_ids": [],
+        "source_ids": [
+          "O8426258b9708c505f5a0",
+          "O8478a00e94684f39abae",
+          "Od5373f2188ec6a5cd687",
+          "O0658ae705c4c7f122eba",
+          "O397375211099023b504b",
+          "Off8cd05760c5de43ae55"
+        ],
+        "resolution_ids": [
+          "O183651e61cbf852b3de7"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "coverage_residual_difficulty:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first",
+        "target_id": "coverage_residual_difficulty",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "reason": "coverage_description_recorded_not_theory_classification",
+        "state": "resolved_descriptively",
+        "comparison_ids": [],
+        "source_ids": [
+          "Od5373f2188ec6a5cd687",
+          "Ob22586b29466b74ea49b"
+        ],
+        "resolution_ids": [
+          "O8d4de3c2dd3c05d5ebe0"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "coverage_self_stance:pwep_614b6ccc-d189-4f35-8a8b-71e48ba7a9e2:first",
+        "target_id": "coverage_self_stance",
+        "occurrence_id": "pwep_614b6ccc-d189-4f35-8a8b-71e48ba7a9e2",
+        "step_id": "first",
+        "reason": "coverage_not_sure",
+        "state": "unresolved",
+        "comparison_ids": [],
+        "source_ids": [
+          "O3328c61331cdfe7e196e",
+          "O58f9a513c6bb60791e64"
+        ],
+        "resolution_ids": [],
+        "attempts": 0
+      },
+      {
+        "id": "coverage_self_stance:pwep_fcc5c159-6815-467a-a612-ef9105e7922d:first",
+        "target_id": "coverage_self_stance",
+        "occurrence_id": "pwep_fcc5c159-6815-467a-a612-ef9105e7922d",
+        "step_id": "first",
+        "reason": "coverage_not_sure",
+        "state": "unresolved",
+        "comparison_ids": [],
+        "source_ids": [
+          "Ob4fb317bccfb8e934f08",
+          "Oa7b2914c233113694452"
+        ],
+        "resolution_ids": [],
+        "attempts": 0
+      },
+      {
+        "id": "energy:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first",
+        "target_id": "energy",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "reason": "discriminator_answered_descriptively",
+        "state": "resolved_descriptively",
+        "comparison_ids": [],
+        "source_ids": [
+          "O8426258b9708c505f5a0"
+        ],
+        "resolution_ids": [
+          "Oc1adc6f70b7c9cc1f73d"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "function:pwep_26fac5a8-618d-4cc1-a387-bc22afa5ae97:first",
+        "target_id": "function",
+        "occurrence_id": "pwep_26fac5a8-618d-4cc1-a387-bc22afa5ae97",
+        "step_id": "first",
+        "reason": "ordinary_or_contextual_explanation_recorded",
+        "state": "supports_alternative",
+        "comparison_ids": [],
+        "source_ids": [
+          "Oc590abac89409b1af7cf"
+        ],
+        "resolution_ids": [
+          "O0dcfcec8c7cedd16b56d"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "function:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first",
+        "target_id": "function",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "reason": "discriminator_answered_descriptively",
+        "state": "resolved_descriptively",
+        "comparison_ids": [],
+        "source_ids": [
+          "O8478a00e94684f39abae",
+          "Od5373f2188ec6a5cd687"
+        ],
+        "resolution_ids": [
+          "O5aa856c65a707f3cecad"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "goal_change:pwep_90003ada-19de-4edd-9080-17cbf5347d11:next",
+        "target_id": "goal_change",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "next",
+        "reason": "authored_evidence_gap",
+        "state": "open",
+        "comparison_ids": [],
+        "source_ids": [
+          "O3b1065e57d34c66256a2"
+        ],
+        "resolution_ids": [],
+        "attempts": 0
+      },
+      {
+        "id": "help_function:pwep_87c4704b-d9f2-4872-8bb1-9d1edd418793:first",
+        "target_id": "help_function",
+        "occurrence_id": "pwep_87c4704b-d9f2-4872-8bb1-9d1edd418793",
+        "step_id": "first",
+        "reason": "discriminator_answered_descriptively",
+        "state": "resolved_descriptively",
+        "comparison_ids": [],
+        "source_ids": [
+          "Oa08fde308da1e8e8a1ba"
+        ],
+        "resolution_ids": [
+          "O34719d6d8311c27fade1"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "next_effect:pwep_90003ada-19de-4edd-9080-17cbf5347d11:next",
+        "target_id": "next_effect",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "next",
+        "reason": "authored_evidence_gap",
+        "state": "open",
+        "comparison_ids": [],
+        "source_ids": [
+          "O3b1065e57d34c66256a2"
+        ],
+        "resolution_ids": [],
+        "attempts": 0
+      },
+      {
+        "id": "next_move:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first",
+        "target_id": "next_move",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "reason": "discriminator_answered_descriptively",
+        "state": "resolved_descriptively",
+        "comparison_ids": [],
+        "source_ids": [
+          "O8478a00e94684f39abae",
+          "Od5373f2188ec6a5cd687"
+        ],
+        "resolution_ids": [
+          "O3b1065e57d34c66256a2"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "noticed_order:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first",
+        "target_id": "noticed_order",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "reason": "discriminator_answered_descriptively",
+        "state": "resolved_descriptively",
+        "comparison_ids": [],
+        "source_ids": [
+          "O8426258b9708c505f5a0",
+          "Off8cd05760c5de43ae55",
+          "Oc1adc6f70b7c9cc1f73d"
+        ],
+        "resolution_ids": [
+          "O95b9431fbdc556acbb2a"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "polarization_relation:pwep_a076f7a9-a543-40f9-a76b-327fd2455f72:first",
+        "target_id": "polarization_relation",
+        "occurrence_id": "pwep_a076f7a9-a543-40f9-a76b-327fd2455f72",
+        "step_id": "first",
+        "reason": "discriminator_not_sure",
+        "state": "unresolved",
+        "comparison_ids": [],
+        "source_ids": [
+          "O1ccf35d0c0135abb12cd",
+          "Obaae82175e8645127285"
+        ],
+        "resolution_ids": [],
+        "attempts": 0
+      },
+      {
+        "id": "quiet_or_access:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first",
+        "target_id": "quiet_or_access",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "reason": "discriminator_answered_descriptively",
+        "state": "resolved_descriptively",
+        "comparison_ids": [],
+        "source_ids": [
+          "O8478a00e94684f39abae",
+          "O0658ae705c4c7f122eba"
+        ],
+        "resolution_ids": [
+          "O397375211099023b504b"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "recovery_duration:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery",
+        "target_id": "recovery_duration",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "recovery",
+        "reason": "discriminator_answered_descriptively",
+        "state": "resolved_descriptively",
+        "comparison_ids": [],
+        "source_ids": [
+          "O543a044c866cd15b9573",
+          "Ob22586b29466b74ea49b",
+          "Oc2946f9ba4b05c7e5f65",
+          "Occa453554150fe009f5b",
+          "O5a0b22af174f55b11f1c"
+        ],
+        "resolution_ids": [
+          "O5ad2538a19201ee5851d"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "recovery_marker:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery",
+        "target_id": "recovery_marker",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "recovery",
+        "reason": "discriminator_answered_descriptively",
+        "state": "resolved_descriptively",
+        "comparison_ids": [],
+        "source_ids": [
+          "Od5373f2188ec6a5cd687",
+          "O05717d3bacb2f7eda689",
+          "O0658ae705c4c7f122eba",
+          "O397375211099023b504b",
+          "Off8cd05760c5de43ae55",
+          "Oc1adc6f70b7c9cc1f73d"
+        ],
+        "resolution_ids": [
+          "Ob22586b29466b74ea49b"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "recovery_sequence:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery",
+        "target_id": "recovery_sequence",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "recovery",
+        "reason": "discriminator_answered_descriptively",
+        "state": "resolved_descriptively",
+        "comparison_ids": [],
+        "source_ids": [
+          "O543a044c866cd15b9573",
+          "Ob22586b29466b74ea49b",
+          "O95b9431fbdc556acbb2a"
+        ],
+        "resolution_ids": [
+          "Oc2946f9ba4b05c7e5f65",
+          "Occa453554150fe009f5b",
+          "O5a0b22af174f55b11f1c"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "repair_feature:pwep_07c2a228-527f-4516-8e4a-7dedd3a80c2c:first",
+        "target_id": "repair_feature",
+        "occurrence_id": "pwep_07c2a228-527f-4516-8e4a-7dedd3a80c2c",
+        "step_id": "first",
+        "reason": "discriminator_not_sure",
+        "state": "unresolved",
+        "comparison_ids": [],
+        "source_ids": [
+          "Ofbd7440ca70088f67a89"
+        ],
+        "resolution_ids": [],
+        "attempts": 0
+      },
+      {
+        "id": "sequence_relation:pwep_90003ada-19de-4edd-9080-17cbf5347d11:next",
+        "target_id": "sequence_relation",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "next",
+        "reason": "discriminator_not_sure",
+        "state": "unresolved",
+        "comparison_ids": [],
+        "source_ids": [
+          "O3b1065e57d34c66256a2"
+        ],
+        "resolution_ids": [],
+        "attempts": 0
+      },
+      {
+        "id": "social_feature:pwep_20db9640-de79-4123-b375-7f4e9853b2e9:first",
+        "target_id": "social_feature",
+        "occurrence_id": "pwep_20db9640-de79-4123-b375-7f4e9853b2e9",
+        "step_id": "first",
+        "reason": "discriminator_not_sure",
+        "state": "unresolved",
+        "comparison_ids": [],
+        "source_ids": [
+          "O9b6e836ff22b4d283f12"
+        ],
+        "resolution_ids": [],
+        "attempts": 0
+      },
+      {
+        "id": "uncertainty_meaning:pwep_a0b2013c-ed26-4b26-9c7e-2014f8f15372:first",
+        "target_id": "uncertainty_meaning",
+        "occurrence_id": "pwep_a0b2013c-ed26-4b26-9c7e-2014f8f15372",
+        "step_id": "first",
+        "reason": "ordinary_or_contextual_explanation_recorded",
+        "state": "supports_alternative",
+        "comparison_ids": [],
+        "source_ids": [
+          "Odaed19d01368138583c2"
+        ],
+        "resolution_ids": [
+          "O4dbb6f732cb0740d7d75"
+        ],
+        "attempts": 0
+      },
+      {
+        "id": "words:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first",
+        "target_id": "words",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "step_id": "first",
+        "reason": "discriminator_answered_descriptively",
+        "state": "resolved_descriptively",
+        "comparison_ids": [],
+        "source_ids": [
+          "O8426258b9708c505f5a0"
+        ],
+        "resolution_ids": [
+          "O0658ae705c4c7f122eba"
+        ],
+        "attempts": 0
+      }
+    ],
+    "structural_evidence_summaries": [],
+    "supported_alternatives": [],
+    "counterexamples": [],
+    "secure_capacity_examples": [],
+    "missingness": [
+      {
+        "administration_id": "pwr_7d4aadea7cbfac3db2adeaf2e19951bdf663573d",
+        "response_id": "pwr_7d4aadea7cbfac3db2adeaf2e19951bdf663573d",
+        "item_id": "D08",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "status": "not_sure",
+        "reason": "not_sure"
+      },
+      {
+        "administration_id": "pwr_4b44dce0599760beddb8280d8f5b295d752aaf8b",
+        "response_id": "pwr_4b44dce0599760beddb8280d8f5b295d752aaf8b",
+        "item_id": "D65",
+        "occurrence_id": "pwep_fcc5c159-6815-467a-a612-ef9105e7922d",
+        "status": "not_sure",
+        "reason": "not_sure"
+      },
+      {
+        "administration_id": "pwr_bc43ae0dd00a039774d726746264b7987b40ef10",
+        "response_id": "pwr_bc43ae0dd00a039774d726746264b7987b40ef10",
+        "item_id": "D91",
+        "occurrence_id": "pwep_87c4704b-d9f2-4872-8bb1-9d1edd418793",
+        "status": "not_sure",
+        "reason": "not_sure"
+      },
+      {
+        "administration_id": "pwr_ccb3a2c1a53b8a0b351ef53e4b71c288076a0d55",
+        "response_id": "pwr_ccb3a2c1a53b8a0b351ef53e4b71c288076a0d55",
+        "item_id": "D38",
+        "occurrence_id": "pwep_20db9640-de79-4123-b375-7f4e9853b2e9",
+        "status": "not_sure",
+        "reason": "not_sure"
+      },
+      {
+        "administration_id": "pwr_07717565ccca0bef40b23a41fa7752c6b1f15f01",
+        "response_id": "pwr_07717565ccca0bef40b23a41fa7752c6b1f15f01",
+        "item_id": "D12",
+        "occurrence_id": "pwep_a076f7a9-a543-40f9-a76b-327fd2455f72",
+        "status": "not_sure",
+        "reason": "not_sure"
+      },
+      {
+        "administration_id": "pwr_9a763643583440efd0740da27f3425b96a9d1d5c",
+        "response_id": "pwr_9a763643583440efd0740da27f3425b96a9d1d5c",
+        "item_id": "D50",
+        "occurrence_id": "pwep_07c2a228-527f-4516-8e4a-7dedd3a80c2c",
+        "status": "not_sure",
+        "reason": "not_sure"
+      },
+      {
+        "administration_id": "pwr_063bde2a511b019e1944d2ed884f74db1ce408ab",
+        "response_id": "pwr_063bde2a511b019e1944d2ed884f74db1ce408ab",
+        "item_id": "D65",
+        "occurrence_id": "pwep_614b6ccc-d189-4f35-8a8b-71e48ba7a9e2",
+        "status": "not_sure",
+        "reason": "not_sure"
+      },
+      {
+        "administration_id": "pwr_ef28b06cf211862d55abd64c17ecc1e990e360f6",
+        "response_id": "pwr_ef28b06cf211862d55abd64c17ecc1e990e360f6",
+        "item_id": "D41",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "status": "not_sure",
+        "reason": "not_sure"
+      }
+    ],
+    "corrections": [],
+    "unresolved_bindings": [],
+    "referent_scopes": [],
+    "context_comparisons": [],
+    "reported_context_controls": [],
+    "interpretation_disputes": [],
+    "open_questions": [
+      {
+        "target_instance": "access_before_change:pwep_90003ada-19de-4edd-9080-17cbf5347d11:next",
+        "target_id": "access_before_change",
+        "state": "open",
+        "reason": "authored_evidence_gap"
+      },
+      {
+        "target_instance": "contrast_context:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first",
+        "target_id": "contrast_context",
+        "state": "unavailable",
+        "reason": "occurrence_binding_no_event"
+      },
+      {
+        "target_instance": "cost:pwep_fcc5c159-6815-467a-a612-ef9105e7922d:self_response",
+        "target_id": "cost",
+        "state": "open",
+        "reason": "authored_evidence_gap"
+      },
+      {
+        "target_instance": "coverage_help_response:pwep_87c4704b-d9f2-4872-8bb1-9d1edd418793:first",
+        "target_id": "coverage_help_response",
+        "state": "unresolved",
+        "reason": "coverage_not_sure"
+      },
+      {
+        "target_instance": "coverage_outward_inward:pwep_07c2a228-527f-4516-8e4a-7dedd3a80c2c:first",
+        "target_id": "coverage_outward_inward",
+        "state": "open",
+        "reason": "coverage_gate_open"
+      },
+      {
+        "target_instance": "coverage_relational_self_expectation:pwep_a0d84224-25b0-45db-acd6-a809f8c5f69f:first",
+        "target_id": "coverage_relational_self_expectation",
+        "state": "open",
+        "reason": "coverage_gate_open"
+      },
+      {
+        "target_instance": "coverage_self_stance:pwep_614b6ccc-d189-4f35-8a8b-71e48ba7a9e2:first",
+        "target_id": "coverage_self_stance",
+        "state": "unresolved",
+        "reason": "coverage_not_sure"
+      },
+      {
+        "target_instance": "coverage_self_stance:pwep_fcc5c159-6815-467a-a612-ef9105e7922d:first",
+        "target_id": "coverage_self_stance",
+        "state": "unresolved",
+        "reason": "coverage_not_sure"
+      },
+      {
+        "target_instance": "goal_change:pwep_90003ada-19de-4edd-9080-17cbf5347d11:next",
+        "target_id": "goal_change",
+        "state": "open",
+        "reason": "authored_evidence_gap"
+      },
+      {
+        "target_instance": "next_effect:pwep_90003ada-19de-4edd-9080-17cbf5347d11:next",
+        "target_id": "next_effect",
+        "state": "open",
+        "reason": "authored_evidence_gap"
+      },
+      {
+        "target_instance": "polarization_relation:pwep_a076f7a9-a543-40f9-a76b-327fd2455f72:first",
+        "target_id": "polarization_relation",
+        "state": "unresolved",
+        "reason": "discriminator_not_sure"
+      },
+      {
+        "target_instance": "repair_feature:pwep_07c2a228-527f-4516-8e4a-7dedd3a80c2c:first",
+        "target_id": "repair_feature",
+        "state": "unresolved",
+        "reason": "discriminator_not_sure"
+      },
+      {
+        "target_instance": "sequence_relation:pwep_90003ada-19de-4edd-9080-17cbf5347d11:next",
+        "target_id": "sequence_relation",
+        "state": "unresolved",
+        "reason": "discriminator_not_sure"
+      },
+      {
+        "target_instance": "social_feature:pwep_20db9640-de79-4123-b375-7f4e9853b2e9:first",
+        "target_id": "social_feature",
+        "state": "unresolved",
+        "reason": "discriminator_not_sure"
+      }
+    ],
+    "administration_provenance": [
+      {
+        "id": "pwr_78c15dcdfebcecdfa0db6156d778647501faf821",
+        "item_id": "M01",
+        "variant": "base",
+        "occurrence_id": "pwep_a271822b-6efc-49c7-96f9-85f8c187fa75",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M01.rest",
+          "M01.own_pace",
+          "M01.tasks",
+          "M01.restless",
+          "M01.drained"
+        ],
+        "live_response_id": "pwr_78c15dcdfebcecdfa0db6156d778647501faf821"
+      },
+      {
+        "id": "pwr_c721994a916cb0a31e546fd72911fb4681f2724a",
+        "item_id": "M02",
+        "variant": "base",
+        "occurrence_id": "pwep_26fac5a8-618d-4cc1-a387-bc22afa5ae97",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M02.bounded",
+          "M02.recheck",
+          "M02.rehearse",
+          "M02.avoid",
+          "M02.feedback",
+          "M02.none"
+        ],
+        "live_response_id": "pwr_c721994a916cb0a31e546fd72911fb4681f2724a"
+      },
+      {
+        "id": "pwr_829073e578855484bd237eef5470195963cbfc8f",
+        "item_id": "M03",
+        "variant": "base",
+        "occurrence_id": "pwep_26fac5a8-618d-4cc1-a387-bc22afa5ae97",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M03.requirements",
+          "M03.exposure",
+          "M03.error",
+          "M03.approval",
+          "M03.relief",
+          "M03.no_aim"
+        ],
+        "live_response_id": "pwr_829073e578855484bd237eef5470195963cbfc8f"
+      },
+      {
+        "id": "pwr_0b48828cdcc17757de52c45975c1440ee7cbdab3",
+        "item_id": "M04",
+        "variant": "base",
+        "occurrence_id": "pwep_fcc5c159-6815-467a-a612-ef9105e7922d",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M04.fix",
+          "M04.check",
+          "M04.tell",
+          "M04.explain",
+          "M04.delay",
+          "M04.continue"
+        ],
+        "live_response_id": "pwr_0b48828cdcc17757de52c45975c1440ee7cbdab3"
+      },
+      {
+        "id": "pwr_359b87768043e322ba71189ba9de02c92362c7d6",
+        "item_id": "M05",
+        "variant": "base",
+        "occurrence_id": "pwep_fcc5c159-6815-467a-a612-ef9105e7922d",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M05.learn",
+          "M05.attack",
+          "M05.rules",
+          "M05.dismiss",
+          "M05.kind",
+          "M05.neutral"
+        ],
+        "live_response_id": "pwr_359b87768043e322ba71189ba9de02c92362c7d6"
+      },
+      {
+        "id": "pwr_f529f593f657837f08a3347429a1e8058562dadd",
+        "item_id": "M06",
+        "variant": "base",
+        "occurrence_id": "pwep_fcc5c159-6815-467a-a612-ef9105e7922d",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M06.clear",
+          "M06.prevent",
+          "M06.worse",
+          "M06.avoid",
+          "M06.break",
+          "M06.same"
+        ],
+        "live_response_id": "pwr_f529f593f657837f08a3347429a1e8058562dadd"
+      },
+      {
+        "id": "pwr_3571aa7526731873cf9d5763b3c2b709e9054390",
+        "item_id": "M07",
+        "variant": "base",
+        "occurrence_id": "pwep_a67f06bc-ea54-4de8-a5d1-31abdca51439",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M07.accept",
+          "M07.flaw",
+          "M07.credit",
+          "M07.joke",
+          "M07.ask",
+          "M07.move_on"
+        ],
+        "live_response_id": "pwr_3571aa7526731873cf9d5763b3c2b709e9054390"
+      },
+      {
+        "id": "pwr_2306f5c2e6b2fb28e90f82998d6ac564bc42f163",
+        "item_id": "M08",
+        "variant": "base",
+        "occurrence_id": "pwep_6b0a5e01-3bc3-41dd-a46a-c53033b1ca8a",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M08.yes",
+          "M08.limit",
+          "M08.delay",
+          "M08.explain",
+          "M08.no",
+          "M08.reduce"
+        ],
+        "live_response_id": "pwr_2306f5c2e6b2fb28e90f82998d6ac564bc42f163"
+      },
+      {
+        "id": "pwr_07e6498930b060005a59937ea29d085e580a5018",
+        "item_id": "M09",
+        "variant": "base",
+        "occurrence_id": "pwep_6b0a5e01-3bc3-41dd-a46a-c53033b1ca8a",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M09.accept",
+          "M09.disappointed",
+          "M09.conflict",
+          "M09.practical",
+          "M09.status",
+          "M09.unknown"
+        ],
+        "live_response_id": "pwr_07e6498930b060005a59937ea29d085e580a5018"
+      },
+      {
+        "id": "pwr_d4a80e41fe6d11cc596a6b8b3a62955a148a6f46",
+        "item_id": "M10",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M10.urgent",
+          "M10.attention",
+          "M10.words",
+          "M10.tension",
+          "M10.slowing",
+          "M10.late"
+        ],
+        "live_response_id": "pwr_d4a80e41fe6d11cc596a6b8b3a62955a148a6f46"
+      },
+      {
+        "id": "pwr_442e9bf65f04c2cd29030dce948b1afa2154bc12",
+        "item_id": "M11",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M11.push",
+          "M11.reduce",
+          "M11.quiet",
+          "M11.help",
+          "M11.absorb",
+          "M11.stop"
+        ],
+        "live_response_id": "pwr_442e9bf65f04c2cd29030dce948b1afa2154bc12"
+      },
+      {
+        "id": "pwr_d4a979e4f470e04a518c56bb23447a77567c0ec0",
+        "item_id": "M12",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M12.relief",
+          "M12.clear",
+          "M12.function",
+          "M12.away",
+          "M12.same",
+          "M12.worse"
+        ],
+        "live_response_id": "pwr_d4a979e4f470e04a518c56bb23447a77567c0ec0"
+      },
+      {
+        "id": "pwr_778dfb8ae2275faaf6871c3c58a5f52632ccf46e",
+        "item_id": "M13",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M13.quiet",
+          "M13.rest",
+          "M13.move",
+          "M13.company",
+          "M13.absorb",
+          "M13.nothing"
+        ],
+        "live_response_id": "pwr_778dfb8ae2275faaf6871c3c58a5f52632ccf46e"
+      },
+      {
+        "id": "pwr_7a1d6ad2542a41652d31babe767b7d838437fd4b",
+        "item_id": "M14",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M14.choice",
+          "M14.energy",
+          "M14.settled",
+          "M14.brief",
+          "M14.same",
+          "M14.worse"
+        ],
+        "live_response_id": "pwr_7a1d6ad2542a41652d31babe767b7d838437fd4b"
+      },
+      {
+        "id": "pwr_1fd5e2b9b1b6d0738203c962bbe4562ddf4cb9e6",
+        "item_id": "M15",
+        "variant": "base",
+        "occurrence_id": "pwep_a0b2013c-ed26-4b26-9c7e-2014f8f15372",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M15.check",
+          "M15.chase",
+          "M15.plan",
+          "M15.pause",
+          "M15.other",
+          "M15.stuck"
+        ],
+        "live_response_id": "pwr_1fd5e2b9b1b6d0738203c962bbe4562ddf4cb9e6"
+      },
+      {
+        "id": "pwr_bb25f747bce9ab505719dc6a5d51e0db3955054c",
+        "item_id": "M16",
+        "variant": "base",
+        "occurrence_id": "pwep_a0b2013c-ed26-4b26-9c7e-2014f8f15372",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M16.practical",
+          "M16.loss",
+          "M16.mistake",
+          "M16.unprepared",
+          "M16.unclear",
+          "M16.little"
+        ],
+        "live_response_id": "pwr_bb25f747bce9ab505719dc6a5d51e0db3955054c"
+      },
+      {
+        "id": "pwr_edf5dd0808d436f191e0b336653a08af5854da66",
+        "item_id": "M17",
+        "variant": "base",
+        "occurrence_id": "pwep_a0d84224-25b0-45db-acd6-a809f8c5f69f",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M17.check",
+          "M17.send",
+          "M17.reread",
+          "M17.stop",
+          "M17.other",
+          "M17.wait"
+        ],
+        "live_response_id": "pwr_edf5dd0808d436f191e0b336653a08af5854da66"
+      },
+      {
+        "id": "pwr_f81daec4f2f6ccf7daea47a4c448d36b1ab357e0",
+        "item_id": "M18",
+        "variant": "base",
+        "occurrence_id": "pwep_a0d84224-25b0-45db-acd6-a809f8c5f69f",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M18.busy",
+          "M18.upset",
+          "M18.matter",
+          "M18.depend",
+          "M18.info",
+          "M18.open"
+        ],
+        "live_response_id": "pwr_f81daec4f2f6ccf7daea47a4c448d36b1ab357e0"
+      },
+      {
+        "id": "pwr_160969e4097d2a5cfbf31acbf91eb443f6c48b1f",
+        "item_id": "M19",
+        "variant": "base",
+        "occurrence_id": "pwep_a0d84224-25b0-45db-acd6-a809f8c5f69f",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M19.ease",
+          "M19.inspect",
+          "M19.anger",
+          "M19.distance",
+          "M19.information",
+          "M19.no_reply"
+        ],
+        "live_response_id": "pwr_160969e4097d2a5cfbf31acbf91eb443f6c48b1f"
+      },
+      {
+        "id": "pwr_172b772f86d4499061953fd523377339a7dd4391",
+        "item_id": "M20",
+        "variant": "base",
+        "occurrence_id": "pwep_87c4704b-d9f2-4872-8bb1-9d1edd418793",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M20.ask",
+          "M20.small",
+          "M20.hint",
+          "M20.justify",
+          "M20.wait",
+          "M20.none"
+        ],
+        "live_response_id": "pwr_172b772f86d4499061953fd523377339a7dd4391"
+      },
+      {
+        "id": "pwr_8d3f54336d96a64ce4f5ab45d1799b786db6aa59",
+        "item_id": "M21",
+        "variant": "base",
+        "occurrence_id": "pwep_87c4704b-d9f2-4872-8bb1-9d1edd418793",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M21.clear",
+          "M21.burden",
+          "M21.refusal",
+          "M21.owe",
+          "M21.unclear",
+          "M21.practical"
+        ],
+        "live_response_id": "pwr_8d3f54336d96a64ce4f5ab45d1799b786db6aa59"
+      },
+      {
+        "id": "pwr_8efc585248cb88672cf7926a93771e08a66e5258",
+        "item_id": "M22",
+        "variant": "base",
+        "occurrence_id": "pwep_20db9640-de79-4123-b375-7f4e9853b2e9",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M22.ease",
+          "M22.manage",
+          "M22.repay",
+          "M22.minimize",
+          "M22.unhelpful",
+          "M22.mixed"
+        ],
+        "live_response_id": "pwr_8efc585248cb88672cf7926a93771e08a66e5258"
+      },
+      {
+        "id": "pwr_826877927f6405c410eea5c79faee215d23197dc",
+        "item_id": "M23",
+        "variant": "base",
+        "occurrence_id": "pwep_0baff9af-9c27-42e3-bee1-de6d67393af8",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M23.apology",
+          "M23.explain",
+          "M23.practical",
+          "M23.invite",
+          "M23.wait",
+          "M23.none"
+        ],
+        "live_response_id": "pwr_826877927f6405c410eea5c79faee215d23197dc"
+      },
+      {
+        "id": "pwr_6dca238961a0849cb29d98872c6b7344bb5c8c56",
+        "item_id": "M25",
+        "variant": "base",
+        "occurrence_id": "pwep_2c1b8a46-81ac-4a96-a3d2-825ff7d084a0",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M25.stop",
+          "M25.one_more",
+          "M25.alternate",
+          "M25.absorb",
+          "M25.exhaust",
+          "M25.deadline"
+        ],
+        "live_response_id": "pwr_6dca238961a0849cb29d98872c6b7344bb5c8c56"
+      },
+      {
+        "id": "pwr_6a35ec5f27d05016e2b186a5b0fbf79fef48332e",
+        "item_id": "M26",
+        "variant": "base",
+        "occurrence_id": "pwep_a076f7a9-a543-40f9-a76b-327fd2455f72",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M26.finish",
+          "M26.contact",
+          "M26.speak",
+          "M26.help",
+          "M26.rest",
+          "M26.sequential"
+        ],
+        "live_response_id": "pwr_6a35ec5f27d05016e2b186a5b0fbf79fef48332e"
+      },
+      {
+        "id": "pwr_7e6dd37a1691716a790a17a83261548c184d3f5d",
+        "item_id": "M27",
+        "variant": "base",
+        "occurrence_id": "pwep_a076f7a9-a543-40f9-a76b-327fd2455f72",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M27.first",
+          "M27.second",
+          "M27.alternate",
+          "M27.compromise",
+          "M27.delay",
+          "M27.stuck"
+        ],
+        "live_response_id": "pwr_7e6dd37a1691716a790a17a83261548c184d3f5d"
+      },
+      {
+        "id": "pwr_208e27ffcd1e3d6d066a10b9f45d3a4f595faf9f",
+        "item_id": "M24",
+        "variant": "base",
+        "occurrence_id": "pwep_07c2a228-527f-4516-8e4a-7dedd3a80c2c",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M24.helped",
+          "M24.details",
+          "M24.change",
+          "M24.space",
+          "M24.outward",
+          "M24.missed"
+        ],
+        "live_response_id": "pwr_208e27ffcd1e3d6d066a10b9f45d3a4f595faf9f"
+      },
+      {
+        "id": "pwr_8f19a7d6392daef052f36fedf840bb3d3518f438",
+        "item_id": "M28",
+        "variant": "base",
+        "occurrence_id": "pwep_614b6ccc-d189-4f35-8a8b-71e48ba7a9e2",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M28.pause",
+          "M28.ask",
+          "M28.stop",
+          "M28.limit",
+          "M28.help",
+          "M28.same"
+        ],
+        "live_response_id": "pwr_8f19a7d6392daef052f36fedf840bb3d3518f438"
+      },
+      {
+        "id": "pwr_46cb254a4ab69bff7946b37179328c49707957ed",
+        "item_id": "M29",
+        "variant": "base",
+        "occurrence_id": "pwep_614b6ccc-d189-4f35-8a8b-71e48ba7a9e2",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M29.clear",
+          "M29.reliable",
+          "M29.capacity",
+          "M29.time",
+          "M29.help",
+          "M29.same"
+        ],
+        "live_response_id": "pwr_46cb254a4ab69bff7946b37179328c49707957ed"
+      },
+      {
+        "id": "pwr_b471d355f89988fd489f865b1195f7b69c7e3e25",
+        "item_id": "M30",
+        "variant": "base",
+        "occurrence_id": "pwep_614b6ccc-d189-4f35-8a8b-71e48ba7a9e2",
+        "phase": "mapping",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "M30.move_on",
+          "M30.settled",
+          "M30.choice",
+          "M30.brief",
+          "M30.practical",
+          "M30.same"
+        ],
+        "live_response_id": "pwr_b471d355f89988fd489f865b1195f7b69c7e3e25"
+      },
+      {
+        "id": "pwr_fabb0be613dcc929eb6c24ccb70df9fe121a2503",
+        "item_id": "D30",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D30.normal",
+          "D30.faster",
+          "D30.stuck",
+          "D30.form",
+          "D30.choose",
+          "D30.tired"
+        ],
+        "live_response_id": "pwr_fabb0be613dcc929eb6c24ccb70df9fe121a2503"
+      },
+      {
+        "id": "pwr_d629eef3b52946c4bb33f5ed7c548ada8ab585fc",
+        "item_id": "D34",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D34.choice",
+          "D34.organize",
+          "D34.words",
+          "D34.tired",
+          "D34.far",
+          "D34.unsafe"
+        ],
+        "live_response_id": "pwr_d629eef3b52946c4bb33f5ed7c548ada8ab585fc"
+      },
+      {
+        "id": "pwr_579b56fd6dccd35eb6dcab40e76a30d233b1062c",
+        "item_id": "D02",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_deepening_answer; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D02.practical",
+          "D02.prevent",
+          "D02.visible",
+          "D02.feel",
+          "D02.contact",
+          "D02.none"
+        ],
+        "live_response_id": "pwr_579b56fd6dccd35eb6dcab40e76a30d233b1062c"
+      },
+      {
+        "id": "pwr_bdd3efadea11c4d6b093d1afc6905b26d4be5328",
+        "item_id": "D07",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_deepening_answer; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D07.more",
+          "D07.leave",
+          "D07.absorb",
+          "D07.help",
+          "D07.quiet",
+          "D07.changed",
+          "D07.nothing"
+        ],
+        "live_response_id": "pwr_bdd3efadea11c4d6b093d1afc6905b26d4be5328"
+      },
+      {
+        "id": "pwr_7d4aadea7cbfac3db2adeaf2e19951bdf663573d",
+        "item_id": "D08",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_deepening_answer; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D08.after_failed",
+          "D08.after",
+          "D08.overlap",
+          "D08.alternate",
+          "D08.uncertain",
+          "D08.different"
+        ],
+        "live_response_id": "pwr_7d4aadea7cbfac3db2adeaf2e19951bdf663573d"
+      },
+      {
+        "id": "pwr_279817fac66e40c76724c831e99238dabab77a96",
+        "item_id": "D35",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D35.clear",
+          "D35.words",
+          "D35.choice",
+          "D35.contact",
+          "D35.energy",
+          "D35.none"
+        ],
+        "live_response_id": "pwr_279817fac66e40c76724c831e99238dabab77a96"
+      },
+      {
+        "id": "pwr_be7fb75d25fdc08579d86e043b77a279e298abfb",
+        "item_id": "D83",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D83.settle",
+          "D83.choose",
+          "D83.contact",
+          "D83.feel",
+          "D83.energy",
+          "D83.nothing",
+          "D83.not_back"
+        ],
+        "live_response_id": "pwr_be7fb75d25fdc08579d86e043b77a279e298abfb"
+      },
+      {
+        "id": "pwr_4b44dce0599760beddb8280d8f5b295d752aaf8b",
+        "item_id": "D65",
+        "variant": "base",
+        "occurrence_id": "pwep_fcc5c159-6815-467a-a612-ef9105e7922d",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_deepening_answer; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D65.curious",
+          "D65.patient",
+          "D65.judge",
+          "D65.remove",
+          "D65.caught",
+          "D65.late",
+          "D65.not_noticed"
+        ],
+        "live_response_id": "pwr_4b44dce0599760beddb8280d8f5b295d752aaf8b"
+      },
+      {
+        "id": "pwr_bc43ae0dd00a039774d726746264b7987b40ef10",
+        "item_id": "D91",
+        "variant": "base",
+        "occurrence_id": "pwep_87c4704b-d9f2-4872-8bb1-9d1edd418793",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_deepening_answer; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D91.offered",
+          "D91.limited",
+          "D91.no",
+          "D91.different",
+          "D91.misunderstood",
+          "D91.pending"
+        ],
+        "live_response_id": "pwr_bc43ae0dd00a039774d726746264b7987b40ef10"
+      },
+      {
+        "id": "pwr_ccb3a2c1a53b8a0b351ef53e4b71c288076a0d55",
+        "item_id": "D38",
+        "variant": "base",
+        "occurrence_id": "pwep_20db9640-de79-4123-b375-7f4e9853b2e9",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_deepening_answer; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D38.present",
+          "D38.listen",
+          "D38.information",
+          "D38.practical",
+          "D38.warm",
+          "D38.space"
+        ],
+        "live_response_id": "pwr_ccb3a2c1a53b8a0b351ef53e4b71c288076a0d55"
+      },
+      {
+        "id": "pwr_07717565ccca0bef40b23a41fa7752c6b1f15f01",
+        "item_id": "D12",
+        "variant": "base",
+        "occurrence_id": "pwep_a076f7a9-a543-40f9-a76b-327fd2455f72",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_deepening_answer; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D12.cost",
+          "D12.switch",
+          "D12.both",
+          "D12.change",
+          "D12.ordinary"
+        ],
+        "live_response_id": "pwr_07717565ccca0bef40b23a41fa7752c6b1f15f01"
+      },
+      {
+        "id": "pwr_9a763643583440efd0740da27f3425b96a9d1d5c",
+        "item_id": "D50",
+        "variant": "base",
+        "occurrence_id": "pwep_07c2a228-527f-4516-8e4a-7dedd3a80c2c",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_deepening_answer; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D50.name",
+          "D50.explain",
+          "D50.change",
+          "D50.time",
+          "D50.warm",
+          "D50.none"
+        ],
+        "live_response_id": "pwr_9a763643583440efd0740da27f3425b96a9d1d5c"
+      },
+      {
+        "id": "pwr_063bde2a511b019e1944d2ed884f74db1ce408ab",
+        "item_id": "D65",
+        "variant": "base",
+        "occurrence_id": "pwep_614b6ccc-d189-4f35-8a8b-71e48ba7a9e2",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_deepening_answer; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D65.curious",
+          "D65.patient",
+          "D65.judge",
+          "D65.remove",
+          "D65.caught",
+          "D65.late",
+          "D65.not_noticed"
+        ],
+        "live_response_id": "pwr_063bde2a511b019e1944d2ed884f74db1ce408ab"
+      },
+      {
+        "id": "pwr_dd44064da012738e3229cd0b3310636154af826e",
+        "item_id": "D80",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D80.information",
+          "D80.words",
+          "D80.change",
+          "D80.feel",
+          "D80.task",
+          "D80.little",
+          "D80.unclear"
+        ],
+        "live_response_id": "pwr_dd44064da012738e3229cd0b3310636154af826e"
+      },
+      {
+        "id": "pwr_09b1e894f3cfffa5c1d32b69cf2cc803511ed5a8",
+        "item_id": "D82",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D82.sudden",
+          "D82.gradual",
+          "D82.waves",
+          "D82.already",
+          "D82.late",
+          "D82.unclear"
+        ],
+        "live_response_id": "pwr_09b1e894f3cfffa5c1d32b69cf2cc803511ed5a8"
+      },
+      {
+        "id": "pwr_65dc2c0225dd33ea9a58293a9c3b9ef2dca04358",
+        "item_id": "D100",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D100.options",
+          "D100.perspective",
+          "D100.same_less",
+          "D100.revised",
+          "D100.same",
+          "D100.unclear"
+        ],
+        "live_response_id": "pwr_65dc2c0225dd33ea9a58293a9c3b9ef2dca04358"
+      },
+      {
+        "id": "pwr_9f4a8cfc5a0427ecc1e7f614cf03fc4af764a405",
+        "item_id": "D85",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D85.function_first",
+          "D85.ease_first",
+          "D85.together",
+          "D85.function_only",
+          "D85.neither",
+          "D85.unclear"
+        ],
+        "live_response_id": "pwr_9f4a8cfc5a0427ecc1e7f614cf03fc4af764a405"
+      },
+      {
+        "id": "pwr_36ff3582215f970853f0b8f5cc1b66edda6b2772",
+        "item_id": "D86",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D86.demands",
+          "D86.information",
+          "D86.support",
+          "D86.setting",
+          "D86.same",
+          "D86.unclear"
+        ],
+        "live_response_id": "pwr_36ff3582215f970853f0b8f5cc1b66edda6b2772"
+      },
+      {
+        "id": "pwr_952b49285df46a85ac218899c49cb1d442e84fc0",
+        "item_id": "D37",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D37.held",
+          "D37.return",
+          "D37.part",
+          "D37.new",
+          "D37.not_return"
+        ],
+        "live_response_id": "pwr_952b49285df46a85ac218899c49cb1d442e84fc0"
+      },
+      {
+        "id": "pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b",
+        "item_id": "D36",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D36.input",
+          "D36.notice",
+          "D36.think",
+          "D36.words",
+          "D36.contact",
+          "D36.task",
+          "D36.energy"
+        ],
+        "live_response_id": "pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b"
+      },
+      {
+        "id": "pwr_ef28b06cf211862d55abd64c17ecc1e990e360f6",
+        "item_id": "D41",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: new_synthetic_deepening_answer; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D41.chest",
+          "D41.throat",
+          "D41.jaw",
+          "D41.stomach",
+          "D41.heat",
+          "D41.heavy",
+          "D41.none"
+        ],
+        "live_response_id": "pwr_ef28b06cf211862d55abd64c17ecc1e990e360f6"
+      },
+      {
+        "id": "pwr_0c22aa3700face8a3bef93789737285a0cbf97fb",
+        "item_id": "D29",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D29.narrow",
+          "D29.jump",
+          "D29.scan",
+          "D29.slow",
+          "D29.broad",
+          "D29.unclear"
+        ],
+        "live_response_id": "pwr_0c22aa3700face8a3bef93789737285a0cbf97fb"
+      },
+      {
+        "id": "pwr_3b3000fdc56862a4bf290a5ea128305645328f91",
+        "item_id": "D32",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D32.rise",
+          "D32.drop",
+          "D32.both",
+          "D32.shift",
+          "D32.same"
+        ],
+        "live_response_id": "pwr_3b3000fdc56862a4bf290a5ea128305645328f91"
+      },
+      {
+        "id": "pwr_39d5d5b6b9a53548fc8e99a87fe83faeb4919014",
+        "item_id": "D33",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D33.body",
+          "D33.thought",
+          "D33.action",
+          "D33.together",
+          "D33.later",
+          "D33.uncertain"
+        ],
+        "live_response_id": "pwr_39d5d5b6b9a53548fc8e99a87fe83faeb4919014"
+      },
+      {
+        "id": "pwr_fd9bf498cc8bccc4b5d63f34e8fb9fdcbdd2d374",
+        "item_id": "D84",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D84.under5",
+          "D84.5to30",
+          "D84.30to120",
+          "D84.later_day",
+          "D84.later_days",
+          "D84.no_easing",
+          "D84.cannot_estimate"
+        ],
+        "live_response_id": "pwr_fd9bf498cc8bccc4b5d63f34e8fb9fdcbdd2d374"
+      },
+      {
+        "id": "pwr_794df933034d12383fd993b1cb512e6259355964",
+        "item_id": "D81",
+        "variant": "base",
+        "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+        "phase": "deepening",
+        "selection_reason": "server-issued authored question; response source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data",
+        "option_order": [
+          "D81.steady_strained",
+          "D81.engaged_far",
+          "D81.quiet_settled",
+          "D81.matched",
+          "D81.more_outward",
+          "D81.no_view"
+        ],
+        "live_response_id": "pwr_794df933034d12383fd993b1cb512e6259355964"
+      }
+    ],
+    "content_sha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3"
+  }
+}

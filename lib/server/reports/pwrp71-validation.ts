@@ -1,3 +1,5 @@
+import { renderPwrp71Markdown } from "./pwrp71-render.ts";
+import { assertNoRespondentClassification } from "./content-boundary.ts";
 import { createHash } from "node:crypto";
 import Ajv2020 from "ajv/dist/2020.js";
 import type { JsonObject, ReportType, ValidationIssue, ValidationResult } from "../../question-engine/types.ts";
@@ -188,7 +190,7 @@ function validateClaimStructure(draft: Record<string, unknown>, packet: Record<s
       if (!observation) { issues.push(issue("current_observation", `$.claims[${i}].evidence_ids[${j}]`, "Claim evidence must cite a current packet observation.")); continue; }
       current.add(evidenceId as string);
       if (typeof observation.response_id !== "string" || invalidated.has(observation.response_id) || !liveResponses.has(observation.response_id)) issues.push(issue("stale_observation", `$.claims[${i}].evidence_ids[${j}]`, "Claim cites a stale or noncurrent response."));
-      if (!occurrenceIds.has(observation.occurrence_id)) issues.push(issue("evidence_scope", `$.claims[${i}].scope.occurrence_ids`, "Cited observation lies outside the claim's declared occurrence scope."));
+      if (!occurrenceIds.has(observation.occurrence_id)) issues.push(issue("evidence_scope", `$.claims[${i}].scope.occurrence_ids`, "Evidence observation " + JSON.stringify(evidenceId) + " belongs to occurrence " + (typeof observation.occurrence_id === "string" ? JSON.stringify(observation.occurrence_id) : "(missing)") + ", which is absent from claim scope."));
       if (typeof observation.person_id === "string" && !personIds.has(observation.person_id)) issues.push(issue("person_scope", `$.claims[${i}].scope.person_ids`, "Cited observation lies outside the claim's declared person scope."));
     }
     for (const id of occurrenceIds) if (typeof id !== "string" || !episodes.has(id)) issues.push(issue("claim_scope", `$.claims[${i}].scope.occurrence_ids`, "Claim scope contains an unknown occurrence."));
@@ -278,7 +280,7 @@ function validateClaimStructure(draft: Record<string, unknown>, packet: Record<s
     if (role !== "descriptive_pattern" && name.entity_kind !== "ifs_part") issues.push(issue("name_role", `$.name_registry[${i}].entity_kind`, "An IFS role must be attached to an IFS part entity."));
     if (["manager", "firefighter", "exile", "vulnerable_part"].includes(role)
       && !support.some((claimId) => { const claim = claims.get(String(claimId)); return claim?.kind === "supported_interpretation" && Array.isArray(claim.constructs) && claim.constructs.includes(role); })) {
-      issues.push(issue("name_role_claim", `$.name_registry[${i}].supporting_claim_ids`, "Named IFS role requires a supported interpretation claim with the same role."));
+      issues.push(issue("name_role_claim", `$.name_registry[${i}].supporting_claim_ids`, "Role " + JSON.stringify(role) + " for entity ID " + JSON.stringify(id) + " lacks a matching supported_interpretation construct; supporting claim IDs checked: " + (support.filter((claimId) => typeof claimId === "string").map((claimId) => JSON.stringify(claimId)).join(", ") || "none") + "."));
     }
   }
   for (const [i, relationship] of rows(draft.relationships).entries()) {
@@ -323,21 +325,6 @@ function validateReaderTextDoesNotExposeOccurrenceIds(draft: Record<string, unkn
   }
 }
 
-function markdown(draft: Record<string, unknown>): string {
-  const lines = [`# ${String(draft.title)}`, "", "*Patternwork is nonclinical self-reflection. Parts and state names are working interpretations, not diagnoses or physiological measurements.*", ""];
-  for (const section of rows(draft.sections)) {
-    if (typeof section.heading === "string" && section.heading) lines.push(`## ${section.heading}`, "");
-    lines.push(String(section.text), "");
-  }
-  const questions = Array.isArray(draft.reflection_questions) ? draft.reflection_questions : [];
-  if (questions.length) {
-    lines.push("## To notice", "");
-    for (const question of questions) lines.push(String(question), "");
-  }
-  return `${lines.join("\n").trimEnd()}\n`;
-}
-
-/** Validates structural evidence bindings and renders an artifact; this does not provide semantic approval. */
 export function validatePwrp71ReportDraft(input: {
   readonly value: unknown;
   readonly reportType: ReportType;
@@ -346,6 +333,8 @@ export function validatePwrp71ReportDraft(input: {
   readonly source: Pwrp71SourcePackage;
 }): ValidationResult<Pwrp71ReportArtifact> {
   const issues: ValidationIssue[] = [];
+  try { assertNoRespondentClassification(input.value); }
+  catch { return { ok: false, issues: [issue("respondent_classification", "$.draft", "Draft contains retired respondent classification.")] }; }
   const reportSource = input.source;
   if (reportSource.manifestSha256 !== PWRP71_RELEASE_MANIFEST_SHA256
     || reportSource.manifest.report_release !== PWQE51_RELEASE_IDENTITY.reportRelease
@@ -372,7 +361,7 @@ export function validatePwrp71ReportDraft(input: {
   validateReaderTextDoesNotExposeOccurrenceIds(draft, packet, issues);
   if (issues.length) return { ok: false, issues };
 
-  const reportMarkdown = markdown(draft);
+  const reportMarkdown = renderPwrp71Markdown(draft);
   const identity = { report_release: draft.report_release, release_id: draft.release_id, snapshot_id: draft.snapshot_id, report_type: draft.report_type, evidence_sha256: draft.evidence_sha256, draft };
   const reportId = `pwrp71_${sha256(identity).slice(0, 28)}`;
   const withoutDigests = {

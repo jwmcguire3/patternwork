@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-INDEPENDENT-MODEL-INTERPRETATION-REVIEW-V1",
+  "status": "rejected_for_composition",
+  "reviewerType": "independent_sol_model_review",
+  "humanApproval": false,
+  "routingQualification": false,
+  "profileId": "C10",
+  "reportType": "IFS",
+  "fixtureSet": "route-replays-v5",
+  "reviewedAt": "2026-10-15T14:12:32Z",
+  "packetSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+  "experimentSha256": "eecb94ff118569ff44288fc81333aa42d0dee6dd868b514e02d3f0e09b47db33",
+  "sourceIdentity": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "sourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb",
+    "authoredFixtureFile": "C10.json",
+    "authoredFixtureSha256": "db6e0b9e8296741324c1aef0e4b481f70468ce4114a599ee8c2907df944d3b81",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5"
+  },
+  "artifacts": {
+    "curatedOutputFile": "outputs/C10.interpretation.curated.json",
+    "curatedOutputFileSha256": "41a33a78f5183cbdb19ff76cc66e6fc1a47cd8f3417732ec998d21bfbcbae9c0",
+    "curationReceiptFile": "outputs/C10.interpretation.curated.derivation.json",
+    "curationReceiptFileSha256": "8f1d12dd0fef3de9f59d3a1fafe5fec2b8f0cdf9eda506ff3b14af3814a23e70",
+    "originalProviderOutputFile": "outputs/C10.interpretation.json",
+    "originalProviderOutputFileSha256": "820e9ac8990099329f9e4783dbb184b08af468357f42c9fc63610b98ef511f54",
+    "providerResponseFile": "responses/C10.interpretation.response.json",
+    "providerResponseFileSha256": "8421204c7783f082b894beb4e31b0fcb18d526b8e07a8760298ff514916c6358",
+    "sourceObservationIndexFile": "outputs/C10.source-observation-index-v3.json",
+    "sourceObservationIndexFileSha256": "d2765bfe4008dd49bc5e6a2c719178f8466adb81af03422506f48a5121289676",
+    "validationFile": "outputs/C10.interpretation.validation.curated.json",
+    "validationFileSha256": "77b88bacea1ab1f5a4fa2f6378d58ffaf6607529b0f43e11b8d76d7bee145f12",
+    "reviewTextFile": "outputs/C10.interpretation.sol-review.pre-c02-prune.md",
+    "reviewTextSha256": "24b0de71afa7369f01172606e75ea04524085ce6db3fd6410ef87bee4f6bb55d"
+  },
+  "sourceValidationStatus": "source_reference_checks_passed",
+  "blockingFindings": [
+    {
+      "code": "retained_prose_uses_synthetic_event",
+      "claimId": "C10-C02",
+      "syntheticObservationId": "O3b1065e57d34c66256a2",
+      "syntheticItemOption": "D07.quiet",
+      "location": ["rationale", "remaining_uncertainty"],
+      "summary": "The claim refers to a separately reported stopping response even though its cited D30/D34 observations support only speech-access difficulty. The stopping response comes from a newly synthetic Deepening selection excluded from the original-authored source index."
+    }
+  ],
+  "coverage": {
+    "CQ08": "materially_supported_in_graph",
+    "CQ09": "partial_due_to_omitted_first_and_later_lower_input_action_account"
+  },
+  "otherRetainedRecords": "The remaining claims and graph records are source supported at one-occurrence scope, subject to the blocking C10-C02 prose defect and later composed-draft validation.",
+  "nextAction": "Create and validate a new transparent derivative that removes the unsupported C10-C02 reference, then obtain a fresh exact-byte review before composition. Preserve this rejection and the raw provider output."
+}

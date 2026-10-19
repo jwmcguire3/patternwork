@@ -1,0 +1,216 @@
+{
+  "schemaVersion": 1,
+  "attempts": [
+    {
+      "attemptId": "pwrp71-fictional-diagnostic:gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011-fresh-budget-epoch-2:C01:IFS:initial:openai-gpt-6-luna-max:attempt-1",
+      "requestFingerprint": "1dd882124b12acb1ce8e1ba1411d12fe82f403e575ba7895330df3ed6f3bff5c",
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "status": "unknown",
+      "startedAt": "2026-10-11T08:10:09.889Z",
+      "request": {
+        "requestedModel": "openai/gpt-6-luna",
+        "requestedReasoningEffort": "max",
+        "schemaName": "patternwork_ifs_pwrp71_candidate_1",
+        "maxOutputTokens": 20000,
+        "idempotencyKey": "pwrp71-fictional-diagnostic:gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011-fresh-budget-epoch-2:C01:IFS:initial:openai-gpt-6-luna-max:attempt-1",
+        "systemSha256": "9b5ca30210f364e0a2055f3da53b14aa1196940750b23cebbda682826fb98576",
+        "promptSha256": "5e261b258c64d1ab119d1a4bad84a0fd04d780a7b8600313871e77da819b58a4",
+        "localSchemaSha256": "704ff6838efac71106fb0b01276e13ef13ad705c4fb92b87e31b7adda59ecc87",
+        "wireSchemaSha256": "8f0f6f91d4037a2c929253bc21e35c96bc3f86c4c28193cafefe22640fb5b451"
+      },
+      "locallyEstimatedCostMicros": 115000,
+      "reservedCostMicros": 115000,
+      "maximumCallCostMicros": 115000,
+      "aggregateCostCapMicros": 3000000,
+      "billingBasisSha256": "0018d4a8c7134c82d4be2d36c603bea3ff29f9300270b46a73ed1d17fdd1f77e",
+      "wirePayloadSha256": "10c477e2220c22d0a07ba97636ed64238bcc8ded9b3d3d6d08fb2dfcb0db5b1b",
+      "usageStatus": "unknown",
+      "diagnostic": {
+        "kind": "client_error",
+        "message": "No endpoints found matching your data policy (Zero data retention). Configure: https://openrouter.ai/settings/privacy",
+        "statusCode": 404,
+        "providerCode": "404",
+        "providerMetadataKeys": [
+          "error.routing_funnel",
+          "error.failed_routing_step",
+          "router.requested",
+          "router.strategy",
+          "router.region",
+          "router.summary",
+          "router.attempt",
+          "router.is_byok",
+          "router.endpoints"
+        ],
+        "providerHints": [
+          "model"
+        ],
+        "retryable": false
+      },
+      "completedAt": "2026-10-11T08:10:10.119Z",
+      "elapsedMs": 224
+    },
+    {
+      "attemptId": "pwrp71-fictional-diagnostic:gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011-fresh-budget-epoch-2:C01:openai-non-zdr-continuation-1:IFS:initial:openai-gpt-6-luna-max:attempt-1",
+      "requestFingerprint": "a7e133ee59576c92b7b075c2b68888d0ae0c05e75b1daed2399149c966e2bb63",
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "status": "unknown",
+      "startedAt": "2026-10-11T09:04:24.339Z",
+      "request": {
+        "requestedModel": "openai/gpt-6-luna",
+        "requestedReasoningEffort": "max",
+        "schemaName": "patternwork_ifs_pwrp71_candidate_1",
+        "maxOutputTokens": 20000,
+        "idempotencyKey": "pwrp71-fictional-diagnostic:gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011-fresh-budget-epoch-2:C01:openai-non-zdr-continuation-1:IFS:initial:openai-gpt-6-luna-max:attempt-1",
+        "systemSha256": "9b5ca30210f364e0a2055f3da53b14aa1196940750b23cebbda682826fb98576",
+        "promptSha256": "5e261b258c64d1ab119d1a4bad84a0fd04d780a7b8600313871e77da819b58a4",
+        "localSchemaSha256": "704ff6838efac71106fb0b01276e13ef13ad705c4fb92b87e31b7adda59ecc87",
+        "wireSchemaSha256": "8f0f6f91d4037a2c929253bc21e35c96bc3f86c4c28193cafefe22640fb5b451"
+      },
+      "locallyEstimatedCostMicros": 115000,
+      "reservedCostMicros": 115000,
+      "maximumCallCostMicros": 115000,
+      "aggregateCostCapMicros": 3000000,
+      "billingBasisSha256": "0018d4a8c7134c82d4be2d36c603bea3ff29f9300270b46a73ed1d17fdd1f77e",
+      "wirePayloadSha256": "4db2ad54d5fcb3de6d1753c0d3f90dfd169983beb668e8cf15e0a5bad93e735c",
+      "usageStatus": "unknown",
+      "diagnostic": {
+        "kind": "client_error",
+        "message": "Provider returned error",
+        "statusCode": 400,
+        "providerCode": "400",
+        "providerName": "OpenAI",
+        "providerUpstreamCode": "invalid_json_schema",
+        "providerMetadataKeys": [
+          "error.raw",
+          "error.provider_name",
+          "error.is_byok",
+          "error.provider_error_code",
+          "router.requested",
+          "router.strategy",
+          "router.region",
+          "router.summary",
+          "router.attempt",
+          "router.is_byok",
+          "router.endpoints",
+          "router.generation_time"
+        ],
+        "providerHints": [
+          "schema",
+          "model"
+        ],
+        "retryable": false
+      },
+      "completedAt": "2026-10-11T09:04:24.828Z",
+      "elapsedMs": 483
+    },
+    {
+      "attemptId": "pwrp71-fictional-diagnostic:gate11-c01-error-detail-resend-20261012:C01:openai-error-detail-resend-1:IFS:initial:openai-gpt-6-luna-max:attempt-1",
+      "requestFingerprint": "b63403cec7d03d1d546a54b481fcfa12d937d4ddb7d9f913a4c6902d58add025",
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "status": "unknown",
+      "startedAt": "2026-10-12T18:08:36.696Z",
+      "request": {
+        "requestedModel": "openai/gpt-6-luna",
+        "requestedReasoningEffort": "max",
+        "schemaName": "patternwork_ifs_pwrp71_candidate_1",
+        "maxOutputTokens": 20000,
+        "idempotencyKey": "pwrp71-fictional-diagnostic:gate11-c01-error-detail-resend-20261012:C01:openai-error-detail-resend-1:IFS:initial:openai-gpt-6-luna-max:attempt-1",
+        "systemSha256": "9b5ca30210f364e0a2055f3da53b14aa1196940750b23cebbda682826fb98576",
+        "promptSha256": "5e261b258c64d1ab119d1a4bad84a0fd04d780a7b8600313871e77da819b58a4",
+        "localSchemaSha256": "704ff6838efac71106fb0b01276e13ef13ad705c4fb92b87e31b7adda59ecc87",
+        "wireSchemaSha256": "8f0f6f91d4037a2c929253bc21e35c96bc3f86c4c28193cafefe22640fb5b451"
+      },
+      "locallyEstimatedCostMicros": 115000,
+      "reservedCostMicros": 115000,
+      "maximumCallCostMicros": 115000,
+      "aggregateCostCapMicros": 3000000,
+      "billingBasisSha256": "0018d4a8c7134c82d4be2d36c603bea3ff29f9300270b46a73ed1d17fdd1f77e",
+      "wirePayloadSha256": "4db2ad54d5fcb3de6d1753c0d3f90dfd169983beb668e8cf15e0a5bad93e735c",
+      "usageStatus": "unknown",
+      "diagnostic": {
+        "kind": "client_error",
+        "message": "Provider returned error",
+        "statusCode": 400,
+        "providerCode": "400",
+        "providerName": "OpenAI",
+        "providerUpstreamCode": "invalid_json_schema",
+        "providerErrorRaw": "{\"error\":{\"message\":\"Invalid schema for response_format 'patternwork_ifs_pwrp71_candidate_1': In context=('properties', 'report_release'), schema must have a 'type' key.\",\"type\":\"invalid_request_error\",\"param\":\"text.format.schema\",\"code\":\"invalid_json_schema\"}}",
+        "providerMetadataKeys": [
+          "error.raw",
+          "error.provider_name",
+          "error.is_byok",
+          "error.provider_error_code",
+          "router.requested",
+          "router.strategy",
+          "router.region",
+          "router.summary",
+          "router.attempt",
+          "router.is_byok",
+          "router.endpoints",
+          "router.generation_time"
+        ],
+        "providerHints": [
+          "schema",
+          "model"
+        ],
+        "retryable": false
+      },
+      "completedAt": "2026-10-12T18:08:37.555Z",
+      "elapsedMs": 854
+    },
+    {
+      "attemptId": "pwrp71-fictional-diagnostic:gate11-c01-c02-ifs-schema-correction-20261012:C01:openai-schema-correction-continuation-1:IFS:initial:openai-gpt-6-luna-max:attempt-1",
+      "requestFingerprint": "2a0f0b83694fc91ff828ddb634307be767fd3bfb7543c99a8759b3168f155094",
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "status": "completed",
+      "startedAt": "2026-10-12T19:51:26.704Z",
+      "request": {
+        "requestedModel": "openai/gpt-6-luna",
+        "requestedReasoningEffort": "max",
+        "schemaName": "patternwork_ifs_pwrp71_candidate_1",
+        "maxOutputTokens": 20000,
+        "idempotencyKey": "pwrp71-fictional-diagnostic:gate11-c01-c02-ifs-schema-correction-20261012:C01:openai-schema-correction-continuation-1:IFS:initial:openai-gpt-6-luna-max:attempt-1",
+        "systemSha256": "9b5ca30210f364e0a2055f3da53b14aa1196940750b23cebbda682826fb98576",
+        "promptSha256": "5e261b258c64d1ab119d1a4bad84a0fd04d780a7b8600313871e77da819b58a4",
+        "localSchemaSha256": "704ff6838efac71106fb0b01276e13ef13ad705c4fb92b87e31b7adda59ecc87",
+        "wireSchemaSha256": "3f5b497e3897fdedc0d84281b36bf3584dca8b45b84e63d8032283924d47452d"
+      },
+      "locallyEstimatedCostMicros": 115000,
+      "reservedCostMicros": 115000,
+      "maximumCallCostMicros": 115000,
+      "aggregateCostCapMicros": 3000000,
+      "billingBasisSha256": "0018d4a8c7134c82d4be2d36c603bea3ff29f9300270b46a73ed1d17fdd1f77e",
+      "wirePayloadSha256": "8bcb842048e504bd4dd1cebc64ac1eeda86d2844b22ac602f06340f3595cd437",
+      "usageStatus": "reported",
+      "usage": {
+        "generationId": "gen-1791834686-tXZrRc6zwWMspmXBEy1f",
+        "inputTokens": 21376,
+        "outputTokens": 20000,
+        "reasoningTokens": 20000,
+        "totalTokens": 41376,
+        "costMicros": 12138,
+        "currency": "USD",
+        "model": "openai/gpt-6-luna"
+      },
+      "finishReason": "length",
+      "providerResult": {
+        "ok": false,
+        "kind": "invalid_json",
+        "message": "OpenRouter response contained no string JSON content.",
+        "usage": {
+          "generationId": "gen-1791834686-tXZrRc6zwWMspmXBEy1f",
+          "inputTokens": 21376,
+          "outputTokens": 20000,
+          "reasoningTokens": 20000,
+          "totalTokens": 41376,
+          "costMicros": 12138,
+          "currency": "USD",
+          "model": "openai/gpt-6-luna"
+        },
+        "finishReason": "length"
+      },
+      "completedAt": "2026-10-12T19:54:05.215Z",
+      "elapsedMs": 158503
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-INDEPENDENT-MODEL-INTERPRETATION-REVIEW-V1",
+  "status": "accepted_for_composition",
+  "reviewerType": "independent_sol_model_review",
+  "humanApproval": false,
+  "routingQualification": false,
+  "reportApproval": false,
+  "profileId": "C10",
+  "reportType": "IFS",
+  "fixtureSet": "route-replays-v5",
+  "reviewedAt": "2026-10-15T14:16:04Z",
+  "packetSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+  "experimentSha256": "eecb94ff118569ff44288fc81333aa42d0dee6dd868b514e02d3f0e09b47db33",
+  "sourceIdentity": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "sourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb",
+    "authoredFixtureFile": "C10.json",
+    "authoredFixtureSha256": "db6e0b9e8296741324c1aef0e4b481f70468ce4114a599ee8c2907df944d3b81",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5"
+  },
+  "artifacts": {
+    "curatedOutputFile": "outputs/C10.interpretation.curated-v2.json",
+    "curatedOutputFileSha256": "9dbdec37ef62751717c975506c8fa71944bd6b4d0ec9326b7e09572f077f6889",
+    "curationReceiptFile": "outputs/C10.interpretation.curated-v2.derivation.json",
+    "curationReceiptFileSha256": "6a5fc18983ba96ed891ca2255eaff9180ffdbd510b3970e382310f3ccdebd8d9",
+    "sourceValidationFile": "outputs/C10.interpretation.validation.curated-v2.json",
+    "sourceValidationFileSha256": "ef406af5d9620b2eb05f33ae78472dd53436c0a5c30b122ecafa4be63cd65424",
+    "originalProviderOutputFile": "outputs/C10.interpretation.json",
+    "originalProviderOutputFileSha256": "820e9ac8990099329f9e4783dbb184b08af468357f42c9fc63610b98ef511f54",
+    "providerResponseFile": "responses/C10.interpretation.response.json",
+    "providerResponseFileSha256": "8421204c7783f082b894beb4e31b0fcb18d526b8e07a8760298ff514916c6358",
+    "sourceObservationIndexFile": "outputs/C10.source-observation-index-v3.json",
+    "sourceObservationIndexFileSha256": "d2765bfe4008dd49bc5e6a2c719178f8466adb81af03422506f48a5121289676",
+    "journalCorrectionFile": "outputs/C10-JOURNAL-METADATA-CORRECTION.json",
+    "journalCorrectionFileSha256": "a3a6e8787ae7b99c0eeb8e555f5f8f303b398403534a1293b03f887ba204e0ee",
+    "journalFile": "BUDGET_JOURNAL.json",
+    "journalFileSha256": "34e1695c69736f4392ce0ff17bb1e73107f98f62870a66e53122555a7530bfed",
+    "reviewTextFile": "outputs/C10.interpretation.sol-review.curated-v2.md",
+    "reviewTextSha256": "61fc617362d2ae04ce325d7703947cf43aec05bcd10243d0b353147524ef5d3e"
+  },
+  "sourceValidationStatus": "source_reference_checks_passed",
+  "independentChecks": {
+    "retainedClaimCount": 4,
+    "retainedStrengthCount": 2,
+    "retainedCounterexampleCount": 2,
+    "retainedOpenQuestionCount": 4,
+    "uniqueCitedOriginalAuthoredObservations": 19,
+    "allCitationsInOriginalAuthoredSourceIndex": true,
+    "allRetainedClaimsVerbatimExceptRecordedDependencyPrune": true,
+    "syntheticContentLeakageInRetainedWording": false,
+    "oneOccurrenceScopePreserved": true,
+    "partialD36OrderPreserved": true,
+    "physiologicalOrSelfOrProtectiveIntentOverreach": false
+  },
+  "semanticCoverage": {
+    "CQ08": "materially_supported",
+    "CQ09": "partial; later setting and changed urgency retained, first and later lower-input actions omitted with C03"
+  },
+  "compositionBoundary": "May compose a bounded fictional IFS diagnostic from the retained graph. No named protector, internal relationship, causal recovery mechanism, full recovery, or recurring pattern may be added. The composed draft requires separate schema, source, and semantic review.",
+  "journalCorrection": {
+    "correctionId": "74d7399c-125c-4703-9c14-b48e84bbff4e",
+    "field": "carriedUnknownCostCallIds",
+    "journalFileBeforeSha256": "091692241c510a67402271d69efbe39d0c5e00286fdac4b85781832993175f6b",
+    "journalFileAfterSha256": "34e1695c69736f4392ce0ff17bb1e73107f98f62870a66e53122555a7530bfed",
+    "monetaryCountersChanged": false
+  }
+}

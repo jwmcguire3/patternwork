@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "PATTERNWORK-IFS-SYSTEM-PORTRAIT-COMPOSITION-EXPERIMENTAL-V1",
+  "status": "COMPOSITION_CANDIDATE_AWAITING_INDEPENDENT_REVIEW",
+  "execution": {
+    "mode": "offline_in_session_model",
+    "providerDispatch": false,
+    "providerCostMicrodollars": 0,
+    "modelIdentity": "Codex conversational model; no external provider model ID claimed"
+  },
+  "profileId": "P02",
+  "fixtureSet": "route-replays-v5",
+  "packetSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+  "frozenInterpretationPath": "P02.interpretation.json",
+  "compositionContract": "02_IFS_NARRATIVE_COMPOSER.md",
+  "paragraphClaimBindings": [
+    { "paragraphId": "p02_connection", "claimIds": ["P02-C1", "P02-C2", "P02-C5"] },
+    { "paragraphId": "p02_step_back", "claimIds": ["P02-C3", "P02-C4", "P02-C6"] }
+  ],
+  "draft": {
+    "report_release": "PWRP-7.1.0-candidate.1",
+    "release_id": "PWQE-5.1.0-candidate.1",
+    "snapshot_id": "fictional-P02-deepening",
+    "evidence_sha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+    "report_type": "IFS",
+    "title": "Keeping connection in view, then stepping back",
+    "title_claim_ids": ["P02-C5", "P02-C6"],
+    "content_status": "complete",
+    "sections": [
+      {
+        "id": "p02_connection",
+        "heading": "Trying to influence what happens next",
+        "text": "When a disagreement makes the next step feel uncertain, the Explaining response keeps your point in view. It is trying to shape what happens next; underneath is a concern about losing contact or not knowing where you stand. Its work is preventive: keep the connection in view while the outcome is still unsettled.",
+        "claim_ids": ["P02-C1", "P02-C2", "P02-C5"]
+      },
+      {
+        "id": "p02_step_back",
+        "heading": "When explaining stops helping",
+        "text": "When explaining is no longer helping, you shift to leaving or ending the exchange. At that point the aim changes: you want the feeling to ease, and afterward it becomes easier to bear. The Step-back response changes the job from trying to influence what happens next to getting some room from the immediate feeling. The shift is clear in this disagreement; whether it reflects one response changing course or two separate inner parts remains open.",
+        "claim_ids": ["P02-C3", "P02-C4", "P02-C6"]
+      }
+    ],
+    "claims": [
+      {
+        "id": "P02-C1",
+        "text": "In the recalled disagreement, you kept explaining your point when it became tense.",
+        "kind": "reported",
+        "constructs": ["description"],
+        "scope": { "level": "occurrence", "occurrence_ids": ["pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"], "person_ids": [], "description": "One actual-recalled disagreement; no fixed lookback window is defined." },
+        "evidence_ids": ["Ofc7b7fb668294601fe78"],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [],
+        "support_basis": ["direct_report"],
+        "rationale": "Current D61.explain observation: the selected option says the respondent kept explaining their point as the disagreement became tense.",
+        "remaining_uncertainty": ["This single recalled occurrence does not establish frequency or a stable trait."]
+      },
+      {
+        "id": "P02-C2",
+        "text": "While explaining, you were trying to influence what happened next and were concerned about losing contact or not knowing where you stood.",
+        "kind": "reported",
+        "constructs": ["working_expectation", "description"],
+        "scope": { "level": "occurrence", "occurrence_ids": ["pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"], "person_ids": [], "description": "One actual-recalled disagreement; D02 is bound to the D61 response in this occurrence." },
+        "evidence_ids": ["Oee9a23929c717af918cc", "O46dfe0bb601014cf6dcf"],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [],
+        "support_basis": ["stated_aim", "direct_report"],
+        "rationale": "D02.prevent states an aim to change what might happen next; D03.connection names losing contact or not knowing where things stood as the most concerning outcome.",
+        "remaining_uncertainty": ["The packet does not establish the other person's actual intentions or the eventual relational outcome."]
+      },
+      {
+        "id": "P02-C3",
+        "text": "After the explanation was not helping, you left or ended the exchange.",
+        "kind": "reported",
+        "constructs": ["state_transition", "description"],
+        "scope": { "level": "occurrence", "occurrence_ids": ["pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"], "person_ids": [], "description": "One actual-recalled disagreement; a respondent-reported before relation connects the first and next steps." },
+        "evidence_ids": ["O024600260948d26c8645", "Oa6147904a3dbc2821d38"],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": ["edge:pwr_cbcda3040bd22d070ab9ce0cc901ab53f9b973f2:D08.after_failed"],
+        "depends_on_claim_ids": [],
+        "support_basis": ["direct_report", "actual_sequence"],
+        "rationale": "D07.leave records the next action. D08.after_failed supplies the only reported order edge: the second response began after the first was not helping; the edge is temporal and does not establish causality.",
+        "remaining_uncertainty": ["The packet does not establish that leaving was caused by the first move or that this order recurs."]
+      },
+      {
+        "id": "P02-C4",
+        "text": "At the next point, you wanted the feeling to ease right then; immediately after the next response it became easier to bear.",
+        "kind": "reported",
+        "constructs": ["state_transition", "description"],
+        "scope": { "level": "occurrence", "occurrence_ids": ["pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"], "person_ids": [], "description": "The next step of the same actual-recalled disagreement." },
+        "evidence_ids": ["O482ef6dc44094628b660", "O52b1a40eb779285046f1"],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [],
+        "support_basis": ["stated_aim", "reported_effect"],
+        "rationale": "D09.relief states the desired immediate easing, and D10.relief reports that the feeling became easier to bear immediately after the next response.",
+        "remaining_uncertainty": ["The response and relief are temporally linked in the report; the packet does not prove that leaving caused the change."]
+      },
+      {
+        "id": "P02-C5",
+        "text": "In this disagreement, explaining functioned as a preventive attempt to influence the next relational outcome and reduce the risk of losing contact or remaining unsure where things stood.",
+        "kind": "supported_interpretation",
+        "constructs": ["protective_function", "working_expectation"],
+        "scope": { "level": "occurrence", "occurrence_ids": ["pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"], "person_ids": [], "description": "A bounded interpretation of the first response in one actual-recalled disagreement." },
+        "evidence_ids": ["Ofc7b7fb668294601fe78", "Oee9a23929c717af918cc", "O46dfe0bb601014cf6dcf"],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": ["P02-C1", "P02-C2"],
+        "support_basis": ["direct_report", "stated_aim", "inferred_function"],
+        "rationale": "The actual action is linked to a stated aim and a named feared relational outcome. The interpretation describes the local job of the response, not a distinct enduring part or a confirmed successful outcome.",
+        "remaining_uncertainty": ["One occurrence cannot establish recurrence, a permanent part identity, or the other person's intentions."]
+      },
+      {
+        "id": "P02-C6",
+        "text": "After the explaining response was not helping, stepping out was a context-bound next move oriented toward immediate emotional relief.",
+        "kind": "supported_interpretation",
+        "constructs": ["protective_function", "state_transition"],
+        "scope": { "level": "occurrence", "occurrence_ids": ["pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"], "person_ids": [], "description": "A bounded interpretation of the next response in the same actual-recalled disagreement." },
+        "evidence_ids": ["O024600260948d26c8645", "Oa6147904a3dbc2821d38", "O482ef6dc44094628b660", "O52b1a40eb779285046f1"],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": ["edge:pwr_cbcda3040bd22d070ab9ce0cc901ab53f9b973f2:D08.after_failed"],
+        "depends_on_claim_ids": ["P02-C3", "P02-C4"],
+        "support_basis": ["stated_aim", "reported_effect", "actual_sequence", "inferred_function"],
+        "rationale": "D07 and D08 bind stepping out to the next position after the earlier explanation was not helping; D09 names immediate easing as the next aim and D10 reports easier-to-bear feeling after the next response. This supports a local function, not a causal certainty or enduring role.",
+        "remaining_uncertainty": ["It is not established whether the two response functions are one response changing course or two separate inner parts.", "This is not evidence of a recurrent loop or a general rule that leaving is protective."]
+      }
+    ],
+    "name_registry": [
+      { "name_id": "p02_explaining", "name": "Explainer", "entity_kind": "descriptive_pattern", "role": "descriptive_pattern", "author_generated": true, "supporting_claim_ids": ["P02-C5"] },
+      { "name_id": "p02_step_back", "name": "Step-back", "entity_kind": "descriptive_pattern", "role": "descriptive_pattern", "author_generated": true, "supporting_claim_ids": ["P02-C6"] }
+    ],
+    "relationships": [],
+    "reflection_questions": []
+  }
+}

@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-FICTIONAL-DIAGNOSTIC-ATTEMPT4-GUARDS-V1",
+  "status": "passed",
+  "executedAt": "2026-10-15T13:19:00.839Z",
+  "attempt4AlreadyConsumed": false,
+  "sourceRequestSha256": "f8c36e20ba9043a8bfc4392c7b11c174f6766d60b796ab175c4ee29cdd5b9cb6",
+  "requiredMaxOutputTokens": 128000,
+  "providerDispatches": 0,
+  "initialJournalSha256": "14e3a556c69c16a4a597d9fe5fab3ccae39fded51baf428a3c8a439774200c39",
+  "finalJournalSha256": "14e3a556c69c16a4a597d9fe5fab3ccae39fded51baf428a3c8a439774200c39",
+  "sideEffectsAbsent": true,
+  "scenarios": [
+    {
+      "id": "missing_explicit_operator_authorization",
+      "exitCode": 1,
+      "rejected": true,
+      "stdout": "",
+      "stderr": "Explicit --operator-authorized yes is required."
+    },
+    {
+      "id": "missing_attempt4_owner_authorization",
+      "exitCode": 1,
+      "rejected": true,
+      "stdout": "",
+      "stderr": "No-dispatch preflight requires one explicit recovery or continuation authorization."
+    },
+    {
+      "id": "enlarged_aggregate_cap",
+      "exitCode": 1,
+      "rejected": true,
+      "stdout": "",
+      "stderr": "The only accepted explicit limits are $3.00 aggregate and $0.30 per request."
+    },
+    {
+      "id": "changed_per_call_reservation",
+      "exitCode": 1,
+      "rejected": true,
+      "stdout": "",
+      "stderr": "The only accepted explicit limits are $3.00 aggregate and $0.30 per request."
+    },
+    {
+      "id": "out_of_scope_profile",
+      "exitCode": 1,
+      "rejected": true,
+      "stdout": "",
+      "stderr": "Only P02/C10 interpretation and composition are in scope."
+    },
+    {
+      "id": "wrong_stage",
+      "exitCode": 1,
+      "rejected": true,
+      "stdout": "",
+      "stderr": "The one-time final authorized request applies only to P02 interpretation attempt 4."
+    },
+    {
+      "id": "invalid_output_limit_override",
+      "exitCode": 1,
+      "rejected": true,
+      "stdout": "",
+      "stderr": "Unsupported argument: --max-output-tokens"
+    },
+    {
+      "id": "provider_override_rejected",
+      "exitCode": 1,
+      "rejected": true,
+      "stdout": "",
+      "stderr": "Unsupported argument: --provider"
+    },
+    {
+      "id": "recovery_flags_cannot_be_combined",
+      "exitCode": 1,
+      "rejected": true,
+      "stdout": "",
+      "stderr": "Recovery and continuation authorizations are mutually exclusive."
+    },
+    {
+      "id": "continuation_before_attempt4_interpretation",
+      "exitCode": 1,
+      "rejected": true,
+      "stdout": "",
+      "stderr": "Continuation requires a current successful attempt-4 P02 interpretation with the exact 128,000-token request and both prior unknown-cost reservations recorded."
+    },
+    {
+      "id": "dispatch_requires_provider_key",
+      "exitCode": 1,
+      "rejected": true,
+      "stdout": "",
+      "stderr": "OPENAI_API_KEY is unavailable; no request was prepared or dispatched."
+    },
+    {
+      "id": "changed_predecessor_request_hash",
+      "exitCode": 1,
+      "rejected": true,
+      "stdout": "",
+      "stderr": "The one-time final P02 interpretation attempt requires the exact three prior calls, both retained unknown-cost reserves, and unused attempt-4 artifacts."
+    },
+    {
+      "id": "released_attempt3_unknown_reserve",
+      "exitCode": 1,
+      "rejected": true,
+      "stdout": "",
+      "stderr": "Budget journal counters do not reconcile to durable call records or the authorized cap."
+    },
+    {
+      "id": "extra_unknown_cost_reservation",
+      "exitCode": 1,
+      "rejected": true,
+      "stdout": "",
+      "stderr": "The one-time final P02 interpretation attempt requires the exact three prior calls, both retained unknown-cost reserves, and unused attempt-4 artifacts."
+    },
+    {
+      "id": "changed_pinned_packet",
+      "exitCode": 1,
+      "rejected": true,
+      "stdout": "",
+      "stderr": "Prepared P02 fixture or packet binding changed."
+    },
+    {
+      "id": "exact_attempt4_preflight",
+      "exitCode": 0,
+      "rejected": false,
+      "status": "fictional_diagnostic_attempt4_preflight_passed_no_dispatch",
+      "qualificationStatus": "FICTIONAL_DIAGNOSTIC_ONLY_NOT_ROUTING_QUALIFICATION_OR_PRODUCTION_APPROVAL",
+      "requestBodySha256": "f8c36e20ba9043a8bfc4392c7b11c174f6766d60b796ab175c4ee29cdd5b9cb6",
+      "expectedRequestSha256": "f8c36e20ba9043a8bfc4392c7b11c174f6766d60b796ab175c4ee29cdd5b9cb6",
+      "maxOutputTokens": 128000,
+      "retainedUnknownMicrodollars": 600000,
+      "nextReservationMicrodollars": 300000,
+      "remainingAfterReservationMicrodollars": 2080350,
+      "providerDispatches": 0
+    }
+  ],
+  "exactPreflightPassed": true,
+  "invalidRequestsRejected": true
+}

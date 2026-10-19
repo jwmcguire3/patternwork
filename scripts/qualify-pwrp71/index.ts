@@ -12,8 +12,8 @@ const ALL_PROFILES = [...Array.from({ length: 9 }, (_, index) => `P${String(inde
 const USAGE = `PWRP 7.1 qualification tooling
 
 Usage:
-  npm run reports:qualify:pwrp71 -- offline --fixture-set route-replays-v5 --profiles P01,P02 --reports ALL --aggregate-cost-cap-micros 500000
-  npm run reports:qualify:pwrp71 -- live --diagnostic-only --fixture-set route-replays-v5 --profiles C01,C02 --reports IFS --max-call-cost-micros 115000 --aggregate-cost-cap-micros 500000 --routing-evidence route-qualification.json
+  npm run reports:qualify:pwrp71 -- offline --fixture-set route-replays-v6 --profiles P01,P02 --reports ALL --aggregate-cost-cap-micros 500000
+  npm run reports:qualify:pwrp71 -- live --diagnostic-only --fixture-set route-replays-v6 --profiles C01,C02 --reports IFS --max-call-cost-micros 115000 --aggregate-cost-cap-micros 500000 --routing-evidence route-qualification.json
   npm run reports:qualify:pwrp71 -- resume <run-id> --diagnostic-only
   npm run reports:qualify:pwrp71 -- status <run-id>
   npm run reports:qualify:pwrp71 -- review-package <run-id>
@@ -22,7 +22,7 @@ Usage:
   npm run reports:qualify:pwrp71 -- manifest <run-id> --approval approval.json --semantic-evidence semantic-review.json --output reviewed-manifest.json
 
 Use --reports DEEPENING for IFS, PV, and ATT, or --reports ALL for all five layers.
-Fixture selection defaults to legacy-v1. route-replays-v3, route-replays-v4, and route-replays-v5 must be selected explicitly and never fall back to another fixture set.
+Fixture selection defaults to legacy-v1. route-replays-v3 through route-replays-v6 must be selected explicitly and never fall back to another fixture set. V3-V5 archives are hash-checked and declassified before active qualification.
 The live command is fixture-only and diagnostic. It requires --diagnostic-only, explicit positive --max-call-cost-micros and --aggregate-cost-cap-micros, and matching final PWQE 5.1 routing evidence. It never delivers reports.
 
 Approval requires a completed live qualification over P01-P09 and C01-C16, all five reports, current semantic-case evidence, and all explicit human checklist items. The manifest command only writes a reviewed manifest after those checks pass.`;
@@ -115,9 +115,9 @@ function reportTypes(args: ParsedArgs, defaultAll = false): ReportType[] {
   return [...values] as ReportType[];
 }
 
-function fixtureSet(args: ParsedArgs): "legacy-v1" | "route-replays-v3" | "route-replays-v4" | "route-replays-v5" {
+function fixtureSet(args: ParsedArgs): "legacy-v1" | "route-replays-v3" | "route-replays-v4" | "route-replays-v5" | "route-replays-v6" {
   const selected = flag(args, "--fixture-set") ?? "legacy-v1";
-  if (selected !== "legacy-v1" && selected !== "route-replays-v3" && selected !== "route-replays-v4" && selected !== "route-replays-v5") throw new Error("--fixture-set must be legacy-v1, route-replays-v3, route-replays-v4, or route-replays-v5.");
+  if (selected !== "legacy-v1" && selected !== "route-replays-v3" && selected !== "route-replays-v4" && selected !== "route-replays-v5" && selected !== "route-replays-v6") throw new Error("--fixture-set must be legacy-v1, route-replays-v3, route-replays-v4, route-replays-v5, or route-replays-v6.");
   return selected;
 }
 

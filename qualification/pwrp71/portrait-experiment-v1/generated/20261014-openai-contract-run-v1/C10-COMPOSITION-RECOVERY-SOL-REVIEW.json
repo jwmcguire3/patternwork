@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "PATTERNWORK-C10-COMPOSITION-RECOVERY-SOL-REVIEW-V1",
+  "recordedAt": "2026-10-15T14:31:25Z",
+  "reviewerType": "independent_read_only_sol_subagent_review",
+  "reviewer": "sol_review_c10_packet",
+  "verdict": "accepted_for_one_bounded_dispatch",
+  "scope": {
+    "profile": "C10",
+    "reportType": "IFS",
+    "stage": "composition",
+    "attempt": 2,
+    "diagnosticOnly": true
+  },
+  "humanApproval": false,
+  "reportApproval": false,
+  "routingQualification": false,
+  "productionApproval": false,
+  "reviewedFiles": {
+    "scripts/dispatch-openai-experiment.mjs": "921455af171da40a8ecd0758fefdbec4651b1a50036ec547f703835d55ce40b1",
+    "scripts/c10-no-dispatch-evidence.mjs": "5422844b3dcb39ffbed8ea33860cc0779b280b7f03568c88876e749103c9b68f",
+    "scripts/reconcile-c10-composition-no-dispatch.mjs": "b902b132f171fa3c881956b98f52486e4c6fadfde38b9d4c7fdacde6ce865cfc",
+    "scripts/validate-composition.ts": "da6bf84a0dd7ce9ec88a4717846293b83f438ba693f083262d8cce48dfbcd93d"
+  },
+  "reviewedFailure": {
+    "callId": "b901a349-96e4-4751-8a91-cf995647dc9a",
+    "code": "ENOTFOUND",
+    "syscall": "getaddrinfo",
+    "hostname": "api.openai.com",
+    "elapsedMilliseconds": 16,
+    "httpStatus": null,
+    "responseId": null,
+    "usage": null,
+    "responseArtifactExists": false
+  },
+  "reviewedRecoveryPins": {
+    "noDispatchReceiptSha256": "1b6bd990c5b38cb80f4893390deb8895abebe32da21eed66fdcb8e29340ec6ff",
+    "packetSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+    "requestSha256": "7f101eb0a1c5294d65496c912e6c86832d3aaa9cd70148d7f32c054d22370e59",
+    "model": "gpt-6-luna",
+    "reasoningEffort": "max",
+    "serviceTier": "default",
+    "outputTokenLimit": 12000,
+    "newReservationMicrodollars": 300000,
+    "lockedPriorP02UnknownReservationsMicrodollars": 900000,
+    "settledUpperBoundMicrodollars": 121677
+  },
+  "reviewedInvariants": {
+    "onlyExactDnsFailureCanBeReconciled": true,
+    "threePriorP02UnknownReservationsRemainLocked": true,
+    "requestSourceAndPacketPinsRemainExact": true,
+    "oneFreshCallHasDistinctAttemptIdentity": true,
+    "invalidOrDuplicateAttemptCannotDispatch": true,
+    "schemaPromptQuestionBankProviderAndActivationPolicyUnchanged": true
+  },
+  "preflight": {
+    "independentReviewerRanPreflight": false,
+    "independentReviewerReportedNoSavedAttempt2PreflightAtReviewTime": true,
+    "savedPreflightFile": "C10-COMPOSITION-ATTEMPT2-PREFLIGHT.json",
+    "savedPreflightStatus": "passed_no_dispatch",
+    "providerDispatches": 0
+  },
+  "limitations": [
+    "This Sol model review is not human approval or report approval.",
+    "The prior error and reconciliation establish no generation dispatch; they do not assert an invoice amount.",
+    "The reviewer did not send or authorize provider requests."
+  ]
+}

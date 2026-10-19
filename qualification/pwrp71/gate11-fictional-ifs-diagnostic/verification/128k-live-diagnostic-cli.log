@@ -1,0 +1,33 @@
+npm notice run patternwork@0.1.0 reports:diagnose:pwrp71-fictional-ifs
+npm notice run tsx scripts/pwrp71-fictional-ifs-diagnostic/index.ts --owner-authorized-fictional-diagnostic --profiles C01,C02 --reports IFS --fixture-set route-replays-v5 --model openai/gpt-6-luna --reasoning-effort max --max-call-cost-micros 200000 --aggregate-cost-cap-micros 3000000 --owner-authorized-fresh-budget-epoch-2 --owner-authorized-allow-non-zdr-continuation --owner-authorized-128k-output-continuation
+{
+  "resultKind": "fictional_report_diagnostic",
+  "status": "diagnostic_complete_with_prior_unknown_cost",
+  "routingQualification": "not_claimed",
+  "productionActivationEffect": "none",
+  "runId": "gate11-c01-c02-ifs-128k-output-20261012",
+  "providerDispatchCount": 11,
+  "aggregateReportedCostMicros": 106566,
+  "unknownOrInFlightReservedCostMicros": 345000,
+  "remainingAuthorizedMicros": 2548434,
+  "results": [
+    {
+      "profileId": "C01",
+      "reportType": "IFS",
+      "status": "accepted",
+      "artifactFile": "reports/C01_IFS.json",
+      "markdownFile": "reports/C01_IFS.md"
+    },
+    {
+      "profileId": "C02",
+      "reportType": "IFS",
+      "status": "accepted",
+      "artifactFile": "reports/C02_IFS.json",
+      "markdownFile": "reports/C02_IFS.md"
+    }
+  ],
+  "blockers": [
+    "Both requested reports completed. Prior unknown-cost reservations remain recorded in this budget journal; they were preserved and not retried."
+  ],
+  "outputDirectory": "C:\\Users\\jwmcg\\OneDrive\\Documents\\AI Projects\\Live Envirnments\\patternwork\\qualification\\pwrp71\\gate11-fictional-ifs-diagnostic\\live\\gate11-c01-c02-ifs-128k-output-20261012"
+}

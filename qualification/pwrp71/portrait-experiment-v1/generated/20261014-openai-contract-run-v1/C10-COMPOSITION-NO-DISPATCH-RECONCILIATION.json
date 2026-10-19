@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "PATTERNWORK-C10-COMPOSITION-NO-DISPATCH-RECONCILIATION-V1",
+  "status": "failed_before_provider_dispatch",
+  "reconciliationId": "721205c1-613d-43d5-815b-ba537e2ffa8f",
+  "recordedAt": "2026-10-15T14:28:12.154Z",
+  "diagnosticOnly": true,
+  "qualificationStatus": "FICTIONAL_DIAGNOSTIC_ONLY_NOT_ROUTING_QUALIFICATION_OR_PRODUCTION_APPROVAL",
+  "profileId": "C10",
+  "reportType": "IFS",
+  "stage": "composition",
+  "fixtureSet": "route-replays-v5",
+  "provider": "OpenAI direct API",
+  "model": "gpt-6-luna",
+  "callId": "b901a349-96e4-4751-8a91-cf995647dc9a",
+  "packetSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+  "requestBodySha256": "7f101eb0a1c5294d65496c912e6c86832d3aaa9cd70148d7f32c054d22370e59",
+  "requestFileSha256": "7f101eb0a1c5294d65496c912e6c86832d3aaa9cd70148d7f32c054d22370e59",
+  "dispatcherSha256": "6c73dc4b4a069a08d5f4c53629c0add3b0ec02c054ff63fa25694b945256d64b",
+  "failure": {
+    "code": "ENOTFOUND",
+    "syscall": "getaddrinfo",
+    "hostname": "api.openai.com",
+    "elapsedMilliseconds": 16,
+    "httpStatus": null,
+    "responseId": null,
+    "responseArtifactExists": false
+  },
+  "independentReadOnlyAssessment": {
+    "reviewer": "audit_final_attempt subagent",
+    "conclusion": "The exact pre-connection DNS error and 16 ms duration show the POST failed before reaching OpenAI; this is technical no-dispatch evidence, not an invoice receipt.",
+    "reportArtifact": "conversation agent review on 2026-10-15; evidence independently checked against the durable journal and dispatcher source"
+  },
+  "postFailurePreflight": {
+    "file": "C10_PROVIDER_PREFLIGHT.json",
+    "sha256": "a022f05f3f590a672b54c650590279d42cba19ee2018816a50d501d85158e311",
+    "checkedAt": "2026-10-15T14:23:08.230Z",
+    "httpStatus": 200,
+    "generationRequests": 0,
+    "providerCostMicrodollars": 0
+  },
+  "disposition": {
+    "providerGenerationRequests": 0,
+    "generationCostMicrodollars": 0,
+    "costStatement": "No generation request reached the provider. No invoice amount is asserted.",
+    "releasedReservationMicrodollars": 300000,
+    "humanApproval": false,
+    "routingQualification": false,
+    "productionApproval": false
+  },
+  "journalBeforeSha256": "83a2420d390cf5849310811a9190ecbdc77d755e24376757a67e147618190126"
+}

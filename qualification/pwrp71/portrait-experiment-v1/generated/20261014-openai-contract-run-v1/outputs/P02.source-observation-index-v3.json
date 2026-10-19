@@ -1,0 +1,158 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-SOURCE-OBSERVATION-INDEX-V1",
+  "status": "source_cross_checked_fictional_evidence",
+  "profileId": "P02",
+  "fixtureSet": "route-replays-v5",
+  "packetSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+  "fixtureSha256": "47611cccd841a7598daa9b88ebbb715872c10c1242fcc48be8923443710b229c",
+  "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+  "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+  "questionBankSha256": "800dec8dcb8b1cecf92bbaefe15012f2252d7a1d93764e814924f0332560aa04",
+  "originalAuthoredObservationCount": 7,
+  "syntheticObservationsExcludedFromIndex": 31,
+  "occurrenceIds": [
+    "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+  ],
+  "sequenceEdges": [
+    {
+      "id": "edge:pwr_cbcda3040bd22d070ab9ce0cc901ab53f9b973f2:D08.after_failed",
+      "occurrence_id": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3",
+      "from_step": "first",
+      "to_step": "next",
+      "meaning": "reported_temporal_relation_not_causality",
+      "relation": "before",
+      "evidence_ids": [
+        "Oa6147904a3dbc2821d38"
+      ],
+      "first_not_helping": true
+    }
+  ],
+  "observations": [
+    {
+      "observation_id": "Ofc7b7fb668294601fe78",
+      "source_response_id": "P02-A01",
+      "current_response_id": "pwr_72c429e78df9ad4ea0d4b01962258c806581ff4a",
+      "phase": "deepening",
+      "item_id": "D61",
+      "option_id": "D61.explain",
+      "selected_text": "I kept explaining my point.",
+      "occurrence_id": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3",
+      "step_id": "first",
+      "source_response_step_id": "first",
+      "basis": "actual_recalled",
+      "capture": "first_action",
+      "target_ids": [
+        "entry:conflict"
+      ],
+      "dependence_group": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+    },
+    {
+      "observation_id": "Oee9a23929c717af918cc",
+      "source_response_id": "P02-A02",
+      "current_response_id": "pwr_8b628e8b5d506ad22656c5a36b3b00c9e454d6d8",
+      "phase": "deepening",
+      "item_id": "D02",
+      "option_id": "D02.prevent",
+      "selected_text": "What might happen next.",
+      "occurrence_id": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3",
+      "step_id": "first",
+      "source_response_step_id": "first",
+      "basis": "actual_recalled",
+      "capture": "aim",
+      "target_ids": [
+        "function:pwep_14b3844b-40fc-4f28-a241-6c812b592dd3:first"
+      ],
+      "dependence_group": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+    },
+    {
+      "observation_id": "O024600260948d26c8645",
+      "source_response_id": "P02-A04",
+      "current_response_id": "pwr_9cbd5f6cb6d36fe0360aafed3781303245bb847f",
+      "phase": "deepening",
+      "item_id": "D07",
+      "option_id": "D07.leave",
+      "selected_text": "I left or ended the exchange.",
+      "occurrence_id": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3",
+      "step_id": "next",
+      "source_response_step_id": "next",
+      "basis": "actual_recalled",
+      "capture": "next_action",
+      "target_ids": [
+        "next_move:pwep_14b3844b-40fc-4f28-a241-6c812b592dd3:first"
+      ],
+      "dependence_group": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+    },
+    {
+      "observation_id": "Oa6147904a3dbc2821d38",
+      "source_response_id": "P02-A05",
+      "current_response_id": "pwr_cbcda3040bd22d070ab9ce0cc901ab53f9b973f2",
+      "phase": "deepening",
+      "item_id": "D08",
+      "option_id": "D08.after_failed",
+      "selected_text": "The second began after the first was not helping.",
+      "occurrence_id": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3",
+      "step_id": "edge",
+      "source_response_step_id": "edge",
+      "basis": "actual_recalled",
+      "capture": "sequence_relation",
+      "target_ids": [
+        "sequence_relation:pwep_14b3844b-40fc-4f28-a241-6c812b592dd3:next"
+      ],
+      "dependence_group": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+    },
+    {
+      "observation_id": "O52b1a40eb779285046f1",
+      "source_response_id": "P02-A07",
+      "current_response_id": "pwr_ab20c58469617aad5fac525bc03fa65aba149b43",
+      "phase": "deepening",
+      "item_id": "D10",
+      "option_id": "D10.relief",
+      "selected_text": "The feeling became easier to bear.",
+      "occurrence_id": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3",
+      "step_id": "next",
+      "source_response_step_id": "next",
+      "basis": "actual_recalled",
+      "capture": "next_effect",
+      "target_ids": [
+        "next_effect:pwep_14b3844b-40fc-4f28-a241-6c812b592dd3:next"
+      ],
+      "dependence_group": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+    },
+    {
+      "observation_id": "O46dfe0bb601014cf6dcf",
+      "source_response_id": "P02-A03",
+      "current_response_id": "pwr_708571a497f267efd1af429a11c37a3911e3216b",
+      "phase": "deepening",
+      "item_id": "D03",
+      "option_id": "D03.connection",
+      "selected_text": "Losing contact or not knowing where I stood.",
+      "occurrence_id": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3",
+      "step_id": "first",
+      "source_response_step_id": "first",
+      "basis": "remembered_expectation",
+      "capture": "prediction",
+      "target_ids": [
+        "prediction:pwep_14b3844b-40fc-4f28-a241-6c812b592dd3:first"
+      ],
+      "dependence_group": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+    },
+    {
+      "observation_id": "O482ef6dc44094628b660",
+      "source_response_id": "P02-A06",
+      "current_response_id": "pwr_c3d540de4e343ac22ab638f56916d733f4a106f6",
+      "phase": "deepening",
+      "item_id": "D09",
+      "option_id": "D09.relief",
+      "selected_text": "For the feeling to ease right then.",
+      "occurrence_id": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3",
+      "step_id": "next",
+      "source_response_step_id": "next",
+      "basis": "actual_recalled",
+      "capture": "next_aim",
+      "target_ids": [
+        "goal_change:pwep_14b3844b-40fc-4f28-a241-6c812b592dd3:next"
+      ],
+      "dependence_group": "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+    }
+  ]
+}

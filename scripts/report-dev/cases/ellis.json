@@ -1,0 +1,300 @@
+{
+  "schema": "patternwork-answer-plan-1",
+  "id": "ellis",
+  "rootBasis": "actual_recalled",
+  "referentRole": "other_person",
+  "optedInTopics": [],
+  "focus": "all",
+  "details": [
+    "state",
+    "body",
+    "urge",
+    "feeling",
+    "texture",
+    "recurrence",
+    "contrast"
+  ],
+  "answers": [
+    {
+      "phase": "mapping",
+      "questionId": "M01",
+      "optionText": "I enjoyed doing something at my own pace."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M02",
+      "optionText": "I rehearsed what I would say."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M03",
+      "optionText": "Avoid being caught without an answer."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M04",
+      "optionText": "I explained how it happened."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M05",
+      "optionText": "I was harsh with myself."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M06",
+      "optionText": "I felt worse about myself."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M07",
+      "optionText": "I pointed out what was not quite right."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M08",
+      "optionText": "I put off answering."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M09",
+      "optionText": "It would cause an argument."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M10",
+      "optionText": "I found it harder to answer people."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M11",
+      "optionText": "I went somewhere with less input."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M12",
+      "optionText": "I stopped paying attention to how I felt."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M13",
+      "optionText": "I did something absorbing or familiar."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M14",
+      "optionText": "I did not notice a change."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M15",
+      "optionText": "I left the decision alone until I knew more."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M16",
+      "optionText": "I found the not-knowing hard in itself."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M17",
+      "optionText": "I reread the conversation."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M18",
+      "optionText": "I might have upset them."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M19",
+      "optionText": "I still did not feel like replying."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M20",
+      "optionText": "I hinted at the problem."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M21",
+      "optionText": "I did not want to face a no."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M22",
+      "optionText": "I appreciated it and still found it uncomfortable."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M23",
+      "optionText": "I explained what I had meant."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M25",
+      "optionText": "I did something absorbing instead."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M26",
+      "optionText": "I wanted to speak plainly, and I wanted to keep the peace."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M27",
+      "optionText": "I could not get started on either."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M24",
+      "optionText": "I still wanted space."
+    },
+    {
+      "phase": "mapping",
+      "questionId": "M28",
+      "status": "skip"
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D28",
+      "optionText": "I felt pressure to keep living up to it."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D16",
+      "optionText": "I did not feel free to disagree or say no."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D16",
+      "optionText": "I did not feel free to disagree or say no."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D30",
+      "optionText": "I knew what I meant but could not get it out."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D16",
+      "optionText": "I did not feel free to disagree or say no."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D43",
+      "optionText": "I wanted the practical information."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D16",
+      "optionText": "I did not feel free to disagree or say no."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D34",
+      "optionText": "I wanted to speak but could not get words out."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D42",
+      "optionText": "I could leave it alone."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D44",
+      "optionText": "It varied and was hard to predict."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D18",
+      "optionText": "How much I wanted something."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D60",
+      "optionText": "I felt restless without knowing why."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D49",
+      "optionText": "Getting some closeness back."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D02",
+      "optionText": "How difficult the feeling was to bear."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D16",
+      "optionText": "I did not feel free to disagree or say no."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D02",
+      "optionText": "How difficult the feeling was to bear."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D19",
+      "optionText": "They would feel responsible for more than they could carry."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D50",
+      "optionText": "They explained something I had misunderstood."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D20",
+      "optionText": "I needed something I could not provide alone."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D65",
+      "optionText": "I judged myself for reacting that way."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D67",
+      "optionText": "It felt wrong for me to feel or need that."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D66",
+      "optionText": "I noticed it, but still felt driven to act one way."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D21",
+      "optionText": "Knowing I could not manage it alone."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D02",
+      "optionText": "How difficult the feeling was to bear."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D16",
+      "optionText": "I did not feel free to disagree or say no."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D12",
+      "optionText": "Acting on either made the other harder to ignore."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D04",
+      "optionText": "I got a sign that things were okay."
+    },
+    {
+      "phase": "deepening",
+      "questionId": "D02",
+      "optionText": "How difficult the feeling was to bear."
+    }
+  ],
+  "missingStatus": "not_sure"
+}

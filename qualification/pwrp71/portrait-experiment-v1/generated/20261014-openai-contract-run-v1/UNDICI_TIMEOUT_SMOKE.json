@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "PATTERNWORK-UNDICI-HEADER-TIMEOUT-SMOKE-V2",
+  "status": "passed",
+  "error": null,
+  "execution": "local loopback only; no provider request or credential used",
+  "undiciVersion": "7.28.0",
+  "delayedPartialHeaderMilliseconds": 3000,
+  "shortAgentHeadersTimeoutMilliseconds": 1000,
+  "longAgentHeadersTimeoutMilliseconds": 8000,
+  "outcomes": {
+    "shortTimeoutError": [
+      {
+        "name": "TypeError",
+        "code": null,
+        "message": "fetch failed"
+      },
+      {
+        "name": "HeadersTimeoutError",
+        "code": "UND_ERR_HEADERS_TIMEOUT",
+        "message": "Headers Timeout Error"
+      }
+    ],
+    "shortTimeoutRejectedForHeadersTimeout": true,
+    "shortTimeoutElapsedMilliseconds": 1523,
+    "longTimeoutStatus": 200,
+    "longTimeoutBody": "ok",
+    "longTimeoutElapsedMilliseconds": 3017
+  }
+}

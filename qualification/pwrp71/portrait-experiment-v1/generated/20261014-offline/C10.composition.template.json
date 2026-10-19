@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "PATTERNWORK-IFS-SYSTEM-PORTRAIT-PREPARATION-V1",
+  "status": "EXPERIMENTAL_NOT_QUALIFIED",
+  "mode": "no_dispatch",
+  "profileId": "C10",
+  "fixtureSet": "route-replays-v5",
+  "packetSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+  "sourceIdentity": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "sourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb",
+    "authoredFixtureFile": "C10.json",
+    "authoredFixtureSha256": "db6e0b9e8296741324c1aef0e4b481f70468ce4114a599ee8c2907df944d3b81",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5"
+  },
+  "experimentSha256": "06a092444fbf664cdb7664a69e0c53c228c8eeaf78671f4c0f446543dfd0f7c1",
+  "authoredDeepening": [
+    "D100",
+    "D29",
+    "D30",
+    "D32",
+    "D33",
+    "D34",
+    "D35",
+    "D36",
+    "D37",
+    "D80",
+    "D81",
+    "D82",
+    "D83",
+    "D84",
+    "D85",
+    "D86"
+  ],
+  "exclusions": [
+    "automatic IFS exile",
+    "involuntary impairment is a protective intention",
+    "full recovery was observed",
+    "exact recovery duration",
+    "physiological autonomic measurements"
+  ],
+  "researchQuestion": "functioning versus ease, word/attention restriction, partial order, recovery context and changed appraisal",
+  "stage": "composition_after_validation",
+  "system": "# Reader-first IFS system portrait — composition contract\r\n\r\nYou are composing a **personal portrait of how this person's supported internal responses work**, not retelling questionnaire incidents or explaining an IFS theory.\r\n\r\nInput: a validated, frozen interpretation graph with claim IDs, evidence basis, internal scope/uncertainty, named functions, part roles, relationships and contrast claims. The graph is the only source of new personalized assertions. Do not silently create additional parts, traits, childhood explanations, motives, relationships or recurrence.\r\n\r\n## The reader experience\r\n\r\nWrite to the reader in direct second-person prose. Use common words, confident verbs, and natural paragraphs. Explain the *kind of circumstance* that draws out a part, what its job is, what it does, what it is protecting and how that changes the person's experience. Develop meaningful relationships as part of the psychological story, not as a checklist.\r\n\r\nAim for a person to think: “That sounds like how this works for me,” not “These were my selected answers.”\r\n\r\n**Do not narrate the survey.** Avoid “You reported”, “in the help-request episode”, “in another situation”, “in IFS terms”, “the evidence suggests”, “event-scoped”, “this formulation”, “a model role”, “it is not known whether”, or similar auditor voice except where such wording genuinely conveys a critical limitation. Do not merely replace exact test specifics with vague references.\r\n\r\nTranslate the pattern to its **most general justified condition**. For example, if the accepted graph supports minimizing requests under anticipated burden, a portrait may say: “When you need help but worry about adding to someone else's load, the Minimizer makes the request smaller.” This is a condition-based interpretation of the supported job, NOT proof that this happens in every relationship or every time.\r\n\r\nDo not extrapolate an unsupported frequency. Where evidence supports only one scene, retain a local conditional context (“When this concern is present...”) rather than “Whenever you...”, “You always...”, “Throughout your life...”.\r\n\r\n## Part portraits\r\n\r\nFor each genuinely important named part, use its short functional name naturally. A section might cover:\r\n- the pressure/concern that activates it;\r\n- its effort and what it is trying to protect;\r\n- how it shapes attention, behavior, feeling, or choice;\r\n- the benefit or tradeoff if established;\r\n- its relationship to other named responses/vulnerabilities;\r\n- the circumstances under which it becomes less necessary, if supported.\r\n\r\nNo part must have all of these. Do not invent a cost or positive aim to fill a field. Where role distinctions are supported, an ordinary first-use explanation is enough. “Manager”, “Firefighter”, “Exile”, “unblending”, and “Self-led” are **internal classifications**, not obligatory vocabulary for the reader. They may be available as optional explanatory notes outside the narrative.\r\n\r\n## The whole system\r\n\r\nThe full report should connect parts and vulnerabilities into a usable architecture: which jobs reinforce or complicate one another, which concerns are distinct, which capacities offer room for choice. Relationships must be backed by accepted graph relations; do not invent a handoff just because one protector is preventive and another reactive. Convergent protections may be described as sharing a concern even if persistent part identity is unresolved.\r\n\r\nDo not force one master wound, unified mechanism, trio of roles, loop, ideal balance, or named identity for each concept. Some reports will support several substantial portraits, others just one. A complex evidence base warrants depth; a sparse one warrants a narrower, still complete account of what is established.\r\n\r\nSecondary contrasts belong where they modify the core account. Do not create an inventory of unrelated evaluation, waiting, mistake, or boundary examples merely to show you checked them.\r\n\r\n## Style acceptance\r\n\r\n- Personal, articulate, psychologically specific but accessible to an average adult.\r\n- Short functional names: *Minimizer*, *Suppressor* when warranted. Not theatrical characters or names carrying a full sentence.\r\n- Complete descriptive sentences; do not use chatty performance, generic reassurance or slogans.\r\n- No repetitive scope disclaimers; the source-ledger holds the full limitations.\r\n- Do not assert unseen intentions, permanent identities, trauma origins, clinical diagnoses, physiology or measured severity.\r\n- Do not substitute an excessively short summary for a full supported IFS portrait. **No fixed word count**; sufficient development means major findings have jobs, stakes, relations and meaningful consequences explained where supported.\r\n\r\n## Output\r\n\r\nReturn a consumer narrative draft with title, section headings, paragraphs and **nonprinted claim bindings** identifying which accepted claim IDs support every materially personalized paragraph. Use existing `name_id` references for named functions. No new source assertions are allowed. The final canonical draft must be reconstructed and passed through source-bound validation, regenerated artifact hashes and fresh semantic review before any release. Keep the nonclinical statement outside the body narrative.\r\n",
+  "inputRequired": "A validated, frozen interpretation graph from the immediately preceding stage; never compose from an unvalidated model output",
+  "claimToParagraphBindingRequired": true,
+  "packetAvailableForValidation": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3"
+}

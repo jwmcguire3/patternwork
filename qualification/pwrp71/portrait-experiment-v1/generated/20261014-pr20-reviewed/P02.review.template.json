@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "PATTERNWORK-IFS-SYSTEM-PORTRAIT-PREPARATION-V1",
+  "status": "EXPERIMENTAL_NOT_QUALIFIED",
+  "mode": "no_dispatch",
+  "profileId": "P02",
+  "fixtureSet": "route-replays-v5",
+  "packetSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+  "sourceIdentity": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "sourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb",
+    "authoredFixtureFile": "P02.json",
+    "authoredFixtureSha256": "b47d80f9f0194055c8461145d75c559422abf34a0377682aa8cfa22e8ac990dc",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5"
+  },
+  "experimentSha256": "06a092444fbf664cdb7664a69e0c53c228c8eeaf78671f4c0f446543dfd0f7c1",
+  "authoredDeepening": [
+    "D02",
+    "D03",
+    "D07",
+    "D08",
+    "D09",
+    "D10",
+    "D61"
+  ],
+  "exclusions": [
+    "lifelong habit",
+    "fixed pair of two enduring parts",
+    "a confirmed recurrent loop",
+    "a known developmental origin",
+    "every leaving response is protective"
+  ],
+  "researchQuestion": "preventive relation-management followed by reactive withdrawal and reported relief",
+  "stage": "independent_evidence_and_reader_review",
+  "system": "# Independent evidence and consumer-quality review\r\n\r\nReview the finalized consumer narrative against the **original canonical packet** and frozen, validated interpretation graph, not merely the writer's claim labels. Distinguish structural validity from semantic truth and consumer quality.\r\n\r\nEvaluate separately:\r\n\r\n1. **Supported meaning:** every material reader-facing assertion follows from the accepted claims and current source. Check action, intent, result, part role, relationship, time and frequency at its actual support scope. Reject invented wounds, distinct part identity, handoffs, stable traits, physiology and off-packet history.\r\n2. **Depth of insight:** the report explains supported functions, vulnerability, protection, tradeoffs, and relations; it does not simply name archetypes or recite what was answered.\r\n3. **Naturalness:** it talks *to* the reader, not about “the participant”, “data” or evidence adjudication. It should be understandable with no framework training.\r\n4. **Functional names:** supported parts have concise, memorable handles used consistently. A named part must appear meaningfully in the prose; the reader does not get a catalog of names unused elsewhere. Unnamed vulnerable material is acceptable.\r\n5. **Whole-system integration:** the account connects only supported parts and conditions; retains real alternatives and capacities; emphasizes central findings over minor context episodes. It must not collapse multiple truly distinct processes into one theory.\r\n6. **Proportion:** the report can be developed and comprehensive without padding or repetitive hedges. A finding should receive space according to explanatory value, not number of answers.\r\n7. **Restraint:** explicitly negative/control cases remain ordinary where evidence supports ordinary motives. C10 should not gain an Exile or Firefighter solely because P02 has a potentially reactive pattern.\r\n8. **Source-to-prose mapping:** each significant paragraph resolves to supporting claim IDs and, transitively, current observations; names and relationship references match the accepted graph.\r\n\r\n### P02-specific probes\r\n\r\nIs there a coherent description of preventive organizing, the reported reactive action and reported relief, without claiming every such disagreement follows one sequence or that two roles are definitely separate enduring parts? Does the report preserve concern for connection and avoid inventing a childhood origin?\r\n\r\n### C10-specific probes\r\n\r\nDoes the writer distinguish outward task performance from inward restriction, loss of ease from loss of capacity, change in environment from change in interpretation, and partial order from complete chronology? Are ordinary constraints retained rather than made into an IFS protector by default?\r\n\r\n### Outcome\r\n\r\nGive a verdict for **source fidelity** and **consumer composition** separately (pass / revise / fail) and cite actual claim and paragraph IDs in every defect. Do not reward dramatic certainty or penalize supported, bounded interpretation. A repaired narrative has new hashes and needs a fresh review; previous reviewer receipts are not reusable.\r\n",
+  "inputRequired": "Current original packet, frozen validated interpretation graph, proposed reader prose and claim bindings",
+  "reviewMustCheckOriginalPacket": true
+}

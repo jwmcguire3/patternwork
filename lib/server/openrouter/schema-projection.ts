@@ -14,7 +14,7 @@ export function projectOpenRouterStrictSchema(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(projectOpenRouterStrictSchema);
   if (!value || typeof value !== "object") return value;
   const record = value as Record<string, unknown>;
-  return Object.fromEntries(Object.entries(record)
+  const projected = Object.fromEntries(Object.entries(record)
     .filter(([key]) => !OPENROUTER_UNSUPPORTED_STRICT_SCHEMA_KEYS.has(key))
     .map(([key, child]) => [key,
       key === "properties" || key === "$defs" || key === "definitions"
@@ -25,6 +25,28 @@ export function projectOpenRouterStrictSchema(value: unknown): unknown {
             ? Array.isArray(child) ? child.map(projectOpenRouterStrictSchema) : child
             : child,
     ]));
+  if (!("type" in projected)) {
+    const inferredType = inferPrimitiveEnumType(projected);
+    if (inferredType) return { type: inferredType, ...projected };
+  }
+  return projected;
+}
+
+/** OpenAI strict Structured Outputs requires a declared type alongside enum/const. */
+function inferPrimitiveEnumType(schema: Record<string, unknown>): "string" | "number" | "boolean" | undefined {
+  const values = Array.isArray(schema.enum)
+    ? schema.enum
+    : Object.hasOwn(schema, "const") ? [schema.const] : undefined;
+  if (!values?.length) return undefined;
+  const primitiveTypes = new Set(values.map((value) => {
+    if (typeof value === "string") return "string";
+    if (typeof value === "number" && Number.isFinite(value)) return "number";
+    if (typeof value === "boolean") return "boolean";
+    return "unsupported";
+  }));
+  if (primitiveTypes.size !== 1) return undefined;
+  const [type] = primitiveTypes;
+  return type === "string" || type === "number" || type === "boolean" ? type : undefined;
 }
 
 function projectSchemaMap(value: unknown): unknown {

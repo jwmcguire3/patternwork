@@ -116,8 +116,8 @@ test("fictional replay issues and accepts Mapping responses through the session 
   assert.equal(uninterrupted.routingTrace.filter((entry) => entry.phase === "mapping" && entry.result === "accepted").length, 30);
   assert.ok(uninterrupted.routingTrace.some((entry) => entry.phase === "deepening" && entry.result === "accepted"));
   assert.ok(uninterrupted.routingTrace.every((entry) => entry.renderedQuestionId === entry.candidate.questionId));
-  assert.equal(uninterrupted.submitted.some((answer) => answer.provenance === "new_synthetic_mapping_response"), true);
-  assert.equal(uninterrupted.submitted.some((answer) => answer.provenance === "original_authored_fictional_response"), true);
+  assert.ok(uninterrupted.submitted.every((answer) => !("provenance" in answer)));
+  assert.ok(!("responseProvenance" in uninterrupted));
   assert.equal(uninterrupted.packets.MAP?.adapterAccepted, true, JSON.stringify(uninterrupted.packets.MAP?.issues));
   assert.equal(verifyPwqe51PacketDigest(uninterrupted.packets.MAP!.packet), true);
 
@@ -138,12 +138,35 @@ test("fictional replay issues and accepts Mapping responses through the session 
   assert.equal(resumed.packets.MAP?.adapterAccepted, true);
 });
 
+test("legacy response-origin labels do not change eligibility or accepted session lineage", async () => {
+  const [history, questionSource] = await Promise.all([p01(), loadPwqe51SourcePackage()]);
+  const baseline = replayFictionalPwqe51Session({ history, questionSource });
+  const legacyTagged = {
+    ...history,
+    mappingResponses: history.mappingResponses.map((response) => ({ ...response, provenance: "new_synthetic_deepening_answer" })),
+    deepeningResponses: history.deepeningResponses.map((response) => ({ ...response, provenance: "new_synthetic_mapping_response" })),
+    responseProvenance: [...history.mappingResponses, ...history.deepeningResponses].map((response) => ({
+      responseId: response.responseId,
+      origin: "new_synthetic_mapping_answer",
+      usage: "legacy-label-must-be-ignored",
+    })),
+  } as unknown as FictionalHistoryV2;
+  const replay = replayFictionalPwqe51Session({ history: legacyTagged, questionSource });
+  const lineage = (result: typeof baseline) => result.submitted.map(({ sourceResponseId, questionId, phase }) =>
+    [sourceResponseId, questionId, phase]);
+  assert.deepEqual(lineage(replay), lineage(baseline));
+  assert.equal(replay.deepeningComplete, baseline.deepeningComplete);
+  assert.ok(replay.submitted.some((answer) => answer.phase === "deepening"));
+  assert.ok(replay.submitted.every((answer) => !("provenance" in answer)));
+  assert.ok(!("responseProvenance" in replay));
+});
+
 test("original P01 answers on both distinct rehearsal occasions are administered in their bound contexts", async () => {
   const [history, questionSource, reportSource] = await Promise.all([p01(), loadPwqe51SourcePackage(), loadPwrp71SourcePackage()]);
   const replay = replayFictionalPwqe51Session({ history, questionSource, reportSource });
   assert.ok(replay.submitted.some((answer) => answer.sourceResponseId === "P01-A03" && answer.occurrenceId === replay.occurrenceReferenceToServerId.fx_P01_E1));
   assert.ok(replay.submitted.some((answer) => answer.sourceResponseId === "P01-A06" && answer.occurrenceId === replay.occurrenceReferenceToServerId.fx_P01_E2));
-  assert.ok(replay.unreachedOriginalAnswers.every((answer) => answer.responseId !== "P01-A03" && answer.responseId !== "P01-A06"));
+  assert.ok(replay.unreachedSourceResponses.every((answer) => answer.responseId !== "P01-A03" && answer.responseId !== "P01-A06"));
   assert.equal(replay.deepeningComplete, true);
   assert.equal(replay.semanticCore.status, "complete");
   assert.equal(replay.replayDecisions.filter((decision) => decision.outcome === "different").length, 1);
@@ -159,8 +182,8 @@ test("router-selected M10 variant uses the supported skip control without transl
   assert.equal(syntheticM10?.variantId, "M10.observable");
   assert.equal(syntheticM10?.status, "skip");
   assert.deepEqual(syntheticM10?.selectedOptionIds, []);
-  assert.equal(syntheticM10?.provenance, "new_fictional_control_outcome");
-  assert.equal(synthetic.responseProvenance.find((answer) => answer.sourceResponseId === syntheticM10?.sourceResponseId)?.accepted, true);
+  assert.ok(syntheticM10);
+  assert.ok(!("responseProvenance" in synthetic));
   assert.ok(synthetic.syntheticRespondentControls.some((control) => control.kind === "source_contract_mismatch"
     && control.questionId === "M10" && control.variantId === "M10.observable"));
 
@@ -174,10 +197,10 @@ test("router-selected M10 variant uses the supported skip control without transl
     const replacement = authored.submitted.find((answer) => answer.questionId === "M10");
     assert.equal(replacement?.status, "skip");
     assert.deepEqual(replacement?.selectedOptionIds, []);
-    assert.equal(replacement?.provenance, "new_fictional_control_outcome");
+    assert.ok(replacement);
     assert.ok(authored.syntheticRespondentControls.some((control) => control.kind === "source_contract_mismatch"
       && control.sourceResponseIds.includes(authoredM10.responseId)));
-    assert.equal(authored.unreachedOriginalAnswers.find((answer) => answer.responseId === authoredM10.responseId)?.classification, "source_contract_mismatch");
+    assert.equal(authored.unreachedSourceResponses.find((answer) => answer.responseId === authoredM10.responseId)?.classification, "source_contract_mismatch");
     assert.equal(authored.packets.MAP?.adapterAccepted, true, `${profileId}: ${JSON.stringify(authored.packets.MAP?.issues)}`);
   }
 });
@@ -249,7 +272,7 @@ test("original Deepening answers require the exact server-bound occurrence excep
     "the M10.observable skip cannot bind the original body-detail occurrence");
   assert.equal(c10Replay.submitted.some((answer) => answer.sourceResponseId === "C10-SRC-D81-1"), false,
     "an authored D81 answer on the M10 occurrence must not move to a router-issued M24 occurrence");
-  assert.ok(c10Replay.unreachedOriginalAnswers.some((answer) => answer.responseId === "C10-SRC-D81-1"
+  assert.ok(c10Replay.unreachedSourceResponses.some((answer) => answer.responseId === "C10-SRC-D81-1"
     && answer.classification === "ineligible_in_current_context"));
   assert.ok(c10Replay.syntheticDeepeningAnswerAudit.some((answer) => answer.sourceQuestionId === "D81"
     && answer.occurrenceReference === "fx_C10_mapping_M24" && answer.status === "not_sure"),
@@ -283,11 +306,11 @@ test("P09 and C12 preserve exact authored episode bindings and require an explic
   assert.notEqual(d61[0]?.occurrenceId, d61[1]?.occurrenceId);
   assert.equal(conflictReplay.submitted.filter((response) => response.questionId === "D61").length, 1);
   assert.ok(conflictReplay.submitted.some((response) => response.sourceResponseId === d61[0]?.responseId && response.occurrenceId === conflictReplay.occurrenceReferenceToServerId[d61[0]!.occurrenceId]));
-  assert.ok(conflictReplay.unreachedOriginalAnswers.some((row) => row.responseId === d61[1]?.responseId && row.classification === "ineligible_in_current_context"));
+  assert.ok(conflictReplay.unreachedSourceResponses.some((row) => row.responseId === d61[1]?.responseId && row.classification === "ineligible_in_current_context"));
   assert.equal(conflictReplay.deepeningComplete, true);
   assert.ok(conflictReplay.syntheticRespondentControls.some((control) => control.kind === "topic_opt_in" && control.topic === "conflict"));
   assert.equal(conflictReplay.submitted.some((response) => response.questionId === "D79"), false, "P09 cannot receive the prohibited D79 response");
-  assert.equal(conflictReplay.unreachedOriginalAnswers.some((response) => response.questionId === "D79"), false);
+  assert.equal(conflictReplay.unreachedSourceResponses.some((response) => response.questionId === "D79"), false);
 
   const delayReplay = replayFictionalPwqe51Session({ history: c12, questionSource, reportSource });
   const firstWait = delayReplay.occurrenceReferenceToServerId.fx_C12_mapping_M17;
@@ -323,8 +346,7 @@ test("authored focus topics reach the real Deepening router without adding answe
     if (profileId === "C15" || profileId === "C16") {
       const authoredDeepeningIds = new Set(history.deepeningResponses.map((answer) => answer.responseId));
       assert.ok(replay.submitted.filter((answer) => authoredDeepeningIds.has(answer.sourceResponseId)).length >= 2, `${profileId} must preserve both authored discrimination answers`);
-      assert.ok(replay.submitted.filter((answer) => answer.provenance === "new_synthetic_deepening_answer").every((answer) => answer.sourceResponseId.startsWith(`${profileId}-SYN-D-`)), `${profileId} synthetic answers need explicit provenance`);
-      assert.ok(replay.syntheticDeepeningAnswerAudit.every((answer) => answer.provenance === "new_synthetic_deepening_answer" && !answer.changesIntendedSemanticTest), `${profileId} synthetic context must preserve the authored distinction`);
+      assert.ok(replay.syntheticDeepeningAnswerAudit.every((answer) => !answer.changesIntendedSemanticTest), `${profileId} same-source context must preserve the semantic distinction`);
     }
   }
 });

@@ -7,7 +7,7 @@ import { preparePwrp71Request } from "../../lib/server/reports/pwrp71-adapter.ts
 import { pwrp71CanonicalResponseEvidenceFromSessionState } from "../../lib/server/reports/pwrp71-response-evidence.ts";
 import { buildGenerationPrompt } from "../../lib/server/reports/prompts.ts";
 import { QUALIFICATION_MODEL_ORDER, UNQUALIFIED_MOCK_MODEL_POLICY } from "../../lib/server/openrouter/policy.ts";
-import { GPT6_LUNA_BILLING_BASIS, GPT6_LUNA_BILLING_BASIS_SHA256, GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY, maximumQuotedCallCostMicros } from "../../lib/server/openrouter/qualification-budget.ts";
+import { GPT6_LUNA_BILLING_BASIS, GPT6_LUNA_BILLING_BASIS_SHA256, GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY, GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY, maximumQuotedCallCostMicros } from "../../lib/server/openrouter/qualification-budget.ts";
 import { projectOpenRouterStrictSchemaObject } from "../../lib/server/openrouter/schema-projection.ts";
 import { buildOpenRouterWirePayload, OPENROUTER_DEFAULT_ENDPOINT } from "../../lib/server/openrouter/wire.ts";
 import { qualificationAttemptFingerprint } from "../../lib/server/reports/qualification/attempt-store.ts";
@@ -18,7 +18,7 @@ import type { JsonObject } from "../../lib/question-engine/types.ts";
 const REPORT_TYPE = "IFS" as const;
 const PROFILES = ["C01", "C02"] as const;
 const FIXTURE_ROOT = path.join(process.cwd(), "qualification", "pwrp71", "route_replays_v5");
-const DEFAULT_RUN_ID = "gate10-c01-c02-ifs-live-diagnostic";
+const DEFAULT_RUN_ID = "gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011";
 const OUTPUT_FILE = path.join(process.cwd(), "qualification", "pwrp71", "gate10-routing-budget-readiness", "provider-preflight", "c01-c02-ifs-no-dispatch.json");
 
 interface FixtureManifest {
@@ -65,12 +65,18 @@ async function main(): Promise<void> {
   if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,79}$/u.test(runId)) throw new Error("--run-id must use 1–80 letters, numbers, dots, underscores or hyphens.");
   const maxCallCostMicros = parseMicros(flags.get("--max-call-cost-micros"), "--max-call-cost-micros");
   const aggregateCostCapMicros = parseMicros(flags.get("--aggregate-cost-cap-micros"), "--aggregate-cost-cap-micros");
+  const providerOnly = flags.get("--provider-only");
+  if (providerOnly !== undefined && providerOnly !== "openai") throw new Error("--provider-only currently accepts only the explicitly pinned openai provider.");
+  const diagnosticContinuation = flags.get("--diagnostic-continuation");
+  if (diagnosticContinuation !== undefined && diagnosticContinuation !== "openai-route-continuation-1") throw new Error("--diagnostic-continuation only accepts the reviewed one-time OpenAI route continuation.");
+  if (diagnosticContinuation && providerOnly !== "openai") throw new Error("A diagnostic continuation preflight requires the explicit OpenAI-only provider route.");
+  const providerPolicy = providerOnly === "openai" ? GPT6_LUNA_OPENAI_DIAGNOSTIC_PROVIDER_POLICY : GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY;
   const outputFile = path.resolve(flags.get("--output") ?? OUTPUT_FILE);
   const blockers: string[] = [];
   if (maxCallCostMicros === null) blockers.push("No explicit per-call ceiling was supplied; this dry run does not create live spending authorization.");
   if (aggregateCostCapMicros === null) blockers.push("No explicit aggregate qualification budget was supplied; this dry run does not create live spending authorization.");
   blockers.push("No independently reviewed, source-bound qualified routing receipt is present for the current router runtime and these packet digests.");
-  blockers.push("No external human authorization to make a paid OpenRouter request was supplied; this command is permanently no-dispatch.");
+  blockers.push("This command is permanently no-dispatch and cannot consume the separately recorded owner-authorized fictional diagnostic approval.");
 
   const [questionSource, reportSource, fixtureManifestText, currentRouterRuntimeSha256] = await Promise.all([
     loadPwqe51SourcePackage(process.cwd()),
@@ -122,7 +128,7 @@ async function main(): Promise<void> {
       preflightRequestRows.push({ profileId, status: "blocked", packetSha256: sha256Canonical(packet), issues: prepared.issues });
       continue;
     }
-    const prompt = buildGenerationPrompt(REPORT_TYPE, prepared.value.user_data);
+    const prompt = buildGenerationPrompt(REPORT_TYPE, prepared.value.user_data, "v7.1");
     const request = {
       model: modelPin.model,
       reasoningEffort: modelPin.reasoningEffort,
@@ -131,13 +137,13 @@ async function main(): Promise<void> {
       schemaName: "patternwork_ifs_pwrp71_candidate_1",
       schema: prepared.value.response_schema,
       maxOutputTokens: modelPin.maxOutputTokens,
-      idempotencyKey: `pwrp71-qualification:${runId}:${profileId}:${REPORT_TYPE}:initial:${pinnedTierName}:attempt-1`,
+      idempotencyKey: `pwrp71-fictional-diagnostic:${runId}:${profileId}${diagnosticContinuation && profileId === "C01" ? `:${diagnosticContinuation}` : ""}:${REPORT_TYPE}:initial:openai-gpt-6-luna-max:attempt-1`,
       includeUsage: true,
     } as const;
     const wireRequest = {
       ...request,
       schema: projectOpenRouterStrictSchemaObject(request.schema),
-      providerPolicy: GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY,
+      providerPolicy,
       promptCacheOptions: { mode: "explicit" as const },
     };
     const body = buildOpenRouterWirePayload(wireRequest);
@@ -209,7 +215,7 @@ async function main(): Promise<void> {
       privacy: {
         privateNoteAndRawAnswerKeysExcludedByPreparedRequest: true,
         directIdentifierScanAppliedByPromptBuilder: true,
-        zeroDataRetentionRequested: true,
+        zeroDataRetentionRequired: false,
         dataCollectionDenied: true,
       },
       repairsAndReviews: {
@@ -233,7 +239,13 @@ async function main(): Promise<void> {
     providerCalls: 0,
     apiKeyRead: false,
     runId,
-    candidate: { model: modelPin.model, reasoningEffort: modelPin.reasoningEffort, reportType: REPORT_TYPE },
+    candidate: {
+      model: modelPin.model,
+      reasoningEffort: modelPin.reasoningEffort,
+      reportType: REPORT_TYPE,
+      providerSelection: providerOnly === "openai" ? "openai_only_no_fallbacks" : "openrouter_default_eligible_provider_routing",
+      requestVariant: diagnosticContinuation ?? "initial",
+    },
     fixtureSet: "route-replays-v5",
     sourceManifestPins: {
       questionRelease: PWQE51_RELEASE_IDENTITY.questionRelease,

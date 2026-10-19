@@ -1,0 +1,619 @@
+{
+  "artifact_type": "pwrp71_report",
+  "report_release": "PWRP-7.1.0-candidate.1",
+  "source_manifest_sha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+  "report_id": "pwrp71_4d9ac25c9a7ad89f1bc1cd06ae84",
+  "report_type": "IFS",
+  "release_id": "PWQE-5.1.0-candidate.1",
+  "snapshot_id": "fictional-C01-deepening",
+  "evidence_sha256": "7171b823f3be7044eeeb33d2779fc3fe66c235535807c8771d0b96e7c4c75b3d",
+  "report_markdown": "# When asking for care seems like adding to someone else's load\n\n*Patternwork is nonclinical self-reflection. Parts and state names are working interpretations, not diagnoses or physiological measurements.*\n\n## A need for care that was hard to allow internally\n\nAcross one remembered help-request episode, you wanted some comfort or care and recognized needing something you could not provide alone. Being seen needing that much was difficult; this went beyond limiting what another person saw. You reported judging yourself for your reaction, feeling it was wrong to need, and pushing it away when it came up again. You also reported becoming less aware of it. Because this includes an internal barrier and an active push-away, not only a choice to keep details private, an event-scoped Exile formulation fits the vulnerable need-for-care experience. This does not establish where the rule came from or a permanent, separate inner identity.\n\n## A smaller request and a push-away response\n\nAn event-scoped Manager role shows in making the request smaller: you asked for less than you needed, named not wanting to add to what the other person was carrying as your aim, and remembered expecting they would feel responsible for more than they could carry. A local organizing rule seems to be to keep the request below the need so the other person does not take on too much. This is an event-specific formulation, not a verbatim thought or a global rule. A reactive Firefighter role also appears inwardly: when the need came up again, you pushed it away and reported less awareness of it. That fits an attempt to interrupt contact with an already uncomfortable experience; its precise aim and whether it brought relief are unknown. The two jobs appear to converge on the same care need. The evidence does not establish whether they are separate parts, one protector changing jobs, or a handoff.\n\n## Practical strain changes the reading\n\nActual strain belongs in this picture too. You reported being short of time, energy, or support and needing something you could not provide alone. The other person offered the help you asked for, yet you reported that some need remained and did not say more. Their offer confirms the response to the request made; it does not tell us how a larger request would have landed or whether they felt overburdened. The smaller request may have combined practical scarcity with the Manager's anticipation; their relative weight is not known.\n\n## This is not the only way you handle support\n\nThese event-bound roles do not establish a global difficulty asking for help or stating needs. In a separate boundary episode, you said what you could and could not manage and expected the other person would work around it; that expectation is not a reported outcome. In a different receiving-help episode, you could let someone take some of the load. These are meaningful contrasts, but they do not show why you responded differently in the help request or whether the same helper was involved.\n\n## Other decisions stay tied to their practical context\n\nOther task and uncertainty episodes do not need the same parts to explain them. In one evaluation situation, you checked the actual requirements and left it there. With a separate mistake, you corrected what you could, tried to work out what you could learn, and reported being able to deal with it more clearly. In a practical uncertainty episode, you left a decision alone until you knew more and said you could not take the next practical step; in a separate reply wait, you thought the other person was probably busy, waited without changing what you were doing, and moved on once you had information. These are context-specific reports of practical checking, learning, and waiting. They do not establish the same Manager–Firefighter pattern elsewhere; clarity by itself also does not establish a Self-led relationship to the mistake.\n\n## A compromise, not a demonstrated polarization\n\nIn a separate internal tension, you wanted to get it right and be done, and found a way to allow some of both. That is a reported compromise, not enough to formulate polarized parts: the account does not establish that either pull blocked or intensified the other. Whether distinct parts were involved remains open.\n",
+  "draft": {
+    "report_release": "PWRP-7.1.0-candidate.1",
+    "release_id": "PWQE-5.1.0-candidate.1",
+    "snapshot_id": "fictional-C01-deepening",
+    "evidence_sha256": "7171b823f3be7044eeeb33d2779fc3fe66c235535807c8771d0b96e7c4c75b3d",
+    "report_type": "IFS",
+    "title": "When asking for care seems like adding to someone else's load",
+    "title_claim_ids": [
+      "C01",
+      "C02"
+    ],
+    "content_status": "complete",
+    "sections": [
+      {
+        "id": "S01",
+        "heading": "A need for care that was hard to allow internally",
+        "text": "Across one remembered help-request episode, you wanted some comfort or care and recognized needing something you could not provide alone. Being seen needing that much was difficult; this went beyond limiting what another person saw. You reported judging yourself for your reaction, feeling it was wrong to need, and pushing it away when it came up again. You also reported becoming less aware of it. Because this includes an internal barrier and an active push-away, not only a choice to keep details private, an event-scoped Exile formulation fits the vulnerable need-for-care experience. This does not establish where the rule came from or a permanent, separate inner identity.",
+        "claim_ids": [
+          "C01"
+        ]
+      },
+      {
+        "id": "S02",
+        "heading": "A smaller request and a push-away response",
+        "text": "An event-scoped Manager role shows in making the request smaller: you asked for less than you needed, named not wanting to add to what the other person was carrying as your aim, and remembered expecting they would feel responsible for more than they could carry. A local organizing rule seems to be to keep the request below the need so the other person does not take on too much. This is an event-specific formulation, not a verbatim thought or a global rule. A reactive Firefighter role also appears inwardly: when the need came up again, you pushed it away and reported less awareness of it. That fits an attempt to interrupt contact with an already uncomfortable experience; its precise aim and whether it brought relief are unknown. The two jobs appear to converge on the same care need. The evidence does not establish whether they are separate parts, one protector changing jobs, or a handoff.",
+        "claim_ids": [
+          "C02",
+          "C03",
+          "C04",
+          "C05"
+        ]
+      },
+      {
+        "id": "S03",
+        "heading": "Practical strain changes the reading",
+        "text": "Actual strain belongs in this picture too. You reported being short of time, energy, or support and needing something you could not provide alone. The other person offered the help you asked for, yet you reported that some need remained and did not say more. Their offer confirms the response to the request made; it does not tell us how a larger request would have landed or whether they felt overburdened. The smaller request may have combined practical scarcity with the Manager's anticipation; their relative weight is not known.",
+        "claim_ids": [
+          "C06"
+        ]
+      },
+      {
+        "id": "S04",
+        "heading": "This is not the only way you handle support",
+        "text": "These event-bound roles do not establish a global difficulty asking for help or stating needs. In a separate boundary episode, you said what you could and could not manage and expected the other person would work around it; that expectation is not a reported outcome. In a different receiving-help episode, you could let someone take some of the load. These are meaningful contrasts, but they do not show why you responded differently in the help request or whether the same helper was involved.",
+        "claim_ids": [
+          "C07",
+          "C08"
+        ]
+      },
+      {
+        "id": "S05",
+        "heading": "Other decisions stay tied to their practical context",
+        "text": "Other task and uncertainty episodes do not need the same parts to explain them. In one evaluation situation, you checked the actual requirements and left it there. With a separate mistake, you corrected what you could, tried to work out what you could learn, and reported being able to deal with it more clearly. In a practical uncertainty episode, you left a decision alone until you knew more and said you could not take the next practical step; in a separate reply wait, you thought the other person was probably busy, waited without changing what you were doing, and moved on once you had information. These are context-specific reports of practical checking, learning, and waiting. They do not establish the same Manager–Firefighter pattern elsewhere; clarity by itself also does not establish a Self-led relationship to the mistake.",
+        "claim_ids": [
+          "C09",
+          "C10"
+        ]
+      },
+      {
+        "id": "S06",
+        "heading": "A compromise, not a demonstrated polarization",
+        "text": "In a separate internal tension, you wanted to get it right and be done, and found a way to allow some of both. That is a reported compromise, not enough to formulate polarized parts: the account does not establish that either pull blocked or intensified the other. Whether distinct parts were involved remains open.",
+        "claim_ids": [
+          "C11"
+        ]
+      }
+    ],
+    "claims": [
+      {
+        "id": "C01",
+        "text": "In one recalled help-request occurrence, you recognized a need for comfort or care and for something you could not provide alone. You also reported judging yourself for your reaction, feeling it was wrong to need, and pushing it away when it came up again; less awareness was the reported internal effect. Taken together with the need being kept small or not voiced, this supports an event-scoped Exile formulation for a vulnerable need-for-care experience—not a claim about its origin, permanence, or a separate enduring identity.",
+        "kind": "supported_interpretation",
+        "constructs": [
+          "exile",
+          "vulnerable_part",
+          "vulnerable_theme",
+          "internal_exclusion",
+          "scope_limit"
+        ],
+        "scope": {
+          "level": "occurrence",
+          "occurrence_ids": [
+            "pwep_5a6febac-38ca-4cf5-8e5c-21afd9e4ba3e"
+          ],
+          "person_ids": [],
+          "description": "One retrospectively recalled help-request occurrence; no independent recurrence is established."
+        },
+        "evidence_ids": [
+          "O85882da86c7f9eca2a77",
+          "O4cecd56526bdb6c20645",
+          "O34b33020127869263c07",
+          "Oe362438f0da7e64b9154",
+          "O247dfc0175eee139cd14",
+          "O392b1669958da6f248e3",
+          "O6187e596bf98bed6b067",
+          "Oaf627ea10c70e967ed78",
+          "Obed96e9abd71fbc0f226"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [],
+        "support_basis": [
+          "direct_report",
+          "reported_effect",
+          "inferred_function",
+          "model_formulation",
+          "scope_limit"
+        ],
+        "rationale": "The account includes discomfort with the need being seen and an internal barrier, followed by an active push-away when the need returned. That distinguishes this from social privacy alone. The same occurrence includes reduced asking and no further disclosure while some need remained. This supports an event-specific internal-exclusion formulation, not a developmental or recurring account.",
+        "remaining_uncertainty": [
+          "Whether this organization recurs in other help contexts or reflects a stable part identity is unknown.",
+          "No origin, history, or reason for the internal rule was assessed."
+        ]
+      },
+      {
+        "id": "C02",
+        "text": "In that help-request occurrence, you asked for less than you needed, named not wanting to add to what the other person was carrying as your aim, and remembered expecting they would feel responsible for more than they could carry. This supports an event-bound Manager function of reducing the request and exposure around anticipated added responsibility. A local organizing rule seems to be to keep the ask smaller than the need to avoid adding responsibility; this is a present formulation, not a verbatim thought or a general rule.",
+        "kind": "supported_interpretation",
+        "constructs": [
+          "manager",
+          "protective_function",
+          "organizing_belief",
+          "vulnerable_theme",
+          "scope_limit"
+        ],
+        "scope": {
+          "level": "occurrence",
+          "occurrence_ids": [
+            "pwep_5a6febac-38ca-4cf5-8e5c-21afd9e4ba3e"
+          ],
+          "person_ids": [],
+          "description": "A preventive request-minimizing function in one recalled help-request occurrence."
+        },
+        "evidence_ids": [
+          "O6187e596bf98bed6b067",
+          "Ob67f86e23cae343836e6",
+          "O2f314c3bb44150775571",
+          "Obed96e9abd71fbc0f226",
+          "O4cecd56526bdb6c20645"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [],
+        "support_basis": [
+          "direct_report",
+          "stated_aim",
+          "remembered_expectation",
+          "inferred_function",
+          "model_formulation",
+          "scope_limit"
+        ],
+        "rationale": "The smaller-than-needed request, stated aim not to add to another person's load, and remembered expectation of over-responsibility converge on a preventive function around making the need visible. This is limited to the reported occurrence.",
+        "remaining_uncertainty": [
+          "Practical shortage was also reported and may have shaped the request.",
+          "The evidence does not establish how often this Manager function appears or whether it applies in other relationships."
+        ]
+      },
+      {
+        "id": "C03",
+        "text": "In the same occurrence, the need came up again and you pushed it away; you also reported feeling driven to act one way and becoming less aware of it. This supports a local reactive Firefighter function of interrupting contact with an already difficult inner experience. Awareness was present, but you did not report room for choice in that moment. No further relief or benefit was reported.",
+        "kind": "supported_interpretation",
+        "constructs": [
+          "firefighter",
+          "protective_function",
+          "internal_exclusion",
+          "scope_limit"
+        ],
+        "scope": {
+          "level": "occurrence",
+          "occurrence_ids": [
+            "pwep_5a6febac-38ca-4cf5-8e5c-21afd9e4ba3e"
+          ],
+          "person_ids": [],
+          "description": "A reactive push-away function within one help-request occurrence."
+        },
+        "evidence_ids": [
+          "O4cecd56526bdb6c20645",
+          "O34b33020127869263c07",
+          "Oe362438f0da7e64b9154",
+          "O01655ad79d9c10d210dc",
+          "O247dfc0175eee139cd14",
+          "O392b1669958da6f248e3"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [],
+        "support_basis": [
+          "direct_report",
+          "reported_effect",
+          "inferred_function",
+          "model_formulation",
+          "scope_limit"
+        ],
+        "rationale": "The account includes a returned need, an active push-away, felt compulsion, and less awareness. Together these support a local interruption function more strongly than the push-away action alone would.",
+        "remaining_uncertainty": [
+          "The exact aim of the push-away and whether it felt relieving are not established.",
+          "A distinct enduring Firefighter identity or recurrence across events is not established."
+        ]
+      },
+      {
+        "id": "C04",
+        "text": "The request-minimizing Manager appears to protect the same need-for-care material from fuller visibility in the request and from anticipated added responsibility. This functional link is supported within the one occurrence; it does not establish a separate part identity.",
+        "kind": "supported_interpretation",
+        "constructs": [
+          "part_relationship",
+          "protective_function",
+          "manager",
+          "exile",
+          "scope_limit"
+        ],
+        "scope": {
+          "level": "occurrence",
+          "occurrence_ids": [
+            "pwep_5a6febac-38ca-4cf5-8e5c-21afd9e4ba3e"
+          ],
+          "person_ids": [],
+          "description": "A target relationship between the request-minimizing role and the care need in one occurrence."
+        },
+        "evidence_ids": [
+          "O85882da86c7f9eca2a77",
+          "O4cecd56526bdb6c20645",
+          "O34b33020127869263c07",
+          "Oe362438f0da7e64b9154",
+          "O247dfc0175eee139cd14",
+          "O392b1669958da6f248e3",
+          "O6187e596bf98bed6b067",
+          "Oaf627ea10c70e967ed78",
+          "Ob67f86e23cae343836e6",
+          "O2f314c3bb44150775571",
+          "Obed96e9abd71fbc0f226"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [
+          "C01",
+          "C02"
+        ],
+        "support_basis": [
+          "direct_report",
+          "stated_aim",
+          "remembered_expectation",
+          "inferred_function",
+          "model_formulation",
+          "scope_limit"
+        ],
+        "rationale": "The stated aim and remembered expectation concern the same help request in which the need for care and difficulty being seen were reported. This supports a local protective link, not a claim about enduring part identity.",
+        "remaining_uncertainty": [
+          "The evidence does not establish whether the main protective concern was the other person's capacity, exposure of the need, or both."
+        ]
+      },
+      {
+        "id": "C05",
+        "text": "The reactive push-away appears to protect against sustained inner contact with the same care need when it returns. This is a target link within one account, not evidence of a handoff or distinct part identity.",
+        "kind": "supported_interpretation",
+        "constructs": [
+          "part_relationship",
+          "protective_function",
+          "firefighter",
+          "exile",
+          "scope_limit"
+        ],
+        "scope": {
+          "level": "occurrence",
+          "occurrence_ids": [
+            "pwep_5a6febac-38ca-4cf5-8e5c-21afd9e4ba3e"
+          ],
+          "person_ids": [],
+          "description": "A target relationship between the push-away response and the care need in one occurrence."
+        },
+        "evidence_ids": [
+          "O85882da86c7f9eca2a77",
+          "O4cecd56526bdb6c20645",
+          "O34b33020127869263c07",
+          "Oe362438f0da7e64b9154",
+          "O247dfc0175eee139cd14",
+          "O392b1669958da6f248e3",
+          "O6187e596bf98bed6b067",
+          "Oaf627ea10c70e967ed78",
+          "Obed96e9abd71fbc0f226",
+          "O01655ad79d9c10d210dc"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [
+          "C01",
+          "C03"
+        ],
+        "support_basis": [
+          "direct_report",
+          "reported_effect",
+          "inferred_function",
+          "model_formulation",
+          "scope_limit"
+        ],
+        "rationale": "The need for care, internal barrier, returned experience, push-away, and reduced awareness are linked in the same occurrence, supporting this limited functional relation.",
+        "remaining_uncertainty": [
+          "No sequence evidence establishes a changeover between the request-minimizing and push-away responses.",
+          "Whether one protector did both jobs or distinct parts were involved is unknown."
+        ]
+      },
+      {
+        "id": "C06",
+        "text": "The same event included a self-reported shortage of time, energy, or support and a need you could not provide alone. The other person offered the help you asked for, but you reported that some need remained and did not say more. The offer is evidence of a response to the request made, not of how a larger request would have landed or whether the person felt overburdened. How practical scarcity and the anticipatory protection combined remains unresolved.",
+        "kind": "supported_interpretation",
+        "constructs": [
+          "practical_explanation",
+          "capacity",
+          "scope_limit",
+          "description"
+        ],
+        "scope": {
+          "level": "occurrence",
+          "occurrence_ids": [
+            "pwep_5a6febac-38ca-4cf5-8e5c-21afd9e4ba3e"
+          ],
+          "person_ids": [],
+          "description": "Practical context and reported outcome for the same help-request occurrence."
+        },
+        "evidence_ids": [
+          "O5554ce8e1666d4a1465e",
+          "O4cecd56526bdb6c20645",
+          "O5e8107e82a82c19de984",
+          "Oaf627ea10c70e967ed78",
+          "O6187e596bf98bed6b067",
+          "O2f314c3bb44150775571",
+          "Ob67f86e23cae343836e6",
+          "Obed96e9abd71fbc0f226"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [
+          "C02"
+        ],
+        "support_basis": [
+          "direct_report",
+          "stated_aim",
+          "remembered_expectation",
+          "reported_effect",
+          "scope_limit"
+        ],
+        "rationale": "The practical limitation, offered help, and remaining unvoiced need are separately reported. Keeping those facts distinct prevents the remembered expectation from being treated as the other person's actual reaction.",
+        "remaining_uncertainty": [
+          "The record establishes an offer, not whether the help was ultimately delivered.",
+          "The response to a larger request and the relative influence of practical limits and anticipated responsibility are unknown."
+        ]
+      },
+      {
+        "id": "C07",
+        "text": "In a separate boundary occurrence, you said what you could and could not manage and expected the other person would work around it. This shows at least one context of direct limit-setting alongside the smaller help request; it does not establish actual accommodation, referent identity, or why the approaches differed.",
+        "kind": "supported_interpretation",
+        "constructs": [
+          "context_contrast",
+          "capacity",
+          "working_expectation",
+          "scope_limit"
+        ],
+        "scope": {
+          "level": "across_sampled_contexts",
+          "occurrence_ids": [
+            "pwep_5a6febac-38ca-4cf5-8e5c-21afd9e4ba3e",
+            "pwep_ae406509-3318-4229-bf5c-103613e4f45b"
+          ],
+          "person_ids": [],
+          "description": "A contrast between a help-request episode and a separate boundary episode; it does not establish recurrence or relationship comparability."
+        },
+        "evidence_ids": [
+          "O2cef5251e1d74c5a0cb1",
+          "O3c52e5891b09fdd82c34",
+          "O6187e596bf98bed6b067",
+          "Ob67f86e23cae343836e6",
+          "O2f314c3bb44150775571",
+          "Obed96e9abd71fbc0f226",
+          "O4cecd56526bdb6c20645"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [
+          "C02"
+        ],
+        "support_basis": [
+          "direct_report",
+          "remembered_expectation",
+          "context_comparison",
+          "scope_limit"
+        ],
+        "rationale": "A separate report of stating limits narrows any attempt to generalize the help-request response into a global inability to communicate needs. The anticipated accommodation remains an expectation, not an observed outcome.",
+        "remaining_uncertainty": [
+          "The packet does not establish whether the two occurrences involved the same person or comparable circumstances."
+        ]
+      },
+      {
+        "id": "C08",
+        "text": "One separate receiving-help occurrence records that you could let someone take some of the load. This is an event-specific contrast to asking for less than needed, not evidence that the same relationship or need was involved or that receiving care is generally easy.",
+        "kind": "supported_interpretation",
+        "constructs": [
+          "context_contrast",
+          "capacity",
+          "scope_limit",
+          "description"
+        ],
+        "scope": {
+          "level": "across_sampled_contexts",
+          "occurrence_ids": [
+            "pwep_5a6febac-38ca-4cf5-8e5c-21afd9e4ba3e",
+            "pwep_ceb0a06d-93e2-44d0-b2d7-751c4ae19d4e"
+          ],
+          "person_ids": [],
+          "description": "A contrast between asking for help and a separate receiving-help occurrence, not a general tendency."
+        },
+        "evidence_ids": [
+          "O581a8e8cbaae77fa2283",
+          "O6187e596bf98bed6b067",
+          "Ob67f86e23cae343836e6",
+          "O2f314c3bb44150775571",
+          "Obed96e9abd71fbc0f226",
+          "O4cecd56526bdb6c20645"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [
+          "C02"
+        ],
+        "support_basis": [
+          "direct_report",
+          "context_comparison",
+          "scope_limit"
+        ],
+        "rationale": "The separate report offers a meaningful instance of allowing some help, while its distinct occurrence prevents treating it as proof about the earlier request or a general receiving pattern.",
+        "remaining_uncertainty": [
+          "Whether the same helper or relationship was involved, and how the two situations differed, is unknown."
+        ]
+      },
+      {
+        "id": "C09",
+        "text": "In separate task-related episodes, you checked the actual requirements and left them there; with a mistake, you corrected what you could, tried to work out what you could learn, and reported being able to deal with it more clearly. These observations support practical checking and learning in those situations, not a fixed critical Manager or a Self-led state. Clarity by itself does not establish an internal relationship to the reaction.",
+        "kind": "supported_interpretation",
+        "constructs": [
+          "capacity",
+          "practical_explanation",
+          "description",
+          "scope_limit"
+        ],
+        "scope": {
+          "level": "across_sampled_contexts",
+          "occurrence_ids": [
+            "pwep_46436bf6-3a91-47fd-8443-ce5f997f53e6",
+            "pwep_ffe515f4-4b48-48d4-8df2-c1acf2dc8f91"
+          ],
+          "person_ids": [],
+          "description": "Two distinct task-related occurrences; evidence for context-specific actions, not a recurring part role."
+        },
+        "evidence_ids": [
+          "O45b870b9e2e2b5f0906a",
+          "O93f05e91e3aae58e3d97",
+          "Ob420adecd67e6220d01b",
+          "O81f07c55cfa8394eaa9b",
+          "O3dbde8db8c90507a80f7"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [],
+        "support_basis": [
+          "direct_report",
+          "stated_aim",
+          "reported_effect",
+          "context_comparison",
+          "scope_limit"
+        ],
+        "rationale": "The reports specify actual requirements, limited correction, learning, and a clearer response. They support practical capacities without establishing an inner critic, unblending, or a general Manager role.",
+        "remaining_uncertainty": [
+          "The evidence does not establish how you related internally to yourself during the mistake episode."
+        ]
+      },
+      {
+        "id": "C10",
+        "text": "In one practical-uncertainty episode, you left a decision alone until you knew more and reported being unable to take the next practical step. In a separate reply wait, you thought the other person was probably busy, waited without changing what you were doing, and moved on once you had information. These are situational reports of waiting for information, not evidence of a generalized Manager or Firefighter pattern.",
+        "kind": "supported_interpretation",
+        "constructs": [
+          "practical_explanation",
+          "description",
+          "scope_limit",
+          "context_contrast"
+        ],
+        "scope": {
+          "level": "across_sampled_contexts",
+          "occurrence_ids": [
+            "pwep_36cdcd12-3da2-4d9d-84cf-bababffd5e8d",
+            "pwep_8049a445-f1fb-43b8-a427-0528ca9c2a2d"
+          ],
+          "person_ids": [],
+          "description": "Two separate waiting situations; no shared protective organization is established."
+        },
+        "evidence_ids": [
+          "Ocd2f93c58d83c7e159dc",
+          "O9b6470112c1e1978246c",
+          "O36111b41bf2c77ff90bc",
+          "O4182382ee0fdcb92c7d5",
+          "Oa61493b31389b14cbec4"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [],
+        "support_basis": [
+          "direct_report",
+          "context_comparison",
+          "scope_limit"
+        ],
+        "rationale": "The practical step was reported as unavailable in one occurrence; the reply-wait account includes a situational interpretation and moving on with information. Neither report independently supports a protective role or a broader relational pattern.",
+        "remaining_uncertainty": [
+          "The practical decision's eventual outcome and the typicality of either waiting response are not established."
+        ]
+      },
+      {
+        "id": "C11",
+        "text": "In one separate two-pulls occurrence, you wanted both to get it right and to be done, and found a way to allow some of each. This supports a compromise in that event, not a polarized relationship between parts: the account does not establish that either pull blocked or intensified the other, and whether distinct parts were involved remains unresolved.",
+        "kind": "supported_interpretation",
+        "constructs": [
+          "polarization",
+          "part_relationship",
+          "capacity",
+          "scope_limit"
+        ],
+        "scope": {
+          "level": "occurrence",
+          "occurrence_ids": [
+            "pwep_0ff9602d-9e6f-44ca-949e-56d908508f23"
+          ],
+          "person_ids": [],
+          "description": "One reported internal-tension occurrence with a compromise; not evidence of a recurring polarity."
+        },
+        "evidence_ids": [
+          "O35492e5e637da91496a8",
+          "O4cddc669f28d6f4a04b3"
+        ],
+        "counterevidence_ids": [],
+        "sequence_edge_ids": [],
+        "depends_on_claim_ids": [],
+        "support_basis": [
+          "direct_report",
+          "model_formulation",
+          "scope_limit"
+        ],
+        "rationale": "Both wants and a way to allow some of each are directly reported. Without evidence of mutual obstruction or escalation, a polarized-parts formulation would exceed the account.",
+        "remaining_uncertainty": [
+          "Whether either pull constrained the other, or whether separate parts were involved, remains unclear."
+        ]
+      }
+    ],
+    "name_registry": [
+      {
+        "name_id": "N1",
+        "name": "Need for care",
+        "entity_kind": "ifs_part",
+        "role": "exile",
+        "author_generated": true,
+        "supporting_claim_ids": [
+          "C01"
+        ]
+      },
+      {
+        "name_id": "N2",
+        "name": "Keep the request small",
+        "entity_kind": "ifs_part",
+        "role": "manager",
+        "author_generated": true,
+        "supporting_claim_ids": [
+          "C02",
+          "C04"
+        ]
+      },
+      {
+        "name_id": "N3",
+        "name": "Push the need away",
+        "entity_kind": "ifs_part",
+        "role": "firefighter",
+        "author_generated": true,
+        "supporting_claim_ids": [
+          "C03",
+          "C05"
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "id": "R01",
+        "from_name_id": "N2",
+        "to_name_id": "N1",
+        "relation": "protects",
+        "claim_ids": [
+          "C04"
+        ]
+      },
+      {
+        "id": "R02",
+        "from_name_id": "N3",
+        "to_name_id": "N1",
+        "relation": "protects",
+        "claim_ids": [
+          "C05"
+        ]
+      }
+    ],
+    "reflection_questions": []
+  },
+  "digests": {
+    "artifact_sha256": "b41a0ee49f92ba78377f7307b4c046fcabbcca85e0a71a685f7e0f813de48314",
+    "report_markdown_sha256": "8657eb6d88008f1dac90424afc8ecc03935654af630acd5cae841281b9d9f016"
+  }
+}

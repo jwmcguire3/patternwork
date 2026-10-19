@@ -1,0 +1,22 @@
+npm notice run patternwork@0.1.0 npx
+npm notice run tsx --test tests/report-workflow/pwrp71-fictional-ifs-diagnostic.test.ts
+✔ diagnostic CLI requires exact owner scope, candidate, and both approved caps (1.083ms)
+✔ the explicit continuation flag cannot authorize a fresh run without its exact prior unknown attempt (325.6882ms)
+✔ the changed OpenAI route preserves the prior unknown attempt and requires an explicit one-time continuation (232.7006ms)
+✔ an explicitly authorized OpenAI continuation allocates a fresh C01 attempt and keeps the Azure reservation (473.784ms)
+✔ source, runtime, and packet pin mismatches reject before transport creation (356.4785ms)
+✔ pure current-source pin checks reject every changed comparison surface (0.4414ms)
+✔ the pre-dispatch transport rejects changed provider parameters before fetch (7.9354ms)
+✔ the diagnostic fetch requires an exact active journal reservation and dispatches each attempt once (15.3191ms)
+✔ direct unjournaled PWRP calls and diagnostic-to-qualification conversions fail closed (3.6021ms)
+✔ a restarted diagnostic retains dispatch evidence before a profile result was saved (210.0993ms)
+✔ the fictional diagnostic rejects an offline/mock returned model before review or C02 (219.559ms)
+✔ an unknown-cost attempt retains its reservation and the fixed diagnostic never retries (446.8551ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2632.7571

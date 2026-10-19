@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "PATTERNWORK-C10-COMPOSITION-OUTPUT-RECOVERY-POST-DISPATCH-GUARD-V1",
+  "status": "passed",
+  "executedAt": "2026-10-15T14:53:26.584Z",
+  "existingAttempt3CallId": "00ad828f-50a8-4637-b5f3-5d7a86eac2fb",
+  "existingAttempt3Status": "completed",
+  "replayExitCode": 1,
+  "replayRejected": true,
+  "replayError": "C10 output recovery requires the exact reconciled attempt 1, incomplete attempt 2, unchanged source chain, retained P02 unknown-cost reserves, and unused attempt-3 artifacts.",
+  "providerDispatches": 0,
+  "sideEffectsAbsent": true,
+  "note": "The one-use recovery CLI was invoked after attempt 3 was journaled; it rejected the replay without changing the journal or request/response/output inventories."
+}

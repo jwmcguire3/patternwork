@@ -1,26 +1,15 @@
-# Synthesis report — v7
+# Synthesis report — revision 2
 
-Use the v7 shared contract. `report_type = SYNTHESIS`.
+Use the shared contract. Set report_type to SYNTHESIS. Use the underlying current evidence and the explicitly accepted layer drafts and claim registry supplied by runtime. An accepted interpretation remains reviewable; three lenses on one answer are not three observations.
 
-Read the underlying current evidence and the explicitly accepted layer drafts/claim registry supplied by runtime. The layer claims are reviewable interpretations sharing source evidence, not three independent observations. Preserve their provenance and names, but do not amplify an error merely because an earlier layer was accepted. Flag a source-layer conflict for revision before release.
+Write an integrated entry point that makes sense without reading the other reports. Its value is explaining meaningful relationships among findings, not concatenating summaries or repeating every portrait. Let the organization be one supported loop, multiple processes, nested responses, contextual contrasts, or no single center. Do not force a master wound, hidden cause, lens quota, or dramatic ending.
 
-Write an integrated entry point that is understandable without first reading the layer reports. It may be presented first even though generated last. Its job is to explain consequential relationships among findings, not concatenate summaries or retell every portrait. Do not inflate it to be longer or more dramatic than the layer material supports.
+Distinguish same-event integration, cross-context comparison, useful two- or three-lens integration, divergence, and unresolved relationships. No lens must contribute to every insight. A single-lens finding can be important without being cross-lens corroboration. Co-occurrence does not prove shared cause, and one answer read three ways remains one answer.
 
-The organizing architecture may be one loop, several independent processes, a nested arrangement, a contextual contrast, or no unifying pattern. Do not force a master thesis, a hidden core wound, a convergence count, or a required counterpoint. Let the reader see multiple centers of importance when that is what the evidence supports.
+Evaluate the strongest material integration opportunity explicitly in your drafting: preserve its source-linked warrant and realize it in prose if supported. A convergence should explain something that separate descriptions miss. A divergence should describe the actual mismatch, such as effective functioning without increased choice. First rule out different occurrences, scopes, missingness, and layer errors. Disagreement between reports is not itself a psychological finding. Do not amplify a source-layer error because it was previously accepted; flag it for revision before release.
 
-Distinguish:
-- same-event integration: different evidence channels describe aspects of one occurrence;
-- cross-context comparison: similar or differing actions/jobs across genuinely identified contexts;
-- two-lens integration or three-lens integration: each contributing lens adds actual explanatory value;
-- divergence: evidence channels differ in a meaningful way;
-- unresolved relationship: an attractive connection has not been established.
+You may originate supported integrations: a present organizing rule, a relationship between protection and vulnerability, a change of goal, or a condition of greater flexibility. Preserve leaf evidence and the status of each premise. An open exile hypothesis cannot become the established cause of the whole system. Separate work and relationship scenes cannot silently become one cascade. A loop needs evidence of a return.
 
-No lens must contribute to every insight. A single-lens finding may be important context but must not be advertised as cross-lens corroboration. One answer read three ways is still one answer. Co-occurrence does not prove shared cause. Do not make all pressure protection, all protection attachment, or all relief ventral/Self/security.
+Reuse accepted entity IDs and working names. Do not silently merge, split, or rename identities. An identity conflict must be resolved consistently in the affected layers before release, not cosmetically concealed in synthesis. A genuinely new synthesis-level pattern needs its own support and should not duplicate an established part under a new brand.
 
-A convergence should explain something that would be missed by treating the observations separately. A divergence should describe the actual mismatch—such as continued functioning without increased choice—not declare one channel more truthful. First rule out mismatched episodes, different scopes, missing data, and layer errors. Report disagreement is not itself a psychological finding.
-
-Originate supported integrations, including present organizing rules, relationships among protectors and vulnerabilities, changes of goal, and conditions of greater choice. Preserve leaf evidence and the status of premises. Do not turn an open exile hypothesis into the cause of a confident system map. Do not splice separate work and relationship scenes into a cascade. A cycle requires evidence of a return, not just a chain of plausible steps.
-
-Reuse accepted entity IDs and working names. Do not merge/split/rename accepted entities silently. Propose an identity reconciliation for semantic review when evidence warrants it; runtime must update affected layers consistently before release. A genuinely new synthesis-level pattern can have a new handle with its own supporting claim. Do not rename existing parts just to give the synthesis its own branding.
-
-Preserve capacities, real constraints, contrary examples, and omitted information where they change the picture. Costs need evidence and are not mandatory. Neither a devastating ending nor an encouraging one is required. End at the supported understanding; navigation to layer reports belongs in a small product interface rather than repeated prose about what the report will do.
+Retain practical constraints, capacities, contrary examples, and material uncertainty when they change the whole. Do not equate all pressure with protection, all protection with attachment, or all relief with Self, security, or a vagal state. The synthesis may be presented first although generated last. Navigation and disclaimers belong in the interface, not repeated prose. End when the integrated understanding is complete.

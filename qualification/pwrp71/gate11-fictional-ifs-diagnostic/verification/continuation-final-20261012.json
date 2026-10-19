@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-12T19:58:05Z",
+  "implementationCommit": "c679a94",
+  "implementationCommitPushed": true,
+  "checks": [
+    {
+      "command": "npx tsx --test tests/report-workflow/pwrp71-fictional-ifs-diagnostic.test.ts",
+      "exitCode": 0,
+      "result": "26 passed; 0 failed"
+    },
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "result": "436 passed; 0 failed"
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "npx eslint scripts/pwrp71-fictional-ifs-diagnostic/diagnostic.ts tests/report-workflow/pwrp71-fictional-ifs-diagnostic.test.ts",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "warnings": [
+        "Existing broad dynamic-file-pattern warnings in report-runner.ts, source-integrity.ts, and qualification/fixtures.ts.",
+        "Existing stale baseline-browser-mapping data warning."
+      ]
+    }
+  ],
+  "networkPreflight": {
+    "kind": "keyless_no_dispatch_probe",
+    "dnsResolved": true,
+    "addressFamily": 4,
+    "openrouterModelsHttpStatus": 200,
+    "apiKeyRead": false,
+    "reportPromptSent": false,
+    "exitCode": 0
+  },
+  "liveDiagnostic": {
+    "commandRecord": "qualification/pwrp71/gate11-fictional-ifs-diagnostic/live/gate11-c01-c02-ifs-schema-correction-20261012/cli-execution.log",
+    "exitCodeRecord": "qualification/pwrp71/gate11-fictional-ifs-diagnostic/live/gate11-c01-c02-ifs-schema-correction-20261012/cli-execution.log.exit-code.txt",
+    "exitCode": 1,
+    "diagnosticStatus": "diagnostic_stopped",
+    "runId": "gate11-c01-c02-ifs-schema-correction-20261012",
+    "runSha256": "cdaf7c96acbbb4e0c378d1417a37e0515e964fc5aa6d37ef4fa1b6319b40060f",
+    "runDigestVerified": true,
+    "attemptsFileSha256": "84391ad5f477f367c9066bf788f43e150a404095f9f38eba418c1b59b06f3fdf",
+    "dispatchesFileSha256": "dcda92dcdf3cff6752fc1eedc241795ab1e4d18b39bafb2d31f55ce670cf5fe7",
+    "cliLogSha256": "1941657d5618e34495391486c289ffccd104312afdaa11b4cb83493badc7da72",
+    "semanticEvaluation": "qualification/pwrp71/gate11-fictional-ifs-diagnostic/live/gate11-c01-c02-ifs-schema-correction-20261012/semantic-evaluation.md",
+    "totalDispatchReceiptsIncludingHistory": 4,
+    "newReportDispatches": 1,
+    "c01": {
+      "status": "failed",
+      "attemptId": "pwrp71-fictional-diagnostic:gate11-c01-c02-ifs-schema-correction-20261012:C01:openai-schema-correction-continuation-1:IFS:initial:openai-gpt-6-luna-max:attempt-1",
+      "generationId": "gen-1791834686-tXZrRc6zwWMspmXBEy1f",
+      "httpStatus": 200,
+      "finishReason": "length",
+      "elapsedMs": 158503,
+      "maxOutputTokens": 20000,
+      "inputTokens": 21376,
+      "outputTokens": 20000,
+      "reasoningTokens": 20000,
+      "totalTokens": 41376,
+      "providerResultSha256": "1db103124d07bf3b83f671eb39f90d5e41d04867c8da9a17f418dfa8c32801c0",
+      "providerReportedCostMicros": 12138,
+      "validation": "not_run",
+      "automatedReview": "not_run",
+      "reportTextAvailable": false
+    },
+    "c02": {
+      "status": "not_dispatched",
+      "reason": "C01 failed before validation and automated review."
+    },
+    "budget": {
+      "priorUnknownReservedMicrosRetained": 345000,
+      "newProviderReportedCostMicros": 12138,
+      "remainingCurrentAuthorizationMicros": 2642862,
+      "invoiceSettlementConfirmed": false
+    },
+    "routingQualification": "not_claimed",
+    "productionActivationEffect": "none"
+  }
+}

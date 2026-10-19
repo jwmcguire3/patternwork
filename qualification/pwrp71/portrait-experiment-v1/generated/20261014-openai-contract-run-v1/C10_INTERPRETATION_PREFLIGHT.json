@@ -1,0 +1,31 @@
+{
+  "status": "authorized_recovery_preflight_passed_no_dispatch",
+  "qualificationStatus": "FICTIONAL_DIAGNOSTIC_ONLY_NOT_ROUTING_QUALIFICATION_OR_PRODUCTION_APPROVAL",
+  "profile": "C10",
+  "reportType": "IFS",
+  "stage": "interpretation",
+  "attemptNumber": 1,
+  "recoveryOfCallId": "48899da5-ce4e-45f2-a493-21ed1db01d8b",
+  "recoveryAfterCallId": null,
+  "packetSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+  "sourceObservationIndexSha256": "d2765bfe4008dd49bc5e6a2c719178f8466adb81af03422506f48a5121289676",
+  "requestBodySha256": "a264e2bbd73d44c8f0694755b0f645ef21ef4df9b14696cf6b57592609eb4139",
+  "maxOutputTokens": 128000,
+  "inputEnvelopeBytes": 134593,
+  "quotedReservationUpperBoundMicrodollars": 129649,
+  "expectedRequestSha256": "a264e2bbd73d44c8f0694755b0f645ef21ef4df9b14696cf6b57592609eb4139",
+  "matchesApprovedRequest": true,
+  "model": "gpt-6-luna",
+  "reasoningEffort": "max",
+  "serviceTier": "default",
+  "clientTimeoutMilliseconds": 1800000,
+  "existingUnknownReservationMicrodollars": 900000,
+  "carriedUnknownCostCallIds": [
+    "017fbfd7-ec20-47a1-bb09-2f5242debd0b",
+    "48899da5-ce4e-45f2-a493-21ed1db01d8b",
+    "e6f9fe4c-500c-4a80-a6e2-230d2ed63fb9"
+  ],
+  "additionalReservationMicrodollars": 300000,
+  "remainingAuthorizationAfterReservationMicrodollars": 1732986,
+  "providerDispatches": 0
+}

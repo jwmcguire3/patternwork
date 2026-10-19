@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "index": 1,
+      "idempotencyKey": "pwrp71-fictional-diagnostic:gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011:C01:IFS:initial:openai-gpt-6-luna-max:attempt-1",
+      "profileId": "C01",
+      "phase": "initial",
+      "model": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "wirePayloadSha256": "6ed4e11f7e3b81a302f4adc603380d4bcde17842b92dc2b5bca38465e0979c24",
+      "dispatchedAt": "2026-10-11T06:19:57.763Z",
+      "outcome": "response_received",
+      "responseAt": "2026-10-11T06:19:58.438Z",
+      "responseStatus": 400
+    },
+    {
+      "index": 2,
+      "idempotencyKey": "pwrp71-fictional-diagnostic:gate11-c01-c02-ifs-owner-authorized-diagnostic-20261011:C01:openai-route-continuation-1:IFS:initial:openai-gpt-6-luna-max:attempt-1",
+      "profileId": "C01",
+      "phase": "initial",
+      "requestVariant": "openai-route-continuation-1",
+      "model": "openai/gpt-6-luna",
+      "reasoningEffort": "max",
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "wirePayloadSha256": "10c477e2220c22d0a07ba97636ed64238bcc8ded9b3d3d6d08fb2dfcb0db5b1b",
+      "dispatchedAt": "2026-10-11T07:28:08.710Z",
+      "outcome": "no_http_response"
+    }
+  ]
+}

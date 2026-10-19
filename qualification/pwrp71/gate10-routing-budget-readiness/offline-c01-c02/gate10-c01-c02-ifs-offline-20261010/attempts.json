@@ -1,0 +1,317 @@
+{
+  "schemaVersion": 1,
+  "attempts": [
+    {
+      "attemptId": "pwrp71-qualification:gate10-c01-c02-ifs-offline-20261010:C01:IFS:initial:luna-medium:attempt-1",
+      "requestFingerprint": "93234a8fc3b662fb1147e8ca50aaaf83d7d0d1c891ad54b11609d4a52e687a6c",
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "status": "completed",
+      "startedAt": "2026-10-11T01:45:38.218Z",
+      "request": {
+        "requestedModel": "openai/gpt-6-luna",
+        "requestedReasoningEffort": "max",
+        "schemaName": "patternwork_ifs_pwrp71_candidate_1",
+        "maxOutputTokens": 20000,
+        "idempotencyKey": "pwrp71-qualification:gate10-c01-c02-ifs-offline-20261010:C01:IFS:initial:luna-medium:attempt-1",
+        "systemSha256": "9b5ca30210f364e0a2055f3da53b14aa1196940750b23cebbda682826fb98576",
+        "promptSha256": "5e261b258c64d1ab119d1a4bad84a0fd04d780a7b8600313871e77da819b58a4",
+        "localSchemaSha256": "704ff6838efac71106fb0b01276e13ef13ad705c4fb92b87e31b7adda59ecc87",
+        "wireSchemaSha256": "8f0f6f91d4037a2c929253bc21e35c96bc3f86c4c28193cafefe22640fb5b451"
+      },
+      "locallyEstimatedCostMicros": 0,
+      "reservedCostMicros": 0,
+      "maximumCallCostMicros": 3000000,
+      "aggregateCostCapMicros": 3000000,
+      "billingBasisSha256": "0018d4a8c7134c82d4be2d36c603bea3ff29f9300270b46a73ed1d17fdd1f77e",
+      "wirePayloadSha256": "6ed4e11f7e3b81a302f4adc603380d4bcde17842b92dc2b5bca38465e0979c24",
+      "usageStatus": "mock",
+      "usage": {
+        "generationId": "offline-2df8815a9da91170c1fea213",
+        "requestId": "offline-2df8815a9da91170c1fea213",
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 0,
+        "costMicros": 0,
+        "currency": "USD",
+        "model": "offline/mock"
+      },
+      "finishReason": "stop",
+      "providerResult": {
+        "ok": true,
+        "output": {
+          "report_release": "PWRP-7.1.0-candidate.1",
+          "release_id": "PWQE-5.1.0-candidate.1",
+          "snapshot_id": "fictional-C01-deepening",
+          "evidence_sha256": "7171b823f3be7044eeeb33d2779fc3fe66c235535807c8771d0b96e7c4c75b3d",
+          "report_type": "IFS",
+          "title": "Offline structural fixture for IFS",
+          "title_claim_ids": [],
+          "content_status": "insufficient_evidence",
+          "sections": [],
+          "claims": [],
+          "name_registry": [],
+          "relationships": [],
+          "reflection_questions": []
+        },
+        "usage": {
+          "generationId": "offline-2df8815a9da91170c1fea213",
+          "requestId": "offline-2df8815a9da91170c1fea213",
+          "inputTokens": 0,
+          "outputTokens": 0,
+          "reasoningTokens": 0,
+          "totalTokens": 0,
+          "costMicros": 0,
+          "currency": "USD",
+          "model": "offline/mock"
+        },
+        "finishReason": "stop"
+      },
+      "completedAt": "2026-10-11T01:45:38.223Z",
+      "elapsedMs": 0,
+      "validation": {
+        "ok": true,
+        "issues": [],
+        "draftSha256": "03df66543c68b602297d1e73da55c511ace6c99f41418b3d02c2e74415e2028c"
+      }
+    },
+    {
+      "attemptId": "pwrp71-qualification:gate10-c01-c02-ifs-offline-20261010:C01:IFS:review:luna-medium:attempt-2",
+      "requestFingerprint": "ab9d654f1c86253cb4243f32c0cced372653e9cef8d3ca2fd6876537aa196d7f",
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "status": "completed",
+      "startedAt": "2026-10-11T01:45:38.249Z",
+      "request": {
+        "requestedModel": "openai/gpt-6-luna",
+        "requestedReasoningEffort": "max",
+        "schemaName": "patternwork_ifs_pwrp71_review_candidate_1",
+        "maxOutputTokens": 20000,
+        "idempotencyKey": "pwrp71-qualification:gate10-c01-c02-ifs-offline-20261010:C01:IFS:review:luna-medium:attempt-2",
+        "systemSha256": "e6bdacc337546b6b1eb21ea2fc2d06169ead2154e8d00b2a153fc60dc4047888",
+        "promptSha256": "ac2137b9437ff380f2a9637181209755daa87e122c9c6473f76d18e138e6d5ac",
+        "localSchemaSha256": "811d007d4019cd9a789c1af7ac77151b98542d3668a176e76d94fe9a6ae68a64",
+        "wireSchemaSha256": "7af1ea0d6b22f826ed536f83affec498cc2215c1a3d6dcff17904d813de380fb"
+      },
+      "locallyEstimatedCostMicros": 0,
+      "reservedCostMicros": 0,
+      "maximumCallCostMicros": 3000000,
+      "aggregateCostCapMicros": 3000000,
+      "billingBasisSha256": "0018d4a8c7134c82d4be2d36c603bea3ff29f9300270b46a73ed1d17fdd1f77e",
+      "wirePayloadSha256": "6661a89a5b728a3c8a4327a65fb323993e85efff612df3262429a347a7092045",
+      "usageStatus": "mock",
+      "usage": {
+        "generationId": "offline-70ab6587eed242d405bb53fa",
+        "requestId": "offline-70ab6587eed242d405bb53fa",
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 0,
+        "costMicros": 0,
+        "currency": "USD",
+        "model": "offline/mock"
+      },
+      "finishReason": "stop",
+      "providerResult": {
+        "ok": true,
+        "output": {
+          "review_contract": "PWRP-REVIEW-7.0.0-candidate.1",
+          "report_release": "PWRP-7.1.0-candidate.1",
+          "reviewed_draft_sha256": "03df66543c68b602297d1e73da55c511ace6c99f41418b3d02c2e74415e2028c",
+          "reviewed_evidence_sha256": "7171b823f3be7044eeeb33d2779fc3fe66c235535807c8771d0b96e7c4c75b3d",
+          "verdict": "accept",
+          "issues": [],
+          "summary": "Offline deterministic structural mock; not a semantic or human approval."
+        },
+        "usage": {
+          "generationId": "offline-70ab6587eed242d405bb53fa",
+          "requestId": "offline-70ab6587eed242d405bb53fa",
+          "inputTokens": 0,
+          "outputTokens": 0,
+          "reasoningTokens": 0,
+          "totalTokens": 0,
+          "costMicros": 0,
+          "currency": "USD",
+          "model": "offline/mock"
+        },
+        "finishReason": "stop"
+      },
+      "completedAt": "2026-10-11T01:45:38.254Z",
+      "elapsedMs": 0,
+      "reviewReceipt": {
+        "receipt_type": "pwrp71_structural_review_receipt",
+        "report_release": "PWRP-7.1.0-candidate.1",
+        "source_manifest_sha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+        "report_id": "pwrp71_1c3278ba22e0977c7549d6d5a33b",
+        "reviewed_draft_sha256": "03df66543c68b602297d1e73da55c511ace6c99f41418b3d02c2e74415e2028c",
+        "reviewed_evidence_sha256": "7171b823f3be7044eeeb33d2779fc3fe66c235535807c8771d0b96e7c4c75b3d",
+        "verdict": "accept",
+        "review_sha256": "37b4249547de0fc10678a4d7b5f9f75fa5f4b7fc2f55ca8274ee0aceee5fcf2a",
+        "review": {
+          "review_contract": "PWRP-REVIEW-7.0.0-candidate.1",
+          "report_release": "PWRP-7.1.0-candidate.1",
+          "reviewed_draft_sha256": "03df66543c68b602297d1e73da55c511ace6c99f41418b3d02c2e74415e2028c",
+          "reviewed_evidence_sha256": "7171b823f3be7044eeeb33d2779fc3fe66c235535807c8771d0b96e7c4c75b3d",
+          "verdict": "accept",
+          "issues": [],
+          "summary": "Offline deterministic structural mock; not a semantic or human approval."
+        }
+      }
+    },
+    {
+      "attemptId": "pwrp71-qualification:gate10-c01-c02-ifs-offline-20261010:C02:IFS:initial:luna-medium:attempt-1",
+      "requestFingerprint": "206d4474747ad2c16e8cb61f0d7c014a1bbb8beb81334e43401b344c9280e54f",
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "status": "completed",
+      "startedAt": "2026-10-11T01:45:38.293Z",
+      "request": {
+        "requestedModel": "openai/gpt-6-luna",
+        "requestedReasoningEffort": "max",
+        "schemaName": "patternwork_ifs_pwrp71_candidate_1",
+        "maxOutputTokens": 20000,
+        "idempotencyKey": "pwrp71-qualification:gate10-c01-c02-ifs-offline-20261010:C02:IFS:initial:luna-medium:attempt-1",
+        "systemSha256": "9b5ca30210f364e0a2055f3da53b14aa1196940750b23cebbda682826fb98576",
+        "promptSha256": "7251733597840423b5ff95dd77ccb21dd9ebfffd82705dd41355f15d77d8c20c",
+        "localSchemaSha256": "704ff6838efac71106fb0b01276e13ef13ad705c4fb92b87e31b7adda59ecc87",
+        "wireSchemaSha256": "8f0f6f91d4037a2c929253bc21e35c96bc3f86c4c28193cafefe22640fb5b451"
+      },
+      "locallyEstimatedCostMicros": 0,
+      "reservedCostMicros": 0,
+      "maximumCallCostMicros": 3000000,
+      "aggregateCostCapMicros": 3000000,
+      "billingBasisSha256": "0018d4a8c7134c82d4be2d36c603bea3ff29f9300270b46a73ed1d17fdd1f77e",
+      "wirePayloadSha256": "9512d05c596173e8a97e846748bd40c0601e1daa32e64e20f41a2f1272f7dcfe",
+      "usageStatus": "mock",
+      "usage": {
+        "generationId": "offline-9e8c2dd0caf57952b66a2a1b",
+        "requestId": "offline-9e8c2dd0caf57952b66a2a1b",
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 0,
+        "costMicros": 0,
+        "currency": "USD",
+        "model": "offline/mock"
+      },
+      "finishReason": "stop",
+      "providerResult": {
+        "ok": true,
+        "output": {
+          "report_release": "PWRP-7.1.0-candidate.1",
+          "release_id": "PWQE-5.1.0-candidate.1",
+          "snapshot_id": "fictional-C02-deepening",
+          "evidence_sha256": "3dac1972a62b994a969c5cb2f65154c1d388b471c67ed5ac6f43c991417e2333",
+          "report_type": "IFS",
+          "title": "Offline structural fixture for IFS",
+          "title_claim_ids": [],
+          "content_status": "insufficient_evidence",
+          "sections": [],
+          "claims": [],
+          "name_registry": [],
+          "relationships": [],
+          "reflection_questions": []
+        },
+        "usage": {
+          "generationId": "offline-9e8c2dd0caf57952b66a2a1b",
+          "requestId": "offline-9e8c2dd0caf57952b66a2a1b",
+          "inputTokens": 0,
+          "outputTokens": 0,
+          "reasoningTokens": 0,
+          "totalTokens": 0,
+          "costMicros": 0,
+          "currency": "USD",
+          "model": "offline/mock"
+        },
+        "finishReason": "stop"
+      },
+      "completedAt": "2026-10-11T01:45:38.297Z",
+      "elapsedMs": 0,
+      "validation": {
+        "ok": true,
+        "issues": [],
+        "draftSha256": "991d1e707892ab0115b0d5ed0d19aae745215c4a26a28e53348ed657101ea066"
+      }
+    },
+    {
+      "attemptId": "pwrp71-qualification:gate10-c01-c02-ifs-offline-20261010:C02:IFS:review:luna-medium:attempt-2",
+      "requestFingerprint": "80cab7f2b34519e9a9219d7e66306fc2989b157888d72f02291a304675dd9610",
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "status": "completed",
+      "startedAt": "2026-10-11T01:45:38.319Z",
+      "request": {
+        "requestedModel": "openai/gpt-6-luna",
+        "requestedReasoningEffort": "max",
+        "schemaName": "patternwork_ifs_pwrp71_review_candidate_1",
+        "maxOutputTokens": 20000,
+        "idempotencyKey": "pwrp71-qualification:gate10-c01-c02-ifs-offline-20261010:C02:IFS:review:luna-medium:attempt-2",
+        "systemSha256": "e6bdacc337546b6b1eb21ea2fc2d06169ead2154e8d00b2a153fc60dc4047888",
+        "promptSha256": "8641046ebb7ac47c37a6ae4c17d5a985554229534c061cb495fce6b3f9724bb5",
+        "localSchemaSha256": "811d007d4019cd9a789c1af7ac77151b98542d3668a176e76d94fe9a6ae68a64",
+        "wireSchemaSha256": "7af1ea0d6b22f826ed536f83affec498cc2215c1a3d6dcff17904d813de380fb"
+      },
+      "locallyEstimatedCostMicros": 0,
+      "reservedCostMicros": 0,
+      "maximumCallCostMicros": 3000000,
+      "aggregateCostCapMicros": 3000000,
+      "billingBasisSha256": "0018d4a8c7134c82d4be2d36c603bea3ff29f9300270b46a73ed1d17fdd1f77e",
+      "wirePayloadSha256": "415665cfe42141a5674afc4864ee262fe78a1422e81aa17ef7b117b7b8884341",
+      "usageStatus": "mock",
+      "usage": {
+        "generationId": "offline-7bb7248d84a0c2740a8adf00",
+        "requestId": "offline-7bb7248d84a0c2740a8adf00",
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 0,
+        "costMicros": 0,
+        "currency": "USD",
+        "model": "offline/mock"
+      },
+      "finishReason": "stop",
+      "providerResult": {
+        "ok": true,
+        "output": {
+          "review_contract": "PWRP-REVIEW-7.0.0-candidate.1",
+          "report_release": "PWRP-7.1.0-candidate.1",
+          "reviewed_draft_sha256": "991d1e707892ab0115b0d5ed0d19aae745215c4a26a28e53348ed657101ea066",
+          "reviewed_evidence_sha256": "3dac1972a62b994a969c5cb2f65154c1d388b471c67ed5ac6f43c991417e2333",
+          "verdict": "accept",
+          "issues": [],
+          "summary": "Offline deterministic structural mock; not a semantic or human approval."
+        },
+        "usage": {
+          "generationId": "offline-7bb7248d84a0c2740a8adf00",
+          "requestId": "offline-7bb7248d84a0c2740a8adf00",
+          "inputTokens": 0,
+          "outputTokens": 0,
+          "reasoningTokens": 0,
+          "totalTokens": 0,
+          "costMicros": 0,
+          "currency": "USD",
+          "model": "offline/mock"
+        },
+        "finishReason": "stop"
+      },
+      "completedAt": "2026-10-11T01:45:38.323Z",
+      "elapsedMs": 0,
+      "reviewReceipt": {
+        "receipt_type": "pwrp71_structural_review_receipt",
+        "report_release": "PWRP-7.1.0-candidate.1",
+        "source_manifest_sha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+        "report_id": "pwrp71_5d173150567161c3fee53622292e",
+        "reviewed_draft_sha256": "991d1e707892ab0115b0d5ed0d19aae745215c4a26a28e53348ed657101ea066",
+        "reviewed_evidence_sha256": "3dac1972a62b994a969c5cb2f65154c1d388b471c67ed5ac6f43c991417e2333",
+        "verdict": "accept",
+        "review_sha256": "4977eb4bec8dd946cdce5844c0be680ffe229de8e2d77930504d4cc53d5a0bd9",
+        "review": {
+          "review_contract": "PWRP-REVIEW-7.0.0-candidate.1",
+          "report_release": "PWRP-7.1.0-candidate.1",
+          "reviewed_draft_sha256": "991d1e707892ab0115b0d5ed0d19aae745215c4a26a28e53348ed657101ea066",
+          "reviewed_evidence_sha256": "3dac1972a62b994a969c5cb2f65154c1d388b471c67ed5ac6f43c991417e2333",
+          "verdict": "accept",
+          "issues": [],
+          "summary": "Offline deterministic structural mock; not a semantic or human approval."
+        }
+      }
+    }
+  ]
+}

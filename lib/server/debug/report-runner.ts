@@ -7,6 +7,7 @@ import type { JsonObject, ReportType } from "../../question-engine/types.ts";
 import { sha256Canonical } from "../../report-contracts/delivery-validator.ts";
 import { OPENROUTER_SITE_MODEL, QUALIFICATION_MODEL_ORDER, UNQUALIFIED_MOCK_MODEL_POLICY } from "../openrouter/policy.ts";
 import { OpenRouterClient } from "../openrouter/client.ts";
+import { REVIEWED_IDENTITY_FREE_FIXTURE_CONTEXT } from "../openrouter/privacy-boundary.ts";
 import { generateCanonicalReport, type Pwrp71GenerationEvent } from "../reports/generator.ts";
 import { preparePwrp71Request } from "../reports/pwrp71-adapter.ts";
 import { loadPwrp71SourcePackage } from "../reports/pwrp71-source.ts";
@@ -214,13 +215,13 @@ async function generateDebugDraft(input: {
     reportType: input.reportType,
     input: prepared.value.user_data,
     packets: [packet],
-    provider: new OpenRouterClient(),
+    provider: new OpenRouterClient({ privacyIdentityContext: REVIEWED_IDENTITY_FREE_FIXTURE_CONTEXT }),
     invocationKey: `patternwork-debug-pwrp71:${input.runId}`,
     spentMicros: input.spentMicros,
     costCapMicros: costCapMicros(),
     modelPolicy: UNQUALIFIED_MOCK_MODEL_POLICY,
     contractVersion: "v7.1",
-    pwrp71: { request: prepared.value, packet, source: resolved.reportSource },
+    pwrp71: { request: prepared.value, packet, source: resolved.reportSource, questionSource: resolved.questionSource },
     onPwrp71Event: (event) => { events.push(event); },
   });
   if (!result.ok) throw new Error(`debug_${result.failure.code}:${result.failure.message}`);

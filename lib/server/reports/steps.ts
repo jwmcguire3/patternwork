@@ -1,4 +1,4 @@
-import { FatalError, RetryableError } from "workflow";
+import { FatalError, RetryableError } from "@workflow/errors";
 import type { JsonObject, ReportType } from "../../question-engine/types.ts";
 import { getReportWorkflowDependencies } from "./dependencies.ts";
 import { generateCanonicalReport } from "./generator.ts";
@@ -96,6 +96,10 @@ export async function generateReportStep(
   const dependencies = getReportWorkflowDependencies();
   const isPwrp71 = prepared.contractVersion === "v7.1";
   const packet = prepared.routerPacket;
+  // Keep identity values invocation-local. The durable workflow must never
+  // checkpoint them in step arguments or PreparedReportInputs.
+  const canonicalSnapshot = await dependencies.snapshotBoundary.loadAndDecryptSnapshot(input);
+  const privacyIdentityContext = dependencies.snapshotBoundary.getLocalProviderIdentityContext?.(canonicalSnapshot);
   let pwrp71: Parameters<typeof generateCanonicalReport>[0]["pwrp71"];
   if (isPwrp71) {
     if (!packet || !prepared.qualificationManifestSha256 || !prepared.sourceManifestSha256 || !prepared.reportSourceManifestSha256) {
@@ -105,7 +109,9 @@ export async function generateReportStep(
       loadPwqe51SourcePackage(dependencies.workspaceRoot),
       loadPwrp71SourcePackage(dependencies.workspaceRoot),
     ]);
-    const canonicalSnapshot = await dependencies.snapshotBoundary.loadAndDecryptSnapshot(input);
+    if (questionSource.sourceManifestSha256 !== prepared.sourceManifestSha256 || reportSource.manifestSha256 !== prepared.reportSourceManifestSha256) {
+      throw new FatalError("pwrp71_source_manifest_changed_since_preparation");
+    }
     const canonicalPacket = objectRecord(canonicalSnapshot.canonicalSnapshot.router_packet);
     if (canonicalSnapshot.snapshotId !== prepared.snapshot.snapshotId
       || canonicalSnapshot.snapshotRevision !== prepared.snapshot.snapshotRevision
@@ -118,13 +124,16 @@ export async function generateReportStep(
     const acceptedLayers = objectRecord(bundle?.accepted_layers) as Readonly<Record<string, JsonObject>> | undefined;
     const preparedRequest = preparePwrp71Request({ packet, reportType, questionSource, reportSource, acceptedLayers, canonicalResponseEvidence });
     if (!preparedRequest.ok) throw new FatalError(`pwrp71_request_invalid:${JSON.stringify(preparedRequest.issues)}`);
-    pwrp71 = { request: preparedRequest.value, packet, source: reportSource };
+    pwrp71 = { request: preparedRequest.value, packet, source: reportSource, questionSource };
   }
+  if (isPwrp71 && !dependencies.createPwrp71Provider) throw new FatalError("configuration_error:PWRP 7.1 requires the durable production provider factory.");
+  const budgeted = isPwrp71 ? dependencies.createPwrp71Provider!({ input, prepared, reportType, privacyIdentityContext }) : undefined;
   const outcome = await generateCanonicalReport({
     reportType,
     input: reportInput,
     packets: (prepared.contractVersion === "v6" || prepared.contractVersion === "v7.1") && prepared.routerPacket ? [prepared.routerPacket] : prepared.packets,
-    provider: dependencies.provider,
+    provider: isPwrp71 ? budgeted!.provider : dependencies.provider,
+    onPwrp71Event: budgeted?.onPwrp71Event,
     invocationKey: input.invocationKey,
     spentMicros,
     costCapMicros: dependencies.costCapMicros ?? 20_000_000,
@@ -136,6 +145,7 @@ export async function generateReportStep(
     qualificationManifestSha256: prepared.qualificationManifestSha256,
     snapshotId: prepared.snapshot.snapshotId,
     pwrp71,
+    privacyIdentityContext,
   });
   if (!outcome.ok && outcome.failure.retryable) {
     throw new RetryableError(`${outcome.failure.code}:${outcome.failure.message}`, { retryAfter: "30s" });

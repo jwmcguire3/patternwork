@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-ATTEMPT3-TRANSPORT-DIAGNOSTIC-V1",
+  "recordedAt": "2026-10-15T12:55:46Z",
+  "scope": {
+    "profile": "P02",
+    "reportType": "IFS",
+    "stage": "interpretation",
+    "fixtureSet": "route-replays-v5",
+    "provider": "OpenAI direct API",
+    "model": "gpt-6-luna",
+    "reasoningEffort": "max"
+  },
+  "callId": "e6f9fe4c-500c-4a80-a6e2-230d2ed63fb9",
+  "status": "unknown_cost",
+  "requestFile": "requests/P02.interpretation.attempt-3.request.json",
+  "requestBodySha256": "f8c36e20ba9043a8bfc4392c7b11c174f6766d60b796ab175c4ee29cdd5b9cb6",
+  "responseStatus": null,
+  "responseFile": null,
+  "responseFileExists": false,
+  "transportError": "fetch failed",
+  "automaticRetry": false,
+  "attempt3ReservationMicrodollars": 300000,
+  "firstUnknownCostReservationMicrodollars": 300000,
+  "settledUpperBoundMicrodollars": 19650,
+  "totalReservedMicrodollars": 600000,
+  "remainingAuthorizationMicrodollars": 2380350,
+  "noCostConnectivityProbe": {
+    "endpoint": "https://api.openai.com/v1/models",
+    "httpStatus": 200,
+    "requestId": "48f9d575-d513-4974-acc5-e219956bdc9d",
+    "modelVisible": true,
+    "costMicrodollars": 0,
+    "generationRequests": 0
+  },
+  "interpretation": "The authorized POST failed at the client transport layer without an HTTP status or retained provider response. A subsequent authenticated non-generative GET reached the same OpenAI API host and confirmed gpt-6-luna visibility later; this does not establish whether the POST reached billing. The $0.30 reservation remains locked. No fourth P02 interpretation attempt is authorized, and downstream P02/C10 stages cannot proceed without a usable reviewed P02 interpretation.",
+  "clientGenerationPostAttempts": 3,
+  "providerAcceptanceKnown": false
+}

@@ -15,8 +15,8 @@ function snapshot(completedPass: 1 | 2 = 1, response: JsonValue = { schemaVersio
     : { completion_mode: "pass2_complete", last_completed_stage: "S5", safe_resume_stage: "complete" };
   return {
     databaseId: "db-snapshot-1",
-    assessmentSessionId: "private-session-id",
-    snapshotId: "pwsn_test",
+    assessmentSessionId: "pwas_00000000-0000-4000-8000-000000000001",
+    snapshotId: "pwsn_00000000-0000-4000-8000-000000000001",
     snapshotRevision: "1",
     completedPass,
     evidenceSha256: "a".repeat(64),

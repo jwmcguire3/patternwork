@@ -4,11 +4,13 @@ import type { JsonObject, LayerReportType, ReportType } from "../../lib/question
 import { sha256Canonical, sha256Text } from "../../lib/report-contracts/delivery-validator.ts";
 import type { LayerReportArtifact, ReportEvidencePacketV3_1, SynthesisAudit } from "../../lib/report-contracts/types.ts";
 import { UNQUALIFIED_MOCK_MODEL_POLICY } from "../../lib/server/openrouter/policy.ts";
+import { OpenRouterClient } from "../../lib/server/openrouter/client.ts";
 import type { OpenRouterGenerationRequest, OpenRouterGenerationResult, OpenRouterTransport, OpenRouterUsage } from "../../lib/server/openrouter/types.ts";
 import { buildPseudonymousPacketsFromCanonicalSnapshot } from "../../lib/server/reports/packet-builder.ts";
 import { setReportWorkflowDependenciesForTests } from "../../lib/server/reports/dependencies.ts";
 import { ReportPipelineError, runPassReportPipeline } from "../../lib/server/reports/pipeline.ts";
 import { buildValidatedSynthesisBundle } from "../../lib/server/reports/synthesis.ts";
+import { generateReportStep } from "../../lib/server/reports/steps.ts";
 import type { DecryptedAssessmentSnapshot, GeneratedCanonicalArtifact, PassReportWorkflowInput, PreparedReportInputs, ReportWorkflowDependencies, ReportWorkflowPersistence } from "../../lib/server/reports/types.ts";
 import { passReportWorkflow } from "../../workflows/pass-report.ts";
 
@@ -129,6 +131,60 @@ test("invalid generation records failure and never releases partial artifacts", 
   assert.deepEqual(persistence.usages, []);
   assert.deepEqual(persistence.failures, ["artifact_validation_failed"]);
   assert.equal(provider.calls.length, 3);
+});
+
+test("durable generation keeps local account, email, and respondent-name checks in the dispatch path", async () => {
+  const previousNodeEnv = process.env.NODE_ENV;
+  Reflect.set(process.env, "NODE_ENV", "test");
+  const snapshotValue = snapshot(2);
+  const persistence = new RecordingPersistence();
+  let dispatches = 0;
+  const provider = new OpenRouterClient({ apiKey: "test", fetch: async () => {
+    dispatches += 1;
+    return Response.json({});
+  } });
+  const identityContext = {
+    identityInventoryReviewed: true as const,
+    respondentNames: ["Mara Jones"],
+    accountIds: ["acct-78421"],
+    emails: ["mara@example.test"],
+  };
+  const configured: ReportWorkflowDependencies = {
+    ...dependencies(snapshotValue, provider, persistence),
+    snapshotBoundary: {
+      async loadAndDecryptSnapshot() { return snapshotValue; },
+      async buildPseudonymousPackets() { return []; },
+      getLocalProviderIdentityContext() { return identityContext; },
+    },
+  };
+  setReportWorkflowDependenciesForTests(configured);
+  const prepared: PreparedReportInputs = {
+    snapshot: {
+      databaseId: snapshotValue.databaseId,
+      assessmentSessionId: snapshotValue.assessmentSessionId,
+      snapshotId: snapshotValue.snapshotId,
+      snapshotRevision: snapshotValue.snapshotRevision,
+      completedPass: snapshotValue.completedPass,
+      evidenceSha256: snapshotValue.evidenceSha256,
+      scopeSha256: snapshotValue.scopeSha256,
+    },
+    packets: [],
+  };
+  const input = { assessmentSessionId: "session", snapshotId: "pwsn_pipeline", completedPass: 2 as const, invocationKey: "privacy-step" };
+  try {
+    // Names are not rejected by the legacy projection itself, so this proves
+    // the durable step retrieves and forwards the local-only identity context.
+    for (const answer of ["Mara Jones"]) {
+      const outcome = await generateReportStep(input, prepared, "IFS", { answer }, 0);
+      assert.ok("code" in outcome);
+      assert.equal(outcome.code, "client_error");
+    }
+    assert.equal(dispatches, 0, "known identities must be blocked by the production OpenRouter client before HTTP dispatch");
+  } finally {
+    setReportWorkflowDependenciesForTests(undefined);
+    if (previousNodeEnv === undefined) Reflect.deleteProperty(process.env, "NODE_ENV");
+    else Reflect.set(process.env, "NODE_ENV", previousNodeEnv);
+  }
 });
 
 test("an already released workflow still invokes idempotent delivery", async () => {

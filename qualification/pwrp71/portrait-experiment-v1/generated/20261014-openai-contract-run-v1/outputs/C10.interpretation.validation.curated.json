@@ -1,0 +1,384 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-INTERPRETATION-SOURCE-VALIDATION-V1",
+  "validationMode": "intermediate_interpretation_graph_source_lineage",
+  "status": "source_reference_checks_passed",
+  "checkedAt": "2026-10-15T14:11:31.555Z",
+  "profileId": "C10",
+  "attemptNumber": 1,
+  "packetSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+  "experimentSha256": "eecb94ff118569ff44288fc81333aa42d0dee6dd868b514e02d3f0e09b47db33",
+  "sourceIdentity": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "sourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb",
+    "authoredFixtureFile": "C10.json",
+    "authoredFixtureSha256": "db6e0b9e8296741324c1aef0e4b481f70468ce4114a599ee8c2907df944d3b81",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5"
+  },
+  "modelOutputFile": "outputs/C10.interpretation.curated.json",
+  "modelOutputFileSha256": "41a33a78f5183cbdb19ff76cc66e6fc1a47cd8f3417732ec998d21bfbcbae9c0",
+  "modelOutputCompactSha256": "84a0277eab37554585f25823a98d7bbfbf80d6b7cf88d3f4f61c55415f7884f5",
+  "sourceObservationIndexFile": "outputs/C10.source-observation-index-v3.json",
+  "sourceObservationIndexFileSha256": "d2765bfe4008dd49bc5e6a2c719178f8466adb81af03422506f48a5121289676",
+  "reportManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+  "reportDraftSchemaSha256": "14e880841aab064593b777b9d113376a30338968e4b0375a38955b174e55b4ba",
+  "claimEvidence": [
+    {
+      "claimId": "C10-C01",
+      "kind": "observation",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+      ],
+      "citedSourceObservations": [
+        {
+          "observationId": "Ocdd69071862c457438ee",
+          "sourceResponseId": "C10-SRC-D82-1",
+          "responseId": "pwr_09b1e894f3cfffa5c1d32b69cf2cc803511ed5a8",
+          "itemId": "D82",
+          "optionId": "D82.gradual",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "first",
+          "basis": "actual_recalled",
+          "capture": "onset_shape",
+          "targetIds": [
+            "coverage_onset_shape:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first"
+          ]
+        },
+        {
+          "observationId": "O8426258b9708c505f5a0",
+          "sourceResponseId": "C10-SRC-M10-1",
+          "responseId": "pwr_d4a80e41fe6d11cc596a6b8b3a62955a148a6f46",
+          "itemId": "M10",
+          "optionId": "M10.words",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "first",
+          "basis": "actual_recalled",
+          "capture": "first_notice",
+          "targetIds": [
+            "coverage:M10"
+          ]
+        },
+        {
+          "observationId": "Off8cd05760c5de43ae55",
+          "sourceResponseId": "C10-SRC-D29-1",
+          "responseId": "pwr_0c22aa3700face8a3bef93789737285a0cbf97fb",
+          "itemId": "D29",
+          "optionId": "D29.narrow",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "first",
+          "basis": "actual_recalled",
+          "capture": "attention",
+          "targetIds": [
+            "attention:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first"
+          ]
+        },
+        {
+          "observationId": "Oc1adc6f70b7c9cc1f73d",
+          "sourceResponseId": "C10-SRC-D32-1",
+          "responseId": "pwr_3b3000fdc56862a4bf290a5ea128305645328f91",
+          "itemId": "D32",
+          "optionId": "D32.both",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "first",
+          "basis": "actual_recalled",
+          "capture": "energy",
+          "targetIds": [
+            "energy:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first"
+          ]
+        },
+        {
+          "observationId": "O95b9431fbdc556acbb2a",
+          "sourceResponseId": "C10-SRC-D33-1",
+          "responseId": "pwr_39d5d5b6b9a53548fc8e99a87fe83faeb4919014",
+          "itemId": "D33",
+          "optionId": "D33.later",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "first",
+          "basis": "actual_recalled",
+          "capture": "noticed_order",
+          "targetIds": [
+            "noticed_order:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first"
+          ]
+        }
+      ]
+    },
+    {
+      "claimId": "C10-C02",
+      "kind": "observation",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+      ],
+      "citedSourceObservations": [
+        {
+          "observationId": "O0658ae705c4c7f122eba",
+          "sourceResponseId": "C10-SRC-D30-1",
+          "responseId": "pwr_fabb0be613dcc929eb6c24ccb70df9fe121a2503",
+          "itemId": "D30",
+          "optionId": "D30.stuck",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "first",
+          "basis": "actual_recalled",
+          "capture": "speech_access",
+          "targetIds": [
+            "words:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first"
+          ]
+        },
+        {
+          "observationId": "O397375211099023b504b",
+          "sourceResponseId": "C10-SRC-D34-1",
+          "responseId": "pwr_d629eef3b52946c4bb33f5ed7c548ada8ab585fc",
+          "itemId": "D34",
+          "optionId": "D34.words",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "first",
+          "basis": "actual_recalled",
+          "capture": "quiet_or_access",
+          "targetIds": [
+            "quiet_or_access:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first"
+          ]
+        }
+      ]
+    },
+    {
+      "claimId": "C10-C04",
+      "kind": "observation",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+      ],
+      "citedSourceObservations": [
+        {
+          "observationId": "Oc2946f9ba4b05c7e5f65",
+          "sourceResponseId": "C10-SRC-D36-1",
+          "responseId": "pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b",
+          "itemId": "D36",
+          "optionId": "D36.input",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "recovery/D36.input",
+          "basis": "actual_recalled",
+          "capture": "recovery_sequence",
+          "targetIds": [
+            "recovery_sequence:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery"
+          ]
+        },
+        {
+          "observationId": "Occa453554150fe009f5b",
+          "sourceResponseId": "C10-SRC-D36-1",
+          "responseId": "pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b",
+          "itemId": "D36",
+          "optionId": "D36.words",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "recovery/D36.words",
+          "basis": "actual_recalled",
+          "capture": "recovery_sequence",
+          "targetIds": [
+            "recovery_sequence:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery"
+          ]
+        },
+        {
+          "observationId": "O5a0b22af174f55b11f1c",
+          "sourceResponseId": "C10-SRC-D36-1",
+          "responseId": "pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b",
+          "itemId": "D36",
+          "optionId": "D36.think",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "recovery/D36.think",
+          "basis": "actual_recalled",
+          "capture": "recovery_sequence",
+          "targetIds": [
+            "recovery_sequence:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery"
+          ]
+        },
+        {
+          "observationId": "O543a044c866cd15b9573",
+          "sourceResponseId": "C10-SRC-M14-1",
+          "responseId": "pwr_7a1d6ad2542a41652d31babe767b7d838437fd4b",
+          "itemId": "M14",
+          "optionId": "M14.choice",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "later",
+          "basis": "actual_recalled",
+          "capture": "later_effect",
+          "targetIds": [
+            "coverage:M14"
+          ]
+        },
+        {
+          "observationId": "Ob22586b29466b74ea49b",
+          "sourceResponseId": "C10-SRC-D35-1",
+          "responseId": "pwr_279817fac66e40c76724c831e99238dabab77a96",
+          "itemId": "D35",
+          "optionId": "D35.choice",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "recovery",
+          "basis": "actual_recalled",
+          "capture": "recovery_marker",
+          "targetIds": [
+            "recovery_marker:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery"
+          ]
+        }
+      ]
+    },
+    {
+      "claimId": "C10-C05",
+      "kind": "observation",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+      ],
+      "citedSourceObservations": [
+        {
+          "observationId": "Od5373f2188ec6a5cd687",
+          "sourceResponseId": "C10-SRC-M12-1",
+          "responseId": "pwr_d4a979e4f470e04a518c56bb23447a77567c0ec0",
+          "itemId": "M12",
+          "optionId": "M12.function",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "first",
+          "basis": "actual_recalled",
+          "capture": "immediate_effect",
+          "targetIds": [
+            "coverage:M12"
+          ]
+        },
+        {
+          "observationId": "O183651e61cbf852b3de7",
+          "sourceResponseId": "C10-SRC-D80-1",
+          "responseId": "pwr_dd44064da012738e3229cd0b3310636154af826e",
+          "itemId": "D80",
+          "optionId": "D80.task",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "first",
+          "basis": "actual_recalled",
+          "capture": "remaining_capacity",
+          "targetIds": [
+            "coverage_remaining_capacity:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first"
+          ]
+        },
+        {
+          "observationId": "O94831d634b022e5d26f4",
+          "sourceResponseId": "C10-SRC-D85-1",
+          "responseId": "pwr_9f4a8cfc5a0427ecc1e7f614cf03fc4af764a405",
+          "itemId": "D85",
+          "optionId": "D85.function_first",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "recovery",
+          "basis": "actual_recalled",
+          "capture": "function_ease_order",
+          "targetIds": [
+            "coverage_function_ease_order:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery"
+          ]
+        },
+        {
+          "observationId": "O8d4de3c2dd3c05d5ebe0",
+          "sourceResponseId": "C10-SRC-D83-1",
+          "responseId": "pwr_be7fb75d25fdc08579d86e043b77a279e298abfb",
+          "itemId": "D83",
+          "optionId": "D83.settle",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "first",
+          "basis": "actual_recalled",
+          "capture": "residual_difficulty",
+          "targetIds": [
+            "coverage_residual_difficulty:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first"
+          ]
+        },
+        {
+          "observationId": "O6076a569a7a3123d3aa8",
+          "sourceResponseId": "C10-SRC-D81-1",
+          "responseId": "pwr_794df933034d12383fd993b1cb512e6259355964",
+          "itemId": "D81",
+          "optionId": "D81.steady_strained",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "first",
+          "basis": "actual_recalled",
+          "capture": "outward_inward",
+          "targetIds": [
+            "coverage_outward_inward:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first"
+          ]
+        }
+      ]
+    },
+    {
+      "claimId": "C10-C06",
+      "kind": "observation",
+      "scopeLevel": "occurrence",
+      "occurrenceIds": [
+        "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+      ],
+      "citedSourceObservations": [
+        {
+          "observationId": "O5ad2538a19201ee5851d",
+          "sourceResponseId": "C10-SRC-D37-1",
+          "responseId": "pwr_952b49285df46a85ac218899c49cb1d442e84fc0",
+          "itemId": "D37",
+          "optionId": "D37.part",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "recovery",
+          "basis": "actual_recalled",
+          "capture": "recovery_duration",
+          "targetIds": [
+            "recovery_duration:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery"
+          ]
+        },
+        {
+          "observationId": "O36b8ab6657f1876670d8",
+          "sourceResponseId": "C10-SRC-D84-1",
+          "responseId": "pwr_fd9bf498cc8bccc4b5d63f34e8fb9fdcbdd2d374",
+          "itemId": "D84",
+          "optionId": "D84.later_day",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "recovery",
+          "basis": "actual_recalled",
+          "capture": "easing_time_estimate",
+          "targetIds": [
+            "coverage_easing_time_estimate:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery"
+          ]
+        },
+        {
+          "observationId": "O929cbaf357c5d2854ed9",
+          "sourceResponseId": "C10-SRC-D86-1",
+          "responseId": "pwr_36ff3582215f970853f0b8f5cc1b66edda6b2772",
+          "itemId": "D86",
+          "optionId": "D86.setting",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "recovery",
+          "basis": "actual_recalled",
+          "capture": "recovery_conditions",
+          "targetIds": [
+            "coverage_recovery_conditions:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery"
+          ]
+        },
+        {
+          "observationId": "O20773d476bcbb179d2ef",
+          "sourceResponseId": "C10-SRC-D100-1",
+          "responseId": "pwr_65dc2c0225dd33ea9a58293a9c3b9ef2dca04358",
+          "itemId": "D100",
+          "optionId": "D100.same_less",
+          "occurrenceId": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+          "stepId": "recovery",
+          "basis": "actual_recalled",
+          "capture": "meaning_after_easing",
+          "targetIds": [
+            "coverage_meaning_after_easing:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": {
+    "onlyCurrentSourceAuthoredObservations": true,
+    "syntheticAnswersCannotSupportClaims": true,
+    "oneOccurrenceCannotSupportRecurrence": true,
+    "sequenceEdgesRequirePacketAndSourceIndexLineage": true,
+    "productionClaimSchema": "pinned_for_composed_draft_validation; not applied to intermediate graph",
+    "noHumanApprovalOrRoutingQualification": true
+  },
+  "issues": []
+}

@@ -1,0 +1,39 @@
+npm notice run patternwork@0.1.0 npx
+npm notice run tsx --test tests/report-workflow/pwrp71-fictional-ifs-diagnostic.test.ts
+✔ diagnostic CLI requires exact owner scope, candidate, and both approved caps (3.5282ms)
+✔ fresh budget epoch requires explicit owner authorization and cannot also request a continuation (0.2552ms)
+✔ 128k output continuation requires exact owner scope and both unchanged aggregate and explicit per-call limits (16.5195ms)
+✔ 128k output request keeps the pinned model, provider route, and $0.20 ceiling (393.8523ms)
+✔ the manual resend CLI fixes one C01 IFS non-ZDR request and requires both exact spending limits (172.1983ms)
+✔ the fixed resend run ID refuses reuse before route checks or provider dispatch (7.4103ms)
+✔ OpenRouter reachability preflight is an unauthenticated catalog GET and reports safe DNS causes (11.8557ms)
+✔ OpenRouter diagnostic route preflight blocks an empty OpenAI/ZDR intersection without credentials (4.4104ms)
+✔ owner-authorized non-ZDR route preflight requires an OpenAI endpoint and records retention policy without dispatch (1.1725ms)
+✔ an ineligible pre-dispatch route stops before reservations and safely permits a metadata recheck (875.2415ms)
+✔ the explicit continuation flag cannot authorize a fresh run without its exact prior unknown attempt (359.9524ms)
+✔ the changed OpenAI route preserves the prior unknown attempt and requires an explicit one-time continuation (380.5522ms)
+✔ a fresh owner-authorized epoch isolates its budget and retains safe transport causes (501.4888ms)
+✔ an explicitly authorized OpenAI continuation allocates a fresh C01 attempt and keeps the Azure reservation (869.5888ms)
+✔ owner-authorized non-ZDR continuation changes only retention policy, retains the epoch-2 unknown cost, and never replays it (919.8138ms)
+✔ schema-correction continuation carries all three unknown reservations and sends only a fresh C01 request on rejection (1378.4192ms)
+✔ schema-correction continuation resumes after a no-dispatch connectivity stop without replaying carried attempts (1427.1144ms)
+✔ 128k continuation carries the exact parent budget and stops after the first failed C01 request (1241.9186ms)
+✔ corrected non-ZDR no-dispatch preflight records actual retention policy and hashes the embedded wire schema (5.08ms)
+✔ the non-ZDR continuation rejects a modified parent journal before provider initialization (338.7225ms)
+✔ source, runtime, and packet pin mismatches reject before transport creation (560.3965ms)
+✔ pure current-source pin checks reject every changed comparison surface (0.5624ms)
+✔ the pre-dispatch transport rejects changed provider parameters before fetch (12.7967ms)
+✔ the diagnostic fetch requires an exact active journal reservation and dispatches each attempt once (60.3817ms)
+✔ the exact C01 error-detail resend gets one journaled HTTP attempt and cannot be repeated (234.7367ms)
+✔ direct unjournaled PWRP calls and diagnostic-to-qualification conversions fail closed (6.6574ms)
+✔ a restarted diagnostic retains dispatch evidence before a profile result was saved (377.2236ms)
+✔ the fictional diagnostic rejects an offline/mock returned model before review or C02 (495.1781ms)
+✔ an unknown-cost attempt retains its reservation and the fixed diagnostic never retries (699.2928ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 29
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13799.8081

@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-DISPATCH-GUARD-TESTS-V1",
+  "status": "passed",
+  "executedAt": "2026-10-15T23:02:11.299Z",
+  "attempt3AlreadyConsumed": true,
+  "providerDispatches": 0,
+  "journalSha256Before": "10da95d0028361bde5b6ca83f015414f9fffae439659dcb1a400df8c4f5f9598",
+  "journalSha256After": "10da95d0028361bde5b6ca83f015414f9fffae439659dcb1a400df8c4f5f9598",
+  "sideEffectsAbsent": true,
+  "scenarioCount": 11,
+  "scenarios": [
+    {
+      "scenario": "missing_explicit_operator_authorization",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "Explicit --operator-authorized yes is required."
+    },
+    {
+      "scenario": "enlarged_aggregate_limit",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "The only accepted explicit limits are $3.00 aggregate and $0.30 per request."
+    },
+    {
+      "scenario": "changed_per_call_reservation",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "The only accepted explicit limits are $3.00 aggregate and $0.30 per request."
+    },
+    {
+      "scenario": "out_of_scope_c03",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "Only P02/C10 interpretation and composition are in scope."
+    },
+    {
+      "scenario": "recovery_on_wrong_profile",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "The owner-authorized incomplete-output recovery applies only to P02 interpretation attempt 3."
+    },
+    {
+      "scenario": "recovery_on_wrong_stage",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "P02 composition requires explicit use of the source-validated attempt-5 evidence-correction derivative."
+    },
+    {
+      "scenario": "continuation_out_of_order_before_p02_composition",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "C10 interpretation requires a reviewed P02 composition or the exact recorded P02 source-evidence rejection, and may run only once."
+    },
+    {
+      "scenario": "continuation_wrong_stage",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "The owner-authorized continuation covers only P02 composition, then C10 interpretation and composition."
+    },
+    {
+      "scenario": "provider_or_model_override_rejected",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "Unsupported argument: --provider"
+    },
+    {
+      "scenario": "dispatch_requires_provider_key",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "OPENAI_API_KEY is unavailable; no request was prepared or dispatched."
+    },
+    {
+      "scenario": "attempt3_replay_rejected_after_consumption",
+      "exitCode": 1,
+      "rejected": true,
+      "stderr": "Attempt 3 is allowed only after the exact recorded incomplete P02 attempt 2 and while the original $0.30 unknown-cost reserve remains the sole unresolved call."
+    }
+  ],
+  "note": "Attempt 3 is already recorded. All cases rejected invalid or duplicate recovery and did not retry generation."
+}

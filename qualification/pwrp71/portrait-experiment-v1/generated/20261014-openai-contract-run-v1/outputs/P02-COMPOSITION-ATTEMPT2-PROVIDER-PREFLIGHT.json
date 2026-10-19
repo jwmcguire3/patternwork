@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-P02-ATTEMPT2-PROVIDER-PREFLIGHT-V1",
+  "status": "passed",
+  "checkedAt": "2026-10-15T15:23:24.439Z",
+  "method": "GET",
+  "endpoint": "https://api.openai.com/v1/models",
+  "requestType": "authenticated model catalog GET; not a generation request",
+  "httpStatus": 200,
+  "model": "gpt-6-luna",
+  "modelVisible": true,
+  "generationRequests": 0,
+  "providerCostMicrodollars": 0,
+  "apiKeyValueRecorded": false,
+  "automaticRetries": false,
+  "transport": "undici@7.28.0 Agent-backed fetch",
+  "purpose": "Fresh zero-cost connectivity, authentication, and model visibility check before the single bounded P02 attempt-2 composition request."
+}

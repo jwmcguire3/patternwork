@@ -26,7 +26,7 @@ async function fixture() {
     selectedOptionIds: [question.options[0].id],
     mode: "single",
   }, source);
-  const snapshotId = "test-snapshot-1";
+  const snapshotId = "pwsn_00000000-0000-4000-8000-000000000002";
   const packet = buildPwqe6RouterPacket({ snapshotId, state, source });
   const { content_sha256: packetDigest } = packet;
   const canonicalSnapshot = {
@@ -39,7 +39,7 @@ async function fixture() {
   };
   const snapshot: DecryptedAssessmentSnapshot = {
     databaseId: "test-database-snapshot",
-    assessmentSessionId: "test-session",
+    assessmentSessionId: "pwas_00000000-0000-4000-8000-000000000002",
     snapshotId,
     snapshotRevision: "1",
     completedPass: 1,
@@ -111,7 +111,7 @@ test("account prose does not look like an ID, while identifier-shaped values sta
   const rejected = validatePwqe6ReportDraftValue({ value: identifying, reportType: "MAP", snapshotId: value.snapshot.snapshotId, packet: value.packet as never, source: value.source });
   assert.equal(rejected.ok, false);
   if (!rejected.ok) assert.ok(rejected.issues.some((issue) => issue.code === "direct_pii"));
-  assert.throws(() => assertProviderPromptPrivacy({ notes: "The source lists account ID ZXCV-99881." }), /direct identifying data/u);
+  assert.throws(() => assertProviderPromptPrivacy({ notes: "The source lists account ID ZXCV-99881." }), /local privacy boundary/u);
 });
 
 test("uses v6 prompt and draft schema through the mock generation transport", async () => {

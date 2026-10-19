@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-RECOVERY-GUARD-TESTS-V1",
+  "checkedDate": "2026-10-15",
+  "dispatcher": "scripts/dispatch-openai-experiment.mjs",
+  "syntaxCheck": {
+    "command": "node --check scripts/dispatch-openai-experiment.mjs",
+    "exitCode": 0,
+    "status": "pass"
+  },
+  "positiveNoDispatchPreflight": {
+    "command": "node scripts/dispatch-openai-experiment.mjs --operator-authorized yes --authorize-up-to-microdollars 3000000 --per-call-reservation-microdollars 300000 --owner-authorized-timeout-recovery yes --preflight-only yes --profile P02 --stage interpretation",
+    "exitCode": 0,
+    "status": "recovery_preflight_passed_no_dispatch",
+    "recoveryOfCallId": "48899da5-ce4e-45f2-a493-21ed1db01d8b",
+    "rebuiltRequestShaMatchesOriginal": true,
+    "verifiedCurrentSourcePacketAndPreparedPins": true,
+    "providerDispatches": 0
+  },
+  "negativeCases": [
+    {
+      "case": "missing explicit operator authorization",
+      "exitCode": 1,
+      "observed": "Explicit --operator-authorized yes is required.",
+      "providerDispatches": 0
+    },
+    {
+      "case": "enlarged aggregate cap",
+      "exitCode": 1,
+      "observed": "The only accepted explicit limits are $3.00 aggregate and $0.30 per request.",
+      "providerDispatches": 0
+    },
+    {
+      "case": "enlarged per-request reservation",
+      "exitCode": 1,
+      "observed": "The only accepted explicit limits are $3.00 aggregate and $0.30 per request.",
+      "providerDispatches": 0
+    },
+    {
+      "case": "missing explicit per-request reservation",
+      "exitCode": 1,
+      "observed": "The only accepted explicit limits are $3.00 aggregate and $0.30 per request.",
+      "providerDispatches": 0
+    },
+    {
+      "case": "out-of-scope profile P03",
+      "exitCode": 1,
+      "observed": "Only P02/C10 interpretation and composition are in scope.",
+      "providerDispatches": 0
+    },
+    {
+      "case": "out-of-scope stage composition for the timeout-recovery flag",
+      "exitCode": 1,
+      "observed": "The owner-authorized timeout recovery applies only to the original P02 interpretation call.",
+      "providerDispatches": 0
+    },
+    {
+      "case": "invalid timeout-recovery flag value",
+      "exitCode": 1,
+      "observed": "--owner-authorized-timeout-recovery, when supplied, must be exactly yes.",
+      "providerDispatches": 0
+    },
+    {
+      "case": "attempt to override the pinned model through CLI",
+      "exitCode": 1,
+      "observed": "Unsupported argument: --model",
+      "providerDispatches": 0
+    },
+    {
+      "case": "ordinary C10 interpretation while prior unknown cost remains unresolved",
+      "exitCode": 1,
+      "observed": "A previous attempt has unknown or unsettled cost; stop without further dispatch.",
+      "providerDispatches": 0
+    }
+  ],
+  "journalAfterChecks": {
+    "callCount": 2,
+    "attempt2CallId": "2b161376-277f-4e10-9e36-48d81736a4db",
+    "noNegativeTestAddedCallRecord": true,
+    "providerDispatchesFromGuardTests": 0
+  },
+  "coverageNote": "These checks exercise the actual current pinned preflight and early CLI rejection paths. They do not simulate on-disk source/packet tampering; the successful exact-request preflight rechecked the current source manifest members, prepared input digests, and packet digest without dispatch."
+}

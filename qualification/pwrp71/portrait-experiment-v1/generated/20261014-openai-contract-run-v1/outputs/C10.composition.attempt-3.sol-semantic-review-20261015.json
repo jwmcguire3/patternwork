@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-C10-IFS-INDEPENDENT-MODEL-SEMANTIC-REVIEW-V1",
+  "reviewedAt": "2026-10-15",
+  "reviewType": "independent_sol_model_review_not_human_approval",
+  "profileId": "C10",
+  "reportType": "IFS",
+  "fixtureSet": "route-replays-v5",
+  "compositionAttemptNumber": 3,
+  "status": "accepted_for_fictional_diagnostic_evaluation_with_material_omissions",
+  "semanticCaseAcceptance": false,
+  "humanApproval": false,
+  "routingQualification": false,
+  "productionApproval": false,
+  "sourceIdentity": {
+    "packetSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+    "sourceObservationIndexSha256": "d2765bfe4008dd49bc5e6a2c719178f8466adb81af03422506f48a5121289676",
+    "sourceAuthoredObservationCount": 23,
+    "sourceAuthoredObservationsCitedByFinalClaims": 19,
+    "syntheticObservationsExcludedFromSourceIndex": 27,
+    "authoredOccurrenceIds": [
+      "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    ]
+  },
+  "artifactHashes": {
+    "prepared/C10.interpretation.input.json": "69517fd068f991ef625e6fed2e6dbd6e6801e3fc67008c09017341d6e68b58d6",
+    "outputs/C10.source-observation-index-v3.json": "d2765bfe4008dd49bc5e6a2c719178f8466adb81af03422506f48a5121289676",
+    "outputs/C10.interpretation.curated-v2.json": "9dbdec37ef62751717c975506c8fa71944bd6b4d0ec9326b7e09572f077f6889",
+    "outputs/C10.interpretation.sol-review.curated-v2.json": "7fbd57483b0f54b8d5317bab03c8a4a8f30e8864f9b2104ef2989a3ca9da0466",
+    "responses/C10.composition.attempt-3.response.json": "d603e06309664a91bf4c3c4329386688844e2b6462df06d10384316ff882587e",
+    "outputs/C10.composition.attempt-3.json": "f868a52b9aff9a2fa244c78527dbd62da6e8b1593431108e508cf997f21b32c6",
+    "outputs/C10.composition.attempt-3.normalization.json": "a8db51050b7c373265cac6fe90aeed80e0fc14ebd87b8691ff5cbac133b5329c",
+    "outputs/C10.report-draft.attempt-3.json": "22183babcfb393f19e21e237acb68b314e2e9807444a53f40b7291629c060175",
+    "outputs/C10.validated-artifact.attempt-3.json": "bdd01c645ef478d04bd02c71f3688de0873034a6c92989f5d839c57e1e09a3c1",
+    "outputs/C10.composition.attempt-3.validation.json": "48e670365033ed1b3ac2e638e6140d2ab95201af8b8677e2799fbf6a397d2497",
+    "outputs/C10.report.attempt-3.md": "228e088f2b55897eb1cc1de8f5cfb65f9a52c20301e21c537e90dcb681a40d75"
+  },
+  "structuralValidation": {
+    "status": "pwrp71_draft_validated",
+    "issueCount": 0,
+    "observationAndSequenceAudit": "All four final claims cite current source-indexed authored observations in the same occurrence. C10-C04 cites both exact D36 reported-recovery-order edges and their observation leaves. No claim cites one of the 27 synthetic observations.",
+    "normalizationBoundary": "The provider composition and curated interpretation are preserved. The versioned sidecar records schema projection and all four reflection-question claim bindings. The report-draft content_status value complete is a schema content designation, not release approval."
+  },
+  "dimensions": {
+    "evidenceFaithfulness": {
+      "verdict": "pass",
+      "rationale": "Report claims C10-C01, C10-C04, C10-C05 and C10-C06 describe only this one fictional recalled occurrence and match their cited options. The two D36 edges support only reduced input before easier words before clearer thinking. No causal mechanism, recurrence, diagnosis, protective intent, part identity or Self leadership is asserted."
+    },
+    "coverage": {
+      "verdict": "partial",
+      "rationale": "The core function-versus-ease, reported order, partial easing and continuing-concern distinctions appear. The reader prose omits the D84 first-easing estimate retained in claim C10-C06. Four authored observations, M11, M13, D30 and D34, were omitted by the reviewed interpretation derivative and do not reach the draft claims."
+    },
+    "alternativeExplanations": {
+      "verdict": "pass_with_omission",
+      "rationale": "A quieter or less demanding setting remains a concrete ordinary contextual factor, and the text withholds a cause. The first and later deliberate moves toward less input, M11 and M13, are not described, limiting the practical alternative account."
+    },
+    "missingnessDiscipline": {
+      "verdict": "pass",
+      "rationale": "The report leaves the initial pressure or need unknown, does not turn delayed awareness into choice, and does not infer full recovery, exact duration, another person's motives, physiological measurement, or a general pattern. Reflection questions preserve uncertainty."
+    },
+    "psychologicalSpecificity": {
+      "verdict": "pass_with_limit",
+      "rationale": "The report distinguishes task capacity, outward steadiness, felt strain and choice in this occurrence. The lack of named IFS parts is appropriate because the packet does not establish protective intention or part identity. Missing D30/D34 source observations make the word-access limitation less specific than the authored record supports."
+    },
+    "narrativeQuality": {
+      "verdict": "pass_with_limit",
+      "rationale": "The prose is direct, natural and recognizable, and restraint fits the evidence. The final section repeats earlier distinctions and the omitted practical actions and first-easing estimate reduce concreteness."
+    }
+  },
+  "caseReview": [
+    {
+      "caseId": "CQ08",
+      "verdict": "partial",
+      "supportedDistinctionAppears": true,
+      "sourceEvidence": [
+        "Od5373f2188ec6a5cd687:M12.function",
+        "O183651e61cbf852b3de7:D80.task",
+        "O6076a569a7a3123d3aa8:D81.steady_strained",
+        "O8d4de3c2dd3c05d5ebe0:D83.settle",
+        "O94831d634b022e5d26f4:D85.function_first",
+        "O36b8ab6657f1876670d8:D84.later_day"
+      ],
+      "reportClaims": [
+        "C10-C05",
+        "C10-C06"
+      ],
+      "supportedContent": "The report explicitly separates retained function and outward steadiness from continued strain and felt ease, and says full recovery was not established.",
+      "meaningfulOmission": "The authored D84 estimate of first easing, more than two hours but within the same day, is cited in C10-C06 but absent from all rendered report prose. This removes the positive timing distinction while avoiding an invented exact duration.",
+      "omissionSeverity": "moderate",
+      "overreachSeverity": "none"
+    },
+    {
+      "caseId": "CQ09",
+      "verdict": "substantially_supported_with_omission",
+      "supportedDistinctionAppears": true,
+      "sourceEvidence": [
+        "O05717d3bacb2f7eda689:M13.quiet",
+        "O543a044c866cd15b9573:M14.choice",
+        "O929cbaf357c5d2854ed9:D86.setting",
+        "O20773d476bcbb179d2ef:D100.same_less"
+      ],
+      "reportClaims": [
+        "C10-C04",
+        "C10-C06"
+      ],
+      "supportedContent": "The report places greater choice, a quieter or less demanding setting, and reduced urgency in the later/recovery account while preserving that the concern still made sense.",
+      "meaningfulOmission": "M13 reports that the respondent spent time with less noise or fewer demands; the final graph and prose omit that later action. M11 also records an initial move somewhere with less input. The report therefore does not fully distinguish the respondent's actions from the later changed setting.",
+      "omissionSeverity": "moderate",
+      "overreachSeverity": "none"
+    }
+  ],
+  "additionalOmissions": [
+    {
+      "sourceEvidence": [
+        "O0658ae705c4c7f122eba:D30.stuck",
+        "O397375211099023b504b:D34.words"
+      ],
+      "detail": "The respondent wanted to speak and knew what they meant but could not get words out. The final report says answering became harder and that words later returned, but omits the explicit lack of word access despite wanting to speak. This is a source-supported distinction from a chosen withholding response.",
+      "severity": "moderate",
+      "cause": "The contaminated C10-C02 interpretation claim was omitted intact from the curated-v2 derivative; no new claim was invented for the report."
+    }
+  ],
+  "unsupportedAdditions": [],
+  "finalRationale": "The live provider report is structurally valid and semantically faithful for the four retained claims. It gives a useful, bounded fictional account and demonstrates appropriate restraint. It does not fully satisfy CQ08/CQ09 positive coverage because source-backed timing, practical action and word-access details are missing from the reader prose or curated graph. This review supports evaluation of this diagnostic report with those omissions recorded; it does not provide semantic release approval."
+}

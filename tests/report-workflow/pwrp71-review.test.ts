@@ -1,3 +1,4 @@
+import { structuralReviewFixture } from "../../lib/server/reports/qualification/review-fixture.ts";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { test } from "node:test";
@@ -53,11 +54,8 @@ async function acceptedInputs() {
   const result = validatePwrp71ReportDraft({ value: draft(source.policy.release, currentPacket), reportType: "MAP", snapshotId: "snapshot-a", packet: currentPacket, source });
   assert.equal(result.ok, true);
   if (!result.ok) throw new Error("Test fixture report draft failed structural validation.");
-  const review = {
-    review_contract: "PWRP-REVIEW-7.0.0-candidate.1", report_release: source.policy.release,
-    reviewed_draft_sha256: hash(result.value.draft), reviewed_evidence_sha256: String((currentPacket as Record<string, unknown>).content_sha256),
-    verdict: "accept", issues: [], summary: "Structurally bound review fixture.",
-  };
+  const review = structuralReviewFixture({source,packet:currentPacket,draft:result.value.draft});
+
   return { source, packet: currentPacket, artifact: result.value, review };
 }
 

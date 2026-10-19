@@ -2,7 +2,7 @@
 
 Patternwork is a private, non-diagnostic self-reflection application. The current assessment is the deterministic Patternwork Question Engine v3.1: a two-pass, evidence-driven experience that saves progress, freezes immutable assessment snapshots, and turns validated evidence into client-facing reports.
 
-The assessment does **not** use AI to ask, choose, route, score, or safety-check questions. AI is used only after a pass is complete, when a server-side workflow sends a pseudonymous, validated evidence packet to OpenRouter. The same report contracts can also be run locally through Codex CLI.
+The assessment does **not** use AI to ask, choose, route, score, or safety-check questions. AI is used only after a pass is complete, when a server-side workflow sends a pseudonymous, validated evidence packet to OpenRouter. Use `npm run reports:dev` to run the same report contracts locally with explicit spending limits; see [report development](docs/report-development.md).
 
 This instrument is not empirically validated and must not be presented as therapy, diagnosis, medical care, or a clinical assessment.
 
@@ -21,7 +21,7 @@ The v3.1 implementation is complete and has passed its local acceptance gate. Pr
 
 ## Current assessment release
 
-New assessment sessions use the byte-pinned PWQE5 source package and the PWQE6 report path. The migration intentionally has no legacy assessment support because the user confirmed that no old assessments need to be preserved. The imported question package and router are still marked as design candidates; live assessment start and report generation fail closed until provider qualification and human review produce the exact deployment-pinned activation manifest. See [`docs/plans/pwqe5-production-integration/run-ledger.md`](docs/plans/pwqe5-production-integration/run-ledger.md), [`migration-notes.md`](docs/plans/pwqe5-production-integration/migration-notes.md), and [`remaining-production-work.md`](docs/plans/pwqe5-production-integration/remaining-production-work.md).
+New assessment sessions use the byte-pinned PWQE5.1 package and PWRP 7.1 report path. The PWQE5/PWQE6 implementation remains a separate compatibility path. The question and reporting packages remain candidates: live assessment start and application report generation require the exact deployment-pinned, human-reviewed activation manifest. Isolated development runs do not activate production. See [the report workflow](docs/pwqe6-report-workflow.md) and [development commands and evidence](docs/report-development.md).
 
 The implementation record and latest gate status live in [`docs/plans/question-engine-v3-1-openrouter/run-ledger.md`](docs/plans/question-engine-v3-1-openrouter/run-ledger.md).
 
@@ -62,7 +62,7 @@ Completion is evidence-driven, so the UI shows stage progress rather than promis
 | [`lib/server/assessment/`](lib/server/assessment/) | Server-authoritative assessment service, deterministic router, trusted-evidence derivation, resume links, snapshot/workflow adapter, retention, and deletion. |
 | [`lib/server/security/`](lib/server/security/) | AES-256-GCM envelopes, email lookup HMAC, signed session cookies, and scoped single-use token helpers. |
 | [`lib/server/reports/`](lib/server/reports/) | Packet construction, prompt privacy, generation, validation, synthesis, workflow steps, persistence, and status authorization. |
-| [`lib/server/openrouter/`](lib/server/openrouter/) | OpenRouter transport, zero-data-retention policy, qualification ladder, activation binding, retry/escalation, usage, and cost-cap enforcement. |
+| [`lib/server/openrouter/`](lib/server/openrouter/) | OpenRouter transport, no-collection routing, qualification ladder, activation binding, retry/escalation, usage, and cost-cap enforcement. |
 | [`lib/server/pdf/`](lib/server/pdf/) | Canonical Markdown-to-PDF rendering plus text, page-count, and rendered-page verification. |
 | [`lib/server/email/`](lib/server/email/) and [`emails/`](emails/) | Resend transport, email composition, BCC, attachment splitting, webhook state, and replay-safe delivery. |
 | [`workflows/pass-report.ts`](workflows/pass-report.ts) | Production Vercel Workflow entry point. Pass 1 generates `MAP`; Pass 2 generates `IFS`, `PV`, `ATT`, then `SYNTHESIS`. |
@@ -171,8 +171,8 @@ The workflow validates the snapshot, constructs or loads packets, initializes id
 
 Important invariants:
 
-- OpenRouter receives only pseudonymous validated packets or a validated synthesis bundle—never email, private notes, access tokens, cookies, names, free text, or a flat raw-answer export.
-- Provider requests require structured JSON output, zero-data-retention routing, and data collection denied.
+- OpenRouter receives only pseudonymous validated packets or a validated synthesis bundle. The projection excludes respondent names, account IDs, contact email, private notes, access tokens, cookies, and flat raw-answer exports.
+- Provider requests require structured JSON output and denied provider data collection. Zero-data-retention routing is not required or promised.
 - Outputs may not diagnose or infer unsupported trauma/origins/childhood, physiology or vagal state, global attachment style, exile, or advice beyond the supplied evidence.
 - An invalid response gets one repair attempt at the same tier, then one escalation tier.
 - Every call is checked against the remaining per-assessment cost cap before it is sent.

@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "PATTERNWORK-OPENAI-MODEL-PREFLIGHT-V1",
+  "status": "failed",
+  "checkedAt": "2026-10-15T13:55:50.143Z",
+  "endpoint": "https://api.openai.com/v1/models",
+  "requestType": "authenticated model catalog GET; not a generation request",
+  "model": "gpt-6-luna",
+  "modelVisible": false,
+  "generationRequests": 0,
+  "providerCostMicrodollars": 0,
+  "automaticRetries": false,
+  "error": "fetch failed"
+}

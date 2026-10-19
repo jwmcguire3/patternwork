@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-PR20-P02-C10-FINAL-VERIFICATION-V1",
+  "date": "2026-10-15",
+  "repository": {
+    "branch": "codex/pwrp71-authorized-fictional-ifs-diagnostic",
+    "head": "88985dfbe1a0095741e6e3299075593cf349d9d2",
+    "pinnedPr20Merge": "f7ebd87894e972c16bf9e38b955c2e0003a1aca6",
+    "packageJsonChanged": false,
+    "changesCommitted": false,
+    "changesPushed": false
+  },
+  "providerRun": {
+    "provider": "OpenAI direct Responses API",
+    "model": "gpt-6-luna",
+    "reasoningEffort": "max",
+    "scope": ["P02", "C10"],
+    "reportType": "IFS",
+    "fixtureSet": "route-replays-v5",
+    "aggregateAuthorizationMicrodollars": 3000000,
+    "dispatchAttempts": [
+      {
+        "callId": "48899da5-ce4e-45f2-a493-21ed1db01d8b",
+        "profile": "P02",
+        "stage": "interpretation",
+        "status": "unknown_cost",
+        "httpStatus": null,
+        "reservationMicrodollars": 300000,
+        "retry": false
+      },
+      {
+        "callId": "2b161376-277f-4e10-9e36-48d81736a4db",
+        "profile": "P02",
+        "stage": "interpretation",
+        "status": "incomplete_no_output",
+        "httpStatus": 200,
+        "responseId": "resp_085577914562c28c016ad0c4b6d04887d2817c3e371086cda5",
+        "finishReason": "max_output_tokens",
+        "usage": {
+          "inputTokens": 30597,
+          "outputTokens": 16000,
+          "reasoningTokens": 16000,
+          "totalTokens": 46597
+        },
+        "usageCostUpperBoundMicrodollars": 19650,
+        "costKind": "conservative_usage_estimate_not_invoice"
+      },
+      {
+        "callId": "e6f9fe4c-500c-4a80-a6e2-230d2ed63fb9",
+        "profile": "P02",
+        "stage": "interpretation",
+        "status": "unknown_cost",
+        "httpStatus": null,
+        "requestBodySha256": "f8c36e20ba9043a8bfc4392c7b11c174f6766d60b796ab175c4ee29cdd5b9cb6",
+        "maxOutputTokens": 128000,
+        "reservationMicrodollars": 300000,
+        "transportError": "fetch failed",
+        "retry": false
+      }
+    ],
+    "providerAcceptanceUnknownCallIds": [
+      "48899da5-ce4e-45f2-a493-21ed1db01d8b",
+      "e6f9fe4c-500c-4a80-a6e2-230d2ed63fb9"
+    ],
+    "outcomeSummary": "Attempt 2 returned an incomplete HTTP 200 response; acceptance and billing for attempts 1 and 3 remain unknown.",
+    "reportDraftsProducedByProvider": 0,
+    "p02CompositionRun": false,
+    "c10ProviderStagesRun": false,
+    "settledUsageUpperBoundMicrodollars": 19650,
+    "lockedUnknownCostReservationsMicrodollars": 600000,
+    "remainingAuthorizedMicrodollars": 2380350,
+    "invoiceStatus": "Unknown for attempts 1 and 3; attempt 2 is a conservative usage-derived estimate, not an invoice.",
+    "stopReason": "The one additional interpretation attempt authorized by the owner ended with unknown cost and no response. The stop rule prohibits retries; downstream stages require a usable reviewed P02 interpretation."
+  },
+  "offlineCandidates": {
+    "directory": "qualification/pwrp71/portrait-experiment-v1/generated/20261014-pr20-reviewed",
+    "profiles": ["P02", "C10"],
+    "status": "Offline in-session compositions; production draft validation and separate Sol model review recorded; not external provider outputs or human semantic approval.",
+    "providerCalls": 0,
+    "providerCostMicrodollars": 0
+  },
+  "checks": [
+    {
+      "command": "node --test qualification/pwrp71/portrait-experiment-v1/generated/20261014-openai-contract-run-v1/scripts/transport-error-details.test.mjs qualification/pwrp71/portrait-experiment-v1/generated/20261014-openai-contract-run-v1/scripts/validate-interpretation.test.mjs",
+      "exitCode": 0,
+      "result": "5 passed; 0 failed"
+    },
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "result": "449 passed; 0 failed"
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "command": "npm run lint -- qualification/pwrp71/portrait-experiment-v1/generated/20261014-openai-contract-run-v1/scripts/transport-error-details.mjs qualification/pwrp71/portrait-experiment-v1/generated/20261014-openai-contract-run-v1/scripts/transport-error-details.test.mjs qualification/pwrp71/portrait-experiment-v1/generated/20261014-openai-contract-run-v1/scripts/dispatch-openai-experiment.mjs",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "command": "node --check on transport-error-details.mjs, dispatch-openai-experiment.mjs, and test-authorized-continuation-guards.mjs; git diff --check",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "result": "production build completed; emitted existing dynamic-file-pattern and stale baseline-browser-mapping warnings"
+    }
+  ],
+  "postDispatchGuards": {
+    "artifact": "RECOVERY_GUARD_TESTS_POST_DISPATCH.json",
+    "status": "passed",
+    "rejectedScenarios": 11,
+    "generationDispatches": 0,
+    "journalUnchanged": true,
+    "sideEffectsAbsent": true
+  },
+  "transportDiagnostics": {
+    "dispatcherPersistsSanitizedSummaryAndCauseChain": true,
+    "scrubbing": "Best effort for common inline credentials, including Bearer, Basic, Token, proxy-authorization, API-key values, and URL queries.",
+    "independentSolReview": "No actionable issue found after the final scrubber update.",
+    "limitation": "Arbitrary opaque secrets without recognizable credential context may still appear in provider error text. The missing nested cause for attempt 3 cannot be reconstructed."
+  },
+  "activation": "Unchanged; no report release, routing qualification, human semantic approval, or production activation is granted."
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-P02-C10-OPENAI-PREFLIGHT-V1",
+  "status": "ready_for_scoped_experimental_dispatch",
+  "checkedAt": "2026-10-14",
+  "repository": {
+    "branch": "codex/pwrp71-authorized-fictional-ifs-diagnostic",
+    "workspaceHead": "88985dfbe1a0095741e6e3299075593cf349d9d2",
+    "pr20MergeCommit": "f7ebd87894e972c16bf9e38b955c2e0003a1aca6",
+    "workspaceContainsPr20Merge": false,
+    "relevantProductionFilesMatchPr20MainBlobs": true,
+    "decision": "Use exact PR #20 contracts and fixtures staged from the merge commit; retain the existing workspace branch and validate its unchanged PWRP/PWQE production sources."
+  },
+  "authorization": {
+    "authority": "explicit current user authorization",
+    "aggregateCapMicrodollars": 3000000,
+    "perRequestReservationMicrodollars": 300000,
+    "profiles": ["P02", "C10"],
+    "reportType": "IFS",
+    "fixtureSet": "route-replays-v5",
+    "provider": "OpenAI direct Responses API",
+    "model": "gpt-6-luna",
+    "reasoningEffort": "max",
+    "serviceTier": "default",
+    "productionQualificationOrActivation": false
+  },
+  "provider": {
+    "endpoint": "https://api.openai.com/v1/responses",
+    "modelsEndpointHttpStatus": 200,
+    "modelVisible": true,
+    "generationRequestsBeforeRun": 0,
+    "preflightGenerationCostMicrodollars": 0,
+    "providerPolicy": "direct OpenAI; no OpenRouter, Azure, fallback, tools, or automatic retry"
+  },
+  "pricing": {
+    "source": "https://developers.openai.com/api/docs/pricing",
+    "modelSource": "https://developers.openai.com/api/docs/models/gpt-6-luna",
+    "serviceTier": "default",
+    "shortContextPerMillionUsd": {
+      "input": 0.1,
+      "cachedInput": 0.01,
+      "cacheWrite": 0.125,
+      "output": 0.5
+    },
+    "longContextPerMillionUsd": {
+      "input": 0.2,
+      "cachedInput": 0.02,
+      "cacheWrite": 0.25,
+      "output": 0.75
+    },
+    "contextWindowTokens": 1050000,
+    "longContextThresholdTokens": 272000,
+    "maxOutputTokensPerCall": {
+      "interpretation": 16000,
+      "composition": 12000
+    },
+    "reservationBasis": "Worst-case long-context cache-write input plus output pricing across the model context and requested output cap remains below $0.30 per call. This is a reservation bound, not an invoice quote."
+  },
+  "sourcePins": {
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+    "experimentSha256": "eecb94ff118569ff44288fc81333aa42d0dee6dd868b514e02d3f0e09b47db33"
+  },
+  "packetPins": {
+    "P02": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+    "C10": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3"
+  },
+  "pr20ContractHashes": {
+    "01_INTERPRETATION_CONTRACT.md": "7f789c89bd72c074dc2c670d5ee750f453d43555233e80181fd547f68e64200d",
+    "02_IFS_NARRATIVE_COMPOSER.md": "70d85bc8e4cd9707ec23122a0b5a2d28ba00585f8b5c5ef37e3c010a03bbb163",
+    "03_NARRATIVE_REVIEW.md": "23ae3e2e77eb79442d82068d8210e41b61dc0324a738ef6f0b2dcd2ec171d670"
+  },
+  "productionValidationIdentities": {
+    "reportValidatorSourceSha256": "802169dd06539dbec3ab0b488a6d3b49c5676b43f3cb56dfffa68b05c3cceef3",
+    "reportSourceLoaderSha256": "3b4ddd071a8fa6eb7d4623d15f386305e98d5a3c9ebd7af332ed56ea8c0c6b39",
+    "questionSourceLoaderSha256": "80899988bc7069b862a10a1a1eed27626c62ca937add5b297221f6d454c724c7",
+    "reportDraftSchemaSha256": "14e880841aab064593b777b9d113376a30338968e4b0375a38955b174e55b4ba",
+    "sharedReportPromptSha256": "1df01aa9fa1ca8d95be8302bccc149a90ebb1dfb26ac48afc022da75d17ca6a2",
+    "ifsReportPromptSha256": "2b73933a51df3e895696f2d0df664d06ee7352213963fb935e6215859518e828"
+  },
+  "stagedInputReproducibility": {
+    "preparationScriptBlobMatchesPr20": true,
+    "fixturesAndContractsBlobMatchPr20": true,
+    "independentPreparationRerunMatchesByteForByte": true,
+    "P02": {
+      "interpretationInputSha256": "5cb46749aa39edabd3e8f6cf9a1e753c4c4c6aad8a14065c51dadbed7e8012de",
+      "compositionTemplateSha256": "96ad865000efca128d2582d4fcb2583694a2f5bbac57cd75ff11889313b60bc1",
+      "reviewTemplateSha256": "4dbaab3e604add79147a0ba2654a7c7eca7cd9dfe79627f1ec2ab42fa5fba673"
+    },
+    "C10": {
+      "interpretationInputSha256": "69517fd068f991ef625e6fed2e6dbd6e6801e3fc67008c09017341d6e68b58d6",
+      "compositionTemplateSha256": "74cd491a25757eeab1c72ad1172d2e479b55d5b341568378b1270a9d7e0e119f",
+      "reviewTemplateSha256": "6098300080f4004db39bc5ff560156dbe5ee89629f38ba08d21c1d602e7b62b6"
+    }
+  },
+  "reviewBoundary": {
+    "independentSolReviewRequiredForEachInterpretationBeforeComposition": true,
+    "independentSolReviewRequiredForEachFinalReport": true,
+    "solReviewIsHumanApproval": false,
+    "diagnosticCanSatisfyProductionQualification": false
+  }
+}

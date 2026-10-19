@@ -1,3 +1,4 @@
+import { assertNoRespondentClassification, assertNoRespondentFullName, assertNoRespondentFullNameInPwrp71ModelInput } from "./content-boundary.ts";
 import { createHash } from "node:crypto";
 import Ajv2020 from "ajv/dist/2020.js";
 import type { JsonObject, ReportType, ValidationIssue, ValidationResult } from "../../question-engine/types.ts";
@@ -197,7 +198,7 @@ function validateSourceBindings(input: PreparePwrp71RequestInput, issues: Valida
     || reportSource.policy.compatible_question_release !== PWQE51_RELEASE_IDENTITY.questionRelease
     || reportSource.policy.compatible_router_format !== "patternwork-router-evidence-v1"
     || reportSource.policy.compatible_router_source_sha256 !== PWQE51_RELEASE_IDENTITY.sourceSha256
-    || reportSource.policy.prompt_composition !== "shared_plus_selected_layer_only") {
+    || reportSource.policy.prompt_composition !== "shared_plus_construct_guide_plus_selected_layer") {
     issues.push(issue("report_source_binding", "$.reportSource", "Loaded report source is not compatible with the pinned PWQE 5.1/PWRP 7.1 candidate pair."));
   }
 }
@@ -368,6 +369,13 @@ function validatePacket(
       && confirmedPairs.has([...pair].sort().join("\u0000"));
     const invalidComparisons = pair.length > 0 && !hasPair;
     const permittedOccurrences = hasPair ? new Set(pair) : new Set([target.occurrence_id]);
+    // Match runtime target lineage for explicitly linked follow-ups. This does
+    // not assert distinctness, recurrence, chronology, or a shared event.
+    if (["known_distance", "reassurance_duration", "ordinary_contrast", "recurrence", "social_feature"].includes(String(target.target_id))) {
+      for (const episode of episodes) {
+        if (episode.basis === "actual_recalled" && episode.linked_from === target.occurrence_id) permittedOccurrences.add(episode.id);
+      }
+    }
     const invalidObservation = refs.some((id) => {
       const observation = typeof id === "string" ? observationIndex.get(id) : undefined;
       return !observation || !permittedOccurrences.has(observation.occurrence_id);
@@ -448,6 +456,10 @@ function validateAcceptedLayers(layers: Readonly<Record<string, JsonObject>>, pa
 
 /** Builds the PWRP 7.1 provider view from an authenticated server-owned PWQE 5.1 packet. */
 export function preparePwrp71Request(input: PreparePwrp71RequestInput): ValidationResult<Pwrp71PreparedRequest> {
+  try { assertNoRespondentClassification(input.packet); }
+  catch { return { ok: false, issues: [{ code: "respondent_classification", path: "$.packet", message: "Rebuild this packet from canonical selections without retired respondent classification." }] }; }
+  try { assertNoRespondentFullName(input.packet); }
+  catch { return { ok: false, issues: [{ code: "respondent_full_name", path: "$.packet", message: "Respondent name fields are prohibited from provider input." }] }; }
   const issues: ValidationIssue[] = [];
   validateSourceBindings(input, issues);
   if (!REPORT_TYPES.has(input.reportType) || !(input.reportType in input.reportSource.policy.layer_prompts)) {
@@ -464,7 +476,7 @@ export function preparePwrp71Request(input: PreparePwrp71RequestInput): Validati
     : input.reportType === "IFS" ? "ifs"
       : input.reportType === "PV" ? "state"
         : input.reportType === "ATT" ? "attachment" : "synthesis";
-  const system = `${input.reportSource.prompts.shared}\n\n${input.reportSource.prompts[promptKey]}`;
+  const system = [input.reportSource.prompts.shared, input.reportSource.constructGuide, input.reportSource.prompts[promptKey]].join("\n\n");
   const packetRecord = input.packet as Record<string, unknown>;
   const scope = object(packetRecord.assessment_scope)!;
   const view: Record<string, unknown> = {};
@@ -477,6 +489,8 @@ export function preparePwrp71Request(input: PreparePwrp71RequestInput): Validati
   view.report_type = input.reportType;
   view.accepted_layers = structuredClone(layers);
   view.interpretation_note = "Structural summaries are non-exhaustive; current source observations control.";
+  try { assertNoRespondentFullNameInPwrp71ModelInput(view); }
+  catch { return { ok: false, issues: [{ code: "respondent_full_name", path: "$.user_data", message: "Respondent name fields are prohibited; only schema-validated author-generated entity labels may appear in accepted layers." }] }; }
   const request: Pwrp71PreparedRequest = {
     system,
     user_data: view as JsonObject,

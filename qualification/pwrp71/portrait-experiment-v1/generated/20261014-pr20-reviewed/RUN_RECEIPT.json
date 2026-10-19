@@ -1,0 +1,176 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-PORTRAIT-OFFLINE-GENERATION-RECEIPT-V1",
+  "status": "OFFLINE_COMPOSITION_CANDIDATE_PENDING_HUMAN_SEMANTIC_APPROVAL",
+  "purpose": "Fictional P02 and C10 IFS system portraits composed under the PR #20 interpretation and narrative-composition contracts.",
+  "repository": {
+    "name": "jwmcguire3/patternwork",
+    "prNumber": 20,
+    "prTitle": "Prepare P02/C10 IFS system-portrait experiment and Astra report redesign",
+    "mergeCommit": "f7ebd87894e972c16bf9e38b955c2e0003a1aca6",
+    "prHead": "f1477a22a97fffd1d85e57318e5eb3364021a280",
+    "prBase": "aed88e60c89a0df4ef2b4e0a3e5bd240a7ae8c50",
+    "verifiedOriginMain": "f7ebd87894e972c16bf9e38b955c2e0003a1aca6",
+    "generationWorkspaceBranch": "codex/pwrp71-authorized-fictional-ifs-diagnostic",
+    "generationWorkspaceCommit": "88985dfbe1a0095741e6e3299075593cf349d9d2",
+    "sourceChangeMade": false,
+    "commitOrPushMade": false
+  },
+  "sourceIdentity": {
+    "fixtureSet": "route-replays-v5",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+    "experimentSha256": "06a092444fbf664cdb7664a69e0c53c228c8eeaf78671f4c0f446543dfd0f7c1"
+  },
+  "contractFiles": [
+    {
+      "path": "qualification/pwrp71/portrait-experiment-v1/01_INTERPRETATION_CONTRACT.md",
+      "sha256": "bfe54873284a24faa4e1155e2d0ec2ef5000db48d6cc7ade8ca9576d82fe74f5"
+    },
+    {
+      "path": "qualification/pwrp71/portrait-experiment-v1/02_IFS_NARRATIVE_COMPOSER.md",
+      "sha256": "69d2ad8cfc6838779d2bbadf9933b85b5948856f54848a70926a8d4e026b4634"
+    },
+    {
+      "path": "qualification/pwrp71/portrait-experiment-v1/03_NARRATIVE_REVIEW.md",
+      "sha256": "a741986edad6010c3b84f42fff2c3a57e088dada2cd6d37754ca0290e0225684"
+    },
+    {
+      "path": "qualification/pwrp71/portrait-experiment-v1/candidate-pair.json",
+      "sha256": "28f87b5fa289f81fdc7116d1cbf83f9fb45025689a2d0afb543bfc8efd619554"
+    }
+  ],
+  "stagingImplementation": [
+    {
+      "path": "scripts/experiment-pwrp71-narrative/prepare-system-portrait.mjs",
+      "sha256": "42488fe1c1e6a647a6f061b643c3fc1f698c2c366ca4ccfeb47ba0856c08e5f1"
+    },
+    {
+      "path": "scripts/experiment-pwrp71-narrative/prepare-system-portrait.test.mjs",
+      "sha256": "37145e36898d13af24e77a33bc12e10a59d85b78aeca402bebc5fd1d734454a8"
+    }
+  ],
+  "execution": {
+    "mode": "offline_in_session_model",
+    "modelIdentity": "Codex conversational model; no external provider model ID claimed",
+    "providerDispatch": false,
+    "providerCalls": 0,
+    "providerCostMicrodollars": 0,
+    "stagingMode": "no_dispatch",
+    "requestPreparationUsedProductionStagingScript": true
+  },
+  "commands": [
+    {
+      "command": "node --test scripts/experiment-pwrp71-narrative/prepare-system-portrait.test.mjs",
+      "cwd": "PR #20 merge worktree",
+      "exitCode": 0,
+      "summary": "4 passed, 0 failed"
+    },
+    {
+      "command": "node scripts/experiment-pwrp71-narrative/prepare-system-portrait.mjs --profile P02 --output qualification/pwrp71/portrait-experiment-v1/generated/20261014-offline",
+      "cwd": "PR #20 merge worktree",
+      "exitCode": 0,
+      "summary": "no-dispatch staging input and templates created; output inputs copied into this reviewed run"
+    },
+    {
+      "command": "node scripts/experiment-pwrp71-narrative/prepare-system-portrait.mjs --profile C10 --output qualification/pwrp71/portrait-experiment-v1/generated/20261014-offline",
+      "cwd": "PR #20 merge worktree",
+      "exitCode": 0,
+      "summary": "no-dispatch staging input and templates created; output inputs copied into this reviewed run"
+    },
+    {
+      "command": "Production loadPwrp71SourcePackage plus validatePwrp71ReportDraft, with independent retained-observation graph checks",
+      "cwd": "workspace source code verified against PR #20 merge for the report validator/source-loader/adapter",
+      "exitCode": 0,
+      "summary": "P02 and C10 passed; packet pins, current observation references, scope, claim representation, and no-synthetic-claim-evidence checks passed"
+    }
+  ],
+  "focusedTests": {
+    "command": "node --test scripts/experiment-pwrp71-narrative/prepare-system-portrait.test.mjs",
+    "exitCode": 0,
+    "passed": 4,
+    "failed": 0
+  },
+  "profiles": {
+    "P02": {
+      "reportType": "IFS",
+      "fixtureSet": "route-replays-v5",
+      "packetSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+      "stagedInputSha256": "180e44597c93b1bd3306f202f6f26432159c8c69da44a156b6aec3d3850b92e9",
+      "claimCount": 6,
+      "activeObservationReferences": 14,
+      "syntheticClaimEvidence": 0,
+      "productionDraftValidation": "PASS",
+      "artifactSha256": "edccdeac4f820e31a7932616ecd0cad088b54f425d06677a4d3150a3493fc0ad",
+      "reportMarkdownSha256": "5f6b11c086103efe70e8952511d314e886fcaf037dc4545db441c7474ca7c053",
+      "files": {
+        "P02.composition.json": "6575fd672fb9230f132d76ea697375666ca8a30feca2fa183c7be2bafe74711f",
+        "P02.composition.template.json": "60a085f0b8dfbd4bbcc7cf81b10068aa6048dd6e07fa40d9a9e3b09e107686ef",
+        "P02.interpretation.input.json": "180e44597c93b1bd3306f202f6f26432159c8c69da44a156b6aec3d3850b92e9",
+        "P02.interpretation.json": "50a9b666cfe3a63772942cdde14d30e21a6d20ae0cb2b9ae8d2ab2e89303c020",
+        "P02.report.md": "5f6b11c086103efe70e8952511d314e886fcaf037dc4545db441c7474ca7c053",
+        "P02.review.template.json": "4d9d4998162757b8c8c39133a38cfbf820730b646f79cd385e5641f6ee5cb4f4",
+        "P02.validated-artifact.json": "a91079b99caef8a37bc232d737593b616a8c09b704a2a87cc98da964e1f9409d"
+      }
+    },
+    "C10": {
+      "reportType": "IFS",
+      "fixtureSet": "route-replays-v5",
+      "packetSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+      "stagedInputSha256": "6423dc37f87bf59820f0185d8e8c79ec7ee083cf6808b6cad41b51dc7d295483",
+      "claimCount": 11,
+      "activeObservationReferences": 23,
+      "syntheticClaimEvidence": 0,
+      "productionDraftValidation": "PASS",
+      "artifactSha256": "79676c0b23de142e8ea403174dee535c90992633bd544ac770f2fdb97e680ece",
+      "reportMarkdownSha256": "9e1819365f5e9c35afb17a804eb46d9465dcfcafa19e878b0405da21f22d1cc4",
+      "files": {
+        "C10.composition.json": "54da732e15edc934ee4676fdc98efcdeff0382061d68db524a69fc950a1eb938",
+        "C10.composition.template.json": "8f769fc14177fe9b2dcb3a9b1ba445f782934b7ea72f28fa6ed89c3aa29d059d",
+        "C10.interpretation.input.json": "6423dc37f87bf59820f0185d8e8c79ec7ee083cf6808b6cad41b51dc7d295483",
+        "C10.interpretation.json": "0ae1f123a6d3817eaeea389c94101bc89e9c545976748f342e01ec6a6425393d",
+        "C10.report.md": "9e1819365f5e9c35afb17a804eb46d9465dcfcafa19e878b0405da21f22d1cc4",
+        "C10.review.template.json": "d407fa5be30bea2750dd3c505925217dc29f84854e564265319a903882cc438b",
+        "C10.validated-artifact.json": "69590a1e46abe0e7a66cd4138713e4b5421377d631705ac748f34fb72c81d8a4"
+      }
+    }
+  },
+  "independentModelReview": {
+    "reviewer": "separate read-only gpt-6-sol subagent",
+    "finalResult": "No remaining concrete issue found after two correction rounds.",
+    "scope": "Source IDs, claims, report prose, source/sequence limits, and interpretation/composition contract adherence.",
+    "limitations": "Not human review, semantic approval, routing qualification, or production approval."
+  },
+  "correctionsAfterReview": [
+    "C10 original-authored Mapping M10-M14 evidence is retained in first-step and later-step claims with one-occurrence dependence and no invented causal edges.",
+    "P02 separates the broad stated aim from the separately reported relational concern and preserves D07.leave as leaving or ending the exchange.",
+    "C10 separates first-easing estimate, post-later-attempt setting, D36 order, first return marker, partial easing, and post-easing appraisal.",
+    "Reader prose was revised to avoid survey narration and assessment-auditor phrasing."
+  ],
+  "releaseGates": {
+    "providerGeneration": "NOT RUN",
+    "providerCost": "$0",
+    "semanticApproval": "PENDING",
+    "humanApproval": "PENDING",
+    "productionRoutingQualification": "NOT ESTABLISHED",
+    "productionActivation": "UNCHANGED"
+  },
+  "outputDirectory": "qualification/pwrp71/portrait-experiment-v1/generated/20261014-pr20-reviewed",
+  "reportMarkdownHashFunction": "SHA-256 over exact UTF-8 Markdown bytes; also recorded in the validated PWRP 7.1 artifact digests.",
+  "handoffFiles": [
+    {
+      "path": "README.md",
+      "sha256": "68b11b2cc4b68ebfbad1e99890b185850914b4bfd13a6db972ec59b773fe2b00"
+    },
+    {
+      "path": "SOL_MODEL_REVIEW.md",
+      "sha256": "b25c6ed2e167d294f7920f7bca01d5dd49d004e7d00132076787d2aa8d90190d"
+    },
+    {
+      "path": "generated/20261014-offline/SUPERSEDED.md",
+      "sha256": "f64b590510f2769dfe6a0d3925093f549b80d715e46098da8bfc2f9a669e6b95"
+    }
+  ]
+}

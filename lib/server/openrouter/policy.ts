@@ -8,6 +8,7 @@ export const PWQE5_NEGATIVE_CASES_SHA256 = "9e8bb8356bccf35ac5f5a13bdfab9d7db1a3
 export const PWQE5_QUALIFICATION_FIXTURE_SET_SHA256 = "20cfc3ef46b49ba0cee6dc0cc5ac0eb51a256ecbd93b6ed7017e2fbe8d905ff5" as const;
 
 export const OPENROUTER_SITE_MODEL = "openai/gpt-6-luna" as const;
+export const REPORT_OUTPUT_TOKEN_LIMIT = 128_000 as const;
 
 export interface QualifiedModelTier {
   readonly name: "luna-low" | "luna-medium" | "terra-medium" | "sol-high";
@@ -48,6 +49,49 @@ export const QUALIFICATION_MODEL_ORDER: readonly QualifiedModelTier[] = [
   },
 ] as const;
 
+/** Fixed, explicitly unqualified candidate for isolated PWRP 7.1 IFS development runs. */
+export const REPORT_DEV_EXPERIMENTAL_CANDIDATE_V1 = {
+  schemaVersion: "pwrp71-report-dev-candidate-v1",
+  id: "report-dev-luna-medium-v1",
+  scope: "report-dev-only",
+  reportType: "IFS",
+  model: OPENROUTER_SITE_MODEL,
+  reasoningEffort: "medium",
+  maxOutputTokens: 20_000,
+  qualificationStatus: "unqualified",
+  productionActivation: false,
+} as const;
+
+/** Separate fixed inference experiment; never a production activation. */
+export const REPORT_DEV_LUNA_HIGH_CANDIDATE_V1 = {
+  ...REPORT_DEV_EXPERIMENTAL_CANDIDATE_V1,
+  id: "report-dev-luna-high-v1",
+  reasoningEffort: "high",
+  unsuccessfulResponsePolicy: "stop-v1",
+} as const;
+
+/** Active fresh-report configuration; historical 20k candidates remain immutable. */
+export const REPORT_DEV_LUNA_HIGH_128K_CANDIDATE_V2 = {
+  ...REPORT_DEV_LUNA_HIGH_CANDIDATE_V1,
+  id: "report-dev-luna-high-128k-v2",
+  maxOutputTokens: REPORT_OUTPUT_TOKEN_LIMIT,
+} as const;
+
+export type ReportDevCandidate = typeof REPORT_DEV_EXPERIMENTAL_CANDIDATE_V1 | typeof REPORT_DEV_LUNA_HIGH_CANDIDATE_V1 | typeof REPORT_DEV_LUNA_HIGH_128K_CANDIDATE_V2;
+export function reportDevCandidate(id: string): ReportDevCandidate | undefined {
+  if (id === REPORT_DEV_EXPERIMENTAL_CANDIDATE_V1.id) return REPORT_DEV_EXPERIMENTAL_CANDIDATE_V1;
+  if (id === REPORT_DEV_LUNA_HIGH_CANDIDATE_V1.id) return REPORT_DEV_LUNA_HIGH_CANDIDATE_V1;
+  if (id === REPORT_DEV_LUNA_HIGH_128K_CANDIDATE_V2.id) return REPORT_DEV_LUNA_HIGH_128K_CANDIDATE_V2;
+  return undefined;
+}
+
+export interface ReportDevCandidateAdmission {
+  readonly scope: "report-dev-experimental-v1";
+  readonly candidateId: ReportDevCandidate["id"];
+  readonly candidateSha256: string;
+  readonly runBindingSha256: string;
+}
+
 export interface ReportModelPin {
   readonly pinnedTier: number;
   readonly model: string;
@@ -62,11 +106,11 @@ export type ActivatedReportModelPolicy = Readonly<Record<ReportType, ReportModel
 
 /** Explicitly unqualified defaults for deterministic mocked tests only. Never use as a production activation signal. */
 export const UNQUALIFIED_MOCK_MODEL_POLICY: ActivatedReportModelPolicy = {
-  MAP: { pinnedTier: 0, model: QUALIFICATION_MODEL_ORDER[0].model, reasoningEffort: "max", escalationTier: 1, escalationModel: QUALIFICATION_MODEL_ORDER[1].model, escalationReasoningEffort: "max", maxOutputTokens: 16_000 },
-  IFS: { pinnedTier: 1, model: QUALIFICATION_MODEL_ORDER[1].model, reasoningEffort: "max", escalationTier: 2, escalationModel: QUALIFICATION_MODEL_ORDER[2].model, escalationReasoningEffort: "max", maxOutputTokens: 20_000 },
-  PV: { pinnedTier: 1, model: QUALIFICATION_MODEL_ORDER[1].model, reasoningEffort: "max", escalationTier: 2, escalationModel: QUALIFICATION_MODEL_ORDER[2].model, escalationReasoningEffort: "max", maxOutputTokens: 20_000 },
-  ATT: { pinnedTier: 2, model: QUALIFICATION_MODEL_ORDER[2].model, reasoningEffort: "max", escalationTier: 3, escalationModel: QUALIFICATION_MODEL_ORDER[3].model, escalationReasoningEffort: "max", maxOutputTokens: 20_000 },
-  SYNTHESIS: { pinnedTier: 2, model: QUALIFICATION_MODEL_ORDER[2].model, reasoningEffort: "max", escalationTier: 3, escalationModel: QUALIFICATION_MODEL_ORDER[3].model, escalationReasoningEffort: "max", maxOutputTokens: 16_000 },
+  MAP: { pinnedTier: 0, model: QUALIFICATION_MODEL_ORDER[0].model, reasoningEffort: "max", escalationTier: 1, escalationModel: QUALIFICATION_MODEL_ORDER[1].model, escalationReasoningEffort: "max", maxOutputTokens: REPORT_OUTPUT_TOKEN_LIMIT },
+  IFS: { pinnedTier: 1, model: QUALIFICATION_MODEL_ORDER[1].model, reasoningEffort: "max", escalationTier: 2, escalationModel: QUALIFICATION_MODEL_ORDER[2].model, escalationReasoningEffort: "max", maxOutputTokens: REPORT_OUTPUT_TOKEN_LIMIT },
+  PV: { pinnedTier: 1, model: QUALIFICATION_MODEL_ORDER[1].model, reasoningEffort: "max", escalationTier: 2, escalationModel: QUALIFICATION_MODEL_ORDER[2].model, escalationReasoningEffort: "max", maxOutputTokens: REPORT_OUTPUT_TOKEN_LIMIT },
+  ATT: { pinnedTier: 2, model: QUALIFICATION_MODEL_ORDER[2].model, reasoningEffort: "max", escalationTier: 3, escalationModel: QUALIFICATION_MODEL_ORDER[3].model, escalationReasoningEffort: "max", maxOutputTokens: REPORT_OUTPUT_TOKEN_LIMIT },
+  SYNTHESIS: { pinnedTier: 2, model: QUALIFICATION_MODEL_ORDER[2].model, reasoningEffort: "max", escalationTier: 3, escalationModel: QUALIFICATION_MODEL_ORDER[3].model, escalationReasoningEffort: "max", maxOutputTokens: REPORT_OUTPUT_TOKEN_LIMIT },
 };
 
 export interface QualificationApprovalEvidence {

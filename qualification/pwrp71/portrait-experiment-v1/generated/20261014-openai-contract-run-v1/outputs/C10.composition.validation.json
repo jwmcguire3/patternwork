@@ -1,0 +1,223 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-EXPERIMENTAL-COMPOSITION-VALIDATION-V1",
+  "status": "pwrp71_draft_rejected",
+  "ok": false,
+  "checkedAt": "2026-10-15T14:46:38.627Z",
+  "profileId": "C10",
+  "reportType": "IFS",
+  "packetSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+  "experimentSha256": "eecb94ff118569ff44288fc81333aa42d0dee6dd868b514e02d3f0e09b47db33",
+  "sourceIdentity": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "sourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb",
+    "authoredFixtureFile": "C10.json",
+    "authoredFixtureSha256": "db6e0b9e8296741324c1aef0e4b481f70468ce4114a599ee8c2907df944d3b81",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5"
+  },
+  "compositionAttemptNumber": 3,
+  "compositionCallId": "00ad828f-50a8-4637-b5f3-5d7a86eac2fb",
+  "compositionResponseId": "resp_0f6e7c973ee41c95016ad0e67ff35487d28466f134841db450",
+  "compositionResponseFile": "responses/C10.composition.attempt-3.response.json",
+  "compositionResponseFileSha256": "d603e06309664a91bf4c3c4329386688844e2b6462df06d10384316ff882587e",
+  "compositionOutputFile": "outputs/C10.composition.attempt-3.json",
+  "compositionOutputFileSha256": "f868a52b9aff9a2fa244c78527dbd62da6e8b1593431108e508cf997f21b32c6",
+  "interpretationAttemptNumber": 1,
+  "interpretationCallId": "379e8908-4d6e-4288-a1ea-9e3a20b274dc",
+  "interpretationResponseId": "resp_0e7771f7e3a27457016ad0dbe9235887d29dca94744a027101",
+  "interpretationResponseFile": "responses/C10.interpretation.response.json",
+  "interpretationResponseFileSha256": "8421204c7783f082b894beb4e31b0fcb18d526b8e07a8760298ff514916c6358",
+  "interpretationOutputFile": "outputs/C10.interpretation.curated-v2.json",
+  "interpretationOutputFileSha256": "9dbdec37ef62751717c975506c8fa71944bd6b4d0ec9326b7e09572f077f6889",
+  "interpretationCurationReceiptFile": "outputs/C10.interpretation.curated-v2.derivation.json",
+  "interpretationCurationReceiptFileSha256": "6a5fc18983ba96ed891ca2255eaff9180ffdbd510b3970e382310f3ccdebd8d9",
+  "interpretationDerivativeKind": "omission_only_experimental_curation",
+  "frozenInterpretationFile": "outputs/C10.interpretation.curated-v2.frozen.json",
+  "frozenInterpretationFileSha256": "42684e39f14a12cf78fd5cef358c27f5810cef8353f96c3b4ee3aca0c3bc506d",
+  "interpretationValidationReceiptFile": "outputs/C10.interpretation.validation.curated-v2.json",
+  "interpretationValidationReceiptFileSha256": "ef406af5d9620b2eb05f33ae78472dd53436c0a5c30b122ecafa4be63cd65424",
+  "interpretationSolReviewReceiptFile": "outputs/C10.interpretation.sol-review.curated-v2.json",
+  "interpretationSolReviewReceiptFileSha256": "7fbd57483b0f54b8d5317bab03c8a4a8f30e8864f9b2104ef2989a3ca9da0466",
+  "reportDraftFile": "outputs/C10.report-draft.json",
+  "reportDraftFileSha256": "b82ecfdbb0c8db060ceccc8d39de97cea1147f2096a786fe78feecd9a0ebca4c",
+  "issues": [
+    {
+      "code": "report_schema",
+      "path": "/content_status",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/0/kind",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/0/constructs/0",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/0/constructs/1",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/0/constructs/2",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/0/constructs/3",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/0/constructs/4",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/0/support_basis",
+      "message": "must be array"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/0/remaining_uncertainty",
+      "message": "must be array"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/1/kind",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/1/constructs/0",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/1/constructs/1",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/1/constructs/2",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/1/constructs/3",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/1/support_basis",
+      "message": "must be array"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/1/remaining_uncertainty",
+      "message": "must be array"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/2/kind",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/2/constructs/0",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/2/constructs/1",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/2/constructs/2",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/2/constructs/3",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/2/support_basis",
+      "message": "must be array"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/2/remaining_uncertainty",
+      "message": "must be array"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/3/kind",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/3/constructs/0",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/3/constructs/1",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/3/constructs/2",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/3/constructs/3",
+      "message": "must be equal to one of the allowed values"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/3/support_basis",
+      "message": "must be array"
+    },
+    {
+      "code": "report_schema",
+      "path": "/claims/3/remaining_uncertainty",
+      "message": "must be array"
+    },
+    {
+      "code": "report_schema",
+      "path": "/reflection_questions/0",
+      "message": "must be string"
+    },
+    {
+      "code": "report_schema",
+      "path": "/reflection_questions/1",
+      "message": "must be string"
+    },
+    {
+      "code": "report_schema",
+      "path": "/reflection_questions/2",
+      "message": "must be string"
+    },
+    {
+      "code": "report_schema",
+      "path": "/reflection_questions/3",
+      "message": "must be string"
+    }
+  ],
+  "qualificationBoundary": "Local production PWRP 7.1 draft validation for a fictional experimental report; not routing qualification, human approval, or production authorization.",
+  "validatedArtifactFile": null,
+  "validatedArtifactFileSha256": null,
+  "reportMarkdownFile": null
+}

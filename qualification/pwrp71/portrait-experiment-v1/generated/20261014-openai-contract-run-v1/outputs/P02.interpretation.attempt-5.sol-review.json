@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-INTERPRETATION-SOL-REVIEW-V1",
+  "reviewType": "model_review_not_human_approval",
+  "reviewerModel": "gpt-6-sol",
+  "reviewerReasoningEffort": "high",
+  "status": "rejected_for_composition",
+  "profileId": "P02",
+  "attemptNumber": 5,
+  "packetSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+  "modelOutputFile": "outputs/P02.interpretation.attempt-5.json",
+  "modelOutputFileSha256": "c967d35a2a5e139f0d31db3b568b523274eefdc019f899412e8c94d8b7824d2f",
+  "modelOutputCompactSha256": "9d22a10690c62c021c3a603b12da8f009a50bf685840f5b38513bd2db5543533",
+  "validationReceipt": "outputs/P02.interpretation.attempt-5.validation.source-recheck.json",
+  "supportedFinding": "One fictional conflict occurrence records explaining with an aim to prevent an anticipated next outcome, followed by leaving after explaining was not helping; immediate easing was sought and reported.",
+  "blockingFindings": [
+    "Synthetic observations are cited in 16 of 19 claims and also appear in strengths, counterexamples, and open questions.",
+    "The exit-relief sequence claim omits its D08 source observation.",
+    "No authored source supports recurrence, distinct enduring part identities, Self-led capacity, exile, or a whole-system portrait."
+  ],
+  "schemaProbeFinding": "The 110 initial final-report-schema issues were inapplicable to the intermediate graph and were removed in the stage-specific recheck; this does not cure its source-evidence failures.",
+  "humanApproval": "not provided"
+}

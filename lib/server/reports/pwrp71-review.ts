@@ -1,3 +1,6 @@
+import { validatePwrp71ReviewQuality } from "./pwrp71-review-quality.ts";
+import { renderPwrp71Markdown } from "./pwrp71-render.ts";
+import { assertNoRespondentClassification } from "./content-boundary.ts";
 import { createHash } from "node:crypto";
 import Ajv2020 from "ajv/dist/2020.js";
 import type { JsonObject, ValidationIssue, ValidationResult } from "../../question-engine/types.ts";
@@ -13,6 +16,10 @@ export interface Pwrp71Review {
   readonly verdict: "accept" | "revise" | "invalid_input";
   readonly issues: readonly JsonObject[];
   readonly summary: string;
+  readonly quality_assessment: JsonObject;
+  readonly evidence_coverage: readonly JsonObject[];
+  readonly explanatory_assessment: JsonObject;
+  readonly synthesis_opportunity: JsonObject;
 }
 
 export interface Pwrp71StructuralReviewReceipt extends JsonObject {
@@ -60,19 +67,6 @@ function uniqueIds(rows: readonly Record<string, unknown>[], key: string, issues
   return ids;
 }
 
-function expectedMarkdown(draft: Record<string, unknown>): string {
-  const lines = [`# ${String(draft.title)}`, "", "*Patternwork is nonclinical self-reflection. Parts and state names are working interpretations, not diagnoses or physiological measurements.*", ""];
-  for (const section of list(draft.sections)) {
-    if (typeof section.heading === "string" && section.heading) lines.push(`## ${section.heading}`, "");
-    lines.push(String(section.text), "");
-  }
-  const questions = Array.isArray(draft.reflection_questions) ? draft.reflection_questions : [];
-  if (questions.length) {
-    lines.push("## To notice", "");
-    for (const question of questions) lines.push(String(question), "");
-  }
-  return `${lines.join("\n").trimEnd()}\n`;
-}
 
 function artifactIssues(artifact: Pwrp71ReportArtifact, packet: JsonObject, source: Pwrp71SourcePackage): ValidationIssue[] {
   const issues: ValidationIssue[] = [];
@@ -99,7 +93,7 @@ function artifactIssues(artifact: Pwrp71ReportArtifact, packet: JsonObject, sour
   }
   const { content_sha256: packetDigest, ...packetContent } = p;
   if (typeof packetDigest !== "string" || sha256(packetContent) !== packetDigest) issues.push(issue("packet_digest", "$.packet.content_sha256", "Current packet digest does not match its canonical contents."));
-  if (typeof artifact.report_markdown !== "string" || artifact.report_markdown !== expectedMarkdown(draft)) issues.push(issue("artifact_markdown", "$.artifact.report_markdown", "Report Markdown does not match the exact draft rendering."));
+  if (typeof artifact.report_markdown !== "string" || artifact.report_markdown !== renderPwrp71Markdown(draft)) issues.push(issue("artifact_markdown", "$.artifact.report_markdown", "Report Markdown does not match the exact draft rendering."));
   const identity = { report_release: draft.report_release, release_id: draft.release_id, snapshot_id: draft.snapshot_id, report_type: draft.report_type, evidence_sha256: draft.evidence_sha256, draft };
   if (artifact.report_id !== `pwrp71_${sha256(identity).slice(0, 28)}`) issues.push(issue("artifact_identity", "$.artifact.report_id", "Report artifact identity does not match its draft."));
   if (!digestSet || digestSet.artifact_sha256 !== sha256(withoutDigests) || digestSet.report_markdown_sha256 !== sha256(String(artifact.report_markdown))) {
@@ -160,7 +154,10 @@ export function validatePwrp71Review(input: {
     for (const error of validate.errors ?? []) issues.push(issue("review_schema", error.instancePath || "$", error.message ?? "PWRP 7.1 review schema validation failed."));
     return { ok: false, issues };
   }
+  try { assertNoRespondentClassification(input.value); }
+  catch { return { ok: false, issues: [issue("respondent_classification", "$.review", "Review contains retired respondent classification.")] }; }
   const review = input.value as Pwrp71Review;
+  issues.push(...validatePwrp71ReviewQuality(review as unknown as Record<string, unknown>, input.artifact.draft, input.packet));
   issues.push(...artifactIssues(input.artifact, input.packet, input.source));
   if (review.report_release !== input.source.policy.release
     || review.reviewed_draft_sha256 !== sha256(input.artifact.draft)

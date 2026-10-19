@@ -1,0 +1,291 @@
+{
+  "schemaVersion": "PATTERNWORK-IFS-INTERPRETATION-LEDGER-EXPERIMENTAL-V1",
+  "status": "FROZEN_SOURCE_VALIDATED_FOR_COMPOSITION_NOT_APPROVED",
+  "execution": {
+    "mode": "offline_in_session_model",
+    "providerDispatch": false,
+    "providerCostMicrodollars": 0,
+    "modelIdentity": "Codex conversational model; no external provider model ID claimed"
+  },
+  "profileId": "P02",
+  "fixtureSet": "route-replays-v5",
+  "inputPacketSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+  "experimentSha256": "06a092444fbf664cdb7664a69e0c53c228c8eeaf78671f4c0f446543dfd0f7c1",
+  "sourceIdentity": {
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5"
+  },
+  "claims": [
+    {
+      "id": "P02-C1",
+      "text": "In the recalled disagreement, you kept explaining your point when it became tense.",
+      "kind": "reported",
+      "constructs": [
+        "description"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": [],
+        "description": "One actual-recalled disagreement; no fixed lookback window is defined."
+      },
+      "evidence_ids": [
+        "Ofc7b7fb668294601fe78"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": [
+        "direct_report"
+      ],
+      "rationale": "Current D61.explain observation: the selected option says the respondent kept explaining their point as the disagreement became tense.",
+      "remaining_uncertainty": [
+        "This single recalled occurrence does not establish frequency or a stable trait."
+      ]
+    },
+    {
+      "id": "P02-C2",
+      "text": "In this disagreement, you wanted to influence what might happen next and separately named losing contact or not knowing where you stood as the outcome that concerned you most.",
+      "kind": "reported",
+      "constructs": [
+        "working_expectation",
+        "description"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": [],
+        "description": "One actual-recalled disagreement; D02 is bound to the D61 response in this occurrence."
+      },
+      "evidence_ids": [
+        "Oee9a23929c717af918cc",
+        "O46dfe0bb601014cf6dcf"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": [
+        "stated_aim",
+        "direct_report"
+      ],
+      "rationale": "D02.prevent records the broad stated aim of influencing what might happen next. D03.connection separately records the feared outcome. Their co-presence in one occurrence does not make the feared outcome the stated aim.",
+      "remaining_uncertainty": [
+        "The packet does not establish the other person's actual intentions, the eventual relational outcome, or that avoiding this specific feared outcome was the stated aim."
+      ]
+    },
+    {
+      "id": "P02-C3",
+      "text": "After the explanation was not helping, you left or ended the exchange.",
+      "kind": "reported",
+      "constructs": [
+        "state_transition",
+        "description"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": [],
+        "description": "One actual-recalled disagreement; a respondent-reported before relation connects the first and next steps."
+      },
+      "evidence_ids": [
+        "O024600260948d26c8645",
+        "Oa6147904a3dbc2821d38"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [
+        "edge:pwr_cbcda3040bd22d070ab9ce0cc901ab53f9b973f2:D08.after_failed"
+      ],
+      "depends_on_claim_ids": [],
+      "support_basis": [
+        "direct_report",
+        "actual_sequence"
+      ],
+      "rationale": "D07.leave records the next action. D08.after_failed supplies the only reported order edge: the second response began after the first was not helping; the edge is temporal and does not establish causality.",
+      "remaining_uncertainty": [
+        "The packet does not establish that leaving was caused by the first move or that this order recurs."
+      ]
+    },
+    {
+      "id": "P02-C4",
+      "text": "At the next point, you wanted the feeling to ease right then; immediately after the next response it became easier to bear.",
+      "kind": "reported",
+      "constructs": [
+        "state_transition",
+        "description"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": [],
+        "description": "The next step of the same actual-recalled disagreement."
+      },
+      "evidence_ids": [
+        "O482ef6dc44094628b660",
+        "O52b1a40eb779285046f1"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": [
+        "stated_aim",
+        "reported_effect"
+      ],
+      "rationale": "D09.relief states the desired immediate easing, and D10.relief reports that the feeling became easier to bear immediately after the next response.",
+      "remaining_uncertainty": [
+        "The response and relief are temporally linked in the report; the packet does not prove that leaving caused the change."
+      ]
+    },
+    {
+      "id": "P02-C5",
+      "text": "In this disagreement, explaining is reasonably read as a preventive effort to influence what might happen next while the concern about losing contact or uncertainty was present. The specific aim is not stated.",
+      "kind": "supported_interpretation",
+      "constructs": [
+        "protective_function",
+        "working_expectation"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": [],
+        "description": "A bounded interpretation of the first response in one actual-recalled disagreement."
+      },
+      "evidence_ids": [
+        "Ofc7b7fb668294601fe78",
+        "Oee9a23929c717af918cc",
+        "O46dfe0bb601014cf6dcf"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [
+        "P02-C1",
+        "P02-C2"
+      ],
+      "support_basis": [
+        "direct_report",
+        "stated_aim",
+        "inferred_function"
+      ],
+      "rationale": "The observed explaining response co-occurs with a stated broad aim to influence what happens next and a separately reported concern about losing contact or uncertainty. This supports a bounded preventive interpretation, while the packet does not say that preventing the feared outcome was itself the specific aim.",
+      "remaining_uncertainty": [
+        "This is a local interpretation of one occurrence, not a stated specific aim, recurring pattern, permanent part identity, or evidence of the other person's intentions."
+      ]
+    },
+    {
+      "id": "P02-C6",
+      "text": "After the explaining response was not helping, leaving or ending the exchange was a context-bound next move oriented toward immediate emotional relief.",
+      "kind": "supported_interpretation",
+      "constructs": [
+        "protective_function",
+        "state_transition"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": [],
+        "description": "A bounded interpretation of the next response in the same actual-recalled disagreement."
+      },
+      "evidence_ids": [
+        "O024600260948d26c8645",
+        "Oa6147904a3dbc2821d38",
+        "O482ef6dc44094628b660",
+        "O52b1a40eb779285046f1"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [
+        "edge:pwr_cbcda3040bd22d070ab9ce0cc901ab53f9b973f2:D08.after_failed"
+      ],
+      "depends_on_claim_ids": [
+        "P02-C3",
+        "P02-C4"
+      ],
+      "support_basis": [
+        "stated_aim",
+        "reported_effect",
+        "actual_sequence",
+        "inferred_function"
+      ],
+      "rationale": "D07.leave allows either physically leaving or ending the exchange. D08.after_failed places the next response after the earlier response was not helping. D09 and D10 support immediate relief as the aim and reported effect; the packet does not establish that the move caused the easing.",
+      "remaining_uncertainty": [
+        "It is not established whether the two response functions are one response changing course or two separate inner parts.",
+        "This is not evidence of a recurrent loop or a general rule that leaving is protective."
+      ]
+    }
+  ],
+  "name_registry": [
+    {
+      "name_id": "p02_explaining",
+      "name": "Explainer",
+      "entity_kind": "descriptive_pattern",
+      "role": "descriptive_pattern",
+      "author_generated": true,
+      "supporting_claim_ids": [
+        "P02-C5"
+      ]
+    },
+    {
+      "name_id": "p02_immediate_relief",
+      "name": "Immediate-relief response",
+      "entity_kind": "descriptive_pattern",
+      "role": "descriptive_pattern",
+      "author_generated": true,
+      "supporting_claim_ids": [
+        "P02-C6"
+      ]
+    }
+  ],
+  "relationships": [],
+  "withheldRelationships": [
+    "No part-to-part relationship or handoff is asserted. The responses have a reported temporal order, but their persistent identities and role relationship are unresolved."
+  ],
+  "priorityOfFindings": [
+    "P02-C5",
+    "P02-C6",
+    "P02-C1",
+    "P02-C2",
+    "P02-C3",
+    "P02-C4"
+  ],
+  "strengthsAndCounterexamples": [
+    "The same occurrence retains a clear concern for connection and a separate immediate wish for emotional relief; these are not collapsed into one motive.",
+    "The selected temporal edge is used only as reported order. No counterexample establishes a different order, but no second actual-recalled occasion establishes recurrence."
+  ],
+  "openQuestions": [
+    "Whether the two response functions are distinct enduring inner parts or one response changing course.",
+    "Whether this sequence recurs in other disagreements.",
+    "The vulnerable meaning beneath the concern; the original D06 anchor is absent from this v5 route.",
+    "The other person's actual intention and the eventual effect on the relationship."
+  ],
+  "provenanceNotes": [
+    "All six claims cite current packet observations bound to live responses. The seven selected Deepening anchors for the candidate pair are original authored fictional responses.",
+    "The Mapping scaffold is synthetic context, not corroboration. This report's core interpretation uses the P02 conflict Deepening observations and does not use synthetic Mapping choices as proof of recurrence or identity."
+  ],
+  "validation": {
+    "validator": "production validatePwrp71ReportDraft plus separate retained-observation graph checks",
+    "schema": "pinned PWRP 7.1 candidate.1 draft schema",
+    "sourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+    "result": "pass",
+    "issues": [],
+    "graphChecks": {
+      "claimCount": 6,
+      "activeObservationReferences": 14,
+      "syntheticClaimEvidence": 0,
+      "packetSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497"
+    },
+    "scopeNote": "Structural and source-binding validation only. This does not establish semantic approval, independent human approval, routing qualification, provider generation, or production readiness."
+  }
+}

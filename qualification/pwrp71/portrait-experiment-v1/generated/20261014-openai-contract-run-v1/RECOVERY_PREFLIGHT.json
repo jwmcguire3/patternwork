@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-P02-C10-RECOVERY-PREFLIGHT-V1",
+  "checkedDate": "2026-10-15",
+  "status": "preflight_passed_recovery_dispatched_response_incomplete",
+  "runScope": {
+    "fixtureSet": "route-replays-v5",
+    "profile": "P02",
+    "reportType": "IFS",
+    "stage": "interpretation",
+    "model": "gpt-6-luna",
+    "reasoningEffort": "max",
+    "serviceTier": "default",
+    "provider": "OpenAI direct API",
+    "endpoint": "https://api.openai.com/v1/responses",
+    "clientTimeoutMilliseconds": 1800000
+  },
+  "sourceAndRequestPins": {
+    "pr20MergeCommit": "f7ebd87894e972c16bf9e38b955c2e0003a1aca6",
+    "packetSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+    "requestBodySha256": "25135d71e43d53433c583177342d69f6dbdbbdb757292d54d118d139edf03cd9",
+    "matchesOriginalUnknownCostRequest": true,
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5",
+    "reportDraftSchemaSha256": "14e880841aab064593b777b9d113376a30338968e4b0375a38955b174e55b4ba",
+    "interpretationContractSha256": "7f789c89bd72c074dc2c670d5ee750f453d43555233e80181fd547f68e64200d"
+  },
+  "budget": {
+    "aggregateAuthorizedMicrodollars": 3000000,
+    "firstUnknownCostReservationMicrodollars": 300000,
+    "additionalReservationMicrodollars": 300000,
+    "accountedAfterAdditionalReservationMicrodollars": 600000,
+    "remainingAuthorizationAfterAdditionalReservationMicrodollars": 2400000,
+    "perCallReservationMicrodollars": 300000,
+    "automaticRetries": false,
+    "firstUnknownCostReservationRemainsLocked": true
+  },
+  "currentProviderPreflight": {
+    "checkedDate": "2026-10-15",
+    "endpoint": "https://api.openai.com/v1/models",
+    "httpStatus": 200,
+    "modelVisible": true,
+    "providerRequestId": "d75271cd-5051-4791-b65a-ff6978dd45d9",
+    "generationRequests": 0,
+    "costMicrodollars": 0
+  },
+  "modelCapabilityCheck": {
+    "source": "https://developers.openai.com/api/docs/models/gpt-6-luna",
+    "checkedDate": "2026-10-15",
+    "modelId": "gpt-6-luna",
+    "reasoningEffortMaxSupported": true,
+    "contextWindowTokens": 1050000,
+    "maxOutputTokens": 128000
+  },
+  "currentPublishedPricing": {
+    "checkedAt": "2026-10-15",
+    "source": "https://developers.openai.com/api/docs/pricing",
+    "serviceTier": "standard",
+    "longContextInputUsdPerMillion": 0.2,
+    "longContextCacheWriteUsdPerMillion": 0.25,
+    "longContextOutputUsdPerMillion": 0.75,
+    "contextWindowTokens": 1050000,
+    "shortContextBoundaryTokens": 272000,
+    "assumedMaximumOutputTokens": 16000,
+    "reservationWorstCaseUsd": 0.2745,
+    "reservationUsd": 0.3,
+    "reservationExceedsPublishedWorstCase": true,
+    "note": "Uses the highest listed long-context input cache-write rate for the entire context and output cap. This is a conservative estimate, not a guaranteed invoice ceiling."
+  },
+  "noDispatchPreflight": {
+    "command": "node scripts/dispatch-openai-experiment.mjs --operator-authorized yes --authorize-up-to-microdollars 3000000 --per-call-reservation-microdollars 300000 --owner-authorized-timeout-recovery yes --preflight-only yes --profile P02 --stage interpretation",
+    "exitCode": 0,
+    "status": "recovery_preflight_passed_no_dispatch",
+    "attemptNumber": 2,
+    "recoveryOfCallId": "48899da5-ce4e-45f2-a493-21ed1db01d8b",
+    "requestBodySha256": "25135d71e43d53433c583177342d69f6dbdbbdb757292d54d118d139edf03cd9",
+    "remainingAuthorizationAfterReservationMicrodollars": 2400000,
+    "providerDispatches": 0
+  },
+  "independentSolCodeReview": {
+    "status": "ready_for_exactly_one_recovery_dispatch",
+    "reviewedOn": "2026-10-15",
+    "reviewer": "Sol subagent, read-only",
+    "findings": [
+      "Recovery requires the exact original call ID, unknown_cost status, packet, request body hash, and $0.30 reservation.",
+      "The original reservation remains counted and one new $0.30 reservation is journaled before the fetch.",
+      "The second request uses attempt-specific artifacts and the 30-minute deadline only on the recovery path.",
+      "No out-of-scope or duplicate recovery path was identified.",
+      "The existing composition gate still needs attempt-aware binding before later P02 composition."
+    ],
+    "reviewIsHumanApproval": false
+  },
+  "recoveryDispatchOutcome": {
+    "callId": "2b161376-277f-4e10-9e36-48d81736a4db",
+    "responseId": "resp_085577914562c28c016ad0c4b6d04887d2817c3e371086cda5",
+    "httpStatus": 200,
+    "responseStatus": "incomplete",
+    "incompleteReason": "max_output_tokens",
+    "outputTokens": 16000,
+    "reasoningTokens": 16000,
+    "visibleOutputTextPresent": false,
+    "conservativeUsageCostUpperBoundMicrodollars": 19650,
+    "invoiceAmountKnown": false,
+    "resultArtifact": "ATTEMPT2_DIAGNOSTIC.json"
+  }
+}

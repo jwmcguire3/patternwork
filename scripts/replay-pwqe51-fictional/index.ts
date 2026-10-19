@@ -7,7 +7,7 @@ import { loadPwrp71SourcePackage } from "../../lib/server/reports/pwrp71-source.
 import { replayFictionalPwqe51Session, type FictionalHistoryV2, type FictionalMappingEntryTopicOptIn } from "../../lib/server/reports/qualification/session-replay.ts";
 
 const V2_DIRECTORY = path.join(process.cwd(), "qualification", "pwrp71", "constructed_histories_v2");
-const DEFAULT_OUTPUT = path.join(process.cwd(), "qualification", "pwrp71", "route_replays_v5");
+const DEFAULT_OUTPUT = path.join(process.cwd(), "qualification", "pwrp71", "route_replays_v6");
 const VALID_PROFILES = [...Array.from({ length: 9 }, (_, index) => `P${String(index + 1).padStart(2, "0")}`), ...Array.from({ length: 16 }, (_, index) => `C${String(index + 1).padStart(2, "0")}`)];
 const DIGEST = /^[a-f0-9]{64}$/u;
 const V2_MANIFEST_SHA256 = "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee";
@@ -51,7 +51,7 @@ function parseArgs(argv: readonly string[]): { profiles: readonly string[]; outp
   for (let index = 0; index < argv.length; index += 1) {
     const flag = argv[index];
     if (flag === "--help" || flag === "-h") {
-      process.stdout.write("Usage: npm run pwqe51:replay:fictional -- [--profiles P01,C01] [--output-dir qualification/pwrp71/route_replays_v5] [--mapping-entry-body-detail-opt-in-profiles P05,C10,C11]\n");
+      process.stdout.write("Usage: npm run pwqe51:replay:fictional -- [--profiles P01,C01] [--output-dir qualification/pwrp71/route_replays_v6] [--mapping-entry-body-detail-opt-in-profiles P05,C10,C11]\n");
       process.exit(0);
     }
     if (flag !== "--profiles" && flag !== "--output-dir" && flag !== "--mapping-entry-body-detail-opt-in-profiles") throw new Error(`Unknown argument: ${flag}`);
@@ -130,7 +130,6 @@ async function main(): Promise<void> {
       baselineReplayApplicationBoundary: "deepening_start",
     }] : [];
     const replay = replayFictionalPwqe51Session({ history, questionSource, reportSource, mappingEntryTopicOptIns });
-    const sourceProvenance = Array.isArray(history.responseProvenance) ? history.responseProvenance : [];
     const supersededResponseIds = new Set(replay.state.routerResult.supersededResponseIds);
     const invalidatedResponseIds = new Set(replay.state.routerResult.invalidatedResponses.map((row) => row.responseId));
     const currentResponses = replay.state.responses.filter((response) => !supersededResponseIds.has(response.responseId) && !invalidatedResponseIds.has(response.responseId));
@@ -144,7 +143,6 @@ async function main(): Promise<void> {
       questionId: row.questionId,
       stepId: row.stepId,
       phase: row.phase,
-      provenance: row.provenance,
     }));
     const traceSemantic = replay.routingTrace.map((row) => ({
       phase: row.phase,
@@ -161,23 +159,23 @@ async function main(): Promise<void> {
       replay.semanticCore.requiredSourceResponseIds,
       replay.semanticCore.acceptedSourceResponseIds,
     ];
-    const unreachedById = new Map(replay.unreachedOriginalAnswers.map((answer) => [answer.responseId, answer]));
-    const authoredAnswerDisposition = replay.responseProvenance
-      .filter((row) => row.origin.startsWith("original_authored_fictional_"))
-      .map((row) => {
-        const unreached = unreachedById.get(row.sourceResponseId);
+    const unreachedById = new Map(replay.unreachedSourceResponses.map((answer) => [answer.responseId, answer]));
+    const sourceAnswerDisposition = [...history.mappingResponses, ...history.deepeningResponses]
+      .map((answer) => {
+        const routeResponse = replay.submitted.find((row) => row.sourceResponseId === answer.responseId);
+        const unreached = unreachedById.get(answer.responseId);
         return {
-          responseId: row.sourceResponseId,
-          runtimeResponseId: row.runtimeResponseId ?? null,
-          questionId: [...history.mappingResponses, ...history.deepeningResponses].find((answer) => answer.responseId === row.sourceResponseId)?.questionId ?? null,
-          classification: row.accepted ? "route_issued_and_accepted"
+          responseId: answer.responseId,
+          runtimeResponseId: routeResponse?.runtimeResponseId ?? null,
+          questionId: answer.questionId,
+          classification: routeResponse ? "route_issued_and_accepted"
             : unreached?.classification ?? "ineligible_in_current_context",
-          reason: unreached?.reason ?? (row.accepted ? "The production session issued and accepted this authored answer." : "No matching server-issued candidate reached this authored answer."),
+          reason: unreached?.reason ?? (routeResponse ? "The production session issued and accepted this source response." : "No matching server-issued candidate reached this source response."),
         };
       });
     const intentionallyForbidden = Array.isArray(history.withheldAuthoredAnswers)
       ? history.withheldAuthoredAnswers.map((answer) => ({ ...object(answer), classification: "intentionally_forbidden" })) : [];
-    const allAuthoredAnswerDisposition = [...authoredAnswerDisposition, ...intentionallyForbidden];
+    const allSourceAnswerDisposition = [...sourceAnswerDisposition, ...intentionallyForbidden];
     const semanticResultSha256 = sha256Canonical({
       submitted: submittedSemantic,
       trace: traceSemantic,
@@ -204,13 +202,12 @@ async function main(): Promise<void> {
         rationale: entry.rationale,
         scenarioRole: entry.scenarioRole,
         changesIntendedSemanticTest: entry.changesIntendedSemanticTest,
-        provenance: entry.provenance,
         outcome: entry.outcome,
       })),
       syntheticRespondentControls: JSON.parse(normalizeRuntimeIds(JSON.stringify(replay.syntheticRespondentControls))) as unknown,
       mappingEntryTopicOptIns,
       replayDecisions: replay.replayDecisions.map(({ sourceOccurrenceReference, outcome }) => ({ sourceOccurrenceReference, outcome })),
-      authoredAnswerDisposition: allAuthoredAnswerDisposition.map((value) => {
+      sourceAnswerDisposition: allSourceAnswerDisposition.map((value) => {
         const row = object(value);
         return {
           responseId: typeof row.responseId === "string" ? row.responseId : typeof row.sourceAnswerRef === "string" ? row.sourceAnswerRef : null,
@@ -221,7 +218,7 @@ async function main(): Promise<void> {
       }),
     });
     const artifact = {
-      schemaVersion: "PWQE51-ROUTE-REPLAY-V5",
+      schemaVersion: "PWQE51-ROUTE-REPLAY-V6",
       profileId,
       sourceIdentity: {
         v2ManifestSha256,
@@ -242,10 +239,6 @@ async function main(): Promise<void> {
         controls: mappingEntryTopicOptIns,
         archivedConfigurationDifference: "The v2 archive retains the permission declaration and provenance. Normal replay applies permission when Deepening starts. This variant separately simulates permission before Mapping and does not rewrite the v2 history.",
       } : null,
-      sourceResponseProvenance: sourceProvenance,
-      originalAuthoredAnswers: history.originalAuthoredResponses ?? history.mappingResponses.filter((answer) => sourceProvenance.some((entry) => entry.responseId === answer.responseId && entry.origin === "original_authored_fictional_answer")),
-      newSyntheticMappingAnswers: history.syntheticMappingResponses ?? history.mappingResponses.filter((answer) => sourceProvenance.some((entry) => entry.responseId === answer.responseId && entry.origin === "new_synthetic_mapping_answer")),
-      newSyntheticDeepeningAnswers: replay.submitted.filter((answer) => answer.provenance === "new_synthetic_deepening_answer"),
       syntheticDeepeningAnswerAudit: replay.syntheticDeepeningAnswerAudit,
       syntheticRespondentControls: replay.syntheticRespondentControls,
       declaredFictionalDecisions: {
@@ -258,18 +251,16 @@ async function main(): Promise<void> {
         comparisonBindingIntents: history.comparisonBindingIntents ?? [],
         intentionallyForbiddenAnswers: Array.isArray(history.withheldAuthoredAnswers) ? history.withheldAuthoredAnswers : [],
       },
-      authoredAnswerDisposition: allAuthoredAnswerDisposition,
+      sourceAnswerDisposition: allSourceAnswerDisposition,
       replay: {
         state: replay.state,
         occurrenceReferenceToServerId: replay.occurrenceReferenceToServerId,
         submittedSourceToRuntimeResponses: replay.submitted,
-        completeResponseProvenance: replay.responseProvenance,
-        newSyntheticDeepeningAnswers: replay.submitted.filter((answer) => answer.provenance === "new_synthetic_deepening_answer"),
         syntheticDeepeningAnswerAudit: replay.syntheticDeepeningAnswerAudit,
         syntheticRespondentControls: replay.syntheticRespondentControls,
         routingDecisionTrace: replay.routingTrace,
         replayAndDistinctnessDecisions: replay.replayDecisions,
-        unreachedOriginalAnswers: replay.unreachedOriginalAnswers,
+        unreachedSourceResponses: replay.unreachedSourceResponses,
         firstDivergence: replay.firstDivergence ?? null,
         completeness: {
           mapping: replay.mappingComplete ? "complete" : "partial",
@@ -303,16 +294,14 @@ async function main(): Promise<void> {
       || (!requiredAnchorIds.length && (history.intendedDeepeningContext?.focusOccurrenceId === answer.occurrenceId)));
     const relevantOccurrenceRefs = new Set(branchAnswers.map((answer) => answer.occurrenceId));
     if (!relevantOccurrenceRefs.size && history.intendedDeepeningContext?.focusOccurrenceId) relevantOccurrenceRefs.add(history.intendedDeepeningContext.focusOccurrenceId);
-    const provenanceById = new Map(sourceProvenance.map((entry) => [entry.responseId, entry]));
     const describeResponse = (answer: FictionalHistoryV2["mappingResponses"][number] | FictionalHistoryV2["deepeningResponses"][number]) => {
       const routeResponse = replay.submitted.find((entry) => entry.sourceResponseId === answer.responseId);
-      const disposition = replay.unreachedOriginalAnswers.find((entry) => entry.responseId === answer.responseId);
+      const disposition = replay.unreachedSourceResponses.find((entry) => entry.responseId === answer.responseId);
       const traceEntry = replay.routingTrace.find((entry) => entry.sourceResponseId === answer.responseId);
       const question = questionSource.questionBank.items.find((item) => item.id === answer.questionId);
       const variant = answer.variantId ? questionSource.questionBank.variants.find((item) => item.id === answer.variantId && item.replaces === answer.questionId) : undefined;
       return {
         sourceResponse: answer,
-        provenance: provenanceById.get(answer.responseId)?.origin ?? answer.provenance ?? "original_authored_fictional_response",
         questionContract: question ? {
           id: question.id,
           stage: question.stage,
@@ -347,9 +336,9 @@ async function main(): Promise<void> {
       fullAssessmentTranscript: false,
       independentlyReviewedRoutingEvidence: false,
       semanticClaim: history.profile.title ?? profileId,
-      status: requiredAnchorIds.length === 0 ? "no_authored_deepening_semantic_anchors"
-        : replay.semanticCore.status === "complete" ? "all_authored_semantic_anchors_issued_in_full_session"
-          : "authored_semantic_anchors_not_fully_issued_in_full_session",
+      status: requiredAnchorIds.length === 0 ? "no_deepening_semantic_anchors"
+        : replay.semanticCore.status === "complete" ? "all_semantic_anchors_issued_in_full_session"
+          : "semantic_anchors_not_fully_issued_in_full_session",
       sourcePins: {
         v2ManifestSha256,
         authoredFixtureFile: profileById.get(profileId)!.file,
@@ -364,8 +353,6 @@ async function main(): Promise<void> {
       },
       separationRules: {
         sourceAnswersRemainUnchanged: true,
-        syntheticMappingScaffoldIsNotEvidenceForThisSemanticClaim: true,
-        syntheticDeepeningAnswersAreContextOnly: true,
         routerMustIssueEveryQuestion: true,
         occurrenceAndBindingMustMatchExactly: true,
       },
@@ -385,8 +372,7 @@ async function main(): Promise<void> {
           episodeFamily: episode?.episodeFamily ?? null,
           basis: episode?.basis ?? null,
           origin: episode?.origin ?? null,
-          originalMappingContext: mapAnswers.filter((answer) => (provenanceById.get(answer.responseId)?.origin ?? answer.provenance) === "original_authored_fictional_answer").map(describeResponse),
-          syntheticMappingScaffoldContextOnly: mapAnswers.filter((answer) => (provenanceById.get(answer.responseId)?.origin ?? answer.provenance)?.includes("synthetic_mapping_answer")).map(describeResponse),
+          sourceMappingContext: mapAnswers.map(describeResponse),
           referentRoles: [...(history.originalConfiguredReferentRoles ?? []), ...(history.syntheticReferentRoles ?? [])].filter((entry) => entry.occurrenceId === occurrenceId),
         };
       }),
@@ -426,20 +412,18 @@ async function main(): Promise<void> {
       semanticResultSha256,
       mapping: replay.mappingComplete ? "complete" : "partial",
       deepening: replay.deepeningComplete ? "complete" : replay.deepeningStarted ? "partial" : "not_applicable",
-      originalAnswers: {
-        issuedAndAccepted: replay.responseProvenance.filter((row) => row.accepted && row.origin.startsWith("original_authored_fictional_")).length,
-        unreached: replay.unreachedOriginalAnswers.length,
+      sourceAnswers: {
+        issuedAndAccepted: sourceAnswerDisposition.filter((row) => row.classification === "route_issued_and_accepted").length,
+        unreached: replay.unreachedSourceResponses.length,
         intentionallyForbidden: Array.isArray(history.withheldAuthoredAnswers) ? history.withheldAuthoredAnswers.length : 0,
       },
-      sourceContractMismatchCount: replay.unreachedOriginalAnswers.filter((answer) => answer.classification === "source_contract_mismatch").length,
-      implementationDefectCount: replay.unreachedOriginalAnswers.filter((answer) => answer.classification === "implementation_defect").length,
-      syntheticMappingScaffoldAnswersAdministered: replay.submitted.filter((answer) => answer.provenance === "new_synthetic_mapping_response").length,
-      newSyntheticDeepeningAnswers: replay.syntheticDeepeningAnswerAudit.length,
+      sourceContractMismatchCount: replay.unreachedSourceResponses.filter((answer) => answer.classification === "source_contract_mismatch").length,
+      implementationDefectCount: replay.unreachedSourceResponses.filter((answer) => answer.classification === "implementation_defect").length,
       syntheticRespondentControls: replay.syntheticRespondentControls.length,
       semanticCore: replay.semanticCore.status,
-      semanticDistinctionStatus: replay.semanticCore.status === "complete" ? "preserved_in_exact_original_semantic_anchors"
-        : replay.semanticCore.status === "unavailable" ? "cannot_be_claimed_no_authored_deepening_anchors"
-          : "partial_or_unverified_exact_original_semantic_anchors",
+      semanticDistinctionStatus: replay.semanticCore.status === "complete" ? "preserved_in_exact_semantic_anchors"
+        : replay.semanticCore.status === "unavailable" ? "cannot_be_claimed_no_deepening_semantic_anchors"
+          : "partial_or_unverified_exact_semantic_anchors",
       requiredSemanticCoreResponseIds: replay.semanticCore.requiredSourceResponseIds,
       acceptedSemanticCoreResponseIds: replay.semanticCore.acceptedSourceResponseIds,
       replayConfirmed: replay.replayDecisions.some((decision) => decision.outcome === "different"),
@@ -474,37 +458,37 @@ async function main(): Promise<void> {
     `- Constructed-history source commit: \`${manifest.sourceCommit}\`.`,
     "- Verified implementation branch base commit: `9b7095919c99861510be8498b822ae8983eaed87`.",
     `- V2 source manifest SHA-256: \`${v2ManifestSha256}\`.`,
-    "- All new Deepening answers and Mapping-entry consent controls retain explicit synthetic provenance.",
+    "- Deepening decisions are audited against same-occurrence facts; Mapping-entry permission is recorded as an explicit control.",
     "- Cohort B cases are in `focused-branches/`; they are source-bound case specifications, not complete assessment transcripts and not independent routing review.",
     "- Packet acceptance below is a source/structure result. It is not semantic approval, reviewer approval, or provider quality.",
     "",
-    "| Profile | Fictional case | Mapping | Deepening | Semantic anchors accepted / required | Original answers issued / unreached / forbidden / mismatch | Synthetic Mapping scaffold / synthetic Deepening answers | MAP packet | Deepening packets | Semantic distinction status |",
+    "| Profile | Fictional case | Mapping | Deepening | Semantic anchors accepted / required | Source answers issued / unreached / forbidden / mismatch | MAP packet | Deepening packets | Semantic distinction status |",
     "|---|---|---|---|---:|---|---|---|---|---|",
   ];
   for (const row of profileIndex) {
-    const original = row.originalAnswers as { issuedAndAccepted: number; unreached: number; intentionallyForbidden: number };
+    const sourceAnswers = row.sourceAnswers as { issuedAndAccepted: number; unreached: number; intentionallyForbidden: number };
     const mismatches = Number(row.sourceContractMismatchCount ?? 0);
     const anchorRequired = Array.isArray(row.requiredSemanticCoreResponseIds) ? row.requiredSemanticCoreResponseIds.length : 0;
     const anchorAccepted = Array.isArray(row.acceptedSemanticCoreResponseIds) ? row.acceptedSemanticCoreResponseIds.length : 0;
     const classification = String(row.semanticDistinctionStatus ?? "unclassified").replace(/\|/gu, "\\|");
-    rootCauseLines.push(`| ${row.profileId} | ${String(row.profileTitle ?? row.profileId).replace(/\|/gu, "\\|")} | ${row.mapping} | ${row.deepening} | ${anchorAccepted} / ${anchorRequired} | ${original.issuedAndAccepted} / ${original.unreached} / ${original.intentionallyForbidden} / ${mismatches} | ${row.syntheticMappingScaffoldAnswersAdministered} / ${row.newSyntheticDeepeningAnswers} | ${row.mappingPacketAccepted ? "accepted" : "unavailable"} | ${row.deepeningPacketAccepted ? "accepted" : "unavailable"} | ${classification} |`);
+    rootCauseLines.push(`| ${row.profileId} | ${String(row.profileTitle ?? row.profileId).replace(/\|/gu, "\\|")} | ${row.mapping} | ${row.deepening} | ${anchorAccepted} / ${anchorRequired} | ${sourceAnswers.issuedAndAccepted} / ${sourceAnswers.unreached} / ${sourceAnswers.intentionallyForbidden} / ${mismatches} | ${row.mappingPacketAccepted ? "accepted" : "unavailable"} | ${row.deepeningPacketAccepted ? "accepted" : "unavailable"} | ${classification} |`);
   }
   rootCauseLines.push(
     "",
     "## Discrepancy and interpretation notes",
     "",
-    "- `M10.observable` remains distinct from base `M10`. The main v5 fixture applies a separately marked Mapping-entry body_detail opt-in for P05, C10, and C11; the no-entry-opt-in comparison is preserved separately. No answer is translated between contracts.",
+    "- `M10.observable` remains distinct from base `M10`. The main v6 fixture applies a separately marked Mapping-entry body_detail opt-in for P05, C10, and C11; the no-entry-opt-in comparison is preserved separately. No answer is translated between contracts.",
     "- P03 and C12 answer a real router-issued D42 known-distance prompt on a linked actual `known_delay` occurrence. The question explicitly asks about a different time; the D42 response is accepted with `actual_recalled` basis and the target-resolution observation. Packet construction records the distinct pair only from that route evidence.",
     "- C07's comparison pair requires an explicit replay binding and actual second M02 root. Occurrence IDs alone do not establish distinctness. P01 follows its separately source-authorized controlled replay path.",
     "- C02's D67/D68 and C09's D79 answers remain intentionally forbidden. A router-issued forbidden question produces a discrepancy and supported skip only.",
-    "- P07 has no authored Deepening semantic anchors. Its completed Deepening route cannot qualify a semantic claim by adding novel synthetic answers.",
-    "- High synthetic response volume, including inherited Mapping scaffold, can make a structurally valid packet a weak test of the original case. The full answer-level audit and focused branch case file preserve that distinction.",
+    "- P07 has no Deepening semantic anchors. Its completed Deepening route cannot qualify a semantic claim without those anchors.",
+    "- High response volume can make a structurally valid packet a weak test of the source case. The full answer-level audit and focused branch case file preserve that distinction.",
     "",
   );
-  await atomicWrite(path.join(output, "v5-root-cause-ledger.md"), rootCauseLines.join("\n"));
+  await atomicWrite(path.join(output, "v6-root-cause-ledger.md"), rootCauseLines.join("\n"));
 
   const index = {
-      schemaVersion: "PWQE51-ROUTE-REPLAY-V5-MANIFEST",
+      schemaVersion: "PWQE51-ROUTE-REPLAY-V6-MANIFEST",
     qualificationStatus: "internal_session_replay_not_independent_qualification",
     inputs: {
       v2ManifestSha256,
@@ -527,7 +511,7 @@ async function main(): Promise<void> {
       provenance: "new_synthetic_mapping_control",
       archivedConfigurationDifference: "Permission is simulated before Mapping for this experiment; v2 keeps its source provenance, and normal replay applies it when Deepening starts.",
     } : null,
-    rootCauseLedger: "v5-root-cause-ledger.md",
+    rootCauseLedger: "v6-root-cause-ledger.md",
     profiles: profileIndex,
   };
   const indexText = `${JSON.stringify(index, null, 2)}\n`;

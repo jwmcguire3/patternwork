@@ -22,16 +22,6 @@ function normalizedPair(left: string, right: string): string {
   return [left, right].sort().join("\u0000");
 }
 
-function responseProvenanceLabel(origin: unknown): string | undefined {
-  switch (origin) {
-    case "original_authored_fictional_answer": return "original_authored_fictional_response";
-    case "new_synthetic_mapping_answer": return "new_synthetic_mapping_response";
-    case "new_synthetic_deepening_answer": return "new_synthetic_deepening_answer";
-    case "new_fictional_control_outcome": return "new_fictional_control_outcome";
-    default: return undefined;
-  }
-}
-
 export interface SemanticEvidenceVerification {
   readonly profileId: string;
   readonly packetObservationCount: number;
@@ -73,10 +63,6 @@ export function verifySemanticEvidencePacket(input: {
 
   const submitted = records(replay.submittedSourceToRuntimeResponses);
   const submittedByRuntimeId = new Map(submitted.map((row) => [row.runtimeResponseId, row]));
-  const provenance = records(replay.completeResponseProvenance);
-  const provenanceBySourceId = new Map(provenance.map((row) => [row.sourceResponseId, row]));
-  const authoredSourceProvenance = records(history.responseProvenance);
-  const authoredOriginBySourceId = new Map(authoredSourceProvenance.map((row) => [row.responseId, row.origin]));
   const responseObservations = new Map<string, JsonRecord[]>();
   const allObservations: JsonRecord[] = [];
   const packetRows = record(artifact.packets) ?? {};
@@ -118,28 +104,8 @@ export function verifySemanticEvidencePacket(input: {
         failures.push(`${packetType}:observation_option_outside_pinned_source:${responseId}`);
       }
       if (typeof responseId === "string" && typeof submittedRow?.sourceResponseId === "string") {
-        const sourceLine = provenanceBySourceId.get(submittedRow.sourceResponseId);
-        if (!sourceLine || sourceLine.accepted !== true) failures.push(`${packetType}:source_provenance_missing_or_unaccepted:${responseId}`);
-        const authoredOrigin = authoredOriginBySourceId.get(submittedRow.sourceResponseId);
-        const authoredProvenance = responseProvenanceLabel(authoredOrigin);
-        const runtimeProvenance = responseProvenanceLabel(sourceLine?.origin);
-        if (!runtimeProvenance) failures.push(`${packetType}:runtime_provenance_origin_unrecognized:${responseId}`);
-        if (authoredOrigin !== undefined && authoredProvenance !== runtimeProvenance) {
-          failures.push(`${packetType}:runtime_provenance_does_not_match_authored_source_origin:${responseId}`);
-        }
-        const expectedProvenance = authoredProvenance ?? runtimeProvenance;
-        if (expectedProvenance && submittedRow.provenance !== expectedProvenance) {
-          failures.push(`${packetType}:submitted_provenance_does_not_match_source_origin:${responseId}`);
-        }
-        const expectedSelectionReason = expectedProvenance
-          ? `source provenance: ${expectedProvenance}; fictional qualification evidence, not real participant data`
-          : undefined;
-        if (input.requirePacketProvenance !== false && (!expectedSelectionReason || observation.selection_reason !== expectedSelectionReason)) {
-          failures.push(`${packetType}:response_provenance_not_visible_in_packet:${responseId}`);
-        }
-        if (submittedRow.phase === "mapping" && expectedProvenance === "new_synthetic_mapping_response"
-          && (sourceLine?.origin !== "new_synthetic_mapping_answer" || authoredOriginBySourceId.get(submittedRow.sourceResponseId) !== "new_synthetic_mapping_answer")) {
-          failures.push(`${packetType}:synthetic_mapping_origin_not_preserved:${responseId}`);
+        if (submittedRow.phase !== undefined && !["mapping", "deepening"].includes(String(submittedRow.phase))) {
+          failures.push(`${packetType}:submission_phase_invalid:${responseId}`);
         }
       }
     }
@@ -267,7 +233,7 @@ export function verifyAuthoredResponsePacketBinding(input: {
     const sourceId = row.sourceResponseId;
     if (typeof sourceId !== "string") continue;
     const source = bySourceId.get(sourceId);
-    if (!source) continue; // Newly synthetic control and Deepening answers have their own provenance records.
+    if (!source) continue; // Control answers do not correspond to fixture response rows.
     const runtimeId = row.runtimeResponseId;
     if (typeof runtimeId !== "string") continue;
     const isMappingOrDeepeningPacket = observationRows.some((observation) => observation.response_id === runtimeId);

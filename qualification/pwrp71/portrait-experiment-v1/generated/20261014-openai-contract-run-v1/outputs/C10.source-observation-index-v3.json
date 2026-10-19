@@ -1,0 +1,460 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-SOURCE-OBSERVATION-INDEX-V1",
+  "status": "source_cross_checked_fictional_evidence",
+  "profileId": "C10",
+  "fixtureSet": "route-replays-v5",
+  "packetSha256": "109ad81a85793f0f114351e42e7f2f4f62e927a80a76e23b0afee4e112b87cb3",
+  "fixtureSha256": "6591fd1aae22a887b213958412813376b9ab6102581e487357b6319459d90afe",
+  "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+  "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+  "questionBankSha256": "800dec8dcb8b1cecf92bbaefe15012f2252d7a1d93764e814924f0332560aa04",
+  "originalAuthoredObservationCount": 23,
+  "syntheticObservationsExcludedFromIndex": 27,
+  "occurrenceIds": [
+    "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+  ],
+  "sequenceEdges": [
+    {
+      "id": "recovery:pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b:D36.input:D36.words",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "from_step": "recovery/D36.input",
+      "to_step": "recovery/D36.words",
+      "meaning": "reported_recovery_order",
+      "relation": "before",
+      "evidence_ids": [
+        "Oc2946f9ba4b05c7e5f65",
+        "Occa453554150fe009f5b"
+      ],
+      "first_not_helping": false
+    },
+    {
+      "id": "recovery:pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b:D36.words:D36.think",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "from_step": "recovery/D36.words",
+      "to_step": "recovery/D36.think",
+      "meaning": "reported_recovery_order",
+      "relation": "before",
+      "evidence_ids": [
+        "Occa453554150fe009f5b",
+        "O5a0b22af174f55b11f1c"
+      ],
+      "first_not_helping": false
+    }
+  ],
+  "observations": [
+    {
+      "observation_id": "O8426258b9708c505f5a0",
+      "source_response_id": "C10-SRC-M10-1",
+      "current_response_id": "pwr_d4a80e41fe6d11cc596a6b8b3a62955a148a6f46",
+      "phase": "mapping",
+      "item_id": "M10",
+      "option_id": "M10.words",
+      "selected_text": "It became harder to answer people.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "first",
+      "source_response_step_id": "first",
+      "basis": "actual_recalled",
+      "capture": "first_notice",
+      "target_ids": [
+        "coverage:M10"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "O8478a00e94684f39abae",
+      "source_response_id": "C10-SRC-M11-1",
+      "current_response_id": "pwr_442e9bf65f04c2cd29030dce948b1afa2154bc12",
+      "phase": "mapping",
+      "item_id": "M11",
+      "option_id": "M11.quiet",
+      "selected_text": "I went somewhere with less input.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "first",
+      "source_response_step_id": "first",
+      "basis": "actual_recalled",
+      "capture": "first_action",
+      "target_ids": [
+        "coverage:M11"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "Od5373f2188ec6a5cd687",
+      "source_response_id": "C10-SRC-M12-1",
+      "current_response_id": "pwr_d4a979e4f470e04a518c56bb23447a77567c0ec0",
+      "phase": "mapping",
+      "item_id": "M12",
+      "option_id": "M12.function",
+      "selected_text": "I could carry on, but did not feel better.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "first",
+      "source_response_step_id": "first",
+      "basis": "actual_recalled",
+      "capture": "immediate_effect",
+      "target_ids": [
+        "coverage:M12"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "O05717d3bacb2f7eda689",
+      "source_response_id": "C10-SRC-M13-1",
+      "current_response_id": "pwr_778dfb8ae2275faaf6871c3c58a5f52632ccf46e",
+      "phase": "mapping",
+      "item_id": "M13",
+      "option_id": "M13.quiet",
+      "selected_text": "I spent time with less noise or fewer demands.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "later",
+      "source_response_step_id": "later",
+      "basis": "actual_recalled",
+      "capture": "later_action",
+      "target_ids": [
+        "coverage:M13"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "O543a044c866cd15b9573",
+      "source_response_id": "C10-SRC-M14-1",
+      "current_response_id": "pwr_7a1d6ad2542a41652d31babe767b7d838437fd4b",
+      "phase": "mapping",
+      "item_id": "M14",
+      "option_id": "M14.choice",
+      "selected_text": "I had more room to think and choose.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "later",
+      "source_response_step_id": "later",
+      "basis": "actual_recalled",
+      "capture": "later_effect",
+      "target_ids": [
+        "coverage:M14"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "O0658ae705c4c7f122eba",
+      "source_response_id": "C10-SRC-D30-1",
+      "current_response_id": "pwr_fabb0be613dcc929eb6c24ccb70df9fe121a2503",
+      "phase": "deepening",
+      "item_id": "D30",
+      "option_id": "D30.stuck",
+      "selected_text": "I knew what I meant but could not get it out.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "first",
+      "source_response_step_id": "first",
+      "basis": "actual_recalled",
+      "capture": "speech_access",
+      "target_ids": [
+        "words:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "O397375211099023b504b",
+      "source_response_id": "C10-SRC-D34-1",
+      "current_response_id": "pwr_d629eef3b52946c4bb33f5ed7c548ada8ab585fc",
+      "phase": "deepening",
+      "item_id": "D34",
+      "option_id": "D34.words",
+      "selected_text": "I wanted to speak but could not get words out.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "first",
+      "source_response_step_id": "first",
+      "basis": "actual_recalled",
+      "capture": "quiet_or_access",
+      "target_ids": [
+        "quiet_or_access:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "Ob22586b29466b74ea49b",
+      "source_response_id": "C10-SRC-D35-1",
+      "current_response_id": "pwr_279817fac66e40c76724c831e99238dabab77a96",
+      "phase": "deepening",
+      "item_id": "D35",
+      "option_id": "D35.choice",
+      "selected_text": "I could consider more than one next step.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "recovery",
+      "source_response_step_id": "recovery",
+      "basis": "actual_recalled",
+      "capture": "recovery_marker",
+      "target_ids": [
+        "recovery_marker:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "O8d4de3c2dd3c05d5ebe0",
+      "source_response_id": "C10-SRC-D83-1",
+      "current_response_id": "pwr_be7fb75d25fdc08579d86e043b77a279e298abfb",
+      "phase": "deepening",
+      "item_id": "D83",
+      "option_id": "D83.settle",
+      "selected_text": "Feeling settled rather than on edge.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "first",
+      "source_response_step_id": "first",
+      "basis": "actual_recalled",
+      "capture": "residual_difficulty",
+      "target_ids": [
+        "coverage_residual_difficulty:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "O183651e61cbf852b3de7",
+      "source_response_id": "C10-SRC-D80-1",
+      "current_response_id": "pwr_dd44064da012738e3229cd0b3310636154af826e",
+      "phase": "deepening",
+      "item_id": "D80",
+      "option_id": "D80.task",
+      "selected_text": "Carry out a familiar task.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "first",
+      "source_response_step_id": "first",
+      "basis": "actual_recalled",
+      "capture": "remaining_capacity",
+      "target_ids": [
+        "coverage_remaining_capacity:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "Ocdd69071862c457438ee",
+      "source_response_id": "C10-SRC-D82-1",
+      "current_response_id": "pwr_09b1e894f3cfffa5c1d32b69cf2cc803511ed5a8",
+      "phase": "deepening",
+      "item_id": "D82",
+      "option_id": "D82.gradual",
+      "selected_text": "It built gradually.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "first",
+      "source_response_step_id": "first",
+      "basis": "actual_recalled",
+      "capture": "onset_shape",
+      "target_ids": [
+        "coverage_onset_shape:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "O20773d476bcbb179d2ef",
+      "source_response_id": "C10-SRC-D100-1",
+      "current_response_id": "pwr_65dc2c0225dd33ea9a58293a9c3b9ef2dca04358",
+      "phase": "deepening",
+      "item_id": "D100",
+      "option_id": "D100.same_less",
+      "selected_text": "The concern still made sense, but it felt less urgent.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "recovery",
+      "source_response_step_id": "recovery",
+      "basis": "actual_recalled",
+      "capture": "meaning_after_easing",
+      "target_ids": [
+        "coverage_meaning_after_easing:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "O94831d634b022e5d26f4",
+      "source_response_id": "C10-SRC-D85-1",
+      "current_response_id": "pwr_9f4a8cfc5a0427ecc1e7f614cf03fc4af764a405",
+      "phase": "deepening",
+      "item_id": "D85",
+      "option_id": "D85.function_first",
+      "selected_text": "I could function before I felt more settled.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "recovery",
+      "source_response_step_id": "recovery",
+      "basis": "actual_recalled",
+      "capture": "function_ease_order",
+      "target_ids": [
+        "coverage_function_ease_order:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "O929cbaf357c5d2854ed9",
+      "source_response_id": "C10-SRC-D86-1",
+      "current_response_id": "pwr_36ff3582215f970853f0b8f5cc1b66edda6b2772",
+      "phase": "deepening",
+      "item_id": "D86",
+      "option_id": "D86.setting",
+      "selected_text": "The setting had become quieter or less demanding.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "recovery",
+      "source_response_step_id": "recovery",
+      "basis": "actual_recalled",
+      "capture": "recovery_conditions",
+      "target_ids": [
+        "coverage_recovery_conditions:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "O5ad2538a19201ee5851d",
+      "source_response_id": "C10-SRC-D37-1",
+      "current_response_id": "pwr_952b49285df46a85ac218899c49cb1d442e84fc0",
+      "phase": "deepening",
+      "item_id": "D37",
+      "option_id": "D37.part",
+      "selected_text": "Some things were easier, but not all.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "recovery",
+      "source_response_step_id": "recovery",
+      "basis": "actual_recalled",
+      "capture": "recovery_duration",
+      "target_ids": [
+        "recovery_duration:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "Oc2946f9ba4b05c7e5f65",
+      "source_response_id": "C10-SRC-D36-1",
+      "current_response_id": "pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b",
+      "phase": "deepening",
+      "item_id": "D36",
+      "option_id": "D36.input",
+      "selected_text": "There was less input or demand.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "recovery/D36.input",
+      "source_response_step_id": "recovery",
+      "basis": "actual_recalled",
+      "capture": "recovery_sequence",
+      "target_ids": [
+        "recovery_sequence:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "Occa453554150fe009f5b",
+      "source_response_id": "C10-SRC-D36-1",
+      "current_response_id": "pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b",
+      "phase": "deepening",
+      "item_id": "D36",
+      "option_id": "D36.words",
+      "selected_text": "Words came more easily.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "recovery/D36.words",
+      "source_response_step_id": "recovery",
+      "basis": "actual_recalled",
+      "capture": "recovery_sequence",
+      "target_ids": [
+        "recovery_sequence:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "O5a0b22af174f55b11f1c",
+      "source_response_id": "C10-SRC-D36-1",
+      "current_response_id": "pwr_5826956b1cf9fa99210af36663cf0ad4952ec74b",
+      "phase": "deepening",
+      "item_id": "D36",
+      "option_id": "D36.think",
+      "selected_text": "I could think more clearly.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "recovery/D36.think",
+      "source_response_step_id": "recovery",
+      "basis": "actual_recalled",
+      "capture": "recovery_sequence",
+      "target_ids": [
+        "recovery_sequence:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "Off8cd05760c5de43ae55",
+      "source_response_id": "C10-SRC-D29-1",
+      "current_response_id": "pwr_0c22aa3700face8a3bef93789737285a0cbf97fb",
+      "phase": "deepening",
+      "item_id": "D29",
+      "option_id": "D29.narrow",
+      "selected_text": "It narrowed to one thing.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "first",
+      "source_response_step_id": "first",
+      "basis": "actual_recalled",
+      "capture": "attention",
+      "target_ids": [
+        "attention:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "Oc1adc6f70b7c9cc1f73d",
+      "source_response_id": "C10-SRC-D32-1",
+      "current_response_id": "pwr_3b3000fdc56862a4bf290a5ea128305645328f91",
+      "phase": "deepening",
+      "item_id": "D32",
+      "option_id": "D32.both",
+      "selected_text": "I felt keyed up and drained at the same time.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "first",
+      "source_response_step_id": "first",
+      "basis": "actual_recalled",
+      "capture": "energy",
+      "target_ids": [
+        "energy:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "O95b9431fbdc556acbb2a",
+      "source_response_id": "C10-SRC-D33-1",
+      "current_response_id": "pwr_39d5d5b6b9a53548fc8e99a87fe83faeb4919014",
+      "phase": "deepening",
+      "item_id": "D33",
+      "option_id": "D33.later",
+      "selected_text": "I only recognized the changes afterward.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "first",
+      "source_response_step_id": "first",
+      "basis": "actual_recalled",
+      "capture": "noticed_order",
+      "target_ids": [
+        "noticed_order:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "O36b8ab6657f1876670d8",
+      "source_response_id": "C10-SRC-D84-1",
+      "current_response_id": "pwr_fd9bf498cc8bccc4b5d63f34e8fb9fdcbdd2d374",
+      "phase": "deepening",
+      "item_id": "D84",
+      "option_id": "D84.later_day",
+      "selected_text": "More than two hours, but within the same day.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "recovery",
+      "source_response_step_id": "recovery",
+      "basis": "actual_recalled",
+      "capture": "easing_time_estimate",
+      "target_ids": [
+        "coverage_easing_time_estimate:pwep_90003ada-19de-4edd-9080-17cbf5347d11:recovery"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    },
+    {
+      "observation_id": "O6076a569a7a3123d3aa8",
+      "source_response_id": "C10-SRC-D81-1",
+      "current_response_id": "pwr_794df933034d12383fd993b1cb512e6259355964",
+      "phase": "deepening",
+      "item_id": "D81",
+      "option_id": "D81.steady_strained",
+      "selected_text": "I looked steady while feeling strained inside.",
+      "occurrence_id": "pwep_90003ada-19de-4edd-9080-17cbf5347d11",
+      "step_id": "first",
+      "source_response_step_id": "first",
+      "basis": "actual_recalled",
+      "capture": "outward_inward",
+      "target_ids": [
+        "coverage_outward_inward:pwep_90003ada-19de-4edd-9080-17cbf5347d11:first"
+      ],
+      "dependence_group": "pwep_90003ada-19de-4edd-9080-17cbf5347d11"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-ATTEMPT4-DIAGNOSTIC-V1",
+  "recordedAt": "2026-10-15T13:24:18.100Z",
+  "profile": "P02",
+  "reportType": "IFS",
+  "stage": "interpretation",
+  "fixtureSet": "route-replays-v5",
+  "diagnosticType": "FICTIONAL_P02_C10_IFS_EXPERIMENT",
+  "qualificationStatus": "FICTIONAL_DIAGNOSTIC_ONLY_NOT_ROUTING_QUALIFICATION_OR_PRODUCTION_APPROVAL",
+  "callId": "017fbfd7-ec20-47a1-bb09-2f5242debd0b",
+  "provider": "OpenAI direct API",
+  "endpoint": "https://api.openai.com/v1/responses",
+  "model": "gpt-6-luna",
+  "reasoningEffort": "max",
+  "serviceTier": "default",
+  "packetSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+  "requestBodySha256": "f8c36e20ba9043a8bfc4392c7b11c174f6766d60b796ab175c4ee29cdd5b9cb6",
+  "maxOutputTokens": 128000,
+  "clientAbortTimeoutMilliseconds": 1800000,
+  "reservationCreatedAt": "2026-10-15T13:19:13.341Z",
+  "finishedAt": "2026-10-15T13:24:18.100Z",
+  "elapsedMilliseconds": 304759,
+  "status": "unknown_cost",
+  "responseStatus": null,
+  "responseId": null,
+  "transportError": "fetch failed",
+  "transportErrorDetails": {
+    "schemaVersion": "PATTERNWORK-TRANSPORT-ERROR-DETAILS-V1",
+    "causeChain": [
+      { "name": "TypeError", "message": "fetch failed" },
+      { "name": "HeadersTimeoutError", "message": "Headers Timeout Error", "code": "UND_ERR_HEADERS_TIMEOUT" }
+    ]
+  },
+  "responseFileCreated": false,
+  "usableDraftCreated": false,
+  "providerUsageAvailable": false,
+  "providerInvoiceCostConfirmed": false,
+  "reservationMicrodollars": 300000,
+  "reservationRemainsLocked": true,
+  "budget": {
+    "unknownReservationsMicrodollars": 900000,
+    "settledUpperBoundMicrodollars": 19650,
+    "remainingAuthorizationMicrodollars": 2080350
+  },
+  "providerAccountPreflight": {
+    "requestType": "authenticated model catalog GET",
+    "generationRequest": false,
+    "httpStatus": 200,
+    "modelVisible": true
+  },
+  "supportedInference": "The failure is consistent with a 300-second Undici response-header timeout ending the request before the runner's configured 30-minute AbortSignal.",
+  "unresolved": "No HTTP response means provider acceptance, completion, and billing for this POST are unknown.",
+  "retries": "No automatic or subsequent generation retry was sent.",
+  "officialDocumentation": [
+    "https://developers.openai.com/api/docs/models/gpt-6-luna",
+    "https://developers.openai.com/api/docs/pricing",
+    "https://github.com/nodejs/undici/blob/main/docs/docs/api/Client.md"
+  ]
+}

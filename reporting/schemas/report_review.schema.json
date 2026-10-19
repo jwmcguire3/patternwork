@@ -3,7 +3,7 @@
   "additionalProperties": false,
   "properties": {
     "review_contract": {
-      "const": "PWRP-REVIEW-7.0.0-candidate.1"
+      "const": "PWRP-REVIEW-7.1.0-candidate.3"
     },
     "report_release": {
       "const": "PWRP-7.1.0-candidate.1"
@@ -112,6 +112,410 @@
     "summary": {
       "type": "string",
       "minLength": 1
+    },
+    "quality_assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_fidelity": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "adequate",
+                "revise"
+              ]
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "rationale"
+          ]
+        },
+        "semantic_completeness": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "adequate",
+                "revise"
+              ]
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "rationale"
+          ]
+        },
+        "narrative_quality": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "adequate",
+                "revise"
+              ]
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "rationale"
+          ]
+        }
+      },
+      "required": [
+        "source_fidelity",
+        "semantic_completeness",
+        "narrative_quality"
+      ]
+    },
+    "evidence_coverage": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "evidence_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "disposition": {
+            "enum": [
+              "represented",
+              "context",
+              "not_material",
+              "missing"
+            ]
+          },
+          "claim_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "evidence_ids",
+          "disposition",
+          "claim_ids",
+          "rationale"
+        ]
+      }
+    },
+    "explanatory_assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Positive explanatory value in this report layer, not a quota of findings or IFS roles. not_supported requires a source-bounded rationale; do not invent absent material.",
+      "properties": {
+        "functions": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "adequate",
+                "not_supported",
+                "revise"
+              ]
+            },
+            "evidence_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "claim_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "evidence_ids",
+            "claim_ids",
+            "rationale"
+          ]
+        },
+        "triggers": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "adequate",
+                "not_supported",
+                "revise"
+              ]
+            },
+            "evidence_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "claim_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "evidence_ids",
+            "claim_ids",
+            "rationale"
+          ]
+        },
+        "costs": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "adequate",
+                "not_supported",
+                "revise"
+              ]
+            },
+            "evidence_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "claim_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "evidence_ids",
+            "claim_ids",
+            "rationale"
+          ]
+        },
+        "vulnerabilities": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "adequate",
+                "not_supported",
+                "revise"
+              ]
+            },
+            "evidence_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "claim_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "evidence_ids",
+            "claim_ids",
+            "rationale"
+          ]
+        },
+        "relationships": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "adequate",
+                "not_supported",
+                "revise"
+              ]
+            },
+            "evidence_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "claim_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "evidence_ids",
+            "claim_ids",
+            "rationale"
+          ]
+        },
+        "choice": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "adequate",
+                "not_supported",
+                "revise"
+              ]
+            },
+            "evidence_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "claim_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "evidence_ids",
+            "claim_ids",
+            "rationale"
+          ]
+        }
+      },
+      "required": [
+        "functions",
+        "triggers",
+        "costs",
+        "vulnerabilities",
+        "relationships",
+        "choice"
+      ]
+    },
+    "synthesis_opportunity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "realized",
+            "no_material_opportunity",
+            "revise"
+          ]
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "claim_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "status",
+        "evidence_ids",
+        "claim_ids",
+        "rationale"
+      ],
+      "description": "Evaluate the strongest material opportunity to connect or contrast findings; a source-grounded explanation is required even when none exists. A checklist of represented evidence alone is insufficient."
     }
   },
   "required": [
@@ -121,7 +525,11 @@
     "reviewed_evidence_sha256",
     "verdict",
     "issues",
-    "summary"
+    "summary",
+    "quality_assessment",
+    "evidence_coverage",
+    "explanatory_assessment",
+    "synthesis_opportunity"
   ],
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Patternwork semantic review v7"

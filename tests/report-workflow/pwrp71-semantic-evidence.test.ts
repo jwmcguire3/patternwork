@@ -39,26 +39,26 @@ test("Mapping-entry body_detail permission preserves the unchanged M10 source an
   });
   const baseM10 = variant.submitted.find((answer) => answer.sourceResponseId === "C10-SRC-M10-1");
   assert.equal(baseline.submitted.some((answer) => answer.sourceResponseId === "C10-SRC-M10-1"), false);
-  assert.equal(baseline.unreachedOriginalAnswers.find((answer) => answer.responseId === "C10-SRC-M10-1")?.classification, "source_contract_mismatch");
+  assert.equal(baseline.unreachedSourceResponses.find((answer) => answer.responseId === "C10-SRC-M10-1")?.classification, "source_contract_mismatch");
   assert.ok(baseM10);
   assert.equal(baseM10.phase, "mapping");
   assert.equal(baseM10.variantId, undefined);
   assert.deepEqual(baseM10.selectedOptionIds, ["M10.words"]);
   const mappingObservations = variant.packets.MAP?.packet.observations as readonly JsonRecord[];
   const m10Observation = mappingObservations.find((observation) => observation.response_id === baseM10.runtimeResponseId);
-  assert.equal(m10Observation?.selection_reason, "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data");
+  assert.equal(m10Observation?.selection_reason, "respondent-selected authored option");
   const syntheticM28 = variant.submitted.find((answer) => answer.sourceResponseId === "C10-SYN-M28");
   assert.ok(syntheticM28);
   const m28Observation = mappingObservations.find((observation) => observation.response_id === syntheticM28.runtimeResponseId);
-  assert.equal(m28Observation?.selection_reason, "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data");
+  assert.equal(m28Observation?.selection_reason, "respondent-selected authored option");
   const prepared = preparePwrp71Request({ packet: variant.packets.MAP!.packet as never, reportType: "MAP", questionSource, reportSource });
   assert.equal(prepared.ok, true, prepared.ok ? undefined : JSON.stringify(prepared.issues));
   if (prepared.ok) {
     const providerObservations = prepared.value.user_data.observations as JsonRecord[];
     assert.equal(providerObservations.find((observation) => observation.response_id === baseM10.runtimeResponseId)?.selection_reason,
-      "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data");
+      "respondent-selected authored option");
     assert.equal(providerObservations.find((observation) => observation.response_id === syntheticM28.runtimeResponseId)?.selection_reason,
-      "source provenance: new_synthetic_mapping_response; fictional qualification evidence, not real participant data");
+      "respondent-selected authored option");
   }
   assert.equal(variant.contextDecisions.mappingEntryTopicOptIns[0]?.provenance, "new_synthetic_mapping_control");
   assert.equal(variant.contextDecisions.mappingEntryTopicOptIns[0]?.baselineReplayApplicationBoundary, "deepening_start");
@@ -145,39 +145,18 @@ test("the independent v5 verifier qualifies retained source-to-packet bindings a
   (tamperedPacket.observations as JsonRecord[])[0]!.option_id = "not-in-source";
   assert.equal(verifySemanticEvidencePacket({ history: history as unknown as JsonRecord, artifact: tamperedOption, questionSource }).status, "fail");
 
-  const tamperedProvenance = structuredClone(artifact);
-  const provenancePacket = (((tamperedProvenance.packets as JsonRecord).MAP as JsonRecord).packet as JsonRecord);
-  (provenancePacket.observations as JsonRecord[])[0]!.selection_reason = "respondent-selected authored option";
-  assert.ok(verifySemanticEvidencePacket({ history: history as unknown as JsonRecord, artifact: tamperedProvenance, questionSource }).failures
-    .some((failure) => failure.includes("response_provenance_not_visible_in_packet")));
-
-  const tamperedSyntheticProvenance = structuredClone(artifact);
-  const replay = tamperedSyntheticProvenance.replay as JsonRecord;
-  const submitted = replay.submittedSourceToRuntimeResponses as JsonRecord[];
-  const syntheticMapResponse = submitted.find((row) => row.provenance === "new_synthetic_mapping_response")!;
-  const syntheticSourceId = syntheticMapResponse.sourceResponseId as string;
-  const syntheticRuntimeId = syntheticMapResponse.runtimeResponseId as string;
-  const sourceBoundProvenanceTamper = structuredClone(artifact);
-  const sourceBoundReplay = sourceBoundProvenanceTamper.replay as JsonRecord;
-  const sourceBoundSubmitted = (sourceBoundReplay.submittedSourceToRuntimeResponses as JsonRecord[])
-    .find((row) => row.runtimeResponseId === syntheticRuntimeId)!;
-  sourceBoundSubmitted.provenance = "original_authored_fictional_response";
-  const sourceBoundPacket = (((sourceBoundProvenanceTamper.packets as JsonRecord).MAP as JsonRecord).packet as JsonRecord);
-  (sourceBoundPacket.observations as JsonRecord[]).find((row) => row.response_id === syntheticRuntimeId)!.selection_reason =
-    "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data";
-  const sourceBoundResult = verifySemanticEvidencePacket({ history: history as unknown as JsonRecord, artifact: sourceBoundProvenanceTamper, questionSource });
-  assert.ok(sourceBoundResult.failures.some((failure) => failure.includes("submitted_provenance_does_not_match_source_origin")));
-  assert.ok(sourceBoundResult.failures.some((failure) => failure.includes("response_provenance_not_visible_in_packet")));
-
-  syntheticMapResponse.provenance = "original_authored_fictional_response";
-  const runtimeProvenance = replay.completeResponseProvenance as JsonRecord[];
-  runtimeProvenance.find((row) => row.sourceResponseId === syntheticSourceId)!.origin = "original_authored_fictional_answer";
-  const syntheticPacket = (((tamperedSyntheticProvenance.packets as JsonRecord).MAP as JsonRecord).packet as JsonRecord);
-  const syntheticObservation = (syntheticPacket.observations as JsonRecord[]).find((row) => row.response_id === syntheticRuntimeId)!;
-  syntheticObservation.selection_reason = "source provenance: original_authored_fictional_response; fictional qualification evidence, not real participant data";
-  const syntheticTamperResult = verifySemanticEvidencePacket({ history: history as unknown as JsonRecord, artifact: tamperedSyntheticProvenance, questionSource });
-  assert.ok(syntheticTamperResult.failures.some((failure) => failure.includes("submitted_provenance_does_not_match_source_origin")));
-  assert.ok(syntheticTamperResult.failures.some((failure) => failure.includes("runtime_provenance_does_not_match_authored_source_origin")));
+  const legacyOriginLabels = structuredClone(artifact);
+  const legacyReplay = legacyOriginLabels.replay as JsonRecord;
+  for (const row of legacyReplay.submittedSourceToRuntimeResponses as JsonRecord[]) {
+    row.provenance = "new_synthetic_mapping_response";
+  }
+  for (const row of legacyReplay.completeResponseProvenance as JsonRecord[]) {
+    row.origin = "untrusted_legacy_origin_label";
+  }
+  for (const row of (((history as unknown as JsonRecord).responseProvenance as JsonRecord[] | undefined) ?? [])) {
+    row.origin = "untrusted_legacy_origin_label";
+  }
+  assert.equal(verifySemanticEvidencePacket({ history: history as unknown as JsonRecord, artifact: legacyOriginLabels, questionSource }).status, "pass");
 
   const tamperedPrivacy = structuredClone(artifact);
   const privatePacket = (((tamperedPrivacy.packets as JsonRecord).MAP as JsonRecord).packet as JsonRecord);

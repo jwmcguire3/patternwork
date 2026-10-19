@@ -1,0 +1,264 @@
+{
+  "schemaVersion": "PATTERNWORK-PWRP71-FROZEN-INTERPRETATION-V1",
+  "status": "source_checked_and_reviewed_for_composition",
+  "profileId": "P02",
+  "attemptNumber": 5,
+  "packetSha256": "a28c19101cb596fca4e395806793944cc5135fc1b619a450161e3e9dcac8d497",
+  "experimentSha256": "eecb94ff118569ff44288fc81333aa42d0dee6dd868b514e02d3f0e09b47db33",
+  "sourceIdentity": {
+    "v2ManifestSha256": "77d050e360778965c29041ba86f1233343596969915a49961ae68778797a52ee",
+    "sourceCommit": "e3cb96593bd232f346cb561cda98b4d4c863a4cb",
+    "authoredFixtureFile": "P02.json",
+    "authoredFixtureSha256": "b47d80f9f0194055c8461145d75c559422abf34a0377682aa8cfa22e8ac990dc",
+    "questionRelease": "PWQE-5.1.0-candidate.1",
+    "routerVersion": "PW-ROUTER-1.1.0-candidate.1",
+    "questionSourceSha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
+    "questionSourceManifestSha256": "144b796d9d1cb78055091e9cc18b5c4735657a9ba3bed6197330fb65da69eabc",
+    "reportRelease": "PWRP-7.1.0-candidate.1",
+    "reportSourceManifestSha256": "026c6fd11fe50adde790d1f62ac5e65794987ed195374b7e9f0c1f276b57a3c5"
+  },
+  "modelOutputFile": "outputs/P02.interpretation.curated-v1.json",
+  "modelOutputFileSha256": "18e4e22a60cb02528c94192247c99bbc005047920483782b2ac80942fd63bc96",
+  "modelOutputCompactSha256": "70991484909bdb0c48464ecd623a572a3278fe91883c5ac48b1296dd22b32983",
+  "derivativeKind": "source_evidence_correction_and_omission",
+  "curationReceiptFile": "outputs/P02.interpretation.curated-v1.derivation.json",
+  "curationReceiptFileSha256": "c79f2e1f8c947bd0cd39069cf9963213376270eda072a0c240ef59e9c2ca883c",
+  "parentProviderOutputFile": "outputs/P02.interpretation.attempt-5.json",
+  "parentProviderOutputFileSha256": "c967d35a2a5e139f0d31db3b568b523274eefdc019f899412e8c94d8b7824d2f",
+  "independentReviewFile": "outputs/P02.interpretation.curated-v1.sol-review.json",
+  "independentReviewFileSha256": "3535ddc138cf3107621de66ef2aad8c78819f405c456c63c0219580052be1f2f",
+  "independentReviewTextFile": "outputs/P02.interpretation.curated-v1.sol-review.md",
+  "independentReviewTextFileSha256": "bc924e1974ae0811275f302f1ee284152b44a35abc6b99c53e7243e3d18cbace",
+  "graphCompactSha256": "fe937e26ccb553427c491f4107b878dea8930e309dae2b09f48aa39d19116989",
+  "validationReceiptFileSha256": "cad97f19959d2e5b8becc680fa66c9a6dee6cc6b4ccd2e2758b280282466ab12",
+  "solReviewReceiptFileSha256": "3535ddc138cf3107621de66ef2aad8c78819f405c456c63c0219580052be1f2f",
+  "claims": [
+    {
+      "id": "c_conflict_preventive_explaining",
+      "text": "In this single represented conflict occurrence, continued explanation of the point was explicitly aimed at preventing what might happen next; the recorded anticipated outcome was losing contact or not knowing where they stood. This supports a preventive relational-management function in that event, not proof that the feared outcome was imminent or prevented.",
+      "kind": "interpretation",
+      "constructs": [
+        "preventive_protection",
+        "relational_management",
+        "anticipated_disconnection_or_uncertainty"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled conflict occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "Ofc7b7fb668294601fe78",
+        "Oee9a23929c717af918cc",
+        "O46dfe0bb601014cf6dcf"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [],
+      "support_basis": "Original authored fictional D61 first action, D02 prevention aim, and D03 remembered expectation/prediction, all bound to the same recalled conflict occurrence.",
+      "rationale": "The explicit aim to prevent what might happen next aligns with the respondent's recorded prediction of losing contact or not knowing where they stood. The function is supported by the reported aim, not inferred from a plausible effect.",
+      "remaining_uncertainty": "The practical context was unresolved, so concurrent aims cannot be ruled out. The prediction is the respondent's expectation, not evidence of another person's motives or an established threat. No underlying vulnerable experience, effectiveness, recurrence, or distinct enduring part identity is established."
+    },
+    {
+      "id": "c_conflict_reported_sequence",
+      "text": "In the same occurrence, leaving or ending the exchange was reported as beginning after the explanation was not helping. This is one reported temporal relation, not proof of causation, a handoff between distinct parts, or a recurrent loop.",
+      "kind": "observation",
+      "constructs": [
+        "reported_temporal_order",
+        "response_change"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled conflict occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "Ofc7b7fb668294601fe78",
+        "O024600260948d26c8645",
+        "Oa6147904a3dbc2821d38"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [
+        "edge:pwr_cbcda3040bd22d070ab9ce0cc901ab53f9b973f2:D08.after_failed"
+      ],
+      "depends_on_claim_ids": [],
+      "support_basis": "The recalled first and next actions are paired with an explicit reported temporal relation; the packet defines the edge as temporal, not causal.",
+      "rationale": "The selected sequence relation states that the second response began after the first was not helping. It supports order in this occurrence only.",
+      "remaining_uncertainty": "Only one such sequence is represented. The edge does not establish why the response changed, whether the responses belong to one or more parts, or whether this order recurs."
+    },
+    {
+      "id": "c_conflict_exit_relief",
+      "text": "In this occurrence, the next action was leaving or ending the exchange. The stated next aim was for the feeling to ease right then, and the reported next effect was that it became easier to bear. The action, aim, and effect support a local reactive, relief-oriented interruption function.",
+      "kind": "interpretation",
+      "constructs": [
+        "reactive_interruption",
+        "protective_function",
+        "immediate_relief",
+        "leaving_or_ending_exchange"
+      ],
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": [],
+        "description": "One fictional source-bound actual_recalled conflict occurrence; person_id is null; recall is per-question with no fixed lookback. Not life-course evidence."
+      },
+      "evidence_ids": [
+        "O024600260948d26c8645",
+        "O482ef6dc44094628b660",
+        "O52b1a40eb779285046f1"
+      ],
+      "counterevidence_ids": [],
+      "sequence_edge_ids": [],
+      "depends_on_claim_ids": [
+        "c_conflict_reported_sequence"
+      ],
+      "support_basis": "Original authored fictional D07 next action, D09 next aim, and D10 reported next effect, all bound to the same recalled conflict occurrence.",
+      "rationale": "The stated aim of immediate feeling relief and the reported easing support interpreting this particular exit as relief-oriented. The function is not inferred from leaving alone.",
+      "remaining_uncertainty": "The reported easing does not prove the exit caused it or establish the degree of choice or control. Return to the exchange and what followed are unresolved. This finding does not make every leaving response protective."
+    }
+  ],
+  "name_registry": [
+    {
+      "name_id": "n_explainer",
+      "name": "Explainer",
+      "entity_kind": "candidate_response_function",
+      "role": "preventive relational protection",
+      "author_generated": true,
+      "supporting_claim_ids": [
+        "c_conflict_preventive_explaining"
+      ]
+    },
+    {
+      "name_id": "n_exit",
+      "name": "Exit",
+      "entity_kind": "candidate_response_function",
+      "role": "reactive immediate-relief interruption",
+      "author_generated": true,
+      "supporting_claim_ids": [
+        "c_conflict_exit_relief"
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "r_conflict_reported_sequence",
+      "from_name_id": "n_explainer",
+      "to_name_id": "n_exit",
+      "relation": "reported_temporal_sequence",
+      "claim_ids": [
+        "c_conflict_reported_sequence"
+      ]
+    }
+  ],
+  "priority_claim_ids": [
+    "c_conflict_preventive_explaining",
+    "c_conflict_reported_sequence",
+    "c_conflict_exit_relief"
+  ],
+  "observed_strengths": [],
+  "counterexamples": [],
+  "open_questions": [
+    {
+      "id": "oq_conflict_practical_context",
+      "status": "open_question",
+      "source_state": "unresolved",
+      "question": "What concrete practical or interactional context was present in the conflict, and was preventing the anticipated loss of contact or standing the only aim or one of several?",
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": []
+      },
+      "evidence_ids": [
+        "Ofc7b7fb668294601fe78",
+        "Oee9a23929c717af918cc",
+        "O46dfe0bb601014cf6dcf"
+      ],
+      "sequence_edge_ids": [],
+      "related_claim_ids": [
+        "c_conflict_preventive_explaining"
+      ]
+    },
+    {
+      "id": "oq_vulnerable_experience",
+      "status": "open_question",
+      "source_state": "open",
+      "question": "Whether the anticipated loss of contact or uncertainty connects to an underlying vulnerable experience or need, and whether any such experience has an exile role, is not established.",
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": []
+      },
+      "evidence_ids": [
+        "O46dfe0bb601014cf6dcf"
+      ],
+      "sequence_edge_ids": [],
+      "related_claim_ids": [
+        "c_conflict_preventive_explaining"
+      ]
+    },
+    {
+      "id": "oq_conflict_recurrence",
+      "status": "not_assessed",
+      "source_state": "abandoned_low_value",
+      "question": "Whether the explanation-to-exit sequence recurs across independently confirmed episodes or characterizes behavior beyond this one recalled conflict is not assessed.",
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": []
+      },
+      "evidence_ids": [
+        "Ofc7b7fb668294601fe78",
+        "O024600260948d26c8645",
+        "Oa6147904a3dbc2821d38"
+      ],
+      "sequence_edge_ids": [
+        "edge:pwr_cbcda3040bd22d070ab9ce0cc901ab53f9b973f2:D08.after_failed"
+      ],
+      "related_claim_ids": [
+        "c_conflict_reported_sequence"
+      ]
+    },
+    {
+      "id": "oq_function_identity",
+      "status": "not_assessed",
+      "source_state": "not_established",
+      "question": "Whether the named preventive and reactive response functions reflect one shifting response, distinct parts, or another account is not established. Their reported temporal relation does not establish a part handoff or enduring identity.",
+      "scope": {
+        "level": "occurrence",
+        "occurrence_ids": [
+          "pwep_14b3844b-40fc-4f28-a241-6c812b592dd3"
+        ],
+        "person_ids": []
+      },
+      "evidence_ids": [
+        "Ofc7b7fb668294601fe78",
+        "O024600260948d26c8645",
+        "Oa6147904a3dbc2821d38",
+        "O482ef6dc44094628b660",
+        "O52b1a40eb779285046f1"
+      ],
+      "sequence_edge_ids": [
+        "edge:pwr_cbcda3040bd22d070ab9ce0cc901ab53f9b973f2:D08.after_failed"
+      ],
+      "related_claim_ids": [
+        "c_conflict_preventive_explaining",
+        "c_conflict_reported_sequence",
+        "c_conflict_exit_relief"
+      ]
+    }
+  ]
+}

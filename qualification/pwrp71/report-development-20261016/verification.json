@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-16",
+  "baseCommit": "a6301d4ffe954c2b8e35eba3ec1a3518ae6d8756",
+  "node": "22",
+  "platform": "linux-x64",
+  "tests": {
+    "tests": 467,
+    "pass": 467,
+    "fail": 0,
+    "skipped": 0
+  },
+  "typecheck": "passed",
+  "productionBuild": "passed",
+  "scopedLint": "passed",
+  "retiredHistoricalTests": 29,
+  "historicalTestsCountedAsPass": false,
+  "providerCalls": 0,
+  "providerCostMicros": 0,
+  "actualModelProseEvaluation": "not_run",
+  "productionActivation": false,
+  "accountDelivery": "not_run",
+  "reportSourceManifestSha256": "890d555b5a7b59955d29352cb3f192120653cb901996934eccc1de16bda2fccb",
+  "profiles": [
+    {
+      "id": "mara",
+      "mappingResponses": 28,
+      "deepeningCumulativeResponses": 56,
+      "additionalDeepeningResponses": 28,
+      "engineCompletion": "administration_or_decision_limit",
+      "reusableRouteValidated": true
+    },
+    {
+      "id": "ellis",
+      "mappingResponses": 28,
+      "deepeningCumulativeResponses": 56,
+      "additionalDeepeningResponses": 28,
+      "engineCompletion": "administration_or_decision_limit",
+      "reusableRouteValidated": true
+    }
+  ],
+  "integrationReports": [
+    "MAP",
+    "IFS",
+    "PV",
+    "ATT",
+    "SYNTHESIS"
+  ],
+  "integrationTransport": "deterministic_test_only",
+  "logSha256": {
+    "final-suite.log": "4ba22edcf118e02892e8237b4aeea3f67b87c646f0a1b01647db084920c436c3",
+    "final-build.log": "1b3591a2468828ec7ea4974fc49ea0cd39c33669bc8a52624f1b1190ea5ef766",
+    "final-typecheck.log": "c8964fe883df7f352d556eddeaeb960fac9b946d1919ab1778de65af0b6d83c6",
+    "final-lint.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

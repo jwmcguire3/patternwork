@@ -17,10 +17,11 @@ import type {
   OpenRouterGenerationResult,
   OpenRouterTransport,
 } from "../../lib/server/openrouter/types.ts";
-import { GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY, maximumQuotedCallCostMicros } from "../../lib/server/openrouter/qualification-budget.ts";
+import { GPT6_LUNA_BILLING_BASIS, GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY, maximumQuotedCallCostMicros } from "../../lib/server/openrouter/qualification-budget.ts";
 import { projectOpenRouterStrictSchemaObject } from "../../lib/server/openrouter/schema-projection.ts";
 import { OpenRouterTransportError } from "../../lib/server/openrouter/types.ts";
 import { OpenRouterClient } from "../../lib/server/openrouter/client.ts";
+import { REVIEWED_IDENTITY_FREE_FIXTURE_CONTEXT } from "../../lib/server/openrouter/privacy-boundary.ts";
 
 const TEST_SCRATCH = path.join(process.cwd(), ".codex-temp", "test-runs");
 
@@ -36,7 +37,7 @@ const request: OpenRouterGenerationRequest = {
     required: ["ok"],
     properties: { ok: { type: "boolean" } },
   },
-  maxOutputTokens: 1_024,
+  maxOutputTokens: 128_000,
   idempotencyKey: "run-1:MAP:initial:luna-low",
 };
 
@@ -70,8 +71,8 @@ function provider(generate: OpenRouterTransport["generate"]): OpenRouterTranspor
   return { generate };
 }
 
-function journal(store: FileQualificationAttemptStore, transport: OpenRouterTransport, costCapMicros = 1_000_000): JournaledPwrp71Transport {
-  return new JournaledPwrp71Transport({ store, transport, maxCallCostMicros: costCapMicros, aggregateCostCapMicros: costCapMicros, now: () => new Date("2026-10-08T12:00:00.000Z") });
+function journal(store: FileQualificationAttemptStore, transport: OpenRouterTransport, costCapMicros = 1_000_000, privacyIdentityContext?: { identityInventoryReviewed?: true; respondentNames?: readonly string[]; accountIds?: readonly string[]; emails?: readonly string[] }): JournaledPwrp71Transport {
+  return new JournaledPwrp71Transport({ store, transport, maxCallCostMicros: costCapMicros, aggregateCostCapMicros: costCapMicros, privacyIdentityContext: privacyIdentityContext ?? REVIEWED_IDENTITY_FREE_FIXTURE_CONTEXT, now: () => new Date("2026-10-08T12:00:00.000Z") });
 }
 
 test("replays a completed provider result after restart without another transport call", async () => {
@@ -92,6 +93,66 @@ test("replays a completed provider result after restart without another transpor
     assert.deepEqual(await resumedRun.generate(request), result);
     assert.equal(resumedCalls, 0);
     assert.equal((await store.get(request.idempotencyKey))?.status, "completed");
+  });
+});
+
+test("journal refuses to reserve or dispatch without a reviewed identity inventory", async () => {
+  await withStore(async (store) => {
+    let calls = 0;
+    const unreviewed = new JournaledPwrp71Transport({
+      store,
+      transport: provider(async () => { calls += 1; return result; }),
+      maxCallCostMicros: 1_000_000,
+      aggregateCostCapMicros: 1_000_000,
+    });
+    await assert.rejects(unreviewed.generate(request), /local privacy boundary/u);
+    assert.equal(calls, 0);
+    assert.equal((await store.list()).length, 0);
+  });
+});
+
+test("journal rejects identity-bearing prompts before recording or dispatching an attempt", async () => {
+  await withStore(async (store) => {
+    let dispatches = 0;
+    const transport = provider(async () => {
+      dispatches += 1;
+      return result;
+    });
+    const invalid = { ...request, prompt: JSON.stringify({ snapshot_id: "person@example.test" }) };
+    await assert.rejects(journal(store, transport).generate(invalid), /local privacy boundary/u);
+    assert.equal(dispatches, 0);
+    assert.deepEqual(await store.list(), []);
+  });
+});
+
+test("journal rejects locally known names and account IDs before persisting their values", async () => {
+  await withStore(async (store) => {
+    let dispatches = 0;
+    const transport = provider(async () => { dispatches += 1; return result; });
+    const localOnlyIdentity = { respondentNames: ["Mara Jones"], accountIds: ["acct-78421"] };
+    const guarded = journal(store, transport, 1_000_000, localOnlyIdentity);
+    await assert.rejects(guarded.generate({ ...request, prompt: "Assessment for Mara Jones." }), /privacy boundary/u);
+    await assert.rejects(guarded.generate({ ...request, idempotencyKey: "run-1:acct-78421", prompt: "Summarize the bound evidence." }), /privacy boundary/u);
+    assert.equal(dispatches, 0);
+    assert.deepEqual(await store.list(), [], "the local identity values are rejected before the attempt is journaled");
+  });
+});
+
+test("journal checks injected provider policy values before persisting the wire request", async () => {
+  await withStore(async (store) => {
+    let dispatches = 0;
+    const transport = provider(async () => { dispatches += 1; return result; });
+    const guarded = new JournaledPwrp71Transport({
+      store,
+      transport,
+      maxCallCostMicros: 1_000_000,
+      aggregateCostCapMicros: 1_000_000,
+      privacyIdentityContext: { identityInventoryReviewed: true, accountIds: ["acct-78421"] },
+      providerPolicy: { ...GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY, only: ["acct-78421"] },
+    });
+    await assert.rejects(guarded.generate(request), /privacy boundary/u);
+    assert.equal(dispatches, 0);
+    assert.deepEqual(await store.list(), [], "injected wire metadata is checked before journal creation");
   });
 });
 
@@ -227,6 +288,16 @@ test("reserves the exact conservative price ceiling and admits a call at the per
   });
 });
 
+test("the qualification fixture uses the full published Luna completion allowance", () => {
+  const quote = maximumQuotedCallCostMicros(request);
+  assert.equal(request.maxOutputTokens, GPT6_LUNA_BILLING_BASIS.maxCompletionTokens);
+  assert.equal(quote, 169_000, "the quote includes the full context and 128,000-token completion allowance at the pinned rates");
+  assert.throws(
+    () => maximumQuotedCallCostMicros({ ...request, maxOutputTokens: GPT6_LUNA_BILLING_BASIS.maxCompletionTokens + 1 }),
+    /maxOutputTokens must be between 1 and 128000/u,
+  );
+});
+
 test("blocks a call one microdollar over its conservative per-call ceiling without dispatch", async () => {
   await withStore(async (store) => {
     const ceiling = maximumQuotedCallCostMicros(request);
@@ -326,8 +397,16 @@ test("a changed published price-basis digest changes the replay fingerprint", ()
 });
 
 test("attempt identity rejects changed model, schema, or provider price envelope without dispatch", async () => {
+  await withStore(async (store) => {
+    await journal(store, provider(async () => result)).generate(request);
+    let calls = 0;
+    await assert.rejects(
+      journal(store, provider(async () => { calls += 1; return result; })).generate({ ...request, model: "openai/gpt-6-sol" }),
+      /No authorized billing basis exists for model openai\/gpt-6-sol/u,
+    );
+    assert.equal(calls, 0);
+  });
   for (const mutate of [
-    (value: OpenRouterGenerationRequest) => ({ ...value, model: "openai/gpt-6-sol" }),
     (value: OpenRouterGenerationRequest) => ({ ...value, schema: { ...value.schema, title: "changed schema" } as JsonObject }),
   ]) {
     await withStore(async (store) => {
@@ -416,7 +495,7 @@ test("an ambiguous HTTP server error keeps its reservation and blocks automatic 
   await withStore(async (store) => {
     const ceiling = maximumQuotedCallCostMicros(request);
     let dispatches = 0;
-    const client = new OpenRouterClient({ apiKey: "offline-test-key", fetch: async () => {
+    const client = new OpenRouterClient({ apiKey: "offline-test-key", privacyIdentityContext: REVIEWED_IDENTITY_FREE_FIXTURE_CONTEXT, fetch: async () => {
       dispatches += 1;
       return Response.json({ error: { message: "upstream unavailable" } }, { status: 503 });
     } });
@@ -427,6 +506,50 @@ test("an ambiguous HTTP server error keeps its reservation and blocks automatic 
     assert.equal((await store.get(request.idempotencyKey))?.reservedCostMicros, ceiling);
     await assert.rejects(transport.generate(request), (error: unknown) => error instanceof QualificationAttemptError && error.code === "attempt_uncertain");
     assert.equal(dispatches, 1);
+  });
+});
+
+test("an explicitly captured provider schema rejection is saved safely and still cannot be retried", async () => {
+  await withStore(async (store) => {
+    const idempotencyKey = `${request.idempotencyKey}:schema-rejection-detail`;
+    let dispatches = 0;
+    const client = new OpenRouterClient({
+      apiKey: "offline-test-key",
+      privacyIdentityContext: REVIEWED_IDENTITY_FREE_FIXTURE_CONTEXT,
+      captureProviderErrorDetail: true,
+      fetch: async () => {
+        dispatches += 1;
+        return Response.json({
+          error: {
+            message: "Provider returned error",
+            code: 400,
+            metadata: {
+              provider_name: "OpenAI",
+              provider_error_code: "invalid_json_schema",
+              raw: JSON.stringify({
+                error: { message: "Unsupported schema keyword at $.properties.status.enum", param: "response_format.json_schema.schema.properties.status.enum" },
+                authorization: "Bearer provider-secret-value",
+              }),
+            },
+          },
+        }, { status: 400 });
+      },
+    });
+    const diagnosticRequest = { ...request, idempotencyKey };
+    const transport = journal(store, client);
+    await assert.rejects(transport.generate(diagnosticRequest), (error: unknown) =>
+      error instanceof OpenRouterTransportError && error.providerUpstreamCode === "invalid_json_schema");
+
+    const attempt = await store.get(idempotencyKey);
+    assert.equal(dispatches, 1);
+    assert.equal(attempt?.status, "unknown");
+    assert.equal(attempt?.reservedCostMicros, maximumQuotedCallCostMicros(diagnosticRequest));
+    assert.match(attempt?.diagnostic?.providerErrorRaw ?? "", /Unsupported schema keyword at \$\.properties\.status\.enum/u);
+    assert.equal(attempt?.diagnostic?.providerErrorRaw?.includes("provider-secret-value"), false);
+
+    await assert.rejects(transport.generate(diagnosticRequest), (error: unknown) =>
+      error instanceof QualificationAttemptError && error.code === "attempt_uncertain");
+    assert.equal(dispatches, 1, "retaining diagnostics must not allow an automatic retry of unknown-cost attempts");
   });
 });
 
@@ -461,7 +584,10 @@ test("a full-context quote covers prompt and schema size while the exact wire fi
     qualificationAttemptFingerprint({ request: { ...request, reasoningEffort: "low" }, wireRequest: { ...wireRequest, reasoningEffort: "low" }, maxCallCostMicros: baseQuote, aggregateCostCapMicros: baseQuote }),
     "reasoning settings change the exact charged request identity even under the same conservative ceiling",
   );
-  assert.ok(maximumQuotedCallCostMicros({ ...wireRequest, maxOutputTokens: request.maxOutputTokens + 1 }) > baseQuote);
+  assert.throws(
+    () => maximumQuotedCallCostMicros({ ...wireRequest, maxOutputTokens: request.maxOutputTokens + 1 }),
+    /maxOutputTokens must be between 1 and 128000/u,
+  );
 });
 
 test("malformed and missing live caps fail closed before dispatch", async () => {
@@ -475,6 +601,7 @@ test("malformed and missing live caps fail closed before dispatch", async () => 
         transport,
         maxCallCostMicros: badCap as number,
         aggregateCostCapMicros: 1_000_000,
+        privacyIdentityContext: REVIEWED_IDENTITY_FREE_FIXTURE_CONTEXT,
       });
       await assert.rejects(invalid.generate({ ...request, idempotencyKey: `${request.idempotencyKey}:bad:${String(badCap)}` }), (error: unknown) =>
         error instanceof QualificationAttemptError && error.code === "budget_blocked");
@@ -564,7 +691,7 @@ test("independent journal processes cannot both reserve the same aggregate remai
       const childRequest = { ...request, idempotencyKey: key };
       const code = `
         const [{ FileQualificationAttemptStore }, { GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY }, { projectOpenRouterStrictSchemaObject }] = await Promise.all([
-          import(${JSON.stringify(storeModule)}), import(${JSON.stringify(budgetModule)}), import(${JSON.stringify(schemaModule)})
+          import(${JSON.stringify(storeModule)}).then(m => m.default ?? m), import(${JSON.stringify(budgetModule)}).then(m => m.default ?? m), import(${JSON.stringify(schemaModule)}).then(m => m.default ?? m)
         ]);
         const store = new FileQualificationAttemptStore(${JSON.stringify(runDirectory)});
         const request = ${JSON.stringify(childRequest)};
