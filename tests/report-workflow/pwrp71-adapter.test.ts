@@ -261,6 +261,7 @@ test("synthesis requires the exact bound layer set and validates every layer cla
   const value = await fixture();
   const observationId = (value.observation as Record<string, unknown>).id as string;
   const layerDraft = (reportType: "IFS" | "PV" | "ATT", evidenceId = observationId): JsonObject => ({
+    formulation_sha256: "f".repeat(64),
     report_release: value.reportSource.policy.release,
     release_id: value.packet.release_id,
     snapshot_id: value.packet.snapshot_id,

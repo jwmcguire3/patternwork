@@ -7,10 +7,13 @@ import { PWQE51_RELEASE_IDENTITY } from "../../question-engine/pwqe51-source.ts"
 
 export const PWRP71_SOURCE_DIRECTORY = "reporting" as const;
 export const PWRP71_RELEASE_MANIFEST_PATH = `${PWRP71_SOURCE_DIRECTORY}/contracts/report_release_manifest.json` as const;
-export const PWRP71_RELEASE_MANIFEST_SHA256 = "36b7b20d9ffb9d49a31e7e229598b83440a982268c4a0bee40effe0322779af1" as const;
+export const PWRP71_RELEASE_MANIFEST_SHA256 = "bf793da28469db17e3e9b351907eccabc06efa140e947488a1ec2ce1ba4e097c" as const;
 
 export const PWRP71_PROMPT_FILES = {
   shared: "prompts/00_SHARED_REPORT_PROMPT_v7.md",
+  formulation: "prompts/09_FORMULATION_PROMPT.md",
+  narrative: "prompts/10_NARRATIVE_PROMPT.md",
+  voiceCompanion: "prompts/08_VOICE_COMPANION.md",
   mapping: "prompts/01_MAPPING_REPORT_PROMPT.md",
   ifs: "prompts/02_IFS_REPORT_PROMPT.md",
   state: "prompts/03_STATE_REPORT_PROMPT.md",
@@ -45,6 +48,7 @@ export interface Pwrp71ReportPolicy {
   readonly prompt_composition: string;
   readonly layer_prompts: Readonly<Record<string, string>>;
   readonly shared_prompt: string;
+  readonly voice_companion_prompt: string;
   readonly reviewer_prompt: string;
   readonly repair_prompt: string;
   readonly draft_schema: string;
@@ -77,7 +81,7 @@ export interface Pwrp71SourcePackage {
   readonly policy: Pwrp71ReportPolicy;
   readonly prompts: Readonly<Record<Pwrp71PromptKey, string>>;
   readonly constructGuide: string;
-  readonly schemas: { readonly reportDraft: JsonSchema; readonly reportReview: JsonSchema };
+  readonly schemas: { readonly reportDraft: JsonSchema; readonly reportReview: JsonSchema; readonly reportFormulation: JsonSchema; readonly reportNarrative: JsonSchema };
 }
 
 export interface Pwrp71SourceIssue {
@@ -93,11 +97,15 @@ export type Pwrp71IntegrityResult =
 const POLICY_FILE = "contracts/report_policy.json";
 const DRAFT_SCHEMA_FILE = "schemas/report_draft.schema.json";
 const REVIEW_SCHEMA_FILE = "schemas/report_review.schema.json";
+const FORMULATION_SCHEMA_FILE = "schemas/report_formulation.schema.json";
+const NARRATIVE_SCHEMA_FILE = "schemas/report_narrative.schema.json";
 const ALLOWED_FILES = new Set([
   ...Object.values(PWRP71_PROMPT_FILES),
   POLICY_FILE,
   DRAFT_SCHEMA_FILE,
   REVIEW_SCHEMA_FILE,
+  FORMULATION_SCHEMA_FILE,
+  NARRATIVE_SCHEMA_FILE,
   "contracts/ADDED_CHANNELS.md",
   "contracts/CONSTRUCT_GUIDE.md",
   "contracts/EVIDENCE_COVERAGE.md",
@@ -193,14 +201,19 @@ async function readJson<T>(workspaceRoot: string, relativePath: string): Promise
 async function loadPackage(workspaceRoot: string): Promise<Pwrp71SourcePackage> {
   const integrity = await verifyPwrp71SourceIntegrity(workspaceRoot);
   if (!integrity.ok) throw new Error(`PWRP 7.1 source integrity failed: ${JSON.stringify(integrity.issues)}`);
-  const [policy, promptValues, reportDraft, reportReview, constructGuide] = await Promise.all([
+  const [policy, promptValues, reportDraft, reportReview, reportFormulation, reportNarrative, constructGuide] = await Promise.all([
     readJson<Pwrp71ReportPolicy>(workspaceRoot, POLICY_FILE),
     Promise.all(Object.values(PWRP71_PROMPT_FILES).map((file) => readFile(path.join(workspaceRoot, PWRP71_SOURCE_DIRECTORY, ...file.split("/")), "utf8"))),
     readJson<JsonSchema>(workspaceRoot, DRAFT_SCHEMA_FILE),
     readJson<JsonSchema>(workspaceRoot, REVIEW_SCHEMA_FILE),
+    readJson<JsonSchema>(workspaceRoot, FORMULATION_SCHEMA_FILE),
+    readJson<JsonSchema>(workspaceRoot, NARRATIVE_SCHEMA_FILE),
     readFile(path.join(workspaceRoot, PWRP71_SOURCE_DIRECTORY, "contracts/CONSTRUCT_GUIDE.md"), "utf8"),
   ]);
-  if (policy.release !== integrity.value.report_release
+  if (policy.prompt_composition !== "formulation_then_narrative_then_independent_review"
+    || policy.release !== integrity.value.report_release
+    || policy.shared_prompt !== PWRP71_PROMPT_FILES.shared
+    || policy.voice_companion_prompt !== PWRP71_PROMPT_FILES.voiceCompanion
     || policy.compatible_question_release !== PWQE51_RELEASE_IDENTITY.questionRelease
     || policy.compatible_router_source_sha256 !== PWQE51_RELEASE_IDENTITY.sourceSha256
     || policy.compatible_router_format !== "patternwork-router-evidence-v1"
@@ -236,6 +249,8 @@ async function loadPackage(workspaceRoot: string): Promise<Pwrp71SourcePackage> 
     const ajv = new Ajv2020({ allErrors: true, strict: false });
     ajv.compile(reportDraft as object);
     ajv.compile(reportReview as object);
+    ajv.compile(reportFormulation as object);
+    ajv.compile(reportNarrative as object);
   } catch (error) {
     throw new Error(`PWRP 7.1 schema compilation failed: ${error instanceof Error ? error.message : String(error)}`);
   }
@@ -245,7 +260,7 @@ async function loadPackage(workspaceRoot: string): Promise<Pwrp71SourcePackage> 
     policy,
     prompts,
     constructGuide,
-    schemas: { reportDraft, reportReview },
+    schemas: { reportDraft, reportReview, reportFormulation, reportNarrative },
   };
 }
 

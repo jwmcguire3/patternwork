@@ -1,3 +1,4 @@
+import { stageSystem } from "./pwrp71-formulation-integration.ts";
 import { assertProviderPayloadPrivacy } from "../openrouter/privacy-boundary.ts";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -54,20 +55,11 @@ export async function loadPwrp71ReportPrompt(
   workspaceRoot = process.cwd(),
 ): Promise<LoadedReportPrompt & { readonly source: Pwrp71SourcePackage }> {
   const source = await loadPwrp71SourcePackage(workspaceRoot);
-  const specificKey = reportType === "MAP" ? "mapping"
-    : reportType === "IFS" ? "ifs"
-      : reportType === "PV" ? "state"
-        : reportType === "ATT" ? "attachment" : "synthesis";
   return {
     source,
-    system: [
-      "You are the Patternwork PWRP 7.1 report writer. Return only the requested JSON object.",
-      source.prompts.shared,
-      source.constructGuide,
-      source.prompts[specificKey],
-    ].join("\n\n"),
-    schema: source.schemas.reportDraft as JsonObject,
-    schemaName: `patternwork_${reportType.toLowerCase()}_pwrp_7_1_candidate`,
+    system: stageSystem(source, reportType, "formulation"),
+    schema: source.schemas.reportFormulation as JsonObject,
+    schemaName: `patternwork_${reportType.toLowerCase()}_pwrp_7_1_formulation`,
   };
 }
 

@@ -152,10 +152,10 @@ test("PWRP 7.1 uses the prepared prompt/schema and validates a complete stop res
   assert.match(requests[0].prompt, /PWRP-7\.1\.0-candidate\.1/u);
   for (const request of requests) {
     assert.match(request.prompt, /authored_question_context/u);
-    assert.match(request.prompt, /pwrp71-authored-question-context-v6/u);
-    assert.match(request.prompt, /visible authored question and selected option text govern/u);
-    assert.match(request.prompt, /requested support was received, or the response produced the outcome/u);
-    assert.match(request.prompt, /may support a bounded comparison across sampled situations/u);
+    assert.match(request.prompt, /pwrp71-authored-question-context-v7/u);
+    assert.match(request.prompt, /Use authored question and option text to establish what was reported/u);
+    assert.match(request.prompt, /receipt of requested support, or an effect caused by the response/u);
+    assert.match(request.prompt, /compare explicitly reported conditions that let responses stop across sampled situations/u);
     const question = value.questionSource.questionBank.items.find((item) => item.id === "D65")!;
     assert.ok(request.prompt.includes(JSON.stringify(question.prompt)), "Writer and reviewer receive the full authored question wording.");
   }
@@ -216,7 +216,7 @@ test("PWRP 7.1 repair uses its authored repair contract and keeps the prepared s
   });
   assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify(result.failure));
   assert.equal(requests.length, 3);
-  assert.ok(requests.every(request => request.prompt.includes("pwrp71-authored-question-context-v6") && request.prompt.includes("requested support was received, or the response produced the outcome") && request.prompt.includes("may support a bounded comparison across sampled situations")), "initial generation, structural repair, and reviewer receive the same outcome and stop-condition rules");
+  assert.ok(requests.every(request => request.prompt.includes("pwrp71-authored-question-context-v7") && request.prompt.includes("receipt of requested support, or an effect caused by the response") && request.prompt.includes("compare explicitly reported conditions that let responses stop across sampled situations")), "initial generation, structural repair, and reviewer receive the same outcome and stop-condition rules");
   assert.equal(requests[0].system, value.request.system);
   assert.equal(requests[1].system, `${value.request.system}\n\n${value.reportSource.prompts.repair}`);
   assert.match(requests[1].prompt, /validator_feedback/u);
@@ -248,7 +248,7 @@ test("PWRP 7.1 reviewer revise gets one repair and a fresh review bound to the r
   const acceptedDraft = (result.value.artifact as Record<string, unknown>).draft as Record<string, unknown>;
   assert.equal(((acceptedDraft.sections as Record<string, unknown>[])[0]).text, ((revisedDraft.sections as Record<string, unknown>[])[0]).text);
   assert.equal(requests.length, 4);
-  assert.ok(requests.every(request => request.prompt.includes("pwrp71-authored-question-context-v6") && request.prompt.includes("requested support was received, or the response produced the outcome") && request.prompt.includes("may support a bounded comparison across sampled situations")), "semantic repair and its fresh review retain the current outcome and stop-condition rules");
+  assert.ok(requests.every(request => request.prompt.includes("pwrp71-authored-question-context-v7") && request.prompt.includes("receipt of requested support, or an effect caused by the response") && request.prompt.includes("compare explicitly reported conditions that let responses stop across sampled situations")), "semantic repair and its fresh review retain the current outcome and stop-condition rules");
   assert.equal(validations.length, 2, "both initial and reviewer-requested replacement drafts retain their validation receipts");
   assert.deepEqual(validations.map((entry) => [entry.attemptId.split(":").at(-3), entry.ok]), [["initial", true], ["repair", true]]);
   assert.equal(requests[2].system, `${value.request.system}\n\n${value.reportSource.prompts.repair}`);
@@ -303,11 +303,11 @@ test("IFS continuation supplies actionable feedback and current references to re
   assert.equal(requests.length, 2, "one repair and a separate fresh review are required");
   assert.ok(requests[0].prompt.includes(PWRP71_REPAIR_STRATEGY_VERSION));
   assert.match(requests[0].prompt, /across_sampled_contexts/u);
-  assert.match(requests[0].prompt, /Build the claim support for that grouping first/u);
-  assert.match(requests[0].prompt, /may organize a bounded account of available choice/u);
+  assert.match(requests[0].prompt, /Requested report type is IFS/u);
+  assert.match(requests[0].system, /change the progression when a substantive omission or narrative problem requires it/u);
   assert.ok(!requests[0].prompt.includes("without giving it common causal or organizing force"));
   assert.match(requests[0].system, /Compare the before and after meanings/u);
-  assert.match(requests[0].prompt, /Split that premise or remove the inappropriate dependency/u);
+  assert.match(requests[0].system, /Remove or split a dependency that imports unrelated content/u);
   const constrained = requests[0].schema as {
     properties: { claims: { items: { properties: {
       evidence_ids: { items: { enum: string[] } };
@@ -318,9 +318,9 @@ test("IFS continuation supplies actionable feedback and current references to re
   assert.equal(constrained.properties.claims.items.properties.scope.properties.person_ids.maxItems,0);
   const repairPayloads = requests[0].prompt.split("\n\n").filter(part => part.startsWith("{")).map(part => JSON.parse(part));
   const feedback = repairPayloads.find(payload => Array.isArray(payload.validator_feedback));
-  assert.equal(feedback.validator_feedback.length, 1);
-  assert.equal(feedback.validator_feedback[0].code, "voice");
-  assert.ok(feedback.validator_feedback[0].message.includes(String(issue.requested_change)));
+  assert.equal(feedback.validator_feedback.length, 0, "semantic issues are not duplicated as validator failures");
+  assert.equal(feedback.semantic_review.issues[0].category, "voice");
+  assert.equal(feedback.semantic_review.issues[0].requested_change, issue.requested_change);
   assert.deepEqual(feedback.semantic_review, priorReview, "the saved review is supplied unchanged");
   assert.deepEqual(feedback.current_draft_references.claims[0].evidence_ids, (previousDraft.claims as JsonObject[])[0].evidence_ids);
   assert.deepEqual(feedback.current_draft_references.named_entities[0].section_ids_with_literal_label, []);
@@ -345,13 +345,13 @@ test("IFS continuation refuses a mismatched review seed before transport", async
   assert.equal(calls, 0);
 });
 
-test("a non-voice continuation requests a local repair while preserving adequate narrative", async () => {
+test("a continuation follows the actual issue while preserving adequate narrative", async () => {
   const value=await fixture("IFS");
   const priorReview=reviewerOutput(value.draft,value.packet,value.reportSource,"revise",[{...reviseIssue(),category:"overreach",requested_change:"Narrow the reviewed assertion."}]);
   const requests:OpenRouterGenerationRequest[]=[];
   const result=await generateCanonicalReport({reportType:"IFS",input:{},packets:[value.packet],contractVersion:"v7.1",pwrp71:{request:value.request,packet:value.packet,source:value.reportSource},modelPolicy:UNQUALIFIED_MOCK_MODEL_POLICY,invocationKey:"local-repair",spentMicros:0,costCapMicros:450000,continuation:{previousDraft:value.draft,previousReview:priorReview,sourceRunBindingSha256:"a".repeat(64),sourceDraftSha256:hash(value.draft),sourceReviewSha256:hash(priorReview),sourceDraftAttemptId:"source-draft",sourceReviewAttemptId:"source-review"},provider:mockProvider([{output:value.draft,finishReason:"stop"},{output:reviewerOutput(value.draft,value.packet,value.reportSource,"accept"),finishReason:"stop"}],request=>{requests.push(request);})});
   assert.equal(result.ok,true,result.ok?undefined:JSON.stringify(result.failure));
-  assert.match(requests[0].prompt,/LOCAL REPAIR:/u);
+  assert.match(requests[0].system,/Prefer a local repair when it resolves the actual issue/u);
   assert.ok(!requests[0].prompt.includes("PARAGRAPH CONSTRUCTION PLAN"));
   assert.equal(requests.length,2);
 });
@@ -369,7 +369,7 @@ test("continuation gets at most one structural correction before a fresh review"
     assert.equal(requests.length,succeeds?3:2);
     assert.match(requests[1].prompt,/BOUNDED STRUCTURAL CORRECTION/u);
     assert.match(requests[1].prompt,/reference_inventory/u);
-    assert.match(requests[1].prompt,/Remove parenthetical internal claim/u);
+    assert.match(requests[1].system,/Keep internal IDs, response codes, source mechanics, and review language out of reader prose/u);
     assert.equal(events.filter(event=>(event as {type:string}).type==="repair_decision").length,1);
     if(succeeds)assert.match(requests[2].idempotencyKey,/:review_after_repair:.*:attempt-3$/u);
     else assert.ok(requests.every(request=>!request.schemaName.includes("_review_")));

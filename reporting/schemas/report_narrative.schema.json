@@ -1,0 +1,108 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title_unit_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "heading": {
+            "type": "string",
+            "minLength": 1
+          },
+          "paragraphs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "unit_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true,
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "text",
+                "unit_ids"
+              ]
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "id",
+          "heading",
+          "paragraphs"
+        ]
+      },
+      "minItems": 1
+    },
+    "formulation_requests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "unit_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true,
+            "minItems": 1
+          },
+          "aspect": {
+            "enum": [
+              "missing_logic",
+              "missing_experience",
+              "missing_relationship",
+              "weak_center",
+              "opaque_meaning"
+            ]
+          }
+        },
+        "required": [
+          "unit_ids",
+          "aspect"
+        ]
+      },
+      "description": "Use only when responsible development requires an additional analytical conclusion. Never invent it in prose. Requests trigger bounded reformulation; they cannot ship."
+    }
+  },
+  "required": [
+    "title",
+    "title_unit_ids",
+    "sections",
+    "formulation_requests"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

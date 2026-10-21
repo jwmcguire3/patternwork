@@ -113,6 +113,7 @@ class ReportContract:
             self.validate_draft(draft, packet)
         self._consistent_registry(list(layers.values()))
         shared = (self.root / self.policy['shared_prompt']).read_text(encoding='utf-8')
+        voice_companion = (self.root / self.policy['voice_companion_prompt']).read_text(encoding='utf-8')
         constructs = (self.root / 'contracts/CONSTRUCT_GUIDE.md').read_text(encoding='utf-8')
         layer_prompt = (self.root / self.policy['layer_prompts'][report_type]).read_text(encoding='utf-8')
         # The original envelope remains the validator's authority. This view keeps
@@ -131,7 +132,7 @@ class ReportContract:
         view['accepted_layers'] = deepcopy(layers)
         # This is a structural aid, not a computed evidence-completeness score.
         view['interpretation_note'] = 'Structural summaries are non-exhaustive; current source observations control.'
-        system = '\n\n'.join([shared, constructs, layer_prompt])
+        system = '\n\n'.join([shared, voice_companion, constructs, layer_prompt])
         return {'system': system, 'user_data': view,
                 'response_schema': deepcopy(self.draft_schema),
                 'binding': {'report_release': self.policy['release'], 'report_type': report_type,
@@ -298,6 +299,7 @@ class ReportContract:
             if review['verdict'] != 'revise':
                 raise ReportValidationError('Semantic repair requires a revise receipt, not acceptance or invalid source.')
             feedback = {'kind': 'bound_semantic_review', 'review': deepcopy(review)}
+            repair_mode = 'semantic'
         else:
             try:
                 self.validate_draft(draft, packet, accepted_layers=accepted_layers)
@@ -305,8 +307,9 @@ class ReportContract:
                 feedback = {'kind': 'recomputed_structural_error', 'error': str(exc)}
             else:
                 raise ReportValidationError('Structurally valid draft needs bound semantic feedback to request repair.')
+            repair_mode = 'structural'
         return {'system': request['system']+'\n\n'+(self.root/self.policy['repair_prompt']).read_text(encoding='utf-8'),
-                'user_data': {'source': request['user_data'], 'draft': deepcopy(draft),
+                'user_data': {'repair_mode': repair_mode, 'source': request['user_data'], 'draft': deepcopy(draft),
                               'draft_sha256': digest(draft), 'feedback': feedback},
                 'response_schema': deepcopy(self.draft_schema), 'binding': deepcopy(request['binding'])}
 

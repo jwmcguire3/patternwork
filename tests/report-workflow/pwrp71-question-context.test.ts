@@ -127,7 +127,7 @@ test("D02-only binding guidance preserves other explicitly referential authored 
   for (const row of selected.slice(2)) row.occurrence_id = "pwep_aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
   const packet = makePacket(source, selected), before = structuredClone(packet);
   const result = buildPwrp71AuthoredQuestionContext(packet, source);
-  assert.equal(result.context_version, "pwrp71-authored-question-context-v6");
+  assert.equal(result.context_version, "pwrp71-authored-question-context-v7");
   assert.deepEqual(result.response_aim_bindings, [], "other explicit referents need no fabricated D02 entries");
   const contexts = result.observations as Record<string, unknown>[];
   const byItem = new Map(contexts.map(row => [row.item_id, row]));
@@ -142,10 +142,10 @@ test("D02-only binding guidance preserves other explicitly referential authored 
     assert.equal(byItem.get(aim)?.step_id, byItem.get(action)?.step_id);
   }
   const rule = String(result.response_aim_binding_rule);
-  assert.match(rule, /For D02 entries, only resolved_single with answer_kind stated_aim/u);
+  assert.match(rule, /For D02, resolved_single with answer_kind stated_aim/u);
   assert.match(rule, /M03 asks about M02's preparation or leaving it alone/u);
   assert.match(rule, /D43's contact_response_label refers to the reported M17 response/u);
-  assert.match(rule, /absence from the D02-only array does not make those links unspecified/u);
+  assert.match(rule, /absence from the D02-only array does not make it unspecified/u);
   assert.deepEqual(packet, before, "context construction does not rewrite source evidence");
 });
 
@@ -259,10 +259,10 @@ test("visible source wording distinguishes a future-change answer from explicit 
   assert.equal(binding.binding_status, "resolved_single");
   assert.equal(binding.answer_kind, "stated_aim", "the broad aim stays linked to the exact action without being upgraded to prevention");
   const rule = String(result.interpretation_rule);
-  assert.match(rule, /visible authored question and selected option text govern/u);
-  assert.match(rule, /not explicit prevention by itself, despite the D02.prevent ID/u);
-  assert.match(rule, /A preventive interpretation needs additional evidence and its proper claim kind and scope/u);
-  assert.match(rule, /explicitly reports preventive effort in that mistake account; preserve it/u);
+  assert.match(rule, /Use authored question and option text to establish what was reported/u);
+  assert.match(rule, /the D02.prevent ID alone does not make it an explicit prevention aim/u);
+  assert.match(rule, /A preventive formulation can draw on additional current evidence under the shared interpretation and scope rules/u);
+  assert.match(rule, /explicitly report preventive effort in that mistake account/u);
   assert.deepEqual(packet, before);
 });
 
@@ -284,10 +284,10 @@ test("authored first and later effect referents survive unordered observation pr
   assert.equal(byItem.get("M14")?.step_id, "later");
   assert.equal(byItem.get("M14")?.option_text, "I got a break, but it faded when I stopped.");
   const rule = String(result.interpretation_rule);
-  assert.match(rule, /Keep each outcome with its own response and stage in claims and readable prose/u);
-  assert.match(rule, /Do not flatten these into one undifferentiated effect/u);
-  assert.match(rule, /do not license an order among unordered selections, a causal mechanism, a handoff between parts/u);
-  assert.match(rule, /preserve supported meanings and restore their correct referents rather than deleting the distinctions/u);
+  assert.match(rule, /Keep each outcome attached to its response and stage/u);
+  assert.match(rule, /M12 reports experience right after the first response in M11/u);
+  assert.match(rule, /without creating an order among unordered selections, a causal mechanism, a handoff/u);
+  assert.match(rule, /restore the supported referent and distinction/u);
 });
 
 test("post-response experience does not imply efficacy, completed intention, or received support", async () => {
@@ -304,10 +304,10 @@ test("post-response experience does not imply efficacy, completed intention, or 
     ["M14", "later", "I got a break, but it faded when I stopped."],
   ]);
   const rule = String(result.interpretation_rule);
-  assert.match(rule, /describes reported experience immediately after the first response in M11/u);
-  assert.match(rule, /describes reported experience after the later attempt in M13/u);
+  assert.match(rule, /M12 reports experience right after the first response in M11/u);
+  assert.match(rule, /M14 reports experience after that later attempt in M13/u);
   assert.doesNotMatch(rule, /describes the effect of M11|describes the effect of M13/u);
-  assert.match(rule, /By itself it does not establish that an intended action was completed, requested support was received, or the response produced the outcome/u);
+  assert.match(rule, /It establishes completion of an intended action, receipt of requested support, or an effect caused by the response only when the authored question and selected answer report that fact/u);
   assert.deepEqual(packet, before);
 });
 
@@ -320,7 +320,7 @@ test("explicit stronger attribution remains available when the selected answer o
   assert.equal(contexts.find(row => row.item_id === "M14")?.option_text, "It made things harder.");
   assert.match(String(contexts.find(row => row.item_id === "D04")?.prompt), /What actually let .* stop/u);
   assert.equal(contexts.find(row => row.item_id === "D04")?.option_text, "I got a sign that things were okay.");
-  assert.match(String(result.interpretation_rule), /Preserve stronger attribution when the authored question and selected answer explicitly report it/u);
+  assert.match(String(result.interpretation_rule), /only when the authored question and selected answer report that fact/u);
 });
 
 test("separate positive stop reports retain their referents for an optional bounded comparison", async () => {
@@ -339,9 +339,9 @@ test("separate positive stop reports retain their referents for an optional boun
     [stopB.id, actionB.occurrence_id, "first", "I got a sign that things were okay."],
   ]);
   const rule = String(result.interpretation_rule);
-  assert.match(rule, /may support a bounded comparison across sampled situations when it adds material understanding/u);
-  assert.match(rule, /Preserve each condition's actual meaning and referent/u);
-  assert.match(rule, /does not establish shared part, motive, or mechanism and need not be added when immaterial/u);
+  assert.match(rule, /When materially useful, compare explicitly reported conditions that let responses stop across sampled situations/u);
+  assert.match(rule, /Use each condition's actual meaning and referent/u);
+  assert.match(rule, /the comparison can clarify a pattern without requiring a common identity, complete sequence, shared motive, or mechanism/u);
 });
 
 test("repeated non-stopping labels and response controls do not become positive shared stop conditions", async () => {
@@ -355,6 +355,6 @@ test("repeated non-stopping labels and response controls do not become positive 
   const contexts = result.observations as JsonObject[];
   assert.deepEqual(contexts.slice(0, 2).map(row => row.option_text), ["It did not really stop during that period.", "It did not really stop during that period."]);
   assert.equal(contexts[2].is_response_control, true);
-  assert.match(String(result.interpretation_rule), /Repeated labels alone, response controls, and reports that a response did not stop do not supply a shared positive stopping condition/u);
+  assert.match(String(result.interpretation_rule), /Labels, response controls, and reports that a response did not stop do not provide a shared positive stopping condition/u);
   assert.deepEqual(result.response_aim_bindings, [], "guidance does not synthesize a positive comparison from repeated labels or controls");
 });

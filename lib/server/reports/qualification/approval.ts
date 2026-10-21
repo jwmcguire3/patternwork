@@ -6,6 +6,7 @@ import { loadPwqe51SourcePackage, PWQE51_RELEASE_IDENTITY } from "../../../quest
 import { sha256Canonical, sha256Text } from "../../../report-contracts/delivery-validator.ts";
 import { QUALIFICATION_MODEL_ORDER } from "../../openrouter/policy.ts";
 import { validatePwrp71ReportDraft, type Pwrp71ReportArtifact } from "../pwrp71-validation.ts";
+import { artifactFormulationIssues, attachFormulation, type FormulationEnvelope } from "../pwrp71-formulation-core.ts";
 import { validatePwrp71Review } from "../pwrp71-review.ts";
 import { assertPwrp71ReportActivationReady, PWRP71_SEMANTIC_CASE_SET_SHA256, type ReviewedPwrp71QualificationManifest } from "../pwrp71-readiness.ts";
 import { loadPwrp71SourcePackage, type Pwrp71SourcePackage } from "../pwrp71-source.ts";
@@ -373,7 +374,12 @@ async function inspectOutputs(input: {
         packet: packet.packet,
         source: input.source,
       });
-      if (!regenerated.ok || sha256Canonical(regenerated.value) !== sha256Canonical(artifact)) {
+      const formulationIssues = artifactFormulationIssues(artifact);
+      const regeneratedArtifact = regenerated.ok && formulationIssues.length === 0
+        ? attachFormulation(regenerated.value, artifact.formulation as unknown as FormulationEnvelope)
+        : undefined;
+      if (!regenerated.ok || formulationIssues.length > 0 || !regeneratedArtifact
+        || sha256Canonical(regeneratedArtifact) !== sha256Canonical(artifact)) {
         issues.push(`${key} no longer passes the full local PWRP 7.1 report validator.`);
         continue;
       }

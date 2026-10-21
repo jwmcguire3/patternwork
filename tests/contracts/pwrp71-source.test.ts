@@ -24,7 +24,9 @@ test("PWRP 7.1 binds active prompts, schemas and the PWQE 5.1 evidence source", 
   assert.equal(loaded.policy.runtime_implementation, "shared_runtime_adapter");
   assert.equal(loaded.policy.findings_cardinality.minimum, null);
   assert.equal(loaded.policy.findings_cardinality.maximum, null);
-  assert.equal(Object.keys(loaded.prompts).length, 8);
+  assert.equal(Object.keys(loaded.prompts).length, 11);
+  assert.ok(loaded.schemas.reportFormulation);
+  assert.ok(loaded.schemas.reportNarrative);
   assert.equal(loaded.schemas.reportDraft !== false, true);
   assert.equal(loaded.schemas.reportReview !== false, true);
 
@@ -53,12 +55,14 @@ test("an edit to an active PWRP 7.1 prompt invalidates the source package", asyn
   }
 });
 
-test("PWRP 7.1 prompt binding combines its shared contract, construct guide, and selected layer", async () => {
+test("PWRP 7.1 first-stage binding combines analytical contracts and the selected layer", async () => {
   const mapping = await loadPwrp71ReportPrompt("MAP");
-  assert.equal(mapping.schemaName, "patternwork_map_pwrp_7_1_candidate");
+  assert.equal(mapping.schemaName, "patternwork_map_pwrp_7_1_formulation");
   assert.ok(mapping.system.includes(mapping.source.prompts.shared));
+  assert.equal(mapping.system.includes(mapping.source.prompts.voiceCompanion), false);
+  assert.ok(mapping.system.includes(mapping.source.prompts.formulation));
   assert.ok(mapping.system.includes(mapping.source.constructGuide));
   assert.ok(mapping.system.includes(mapping.source.prompts.mapping));
   assert.equal(mapping.system.includes(mapping.source.prompts.ifs), false);
-  assert.equal(mapping.schema, mapping.source.schemas.reportDraft);
+  assert.equal(mapping.schema, mapping.source.schemas.reportFormulation);
 });

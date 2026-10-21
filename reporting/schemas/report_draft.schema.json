@@ -401,6 +401,10 @@
         "type": "string",
         "minLength": 1
       }
+    },
+    "formulation_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
     }
   },
   "required": [
@@ -416,10 +420,11 @@
     "claims",
     "name_registry",
     "relationships",
-    "reflection_questions"
+    "reflection_questions",
+    "formulation_sha256"
   ],
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Patternwork report draft v7 \u00e2\u20ac\u201d no psychological cardinality quota",
+  "title": "Patternwork compiled report with formulation binding",
   "$defs": {
     "construct": {
       "enum": [

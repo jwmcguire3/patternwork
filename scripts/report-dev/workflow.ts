@@ -1,3 +1,4 @@
+import { attachFormulation, artifactFormulationIssues, type FormulationEnvelope } from "../../lib/server/reports/pwrp71-formulation-core.ts";
 import { PWRP71_QUESTION_CONTEXT_VERSION } from "../../lib/server/reports/pwrp71-question-context.ts";
 import { PWRP71_REFERENCE_SCHEMA_VERSION } from "../../lib/server/reports/pwrp71-reference-schema.ts";
 import { assertAssessmentRoute } from "./verify-assessment.ts";
@@ -55,6 +56,7 @@ export interface RunReportBatchOptions {
  /** Local-only comparison values; never written to run artifacts or provider requests. */
  privacyIdentityContext?:ProviderPrivacyIdentityContext;
  candidateId?:ReportDevCandidateAdmission["candidateId"];
+ formulationSeed?:FormulationEnvelope;
  continuation?:Pwrp71ContinuationSeed;
  continuationStructuralRepair?:boolean;
  recoveryProfileId?:string;
@@ -667,6 +669,8 @@ export async function loadPwrp71RecoverySeed(input:RecoverySource & {
 
 export async function runReportBatch(options:RunReportBatchOptions) {
  const {assessment,types,questionSource,reportSource,directory,mode}=options;
+ if(!["prepare","generate"].includes(mode))throw new Error("Legacy recovery modes are read-only under formulation-first. Generate afresh or use --formulation with a current saved assessment.");
+ if(options.formulationSeed&&(mode!=="generate"||types.length!==1))throw new Error("Formulation reuse requires one report and generate mode.");
  const privacyIdentityContext=options.privacyIdentityContext??(options.testTransport?REVIEWED_IDENTITY_FREE_FIXTURE_CONTEXT:undefined);
  if(mode!=="prepare"&&!options.testTransport
   &&privacyIdentityContext?.identityInventoryReviewed!==true) {
@@ -706,7 +710,7 @@ export async function runReportBatch(options:RunReportBatchOptions) {
   sourceReviewAttemptId:continuation.sourceReviewAttemptId,
  }:undefined;
  const reviewRetryBinding=reviewRetry?{sourceRunBindingSha256:reviewRetry.sourceRunBindingSha256,sourceDraftSha256:reviewRetry.sourceDraftSha256,sourceDraftAttemptId:reviewRetry.sourceDraftAttemptId,sourceReviewAttemptId:reviewRetry.sourceReviewAttemptId,validationIssues:reviewRetry.validationIssues.map(({code,path})=>({code,path}))}:undefined;
- const binding={...(recovery??{}),...(options.exportPdfs?{exportPdfs:true}:{}),...(mode==="generate"?{generationRepairVersion:PWRP71_GENERATION_REPAIR_VERSION,reviewReplacementStructuralRepairLimit:1}:{}),...(candidate!==undefined&&"unsuccessfulResponsePolicy" in candidate?{unsuccessfulResponsePolicy:candidate.unsuccessfulResponsePolicy}:{}),schema:"patternwork-report-dev-run-2",assessmentSha256:assessment.contentSha256,questionSourceSha256:questionSource.sourceManifestSha256,reportSourceSha256:reportSource.manifestSha256,types,modelPolicy,...(candidate?{candidate,candidateSha256}:{}),providerPolicy,billingBasisSha256,inputGuidanceVersion:PWRP71_INPUT_GUIDANCE_VERSION,questionContextVersion:PWRP71_QUESTION_CONTEXT_VERSION,scopeGuidanceVersion:PWRP71_SCOPE_GUIDANCE_VERSION,referenceSchemaVersion:PWRP71_REFERENCE_SCHEMA_VERSION,...(mode==="continue"?{repairStrategyVersion:PWRP71_REPAIR_STRATEGY_VERSION,structuralRepairLimit:structuralRepair?1:0}:{}),mode,aggregateMicros:options.aggregateMicros??0,perCallMicros:options.perCallMicros??0,operationalApproval:false,...(continuationBinding?{continuation:continuationBinding}:{}),...(reviewRetryBinding?{reviewRetry:reviewRetryBinding}:{}),...(closureBinding?{citationClosure:closureBinding}:{})};
+ const binding={...(options.formulationSeed?{formulationSeedSha256:options.formulationSeed.content_sha256}:{}),...(recovery??{}),...(options.exportPdfs?{exportPdfs:true}:{}),...(mode==="generate"?{generationRepairVersion:PWRP71_GENERATION_REPAIR_VERSION,reviewReplacementStructuralRepairLimit:1}:{}),...(candidate!==undefined&&"unsuccessfulResponsePolicy" in candidate?{unsuccessfulResponsePolicy:candidate.unsuccessfulResponsePolicy}:{}),schema:"patternwork-report-dev-run-2",assessmentSha256:assessment.contentSha256,questionSourceSha256:questionSource.sourceManifestSha256,reportSourceSha256:reportSource.manifestSha256,types,modelPolicy,...(candidate?{candidate,candidateSha256}:{}),providerPolicy,billingBasisSha256,inputGuidanceVersion:PWRP71_INPUT_GUIDANCE_VERSION,questionContextVersion:PWRP71_QUESTION_CONTEXT_VERSION,scopeGuidanceVersion:PWRP71_SCOPE_GUIDANCE_VERSION,referenceSchemaVersion:PWRP71_REFERENCE_SCHEMA_VERSION,...(mode==="continue"?{repairStrategyVersion:PWRP71_REPAIR_STRATEGY_VERSION,structuralRepairLimit:structuralRepair?1:0}:{}),mode,aggregateMicros:options.aggregateMicros??0,perCallMicros:options.perCallMicros??0,operationalApproval:false,...(continuationBinding?{continuation:continuationBinding}:{}),...(reviewRetryBinding?{reviewRetry:reviewRetryBinding}:{}),...(closureBinding?{citationClosure:closureBinding}:{})};
  const runBindingSha256=contentHash(canonical(binding));
  const candidateAdmission:ReportDevCandidateAdmission|undefined=candidate&&candidateSha256?{scope:"report-dev-experimental-v1",candidateId:candidate.id,candidateSha256,runBindingSha256}:undefined;
  await writeImmutableJson(path.join(directory,"binding.json"),binding);
@@ -746,7 +750,7 @@ export async function runReportBatch(options:RunReportBatchOptions) {
     await writeImmutableJson(path.join(sub,"normalized-draft.json"),closed.artifact.draft);
    }
    const events:JsonObject[]=[];
-   const outcome=await generateCanonicalReport({reportType:type,input:request.value.user_data,packets:[packet],provider:provider!,privacyIdentityContext,invocationKey:`dev:${runBindingSha256}`,spentMicros:0,costCapMicros:options.aggregateMicros!,modelPolicy,contractVersion:"v7.1",reviewReplacementStructuralRepair:mode==="generate",stopOnUnsuccessfulProviderResponse:candidate!==undefined&&"unsuccessfulResponsePolicy" in candidate,...(candidate?{requestIdentityLabel:candidate.id}:{}),...(continuation?{continuation,continuationStructuralRepair:structuralRepair}:{}),...(reviewRetry?{reviewRetry}:{}),...(citationClosure?{citationClosure}:{}),beforeProviderRequest:({assessmentData,previousOutput})=>{assertNoRespondentFullNameInPwrp71ModelInput(assessmentData);if(previousOutput)assertNoRespondentFullNameInGeneratedDraft(previousOutput);},pwrp71:{request:request.value,packet,source:reportSource,questionSource},onPwrp71Event:async event=>{assertNoRespondentClassification(event);assertNoRespondentFullName(event);events.push(event as unknown as JsonObject);await store.recordGenerationEvent(event);}});
+   const outcome=await generateCanonicalReport({...(options.formulationSeed?{formulationSeed:options.formulationSeed}:{}),onPwrp71Formulation:async envelope=>{const folder=path.join(sub,"formulations");await mkdir(folder,{recursive:true,mode:0o700});await writeImmutableJson(path.join(folder,`${envelope.content_sha256}.json`),envelope);},reportType:type,input:request.value.user_data,packets:[packet],provider:provider!,privacyIdentityContext,invocationKey:`dev:${runBindingSha256}`,spentMicros:0,costCapMicros:options.aggregateMicros!,modelPolicy,contractVersion:"v7.1",reviewReplacementStructuralRepair:mode==="generate",stopOnUnsuccessfulProviderResponse:candidate!==undefined&&"unsuccessfulResponsePolicy" in candidate,...(candidate?{requestIdentityLabel:candidate.id}:{}),...(continuation?{continuation,continuationStructuralRepair:structuralRepair}:{}),...(reviewRetry?{reviewRetry}:{}),...(citationClosure?{citationClosure}:{}),beforeProviderRequest:({assessmentData,previousOutput})=>{assertNoRespondentFullNameInPwrp71ModelInput(assessmentData);if(previousOutput)assertNoRespondentFullNameInGeneratedDraft(previousOutput);},pwrp71:{request:request.value,packet,source:reportSource,questionSource},onPwrp71Event:async event=>{assertNoRespondentClassification(event);assertNoRespondentFullName(event);events.push(event as unknown as JsonObject);await store.recordGenerationEvent(event);}});
    if(events.some((event)=>event.type==="review_receipt"||event.type==="review_validation")) independentReviewCount++;
    await writeImmutableJson(path.join(sub,"outcome.json"),outcome);
    await writeImmutableJson(path.join(sub,"events.json"),events);
@@ -757,6 +761,7 @@ export async function runReportBatch(options:RunReportBatchOptions) {
    const validated=validatePwrp71Review({value:review,artifact,packet,source:reportSource});
    if(!validated.ok||validated.value.verdict!=="accept") throw new Error("Generated artifact lacks a current accepted review receipt.");
    await writeImmutableJson(path.join(sub,"artifact.json"),artifact);
+   await writeImmutableJson(path.join(sub,"formulation.json"),artifact.formulation);
    await writeImmutableJson(path.join(sub,"review.json"),review);
    const markdown=artifact.report_markdown;
    // JSON is the authoritative immutable record; Markdown is its byte-identical projection.
@@ -796,7 +801,11 @@ export async function validateStoredReport(artifactPath:string,reviewPath:string
  const draft=raw.draft??raw;
  const structural=validatePwrp71ReportDraft({value:draft,reportType:type,snapshotId:String(packet.snapshot_id),packet,source});
  if(!structural.ok) return {structural,semanticReview:"not_evaluated"};
- if(raw.artifact_type&&canonical(raw)!==canonical(structural.value)) return {structural:{ok:false,issues:[{code:"artifact_projection",path:"$",message:"Stored artifact differs from the exact validated draft projection or current source."}]},semanticReview:"not_evaluated"};
- const review=reviewPath?validatePwrp71Review({value:JSON.parse(await readFile(reviewPath,"utf8")),artifact:structural.value,packet,source}):undefined;
+ const envelope=raw.formulation as unknown as FormulationEnvelope|undefined;
+ const projected=envelope?attachFormulation(structural.value,envelope):structural.value;
+ const formIssues=artifactFormulationIssues(projected);
+ if(formIssues.length)return {structural:{ok:false,issues:formIssues},semanticReview:"not_evaluated"};
+ if(raw.artifact_type&&canonical(raw)!==canonical(projected)) return {structural:{ok:false,issues:[{code:"artifact_projection",path:"$",message:"Stored artifact differs from the exact validated draft projection or current source."}]},semanticReview:"not_evaluated"};
+ const review=reviewPath?validatePwrp71Review({value:JSON.parse(await readFile(reviewPath,"utf8")),artifact:projected,packet,source}):undefined;
  return {structural:{ok:true,issues:[]},semanticReview:review??"not_supplied",operationalApproval:false};
 }

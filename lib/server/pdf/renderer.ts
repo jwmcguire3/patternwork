@@ -14,6 +14,7 @@ import { loadPwqe5SourcePackage } from "../reports/pwqe6-source.ts";
 import type { Pwqe6ReportArtifact } from "../reports/types.ts";
 import type { Pwrp71ReportArtifact } from "../reports/pwrp71-validation.ts";
 import { validatePwrp71ReportDraft } from "../reports/pwrp71-validation.ts";
+import { artifactFormulationIssues, attachFormulation, type FormulationEnvelope } from "../reports/pwrp71-formulation-core.ts";
 import { loadPwqe51SourcePackage } from "../../question-engine/pwqe51-source.ts";
 import { loadPwrp71SourcePackage } from "../reports/pwrp71-source.ts";
 import { preparePwrp71Request } from "../reports/pwrp71-adapter.ts";
@@ -242,7 +243,10 @@ export async function renderAndVerifyCanonicalPdf(input: RenderCanonicalPdfInput
     ]);
     const prepared = preparePwrp71Request({ packet, reportType: input.reportType, questionSource, reportSource, acceptedLayers: input.acceptedLayers, canonicalResponseEvidence: input.canonicalResponseEvidence });
     const validation = validatePwrp71ReportDraft({ value: artifact.draft, reportType: input.reportType, snapshotId: input.snapshotId, packet, source: reportSource });
-    const reconstructed = validation.ok ? validation.value : undefined;
+    const formulationIssues = artifactFormulationIssues(artifact);
+    const reconstructed = validation.ok && formulationIssues.length === 0
+      ? attachFormulation(validation.value, artifact.formulation as unknown as FormulationEnvelope)
+      : undefined;
     const artifactDigest = (artifact.digests as JsonObject).artifact_sha256;
     const artifactWithoutDigests = Object.fromEntries(Object.entries(artifact).filter(([key]) => key !== "digests"));
     if (!prepared.ok || !validation.ok || !reconstructed
@@ -256,7 +260,10 @@ export async function renderAndVerifyCanonicalPdf(input: RenderCanonicalPdfInput
       // Packet adapter validation is also required here so a source-valid report
       // cannot be rendered from a modified observation envelope.
       if (!prepared.ok) throw new Error(`PWRP 7.1 packet is not renderable: ${JSON.stringify(prepared.issues)}`);
-      throw new Error(`PWRP 7.1 artifact is not validator-clean: ${JSON.stringify(validation.ok ? [{ code: "artifact_digest", path: "$.digests", message: "Artifact digest or reconstructed fields do not match." }] : validation.issues)}`);
+      const issues = !validation.ok ? validation.issues
+        : formulationIssues.length ? formulationIssues
+          : [{ code: "artifact_digest", path: "$.digests", message: "Artifact digest or reconstructed fields do not match." }];
+      throw new Error(`PWRP 7.1 artifact is not validator-clean: ${JSON.stringify(issues)}`);
     }
   } else if (input.contractVersion === "v6") {
     const packet = input.routerPacket;

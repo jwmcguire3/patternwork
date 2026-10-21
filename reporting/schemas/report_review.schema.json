@@ -3,7 +3,7 @@
   "additionalProperties": false,
   "properties": {
     "review_contract": {
-      "const": "PWRP-REVIEW-7.1.0-candidate.3"
+      "const": "PWRP-REVIEW-7.1.0-candidate.5"
     },
     "report_release": {
       "const": "PWRP-7.1.0-candidate.1"
@@ -516,6 +516,546 @@
         "rationale"
       ],
       "description": "Evaluate the strongest material opportunity to connect or contrast findings; a source-grounded explanation is required even when none exists. A checklist of represented evidence alone is insufficient."
+    },
+    "reviewed_formulation_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "revision_target": {
+      "enum": [
+        "none",
+        "source",
+        "formulation",
+        "narrative"
+      ]
+    },
+    "narrative_tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "section_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "unit_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "action": {
+            "enum": [
+              "develop_logic",
+              "develop_cost",
+              "develop_relationship",
+              "develop_exile",
+              "restore_condition",
+              "restore_contrast",
+              "remove_scenario",
+              "remove_unsupported_detail",
+              "reduce_repetition",
+              "improve_progression",
+              "use_retained_label",
+              "rewrite_opening",
+              "simplify_language",
+              "develop_expectation",
+              "develop_felt_experience",
+              "make_possibility_specific",
+              "embed_context",
+              "remove_audit_commentary"
+            ]
+          }
+        },
+        "required": [
+          "section_ids",
+          "unit_ids",
+          "action"
+        ]
+      }
+    },
+    "editorial_assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "recognizable_opening": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "pass",
+                "revise",
+                "not_applicable"
+              ]
+            },
+            "repair_owner": {
+              "enum": [
+                "none",
+                "formulation",
+                "narrative"
+              ]
+            },
+            "anchors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "section_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "quote": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "section_id",
+                  "quote"
+                ]
+              }
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "repair_owner",
+            "anchors",
+            "rationale"
+          ]
+        },
+        "distinctive_throughline": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "pass",
+                "revise",
+                "not_applicable"
+              ]
+            },
+            "repair_owner": {
+              "enum": [
+                "none",
+                "formulation",
+                "narrative"
+              ]
+            },
+            "anchors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "section_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "quote": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "section_id",
+                  "quote"
+                ]
+              }
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "repair_owner",
+            "anchors",
+            "rationale"
+          ]
+        },
+        "human_names": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "pass",
+                "revise",
+                "not_applicable"
+              ]
+            },
+            "repair_owner": {
+              "enum": [
+                "none",
+                "formulation",
+                "narrative"
+              ]
+            },
+            "anchors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "section_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "quote": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "section_id",
+                  "quote"
+                ]
+              }
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "repair_owner",
+            "anchors",
+            "rationale"
+          ]
+        },
+        "psychological_development": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "pass",
+                "revise",
+                "not_applicable"
+              ]
+            },
+            "repair_owner": {
+              "enum": [
+                "none",
+                "formulation",
+                "narrative"
+              ]
+            },
+            "anchors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "section_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "quote": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "section_id",
+                  "quote"
+                ]
+              }
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "repair_owner",
+            "anchors",
+            "rationale"
+          ]
+        },
+        "emotional_specificity": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "pass",
+                "revise",
+                "not_applicable"
+              ]
+            },
+            "repair_owner": {
+              "enum": [
+                "none",
+                "formulation",
+                "narrative"
+              ]
+            },
+            "anchors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "section_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "quote": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "section_id",
+                  "quote"
+                ]
+              }
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "repair_owner",
+            "anchors",
+            "rationale"
+          ]
+        },
+        "cumulative_structure": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "pass",
+                "revise",
+                "not_applicable"
+              ]
+            },
+            "repair_owner": {
+              "enum": [
+                "none",
+                "formulation",
+                "narrative"
+              ]
+            },
+            "anchors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "section_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "quote": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "section_id",
+                  "quote"
+                ]
+              }
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "repair_owner",
+            "anchors",
+            "rationale"
+          ]
+        },
+        "plain_language": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "pass",
+                "revise",
+                "not_applicable"
+              ]
+            },
+            "repair_owner": {
+              "enum": [
+                "none",
+                "formulation",
+                "narrative"
+              ]
+            },
+            "anchors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "section_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "quote": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "section_id",
+                  "quote"
+                ]
+              }
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "repair_owner",
+            "anchors",
+            "rationale"
+          ]
+        },
+        "nonrepetition": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "pass",
+                "revise",
+                "not_applicable"
+              ]
+            },
+            "repair_owner": {
+              "enum": [
+                "none",
+                "formulation",
+                "narrative"
+              ]
+            },
+            "anchors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "section_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "quote": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "section_id",
+                  "quote"
+                ]
+              }
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "repair_owner",
+            "anchors",
+            "rationale"
+          ]
+        },
+        "grounded_possibility": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "pass",
+                "revise",
+                "not_applicable"
+              ]
+            },
+            "repair_owner": {
+              "enum": [
+                "none",
+                "formulation",
+                "narrative"
+              ]
+            },
+            "anchors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "section_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "quote": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "section_id",
+                  "quote"
+                ]
+              }
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "repair_owner",
+            "anchors",
+            "rationale"
+          ]
+        }
+      },
+      "required": [
+        "recognizable_opening",
+        "distinctive_throughline",
+        "human_names",
+        "psychological_development",
+        "emotional_specificity",
+        "cumulative_structure",
+        "plain_language",
+        "nonrepetition",
+        "grounded_possibility"
+      ]
     }
   },
   "required": [
@@ -529,7 +1069,11 @@
     "quality_assessment",
     "evidence_coverage",
     "explanatory_assessment",
-    "synthesis_opportunity"
+    "synthesis_opportunity",
+    "reviewed_formulation_sha256",
+    "revision_target",
+    "narrative_tasks",
+    "editorial_assessment"
   ],
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Patternwork semantic review v7"

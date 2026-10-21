@@ -129,17 +129,18 @@ test("unsupported aspects remain optional findings for every report layer", () =
   }
 });
 
-test("calibrated writer, reviewer, and repair instructions preserve interpretation boundaries", async () => {
-  const [guide, ifs, shared, reviewer, repair, generator] = await Promise.all([
-    readFile("reporting/contracts/CONSTRUCT_GUIDE.md", "utf8"), readFile("reporting/prompts/02_IFS_REPORT_PROMPT.md", "utf8"),
-    readFile("reporting/prompts/00_SHARED_REPORT_PROMPT_v7.md", "utf8"), readFile("reporting/prompts/06_REVIEWER_PROMPT.md", "utf8"),
+test("canonical construct and repair instructions preserve interpretation boundaries", async () => {
+  const [guide, shared, repair, generator] = await Promise.all([
+    readFile("reporting/contracts/CONSTRUCT_GUIDE.md", "utf8"),
+    readFile("reporting/prompts/00_SHARED_REPORT_PROMPT_v7.md", "utf8"),
     readFile("reporting/prompts/07_REPAIR_REPORT_PROMPT.md", "utf8"), readFile("lib/server/reports/generator.ts", "utf8"),
   ]);
+  // The guide owns definitions; layer/reviewer prompts need not repeat them or
+  // the case-specific examples already represented by the fixtures above.
   assert.match(guide, /current constraining extreme belief\/feeling carried by a part/u);
-  assert.match(ifs, /not an ordinary expectation/u);
+  assert.match(guide, /not every ordinary expectation/u);
+  assert.match(guide, /Ordinary problem solving is not automatically emotional protection/u);
   assert.match(shared, /strongest material connection or contrast/u);
-  assert.match(reviewer, /scene itinerary can cover all observations while failing/u);
-  assert.match(reviewer, /checking a route because roads are closed/u);
   assert.match(repair, /Compare the before and after meanings/u);
   assert.match(repair, /function, vulnerability, context, cost, relationships, and choice/u);
   assert.ok(!generator.includes("without giving it common causal or organizing force"));

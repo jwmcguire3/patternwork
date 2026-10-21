@@ -81,7 +81,7 @@ export async function loadPwrp71ReferenceRecoverySeed(input: {
     || canonical(binding.providerPolicy) !== canonical(GPT6_LUNA_QUALIFICATION_PROVIDER_POLICY)
     || binding.billingBasisSha256 !== GPT6_LUNA_BILLING_BASIS_SHA256
     || binding.inputGuidanceVersion !== PWRP71_INPUT_GUIDANCE_VERSION || binding.operationalApproval !== false
-    || ![PWRP71_REPAIR_STRATEGY_VERSION,"pwrp71-functional-recomposition-v2"].includes(String(binding.repairStrategyVersion)) || binding.structuralRepairLimit !== 1
+    || ![PWRP71_REPAIR_STRATEGY_VERSION,"pwrp71-functional-recomposition-v3","pwrp71-functional-recomposition-v2"].includes(String(binding.repairStrategyVersion)) || binding.structuralRepairLimit !== 1
     || binding.citationClosure !== undefined || binding.reviewRetry !== undefined
     || typeof binding.aggregateMicros !== "number" || !Number.isSafeInteger(binding.aggregateMicros) || binding.aggregateMicros <= 0 || binding.aggregateMicros > 500_000
     || typeof binding.perCallMicros !== "number" || !Number.isSafeInteger(binding.perCallMicros) || binding.perCallMicros <= 0 || binding.perCallMicros > binding.aggregateMicros

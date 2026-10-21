@@ -1,15 +1,11 @@
-# Mapping report — revision 2
+# MAP: an initial functional map
+Revision: portrait-quality 2
 
-Use the shared contract. Set report_type to MAP.
+Purpose: a meaningful first overview of how pressure, uncertainty, demands, support, and connection interact. Use the Mapping evidence state, not assumed Deepening answers. This is a reader product, not the upstream formulation for other layers.
 
-Give the reader a useful first understanding of their responses to pressure, uncertainty, need, and connection. Mapping stands on its own; it is not a waiting room for another report. Organize around the most consequential functions and contrasts rather than narrating each questionnaire scene.
+Find the most informative recurring functional themes or conditional tendencies, their costs, and the contrasts that alter them. Relate wants to responses without forcing a manager/firefighter/exile cast, an autonomic ladder, or an attachment identity. Distinguish actual constraints from self-imposed terms. A sparse map can be useful and precise without an invented deep cause.
 
-Explain what the person does, what that move is trying to accomplish when established, what changes immediately, and what remains difficult. Distinguish a task goal from a protective purpose and an intended outcome from a reported effect. Do not narrow a broad wish to prevent a future problem into a single predicted relationship consequence just because another answer names one. Preserve multiple concurrent aims.
+Formulation focus: organizing tension; what becomes important under pressure; what the person attempts to preserve; wanted experience and cost; where the pattern relaxes or differs. Narration should offer a real account, not preview disclaimers or a list of eventual reports. End with a useful distinction rather than a premature comprehensive theory of the person.
 
-Show how the pattern changes with practical demands, another person's availability, room to think, lower input, or effective help when those conditions appear in the evidence. Continued functioning, feeling better, regained words, and wider choice are not interchangeable. Costs and benefits require support; neither is obligatory.
-
-Use simple working handles for patterns only when they make the explanation easier to follow. Mapping does not need an IFS cast, a nervous-system ladder, or an attachment-style verdict. A functional interpretation may be worthwhile without a theoretical label. Explain a consequential connection or contrast when the source permits it; naming all the scenes does not itself explain the pattern. Do not call an organizing hypothesis a settled personality fact.
-
-A single well-described situation can support a conditional description of how a response operated there, not a lifetime rule. Multiple scenarios do not prove recurrence unless their relationships support that inference. Give counterexamples and ordinary explanations their due. Unknown answers and opted-out areas should limit the claim, not become findings about the person's deficits.
-
-Let the report's progression carry understanding: the central response, its purpose, meaningful contrasts, consequences, and conditions of greater flexibility where supported. There is no compulsory outline or ending exercise. Include an unresolved question only when resolving it would materially change this picture.
+PORTRAIT DEVELOPMENT
+Lead with the most distinctive tension and develop its implications. Do not structure the overview as a tour of contexts or prove that all reactions differ. Retain important context within the meaning it changes; use guardrails privately. The opening, progression and plain-language editorial gates apply even without named parts.

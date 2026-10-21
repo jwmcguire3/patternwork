@@ -1,5 +1,6 @@
+import { editorialReviewIssues } from './pwrp71-portrait-quality.ts';
 import type { JsonObject, ValidationIssue } from "../../question-engine/types.ts";
-export const PWRP71_REVIEW_CONTRACT = "PWRP-REVIEW-7.1.0-candidate.3";
+export const PWRP71_REVIEW_CONTRACT = "PWRP-REVIEW-7.1.0-candidate.5";
 export const REVIEW_DIMENSIONS = ["source_fidelity", "semantic_completeness", "narrative_quality"] as const;
 export const EXPLANATORY_ASPECTS = ["functions", "triggers", "costs", "vulnerabilities", "relationships", "choice"] as const;
 function object(value: unknown): Record<string, unknown> { return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {}; }
@@ -7,7 +8,7 @@ function rows(value: unknown): Record<string, unknown>[] { return Array.isArray(
 function strings(value: unknown): string[] { return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : []; }
 /** Checks review consistency and coverage, not the truth of the reviewer's judgments. */
 export function validatePwrp71ReviewQuality(review: Record<string, unknown>, draft: JsonObject, packet: JsonObject): ValidationIssue[] {
- const issues: ValidationIssue[] = [];
+ const issues: ValidationIssue[] = [...editorialReviewIssues(review, draft)];
  const add = (code: string, path: string, message: string) => issues.push({code,path,message});
  const quality = object(review.quality_assessment);
  const statuses = REVIEW_DIMENSIONS.map(d => object(quality[d]).status);

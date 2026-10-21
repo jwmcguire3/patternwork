@@ -77,11 +77,19 @@ export const REPORT_DEV_LUNA_HIGH_128K_CANDIDATE_V2 = {
   maxOutputTokens: REPORT_OUTPUT_TOKEN_LIMIT,
 } as const;
 
-export type ReportDevCandidate = typeof REPORT_DEV_EXPERIMENTAL_CANDIDATE_V1 | typeof REPORT_DEV_LUNA_HIGH_CANDIDATE_V1 | typeof REPORT_DEV_LUNA_HIGH_128K_CANDIDATE_V2;
+/** Separate max-reasoning evaluation at Luna's supported output ceiling. */
+export const REPORT_DEV_LUNA_MAX_128K_CANDIDATE_V1 = {
+  ...REPORT_DEV_LUNA_HIGH_128K_CANDIDATE_V2,
+  id: "report-dev-luna-max-128k-v1",
+  reasoningEffort: "max",
+} as const;
+
+export type ReportDevCandidate = typeof REPORT_DEV_EXPERIMENTAL_CANDIDATE_V1 | typeof REPORT_DEV_LUNA_HIGH_CANDIDATE_V1 | typeof REPORT_DEV_LUNA_HIGH_128K_CANDIDATE_V2 | typeof REPORT_DEV_LUNA_MAX_128K_CANDIDATE_V1;
 export function reportDevCandidate(id: string): ReportDevCandidate | undefined {
   if (id === REPORT_DEV_EXPERIMENTAL_CANDIDATE_V1.id) return REPORT_DEV_EXPERIMENTAL_CANDIDATE_V1;
   if (id === REPORT_DEV_LUNA_HIGH_CANDIDATE_V1.id) return REPORT_DEV_LUNA_HIGH_CANDIDATE_V1;
   if (id === REPORT_DEV_LUNA_HIGH_128K_CANDIDATE_V2.id) return REPORT_DEV_LUNA_HIGH_128K_CANDIDATE_V2;
+  if (id === REPORT_DEV_LUNA_MAX_128K_CANDIDATE_V1.id) return REPORT_DEV_LUNA_MAX_128K_CANDIDATE_V1;
   return undefined;
 }
 

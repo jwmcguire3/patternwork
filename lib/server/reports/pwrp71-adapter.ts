@@ -1,3 +1,4 @@
+import { stageSystem } from "./pwrp71-formulation-integration.ts";
 import { assertNoRespondentClassification, assertNoRespondentFullName, assertNoRespondentFullNameInPwrp71ModelInput } from "./content-boundary.ts";
 import { createHash } from "node:crypto";
 import Ajv2020 from "ajv/dist/2020.js";
@@ -198,7 +199,7 @@ function validateSourceBindings(input: PreparePwrp71RequestInput, issues: Valida
     || reportSource.policy.compatible_question_release !== PWQE51_RELEASE_IDENTITY.questionRelease
     || reportSource.policy.compatible_router_format !== "patternwork-router-evidence-v1"
     || reportSource.policy.compatible_router_source_sha256 !== PWQE51_RELEASE_IDENTITY.sourceSha256
-    || reportSource.policy.prompt_composition !== "shared_plus_construct_guide_plus_selected_layer") {
+    || reportSource.policy.prompt_composition !== "formulation_then_narrative_then_independent_review") {
     issues.push(issue("report_source_binding", "$.reportSource", "Loaded report source is not compatible with the pinned PWQE 5.1/PWRP 7.1 candidate pair."));
   }
 }
@@ -472,11 +473,7 @@ export function preparePwrp71Request(input: PreparePwrp71RequestInput): Validati
   if (input.reportType === "SYNTHESIS" && Object.keys(layers).length > 0) validateAcceptedLayers(layers, input.packet, input.reportSource, issues);
   if (issues.length > 0) return { ok: false, issues };
 
-  const promptKey = input.reportType === "MAP" ? "mapping"
-    : input.reportType === "IFS" ? "ifs"
-      : input.reportType === "PV" ? "state"
-        : input.reportType === "ATT" ? "attachment" : "synthesis";
-  const system = [input.reportSource.prompts.shared, input.reportSource.constructGuide, input.reportSource.prompts[promptKey]].join("\n\n");
+  const system = stageSystem(input.reportSource, input.reportType, "formulation");
   const packetRecord = input.packet as Record<string, unknown>;
   const scope = object(packetRecord.assessment_scope)!;
   const view: Record<string, unknown> = {};
@@ -494,7 +491,7 @@ export function preparePwrp71Request(input: PreparePwrp71RequestInput): Validati
   const request: Pwrp71PreparedRequest = {
     system,
     user_data: view as JsonObject,
-    response_schema: structuredClone(input.reportSource.schemas.reportDraft) as JsonObject,
+    response_schema: structuredClone(input.reportSource.schemas.reportFormulation) as JsonObject,
     binding: {
       report_release: input.reportSource.policy.release,
       report_type: input.reportType,

@@ -4,6 +4,7 @@
   "compatible_router_format": "patternwork-router-evidence-v1",
   "compatible_router_source_sha256": "a1ec5e1aae86f28086ac84a42e33bfdca953870631b5d8dbec2a76cd0985f832",
   "shared_prompt": "prompts/00_SHARED_REPORT_PROMPT_v7.md",
+  "voice_companion_prompt": "prompts/08_VOICE_COMPANION.md",
   "layer_prompts": {
     "MAP": "prompts/01_MAPPING_REPORT_PROMPT.md",
     "IFS": "prompts/02_IFS_REPORT_PROMPT.md",
@@ -19,13 +20,13 @@
     "maximum": null,
     "theoretical_balance_required": false
   },
-  "prompt_composition": "shared_plus_construct_guide_plus_selected_layer",
+  "prompt_composition": "formulation_then_narrative_then_independent_review",
   "activation": "requires_external_provider_qualification_and_authorized_release_approval",
   "runtime_implementation": "shared_runtime_adapter",
   "repair_prompt": "prompts/07_REPAIR_REPORT_PROMPT.md",
   "compatible_question_release": "PWQE-5.1.0-candidate.1",
-  "interpretation_revision": 3,
-  "review_contract": "PWRP-REVIEW-7.1.0-candidate.3",
+  "interpretation_revision": 6,
+  "review_contract": "PWRP-REVIEW-7.1.0-candidate.5",
   "provider_data_handling": {
     "assessment_content": "permitted_when_respondent_names_account_ids_and_emails_are_omitted",
     "test_assessment_content": "permitted_for_all_report_types_when_respondent_names_account_ids_and_emails_are_omitted",
@@ -45,5 +46,21 @@
     "provider_data_collection": "deny_required",
     "test_dispatch_paths": "budgeted_report_dev_and_journaled_pwrp71_qualification_only",
     "production_activation": "separate_reviewed_qualification_and_release_approval"
-  }
+  },
+  "formulation_prompt": "prompts/09_FORMULATION_PROMPT.md",
+  "narrative_prompt": "prompts/10_NARRATIVE_PROMPT.md",
+  "formulation_schema": "schemas/report_formulation.schema.json",
+  "narrative_schema": "schemas/report_narrative.schema.json",
+  "pipeline_revision": "portrait-quality-3-explicit-examination",
+  "normal_model_calls": 3,
+  "semantic_revision_limit": 1,
+  "structural_corrections_per_stage_per_pass": 1,
+  "maximum_model_calls_per_fresh_report": 10,
+  "prior_report_prose_in_writer_input": false,
+  "production_activation_unchanged": true,
+  "formulation_contract": "PWRP-FORMULATION-3",
+  "editorial_acceptance": "all_applicable_dimensions_pass_with_exact_prose_anchors",
+  "narrator_analytical_instructions": false,
+  "guardrails_are_required_topics": false,
+  "narrator_expansion_uses_existing_semantic_revision": true
 }

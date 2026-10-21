@@ -1,3 +1,4 @@
+import type { FormulationEnvelope } from "../../lib/server/reports/pwrp71-formulation-core.ts";
 import { PWRP71_QUESTION_CONTEXT_VERSION } from "../../lib/server/reports/pwrp71-question-context.ts";
 import { PWRP71_REFERENCE_SCHEMA_VERSION } from "../../lib/server/reports/pwrp71-reference-schema.ts";
 import { readFile, mkdir, readdir } from "node:fs/promises";
@@ -27,12 +28,13 @@ Default: offline preparation. No provider call without --mode generate and --all
   npm run reports:dev -- --assessment .report-dev/assessments/<digest>.json --reports IFS
   npm run reports:dev -- --assessment <file> --reports all --mode generate --allow-spend --budget 3.00 --per-call 0.30 --identity-file <reviewed-local-identities.json> --pdf
   npm run reports:dev -- --assessment <file> --reports IFS --mode generate --allow-spend --budget 0.50 --per-call 0.50 --identity-file <local-identities.json>
-  npm run reports:dev -- --assessment <file> --reports IFS --mode continue --candidate report-dev-luna-high-128k-v2 --continue-from <completed-generate-run> --output <same-output-root> --allow-spend --budget 0.50 --per-call 0.50 --identity-file <local-identities.json>
   npm run reports:dev -- --assessment <file> --mode validate --reports IFS --artifact <artifact.json> --review <review.json>
   npm run reports:dev -- --mode compare --left <run-directory> --right <run-directory>
   npm run reports:dev -- --mode inspect --run <run-directory>
   npm run reports:source -- --sync --change prose|interpretation|schema
 
+--formulation <formulation.json> reuses one source-bound interpretation with --assessment, --reports <one type>, --mode generate. New prose and a fresh independent review still require explicit spending authorization. Changing evidence or analytical prompts rejects the seed; changing only voice/narrative prompts can reuse it.
+Legacy continue/review-retry/review-closure dispatch is retired. Inspect historical runs with --mode inspect; start a fresh generation or reuse a bound formulation.
 --pdf exports accepted generated reports with the application canonical PDF renderer and text/raster verification.
 --plan <JSON> loads another answer plan. --case uses scripts/report-dev/cases/<id>.json.
 --output <directory> changes the isolated output root (default .report-dev).
@@ -41,14 +43,13 @@ Default: offline preparation. No provider call without --mode generate and --all
 --mode prepare validates packets and saves provider inputs; synthesis awaits accepted generated layers.
 --mode validate checks structure and an existing bound review, not new semantic judgment.
 --candidate report-dev-luna-high-128k-v2 selects the active fixed Luna/high/128,000-token IFS configuration (also the fresh IFS default). Historical 20k candidates are read-only; arbitrary model/effort overrides are rejected.
-Active 128k continuation requires the same fixed candidate's completed generation and valid final revision review. It permits one repair and one fresh review without structural correction. One final voice-only continuation may follow the first continuation; depth three is rejected.
---recovery-profile report-dev-luna-high-128k-bounded-structure-v1 explicitly permits one semantic repair, at most one structural correction and one fresh full review from a strictly reloaded current-v2 generation only. Maximum new aggregate budget is $0.25, within the original source authorization. Every failure is terminal; no recovery run can seed this profile. Ordinary continuation remains unchanged.
-Live generation, continuation, and review retry require --identity-file. The local-only JSON must set identityInventoryReviewed to true and include respondentNames, accountIds, emails, and otherIdentityTokens arrays (use [] when a category is absent). Values are checked locally and never stored in run artifacts.
+--candidate report-dev-luna-max-128k-v1 selects a separate fixed Luna/max/128,000-token IFS generation. Every writer, repair, escalation and reviewer call uses max reasoning. Recovery modes are unavailable for this candidate.
+Live generation requires --identity-file. The local-only JSON must set identityInventoryReviewed to true and include respondentNames, accountIds, emails, and otherIdentityTokens arrays (use [] when a category is absent). Values are checked locally and never stored in run artifacts.
 Live generation uses OPENROUTER_API_KEY and the existing configured model tiers unless that fixed candidate is explicitly selected. Old authorizations are never read.
 `;
 function argumentsMap(argv:string[]) {
  const flags=new Map<string,string|boolean>();
- const valued=new Set(["case","plan","assessment","mode","reports","output","budget","per-call","artifact","review","left","right","run","candidate","continue-from","recovery-profile","review-retry-from","review-closure-from","identity-file"]);
+ const valued=new Set(["case","plan","assessment","mode","reports","output","budget","per-call","artifact","review","left","right","run","candidate","continue-from","recovery-profile","review-retry-from","review-closure-from","identity-file","formulation"]);
  for(let i=0;i<argv.length;i++) {
   const key=argv[i].replace(/^--/u,"");
   if(!argv[i].startsWith("--")||flags.has(key)) throw new Error("Use unique --named options; see --help.");
@@ -88,7 +89,7 @@ async function main() {
  if(recovery&&(mode!=="continue"||candidateId!==recovery.recoveryProfile.candidateId))throw new Error("--recovery-profile requires --mode continue and the current fixed 128k candidate.");
  const candidate=candidateId?reportDevCandidate(candidateId):undefined;
  if(candidateId!==undefined&&!candidate) throw new Error("Unknown report-dev candidate; arbitrary model and effort overrides are not supported.");
- if(liveMode&&candidate&&candidate.maxOutputTokens!==REPORT_OUTPUT_TOKEN_LIMIT) throw new Error("Historical 20k candidates are read-only. New calls require report-dev-luna-high-128k-v2.");
+ if(liveMode&&candidate&&candidate.maxOutputTokens!==REPORT_OUTPUT_TOKEN_LIMIT) throw new Error("Historical 20k candidates are read-only. New calls require a fixed 128k Luna candidate.");
  if(candidate!==undefined&&"unsuccessfulResponsePolicy" in candidate&&mode!=="prepare"&&mode!=="generate"&&!(candidate.id===REPORT_DEV_LUNA_HIGH_128K_CANDIDATE_V2.id&&mode==="continue")) throw new Error("This candidate does not support the selected recovery mode.");
  if(candidateId&&mode!=="prepare"&&!liveMode) throw new Error("The experimental candidate is available only for no-cost preparation or report generation.");
  if(mode==="inspect") {
@@ -104,11 +105,15 @@ async function main() {
   if(left.assessmentSha256!==right.assessmentSha256) throw new Error("These runs use different assessments; they are not a controlled prompt comparison.");
   console.log(JSON.stringify({sameAssessment:true,leftSource:left.reportSourceSha256,rightSource:right.reportSourceSha256,leftReports:left.reports,rightReports:right.reports,leftEvaluation:left.narrativeEvaluation,rightEvaluation:right.narrativeEvaluation,note:"Counts and review receipts are not independent proof of narrative quality."},null,2));return;
  }
+ if(["continue","review-retry","review-closure"].includes(mode))throw new Error("Legacy recovery cannot dispatch under formulation-first. Use generate and optionally --formulation.");
+ if(flags.has("formulation")&&(mode!=="generate"||!flags.has("assessment")))throw new Error("--formulation requires --mode generate and the saved --assessment.");
+ const formulationSeed=string("formulation")?JSON.parse(await readFile(string("formulation")!,"utf8")) as FormulationEnvelope:undefined;
  const targets=(string("reports")??"all").toUpperCase();
  let types=targets==="ALL"?[...REPORT_ORDER]:targets.split(",") as ReportType[];
  if(types.some(t=>!REPORT_ORDER.includes(t))) throw new Error("Unknown report type. Use MAP, IFS, PV, ATT, SYNTHESIS, or all.");
  if(mode!=="validate"&&types.includes("SYNTHESIS")) types=[...new Set<ReportType>([...types,"IFS","PV","ATT"])];
  types=REPORT_ORDER.filter(t=>types.includes(t));
+ if(formulationSeed&&types.length!==1)throw new Error("--formulation applies to exactly one report.");
  if(candidateId&&(types.length!==1||types[0]!=="IFS")) throw new Error("The experimental candidate is restricted to one IFS report per run.");
  if(mode==="validate"&&(types.length!==1||!string("artifact"))) throw new Error("Validate requires one report type and --artifact.");
  let aggregateMicros:number|undefined,perCallMicros:number|undefined;
@@ -170,9 +175,9 @@ async function main() {
  const closureBinding=citationClosure?citationClosureBinding(citationClosure):undefined;
  const continuationBinding=continuation?{sourceRunBindingSha256:continuation.sourceRunBindingSha256,sourceDraftSha256:continuation.sourceDraftSha256,sourceReviewSha256:continuation.sourceReviewSha256,sourceDraftAttemptId:continuation.sourceDraftAttemptId,sourceReviewAttemptId:continuation.sourceReviewAttemptId}:undefined;
  const reviewRetryBinding=reviewRetry?{sourceRunBindingSha256:reviewRetry.sourceRunBindingSha256,sourceDraftSha256:reviewRetry.sourceDraftSha256,sourceDraftAttemptId:reviewRetry.sourceDraftAttemptId,sourceReviewAttemptId:reviewRetry.sourceReviewAttemptId,validationIssues:reviewRetry.validationIssues.map(({code,path})=>({code,path}))}:undefined;
- const runHash=contentHash(canonical({...(recovery??{}),...(flags.has("pdf")?{exportPdfs:true}:{}),...(mode==="generate"?{generationRepairVersion:PWRP71_GENERATION_REPAIR_VERSION,reviewReplacementStructuralRepairLimit:1}:{}),...(candidate!==undefined&&"unsuccessfulResponsePolicy" in candidate?{unsuccessfulResponsePolicy:candidate.unsuccessfulResponsePolicy}:{}),schema:"patternwork-report-dev-run-2",inputGuidanceVersion:PWRP71_INPUT_GUIDANCE_VERSION,questionContextVersion:PWRP71_QUESTION_CONTEXT_VERSION,scopeGuidanceVersion:PWRP71_SCOPE_GUIDANCE_VERSION,referenceSchemaVersion:PWRP71_REFERENCE_SCHEMA_VERSION,...(mode==="continue"?{repairStrategyVersion:PWRP71_REPAIR_STRATEGY_VERSION,structuralRepairLimit:continuationStructuralRepair?1:0}:{}),assessment:assessment.contentSha256,questionSource:source.sourceManifestSha256,reportSource:reportSource.manifestSha256,types,modelPolicy,candidateConfiguration,providerPolicy,billingBasisSha256,mode,aggregateMicros:aggregateMicros??0,perCallMicros:perCallMicros??0,...(continuationBinding?{continuation:continuationBinding}:{}),...(reviewRetryBinding?{reviewRetry:reviewRetryBinding}:{}),...(closureBinding?{citationClosure:closureBinding}:{})}));
+ const runHash=contentHash(canonical({...(formulationSeed?{formulationSeedSha256:formulationSeed.content_sha256}:{}),...(recovery??{}),...(flags.has("pdf")?{exportPdfs:true}:{}),...(mode==="generate"?{generationRepairVersion:PWRP71_GENERATION_REPAIR_VERSION,reviewReplacementStructuralRepairLimit:1}:{}),...(candidate!==undefined&&"unsuccessfulResponsePolicy" in candidate?{unsuccessfulResponsePolicy:candidate.unsuccessfulResponsePolicy}:{}),schema:"patternwork-report-dev-run-2",inputGuidanceVersion:PWRP71_INPUT_GUIDANCE_VERSION,questionContextVersion:PWRP71_QUESTION_CONTEXT_VERSION,scopeGuidanceVersion:PWRP71_SCOPE_GUIDANCE_VERSION,referenceSchemaVersion:PWRP71_REFERENCE_SCHEMA_VERSION,...(mode==="continue"?{repairStrategyVersion:PWRP71_REPAIR_STRATEGY_VERSION,structuralRepairLimit:continuationStructuralRepair?1:0}:{}),assessment:assessment.contentSha256,questionSource:source.sourceManifestSha256,reportSource:reportSource.manifestSha256,types,modelPolicy,candidateConfiguration,providerPolicy,billingBasisSha256,mode,aggregateMicros:aggregateMicros??0,perCallMicros:perCallMicros??0,...(continuationBinding?{continuation:continuationBinding}:{}),...(reviewRetryBinding?{reviewRetry:reviewRetryBinding}:{}),...(closureBinding?{citationClosure:closureBinding}:{})}));
  const directory=path.join(root,"runs",`${mode}-${runHash.slice(0,24)}`);
- const summary=await runReportBatch({...(flags.has("pdf")?{exportPdfs:true}:{}),assessment,types,questionSource:source,reportSource,directory,mode:mode as "prepare"|"generate"|"continue"|"review-retry"|"review-closure",...(candidate?{candidateId:candidate.id}:{}),...(recovery?{recoveryProfileId,recoverySource}:continuation?{continuation,continuationStructuralRepair}:{}),...(reviewRetry?{reviewRetry}:{}),...(citationClosure?{citationClosure}:{}),...(privacyIdentityContext?{privacyIdentityContext}:{}),aggregateMicros,perCallMicros,...(liveMode?{transport:new OpenRouterClient()}: {})});
+ const summary=await runReportBatch({...(formulationSeed?{formulationSeed}:{}),...(flags.has("pdf")?{exportPdfs:true}:{}),assessment,types,questionSource:source,reportSource,directory,mode:mode as "prepare"|"generate"|"continue"|"review-retry"|"review-closure",...(candidate?{candidateId:candidate.id}:{}),...(recovery?{recoveryProfileId,recoverySource}:continuation?{continuation,continuationStructuralRepair}:{}),...(reviewRetry?{reviewRetry}:{}),...(citationClosure?{citationClosure}:{}),...(privacyIdentityContext?{privacyIdentityContext}:{}),aggregateMicros,perCallMicros,...(liveMode?{transport:new OpenRouterClient()}: {})});
  console.log(JSON.stringify(summary,null,2));
  if(summary.failed) process.exitCode=1;
 }

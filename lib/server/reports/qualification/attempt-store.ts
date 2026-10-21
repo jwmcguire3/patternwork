@@ -67,6 +67,7 @@ export interface QualificationAttemptRecord {
   };
   readonly validation?: { readonly ok: boolean; readonly issues: readonly { readonly code: string; readonly path: string; readonly message: string }[]; readonly draftSha256?: string };
   readonly reviewReceipt?: Record<string, unknown>;
+  readonly formulationReceipt?: { readonly formulationSha256: string; readonly analysisSha256: string };
   readonly repairDecisions?: readonly { readonly reason: "draft_validation" | "review_revise"; readonly issueCount: number }[];
 }
 
@@ -132,20 +133,20 @@ function isReportDevCandidateAdmission(
   if (!request.idempotencyKey.startsWith(prefix)) return false;
   const scopedKey = request.idempotencyKey.slice(prefix.length);
   const [phase, candidateId, ordinal, ...extra] = scopedKey.split(":");
-  if (!["initial", "repair", "escalation", "review", "review_after_repair", "review_retry"].includes(phase)
+  if (!["initial", "repair", "review", "review_after_repair"].includes(phase)
     || candidateId !== candidate.id || !/^attempt-[1-9][0-9]*$/u.test(ordinal ?? "") || extra.length !== 0) return false;
-  const reviewPhase = /^(?:review|review_after_repair|review_retry):/u.test(scopedKey);
-  const expectedSchemaName = reviewPhase
-    ? "patternwork_ifs_pwrp71_review_candidate_3"
-    : "patternwork_ifs_pwrp71_candidate_1";
+  const reviewPhase = phase === "review" || phase === "review_after_repair";
+  const expectedSchemaNames = reviewPhase
+    ? ["patternwork_ifs_pwrp71_review_candidate_5"]
+    : ["patternwork_ifs_pwrp71_formulation_3", "patternwork_ifs_pwrp71_narrative_2"];
   return request.model === candidate.model
     && request.reasoningEffort === candidate.reasoningEffort
     && request.maxOutputTokens === candidate.maxOutputTokens
     && wireRequest.includeUsage === true
     && wireRequest.promptCacheOptions?.mode === "explicit"
     && sha256Canonical(wireRequest.providerPolicy) === sha256Canonical(reportDevProviderPolicy(candidate.model))
-    && request.schemaName === expectedSchemaName
-    && wireRequest.schemaName === expectedSchemaName;
+    && expectedSchemaNames.includes(request.schemaName)
+    && wireRequest.schemaName === request.schemaName;
 }
 
 export type AttemptJournalMutation<T> = (attempts: readonly QualificationAttemptRecord[], openingCostMicros: number) => {
@@ -311,7 +312,9 @@ export abstract class QualificationAttemptStoreBase {
           ? { ...record, reviewReceipt: structuredClone(event.receipt) as Record<string, unknown> }
           : event.type === "review_validation"
             ? { ...record, validation: { ok: false, issues: event.issues.slice(0, 50) } }
-            : { ...record, repairDecisions: [...(record.repairDecisions ?? []), { reason: event.reason, issueCount: event.issueCount }] };
+            : event.type === "formulation_saved"
+              ? { ...record, formulationReceipt: { formulationSha256: event.formulationSha256, analysisSha256: event.analysisSha256 } }
+              : { ...record, repairDecisions: [...(record.repairDecisions ?? []), { reason: event.reason, issueCount: event.issueCount }] };
       return { next: attempts.map((attempt) => attempt.attemptId === attemptId ? nextRecord : attempt), value: undefined };
     });
   }

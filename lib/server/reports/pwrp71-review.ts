@@ -1,3 +1,4 @@
+import { artifactFormulationIssues, reviewRoutingIssues } from "./pwrp71-formulation-core.ts";
 import { validatePwrp71ReviewQuality } from "./pwrp71-review-quality.ts";
 import { renderPwrp71Markdown } from "./pwrp71-render.ts";
 import { assertNoRespondentClassification } from "./content-boundary.ts";
@@ -10,6 +11,8 @@ import type { Pwrp71ReportArtifact } from "./pwrp71-validation.ts";
 
 export interface Pwrp71Review {
   readonly review_contract: string;
+  readonly reviewed_formulation_sha256: string;
+  readonly revision_target: "none" | "source" | "formulation" | "narrative";
   readonly report_release: string;
   readonly reviewed_draft_sha256: string;
   readonly reviewed_evidence_sha256: string;
@@ -17,6 +20,7 @@ export interface Pwrp71Review {
   readonly issues: readonly JsonObject[];
   readonly summary: string;
   readonly quality_assessment: JsonObject;
+  readonly editorial_assessment: JsonObject;
   readonly evidence_coverage: readonly JsonObject[];
   readonly explanatory_assessment: JsonObject;
   readonly synthesis_opportunity: JsonObject;
@@ -71,6 +75,7 @@ function uniqueIds(rows: readonly Record<string, unknown>[], key: string, issues
 function artifactIssues(artifact: Pwrp71ReportArtifact, packet: JsonObject, source: Pwrp71SourcePackage): ValidationIssue[] {
   const issues: ValidationIssue[] = [];
   const row = artifact as Record<string, unknown>;
+  issues.push(...artifactFormulationIssues(row));
   const draft = object(artifact.draft);
   const p = packet as Record<string, unknown>;
   const sourceBinding = object(p.source_binding);
@@ -157,6 +162,7 @@ export function validatePwrp71Review(input: {
   try { assertNoRespondentClassification(input.value); }
   catch { return { ok: false, issues: [issue("respondent_classification", "$.review", "Review contains retired respondent classification.")] }; }
   const review = input.value as Pwrp71Review;
+  issues.push(...reviewRoutingIssues(review as unknown as Record<string, unknown>, object(object(input.artifact.formulation)?.formulation) ?? {}, list(input.artifact.draft.sections).map(s => String(s.id))));
   issues.push(...validatePwrp71ReviewQuality(review as unknown as Record<string, unknown>, input.artifact.draft, input.packet));
   issues.push(...artifactIssues(input.artifact, input.packet, input.source));
   if (review.report_release !== input.source.policy.release
@@ -165,6 +171,13 @@ export function validatePwrp71Review(input: {
     || review.reviewed_evidence_sha256 !== input.artifact.evidence_sha256) {
     issues.push(issue("review_binding", "$", "Review does not bind to the exact current report draft artifact and packet evidence."));
   }
+  if (review.reviewed_formulation_sha256 !== input.artifact.draft.formulation_sha256) {
+    issues.push(issue("review_formulation_binding", "$.reviewed_formulation_sha256", "Review must bind to the formulation used by this exact draft."));
+  }
+  const validRoute = review.verdict === "accept" ? review.revision_target === "none"
+    : review.verdict === "invalid_input" ? review.revision_target === "source"
+      : ["formulation", "narrative"].includes(review.revision_target);
+  if (!validRoute) issues.push(issue("review_route", "$.revision_target", "Review verdict and revision target disagree."));
   if (review.verdict === "accept" && review.issues.length > 0) issues.push(issue("review_accept_with_issues", "$.issues", "A structurally accepted review cannot retain unresolved issue records."));
   if (review.verdict === "revise" && review.issues.length === 0) issues.push(issue("review_revise_without_issue", "$.issues", "A revision verdict must identify at least one actionable issue."));
   issues.push(...reviewReferenceIssues(review as unknown as Record<string, unknown>, input.artifact, input.packet));
